@@ -1,0 +1,427 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // NOTE: Prisma ne supporte pas les variables d'env pour 'provider'.
+  // Utiliser "sqlite" pour le dev local, remplacer par "postgresql" en production.
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── SCHOOL (Multi-tenant) ─────────────────────────────────────────────────────
+model School {
+  id           String     @id @default(uuid())
+  name         String
+  logoUrl      String?
+  type         String     // SchoolType
+  convention   String?
+  agrement     String?
+  province     String     @default("Nord-Kivu")
+  ville        String     @default("Goma")
+  commune      String?
+  adresse      String?
+  telephone    String?
+  email        String?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  users         User[]
+  students      Student[]
+  teachers      Teacher[]
+  classes       Class[]
+  sections      Section[]
+  subjects      Subject[]
+  academicYears AcademicYear[]
+  feeTypes      FeeType[]
+  payments      Payment[]
+  smsLogs       SmsLog[]
+  settings      Setting[]
+
+  @@map("schools")
+}
+
+// ── USER & AUTH ───────────────────────────────────────────────────────────────
+model User {
+  id           String    @id @default(uuid())
+  schoolId     String
+  school       School    @relation(fields: [schoolId], references: [id])
+  nom          String
+  postNom      String
+  prenom       String?
+  email        String?
+  phone        String
+  passwordHash String
+  role         String    // UserRole
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  gradesCreated   Grade[]
+  paymentsCreated Payment[]
+  attendanceTaken Attendance[]
+
+  @@unique([schoolId, phone])
+  @@unique([schoolId, email])
+  @@map("users")
+}
+
+// ── ACADEMIC YEAR ─────────────────────────────────────────────────────────────
+model AcademicYear {
+  id        String   @id @default(uuid())
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  label     String
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  terms       Term[]
+  enrollments Enrollment[]
+  payments    Payment[]
+
+  @@unique([schoolId, label])
+  @@map("academic_years")
+}
+
+// ── TERM (Trimestre) ──────────────────────────────────────────────────────────
+model Term {
+  id             String       @id @default(uuid())
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  number         Int
+  label          String
+  startDate      DateTime
+  endDate        DateTime
+  examStartDate  DateTime?
+  examEndDate    DateTime?
+  isActive       Boolean      @default(false)
+
+  grades        Grade[]
+  deliberations Deliberation[]
+  attendances   Attendance[]
+
+  @@unique([academicYearId, number])
+  @@map("terms")
+}
+
+// ── SECTION & CLASS ───────────────────────────────────────────────────────────
+model Section {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+  name     String
+  code     String
+  year     Int
+
+  classes  Class[]
+  subjects SubjectSection[]
+
+  @@unique([schoolId, code, year])
+  @@map("sections")
+}
+
+model Class {
+  id          String  @id @default(uuid())
+  schoolId    String
+  school      School  @relation(fields: [schoolId], references: [id])
+  sectionId   String
+  section     Section @relation(fields: [sectionId], references: [id])
+  name        String
+  maxStudents Int     @default(45)
+  isActive    Boolean @default(true)
+
+  enrollments        Enrollment[]
+  teacherAssignments TeacherClassSubject[]
+  attendances        Attendance[]
+  deliberations      Deliberation[]
+
+  @@unique([schoolId, name])
+  @@map("classes")
+}
+
+// ── SUBJECT (Matière) ─────────────────────────────────────────────────────────
+model Subject {
+  id            String  @id @default(uuid())
+  schoolId      String
+  school        School  @relation(fields: [schoolId], references: [id])
+  name          String
+  abbreviation  String
+  maxScore      Int     @default(20)
+  isEliminatory Boolean @default(false)
+  elimThreshold Float?
+  displayOrder  Int     @default(0)
+
+  sections    SubjectSection[]
+  grades      Grade[]
+  assignments TeacherClassSubject[]
+
+  @@unique([schoolId, abbreviation])
+  @@map("subjects")
+}
+
+model SubjectSection {
+  subjectId   String
+  subject     Subject @relation(fields: [subjectId], references: [id])
+  sectionId   String
+  section     Section @relation(fields: [sectionId], references: [id])
+  coefficient Int     @default(1)
+
+  @@id([subjectId, sectionId])
+  @@map("subject_sections")
+}
+
+// ── STUDENT ───────────────────────────────────────────────────────────────────
+model Student {
+  id            String        @id @default(uuid())
+  schoolId      String
+  school        School        @relation(fields: [schoolId], references: [id])
+  matricule     String
+  nom           String
+  postNom       String
+  prenom        String?
+  sexe          String        // Sexe
+  dateNaissance DateTime
+  lieuNaissance String
+  nationalite   String        @default("Congolaise")
+  photoUrl      String?
+  nomPere       String?
+  telPere       String?
+  nomMere       String?
+  telMere       String?
+  nomTuteur     String?
+  telTuteur     String?
+  statut        String        @default("NOUVEAU") // StudentStatus
+  isActive      Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  enrollments       Enrollment[]
+  payments          Payment[]
+  attendances       Attendance[]
+  disciplineRecords DisciplineRecord[]
+  grades            Grade[]
+
+  @@unique([schoolId, matricule])
+  @@map("students")
+}
+
+// ── ENROLLMENT (Inscription annuelle) ────────────────────────────────────────
+model Enrollment {
+  id             String       @id @default(uuid())
+  studentId      String
+  student        Student      @relation(fields: [studentId], references: [id])
+  classId        String
+  class          Class        @relation(fields: [classId], references: [id])
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  ecoleOrigine   String?
+  resultatTenasosp Float?
+  enrolledAt     DateTime     @default(now())
+
+  @@unique([studentId, academicYearId])
+  @@map("enrollments")
+}
+
+// ── TEACHER ───────────────────────────────────────────────────────────────────
+model Teacher {
+  id             String        @id @default(uuid())
+  schoolId       String
+  school         School        @relation(fields: [schoolId], references: [id])
+  nom            String
+  postNom        String
+  prenom         String?
+  matriculeMepst String?
+  diplome        String?
+  phone          String?
+  statut         String        @default("NON_PAYE") // TeacherStatus
+  isActive       Boolean       @default(true)
+
+  assignments TeacherClassSubject[]
+
+  @@map("teachers")
+}
+
+model TeacherClassSubject {
+  id        String  @id @default(uuid())
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  classId   String
+  class     Class   @relation(fields: [classId], references: [id])
+  subjectId String
+  subject   Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([teacherId, classId, subjectId])
+  @@map("teacher_class_subjects")
+}
+
+// ── GRADE (Note) ──────────────────────────────────────────────────────────────
+model Grade {
+  id          String     @id @default(uuid())
+  studentId   String
+  student     Student    @relation(fields: [studentId], references: [id], onDelete: NoAction)
+  subjectId   String
+  subject     Subject    @relation(fields: [subjectId], references: [id])
+  termId      String
+  term        Term       @relation(fields: [termId], references: [id])
+  evalType    String     // EvalType
+  score       Float
+  maxScore    Int        @default(20)
+  observation String?
+  isLocked    Boolean    @default(false)
+  syncStatus  String     @default("SYNCED") // SyncStatus
+  createdById String
+  createdBy   User       @relation(fields: [createdById], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@unique([studentId, subjectId, termId, evalType])
+  @@map("grades")
+}
+
+// ── DELIBERATION ──────────────────────────────────────────────────────────────
+model Deliberation {
+  id          String      @id @default(uuid())
+  classId     String
+  class       Class       @relation(fields: [classId], references: [id])
+  termId      String
+  term        Term        @relation(fields: [termId], references: [id])
+  status      String      @default("DRAFT") // DelibStatus
+  validatedAt DateTime?
+  pvUrl       String?
+  createdAt   DateTime    @default(now())
+
+  results DelibResult[]
+
+  @@unique([classId, termId])
+  @@map("deliberations")
+}
+
+model DelibResult {
+  id             String        @id @default(uuid())
+  deliberationId String
+  deliberation   Deliberation  @relation(fields: [deliberationId], references: [id])
+  studentId      String
+  generalAverage Float
+  totalPoints    Float
+  rank           Int
+  decision       String        // DelibDecision
+  justification  String?
+
+  @@unique([deliberationId, studentId])
+  @@map("delib_results")
+}
+
+// ── ATTENDANCE (Présence) ─────────────────────────────────────────────────────
+model Attendance {
+  id            String           @id @default(uuid())
+  studentId     String
+  student       Student          @relation(fields: [studentId], references: [id])
+  classId       String
+  class         Class            @relation(fields: [classId], references: [id])
+  termId        String
+  term          Term             @relation(fields: [termId], references: [id])
+  date          DateTime
+  period        String           // AttendancePeriod
+  status        String           // AttendanceStatus
+  justification String?
+  syncStatus    String           @default("SYNCED") // SyncStatus (from Grade enum reused or string)
+  recordedById  String
+  recordedBy    User             @relation(fields: [recordedById], references: [id])
+  createdAt     DateTime         @default(now())
+
+  @@unique([studentId, date, period])
+  @@map("attendances")
+}
+
+// ── DISCIPLINE ────────────────────────────────────────────────────────────────
+model DisciplineRecord {
+  id          String           @id @default(uuid())
+  studentId   String
+  student     Student          @relation(fields: [studentId], references: [id])
+  date        DateTime
+  description String
+  witnesses   String?
+  sanction    String           // SanctionType
+  status      String           @default("OPEN") // DisciplineStatus
+  resolution  String?
+  createdAt   DateTime         @default(now())
+
+  @@map("discipline_records")
+}
+
+// ── FINANCE ───────────────────────────────────────────────────────────────────
+model FeeType {
+  id         String  @id @default(uuid())
+  schoolId   String
+  school     School  @relation(fields: [schoolId], references: [id])
+  name       String
+  amount     Int
+  termNumber Int?
+  isRequired Boolean @default(true)
+  isActive   Boolean @default(true)
+
+  payments Payment[]
+
+  @@map("fee_types")
+}
+
+model Payment {
+  id             String       @id @default(uuid())
+  receiptNumber  String
+  studentId      String
+  student        Student      @relation(fields: [studentId], references: [id])
+  feeTypeId      String
+  feeType        FeeType      @relation(fields: [feeTypeId], references: [id])
+  schoolId       String
+  school         School       @relation(fields: [schoolId], references: [id])
+  academicYearId String
+  academicYear   AcademicYear @relation(fields: [academicYearId], references: [id])
+  amountDue      Int
+  amountPaid     Int
+  currency       String       @default("FC") // Currency
+  exchangeRate   Float?
+  paymentMode    String       // PaymentMode
+  reference      String?
+  paidAt         DateTime
+  createdById    String
+  createdBy      User         @relation(fields: [createdById], references: [id])
+  createdAt      DateTime     @default(now())
+
+  @@unique([schoolId, receiptNumber])
+  @@map("payments")
+}
+
+// ── SMS LOG ───────────────────────────────────────────────────────────────────
+model SmsLog {
+  id        String    @id @default(uuid())
+  schoolId  String
+  school    School    @relation(fields: [schoolId], references: [id])
+  recipient String
+  message   String
+  language  String    @default("fr")
+  status    String    // SmsStatus
+  provider  String    @default("africas_talking")
+  costFc    Int?
+  sentAt    DateTime  @default(now())
+  errorMsg  String?
+
+  @@map("sms_logs")
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+model Setting {
+  id        String   @id @default(uuid())
+  schoolId  String
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  school School @relation(fields: [schoolId], references: [id])
+
+  @@unique([schoolId, key])
+  @@map("settings")
+}

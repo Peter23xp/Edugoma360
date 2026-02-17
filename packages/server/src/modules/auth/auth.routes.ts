@@ -1,0 +1,13 @@
+import { Router } from 'express';
+import { authController } from './auth.controller';
+import { authenticate } from '../../middleware/auth.middleware';
+import { authLimiter } from '../../middleware/rateLimit.middleware';
+
+const router = Router();
+
+router.post('/login', authLimiter, (req, res, next) => authController.login(req, res, next));
+router.post('/logout', authenticate, (req, res) => authController.logout(req, res));
+router.get('/profile', authenticate, (req, res, next) => authController.getProfile(req, res, next));
+router.put('/change-password', authenticate, (req, res, next) => authController.changePassword(req, res, next));
+
+export default router;

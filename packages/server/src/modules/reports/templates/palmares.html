@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Palmarès — {{schoolName}}</title>
+    <style>
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 11pt;
+            padding: 15mm;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 16pt;
+            text-transform: uppercase;
+        }
+
+        .header h2 {
+            font-size: 12pt;
+        }
+
+        .header p {
+            font-size: 10pt;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 5px 8px;
+            font-size: 10pt;
+        }
+
+        th {
+            background: #d0d0d0;
+            text-align: center;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        .distinction {
+            background: #e8f5e9;
+        }
+
+        .great-distinction {
+            background: #c8e6c9;
+            font-weight: bold;
+        }
+
+        @media print {
+            body {
+                padding: 8mm;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <p>RÉPUBLIQUE DÉMOCRATIQUE DU CONGO — MEPST</p>
+        <h1>{{schoolName}}</h1>
+        <h2>PALMARÈS — {{termLabel}} — {{academicYear}}</h2>
+        <p>Classe: {{className}} — Section: {{sectionName}}</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Rang</th>
+                <th>Nom de l'Élève</th>
+                <th>Matricule</th>
+                <th>Total Points</th>
+                <th>Moyenne Générale</th>
+                <th>Décision</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{studentRows}}
+        </tbody>
+    </table>
+</body>
+
+</html>

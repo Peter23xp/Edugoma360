@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
+    --primary: 120 53% 23%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 96% 53%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 13%;
+    --destructive: 0 73% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 120 53% 23%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* ── Card Styles ─────────────────────────────────────────────── */
+  .card-stat {
+    @apply bg-white rounded-xl border border-neutral-300/50 p-5 shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  /* ── Status Badges ───────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-success { @apply bg-success-bg text-success; }
+  .badge-warning { @apply bg-warning-bg text-warning; }
+  .badge-danger  { @apply bg-danger-bg text-danger; }
+  .badge-info    { @apply bg-info-bg text-info; }
+
+  /* ── Form Inputs ─────────────────────────────────────────────── */
+  .input-label {
+    @apply text-sm font-medium text-neutral-700 mb-1 block;
+  }
+
+  /* ── Offline indicator ───────────────────────────────────────── */
+  .offline-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-warning animate-pulse;
+  }
+  .online-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-success;
+  }
+
+  /* ── Sidebar ─────────────────────────────────────────────────── */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-neutral-700 
+           hover:bg-primary/10 hover:text-primary transition-colors duration-150;
+  }
+  .sidebar-link-active {
+    @apply bg-primary/10 text-primary font-semibold;
+  }
+
+  /* ── Table Styles ────────────────────────────────────────────── */
+  .table-header {
+    @apply bg-neutral-100 text-neutral-700 text-xs font-semibold uppercase tracking-wider;
+  }
+
+  /* ── Print Styles ────────────────────────────────────────────── */
+  @media print {
+    .no-print { display: none !important; }
+    .print-only { display: block !important; }
+    body { font-size: 10pt; }
+  }
+}
+
+/* ── Scrollbar Styling ─────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #BDBDBD; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #757575; }
+
+/* ── Mobile optimization ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  input, select, textarea {
+    font-size: 16px !important; /* Prevent zoom on iOS */
+  }
+}
