@@ -1,8 +1,11 @@
 import { z } from 'zod';
 
+// ── Login DTO ────────────────────────────────────────────────────────────────
+// Accepts either email, phone, or matricule via a single "identifier" field.
 export const LoginDto = z.object({
-    phone: z.string().min(1, 'Numéro de téléphone requis'),
-    password: z.string().min(1, 'Mot de passe requis'),
+    identifier: z.string().min(4, 'Minimum 4 caractères'),
+    password: z.string().min(6, 'Minimum 6 caractères'),
+    rememberMe: z.boolean().default(false),
 });
 
 export const RefreshTokenDto = z.object({

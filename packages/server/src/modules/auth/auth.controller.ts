@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { authService } from './auth.service';
-import { LoginDto, ChangePasswordDto } from './auth.dto';
+import { authService, AuthError } from './auth.service';
+import { LoginDto, RefreshTokenDto, ChangePasswordDto } from './auth.dto';
 
 export class AuthController {
     async login(req: Request, res: Response, next: NextFunction) {
@@ -8,19 +8,52 @@ export class AuthController {
             const data = LoginDto.parse(req.body);
             const result = await authService.login(data);
 
-            // Set httpOnly cookie
-            res.cookie('token', result.token, {
+            // ── Set refreshToken as httpOnly cookie ────────────────────────
+            const cookieMaxAge = result.rememberMe
+                ? 30 * 24 * 60 * 60 * 1000  // 30 days
+                : undefined;                 // session cookie (closes with browser)
+
+            res.cookie('refreshToken', result.refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
-                maxAge: 8 * 60 * 60 * 1000, // 8 hours
+                sameSite: 'strict',
+                path: '/api/auth',
+                maxAge: cookieMaxAge,
             });
 
+            // NEVER return refreshToken in the body
+            const { refreshToken, rememberMe, ...responseData } = result;
+
+            res.json({ data: responseData });
+        } catch (error) {
+            if (error instanceof AuthError) {
+                const statusCode = error.code === 'ACCOUNT_LOCKED' ? 423 : 401;
+                res.status(statusCode).json({
+                    error: { code: error.code, message: error.message },
+                });
+                return;
+            }
+            next(error);
+        }
+    }
+
+    async refresh(req: Request, res: Response, next: NextFunction) {
+        try {
+            // Read refreshToken from cookie
+            const refreshToken = req.cookies?.refreshToken;
+            if (!refreshToken) {
+                res.status(401).json({
+                    error: { code: 'NO_REFRESH_TOKEN', message: 'Token de rafraîchissement absent.' },
+                });
+                return;
+            }
+
+            const result = await authService.refresh(refreshToken);
             res.json({ data: result });
         } catch (error) {
-            if (error instanceof Error && error.message === 'Identifiants invalides') {
+            if (error instanceof AuthError) {
                 res.status(401).json({
-                    error: { code: 'INVALID_CREDENTIALS', message: error.message },
+                    error: { code: error.code, message: error.message },
                 });
                 return;
             }
@@ -54,7 +87,12 @@ export class AuthController {
     }
 
     async logout(_req: Request, res: Response) {
-        res.clearCookie('token');
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            path: '/api/auth',
+        });
         res.json({ data: { message: 'Déconnexion réussie' } });
     }
 }

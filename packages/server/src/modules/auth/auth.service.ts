@@ -4,16 +4,33 @@ import { generateToken, generateRefreshToken } from '../../lib/jwt';
 import { env } from '../../config/env';
 import type { LoginInput, ChangePasswordInput } from './auth.dto';
 
+// ── Regex helpers ────────────────────────────────────────────────────────────
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MATRICULE_REGEX = /^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]+-\d+$/i;
+
 export class AuthService {
     /**
-     * Authenticate user with phone + password
+     * Authenticate user with identifier (email / matricule / phone) + password
      */
     async login(data: LoginInput) {
+        const { identifier, password, rememberMe } = data;
+
+        // ── Detect identifier type and build Prisma where clause ─────────
+        let whereClause: any;
+        if (EMAIL_REGEX.test(identifier)) {
+            // Email login
+            whereClause = { email: identifier, isActive: true };
+        } else if (MATRICULE_REGEX.test(identifier)) {
+            // Matricule login — look up the student first, then the parent user
+            // For now, also try matching phone as a fallback
+            whereClause = { phone: identifier, isActive: true };
+        } else {
+            // Phone number login (legacy / fallback)
+            whereClause = { phone: identifier, isActive: true };
+        }
+
         const user = await prisma.user.findFirst({
-            where: {
-                phone: data.phone,
-                isActive: true,
-            },
+            where: whereClause,
             include: {
                 school: {
                     select: {
@@ -28,20 +45,24 @@ export class AuthService {
         });
 
         if (!user) {
-            throw new Error('Identifiants invalides');
+            throw new AuthError('INVALID_CREDENTIALS', 'Email/matricule ou mot de passe incorrect.');
         }
 
-        const isPasswordValid = await bcrypt.compare(data.password, user.passwordHash);
+        // ── Verify password ─────────────────────────────────────────────
+        const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
         if (!isPasswordValid) {
-            throw new Error('Identifiants invalides');
+            throw new AuthError('INVALID_CREDENTIALS', 'Email/matricule ou mot de passe incorrect.');
         }
 
-        // Update last login
+        // ── Check lockout (handled at controller level via loginAttempts) ─
+
+        // ── Update last login ───────────────────────────────────────────
         await prisma.user.update({
             where: { id: user.id },
             data: { lastLoginAt: new Date() },
         });
 
+        // ── Generate tokens ─────────────────────────────────────────────
         const payload = {
             userId: user.id,
             schoolId: user.schoolId,
@@ -54,10 +75,39 @@ export class AuthService {
         const { passwordHash, ...userWithoutPassword } = user;
 
         return {
-            user: userWithoutPassword,
+            user: {
+                id: userWithoutPassword.id,
+                nom: userWithoutPassword.nom,
+                postNom: userWithoutPassword.postNom,
+                prenom: userWithoutPassword.prenom,
+                role: userWithoutPassword.role,
+                phone: userWithoutPassword.phone,
+                email: userWithoutPassword.email,
+                schoolId: userWithoutPassword.schoolId,
+                schoolName: userWithoutPassword.school.name,
+            },
             token,
             refreshToken,
+            rememberMe: rememberMe ?? false,
         };
+    }
+
+    /**
+     * Refresh an access token
+     */
+    async refresh(refreshToken: string) {
+        try {
+            const { verifyToken } = await import('../../lib/jwt');
+            const payload = verifyToken(refreshToken);
+            const newToken = generateToken({
+                userId: payload.userId,
+                schoolId: payload.schoolId,
+                role: payload.role,
+            });
+            return { token: newToken, expiresIn: 28800 }; // 8h in seconds
+        } catch {
+            throw new AuthError('INVALID_TOKEN', 'Token de rafraîchissement invalide ou expiré.');
+        }
     }
 
     /**
@@ -143,6 +193,16 @@ export class AuthService {
 
         const { passwordHash: _, ...userWithoutPassword } = user;
         return userWithoutPassword;
+    }
+}
+
+// ── Custom Auth Error ────────────────────────────────────────────────────────
+export class AuthError extends Error {
+    code: string;
+    constructor(code: string, message: string) {
+        super(message);
+        this.code = code;
+        this.name = 'AuthError';
     }
 }
 

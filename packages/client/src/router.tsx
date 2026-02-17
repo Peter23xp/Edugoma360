@@ -49,7 +49,11 @@ import SyncPage from './pages/settings/SyncPage';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (!isAuthenticated) {
+        const redirect = window.location.pathname;
+        const params = redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : '';
+        return <Navigate to={`/login${params}`} replace />;
+    }
     return <>{children}</>;
 }
 
@@ -69,7 +73,8 @@ export default function AppRouter() {
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<DashboardPage />} />
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="dashboard" element={<DashboardPage />} />
 
                 {/* Students */}
                 <Route path="students" element={<StudentsListPage />} />
@@ -90,6 +95,7 @@ export default function AppRouter() {
 
                 {/* Attendance */}
                 <Route path="attendance" element={<DailyAttendancePage />} />
+                <Route path="attendance/daily" element={<DailyAttendancePage />} />
                 <Route path="attendance/report" element={<AttendanceReportPage />} />
 
                 {/* Communication */}
@@ -98,6 +104,7 @@ export default function AppRouter() {
 
                 {/* Parent Portal */}
                 <Route path="parent" element={<ParentHomePage />} />
+                <Route path="parent/home" element={<ParentHomePage />} />
 
                 {/* Reports */}
                 <Route path="reports" element={<ReportsPage />} />
@@ -110,7 +117,7 @@ export default function AppRouter() {
             </Route>
 
             {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
     );
 }
