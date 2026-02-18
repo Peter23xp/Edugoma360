@@ -14,7 +14,7 @@ build/
 .env.local
 .env.production
 .env.*.local
-
+.env.example
 # Database
 packages/server/prisma/dev.db
 packages/server/prisma/dev.db-journal
