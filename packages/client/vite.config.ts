@@ -41,6 +41,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
+            '@edugoma360/shared': path.resolve(__dirname, '../shared/src'),
         },
     },
     server: {

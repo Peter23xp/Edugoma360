@@ -45,4 +45,9 @@ router.post('/', requirePermission('students:create'), (req, res, next) => stude
 router.put('/:id', requirePermission('students:update'), (req, res, next) => studentsController.updateStudent(req, res, next));
 router.delete('/:id', requirePermission('students:delete'), (req, res, next) => studentsController.archiveStudent(req, res, next));
 
+// Student detail routes
+router.get('/:id/academic-history', requirePermission('students:read'), (req, res, next) => studentsController.getAcademicHistory(req, res, next));
+router.get('/:id/attestation', requirePermission('students:read'), (req, res, next) => studentsController.generateAttestation(req, res, next));
+router.get('/:id/card', requirePermission('students:read'), (req, res, next) => studentsController.generateStudentCard(req, res, next));
+
 export default router;

@@ -15,6 +15,7 @@ import DashboardPage from './pages/dashboard/DashboardPage';
 import StudentsListPage from './pages/students/StudentsListPage';
 import StudentDetailPage from './pages/students/StudentDetailPage';
 import StudentFormPage from './pages/students/StudentFormPage';
+import StudentsImportPage from './pages/students/StudentsImportPage';
 
 // Grades
 import GradeEntryPage from './pages/grades/GradeEntryPage';
@@ -47,6 +48,9 @@ import AcademicYearPage from './pages/settings/AcademicYearPage';
 import SubjectsPage from './pages/settings/SubjectsPage';
 import SyncPage from './pages/settings/SyncPage';
 
+// Setup Wizard
+import SetupWizardPage from './pages/setup/SetupWizardPage';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
     if (!isAuthenticated) {
@@ -64,6 +68,16 @@ export default function AppRouter() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
+            {/* Setup Wizard (Protected but outside AppLayout) */}
+            <Route
+                path="/setup"
+                element={
+                    <ProtectedRoute>
+                        <SetupWizardPage />
+                    </ProtectedRoute>
+                }
+            />
+
             {/* Protected */}
             <Route
                 path="/"
@@ -78,8 +92,9 @@ export default function AppRouter() {
 
                 {/* Students */}
                 <Route path="students" element={<StudentsListPage />} />
-                <Route path="students/:id" element={<StudentDetailPage />} />
                 <Route path="students/new" element={<StudentFormPage />} />
+                <Route path="students/import" element={<StudentsImportPage />} />
+                <Route path="students/:id" element={<StudentDetailPage />} />
                 <Route path="students/:id/edit" element={<StudentFormPage />} />
 
                 {/* Grades */}

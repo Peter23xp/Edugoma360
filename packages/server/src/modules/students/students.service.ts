@@ -416,7 +416,7 @@ export class StudentsService {
         const { z } = await import('zod');
 
         const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.load(buffer);
+        await workbook.xlsx.load(buffer as any);
         const sheet = workbook.worksheets[0];
 
         if (!sheet) {
@@ -500,6 +500,125 @@ export class StudentsService {
             errors,
             rows: rowsToProcess,
         };
+    }
+
+    async getAcademicHistory(studentId: string, schoolId: string) {
+        const student = await prisma.student.findFirst({
+            where: { id: studentId, schoolId },
+            include: {
+                enrollments: {
+                    include: {
+                        class: true,
+                        academicYear: true,
+                    },
+                    orderBy: {
+                        enrolledAt: 'desc',
+                    },
+                },
+            },
+        });
+
+        if (!student) {
+            throw new Error('Élève introuvable');
+        }
+
+        // Build academic history from enrollments
+        const history = student.enrollments.map((enrollment) => ({
+            year: enrollment.academicYear.label,
+            class: enrollment.class.name,
+            decision: 'En cours', // TODO: Get from deliberation results
+            average: null, // TODO: Calculate from grades
+            isTenasosp: !!enrollment.resultatTenasosp,
+        }));
+
+        return history;
+    }
+
+    async generateAttestation(studentId: string, schoolId: string) {
+        const student = await prisma.student.findFirst({
+            where: { id: studentId, schoolId },
+            include: {
+                enrollments: {
+                    include: {
+                        class: true,
+                        academicYear: true,
+                    },
+                    where: {
+                        academicYear: {
+                            isActive: true,
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!student) {
+            throw new Error('Élève introuvable');
+        }
+
+        const school = await prisma.school.findUnique({
+            where: { id: schoolId },
+        });
+
+        // TODO: Generate PDF using Puppeteer or PDFKit
+        // For now, return a placeholder
+        const pdfContent = Buffer.from(`
+            ATTESTATION D'INSCRIPTION SCOLAIRE
+            
+            École: ${school?.name}
+            
+            Je soussigné(e), Préfet de l'${school?.name}, certifie que
+            ${student.nom} ${student.postNom} ${student.prenom || ''},
+            matricule ${student.matricule}, est régulièrement inscrit(e)
+            en ${student.enrollments[0]?.class.name || 'N/A'}
+            pour l'année scolaire ${student.enrollments[0]?.academicYear.label || 'N/A'}.
+            
+            Fait à Goma, le ${new Date().toLocaleDateString('fr-FR')}
+        `);
+
+        return pdfContent;
+    }
+
+    async generateStudentCard(studentId: string, schoolId: string) {
+        const student = await prisma.student.findFirst({
+            where: { id: studentId, schoolId },
+            include: {
+                enrollments: {
+                    include: {
+                        class: true,
+                        academicYear: true,
+                    },
+                    where: {
+                        academicYear: {
+                            isActive: true,
+                        },
+                    },
+                },
+            },
+        });
+
+        if (!student) {
+            throw new Error('Élève introuvable');
+        }
+
+        const school = await prisma.school.findUnique({
+            where: { id: schoolId },
+        });
+
+        // TODO: Generate ID card PDF (85.6mm × 54mm)
+        // For now, return a placeholder
+        const pdfContent = Buffer.from(`
+            CARTE D'ÉLÈVE
+            
+            ${school?.name}
+            
+            Nom: ${student.nom} ${student.postNom} ${student.prenom || ''}
+            Matricule: ${student.matricule}
+            Classe: ${student.enrollments[0]?.class.name || 'N/A'}
+            Année: ${student.enrollments[0]?.academicYear.label || 'N/A'}
+        `);
+
+        return pdfContent;
     }
 }
 

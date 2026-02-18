@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, Filter, ChevronDown } from 'lucide-react';
 import { useClasses } from '../../hooks/useStudents';
-import { SECTIONS as SHARED_SECTIONS } from '@edugoma360/shared';
+import { SCHOOL_SECTIONS } from '@edugoma360/shared';
 
 interface StudentFiltersProps {
     classId: string;
@@ -16,7 +16,7 @@ interface StudentFiltersProps {
 
 const SECTIONS = [
     { value: '', label: 'Toutes les sections' },
-    ...SHARED_SECTIONS.map((s) => ({ value: s.code, label: s.name })),
+    ...SCHOOL_SECTIONS.map((s) => ({ value: s.code, label: s.name })),
 ];
 
 const STATUTS = [

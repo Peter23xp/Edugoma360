@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { studentsService } from './students.service';
 import { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
+import prisma from '../../lib/prisma';
 
 export class StudentsController {
     async getStudents(req: Request, res: Response, next: NextFunction) {
@@ -97,6 +98,62 @@ export class StudentsController {
 
             const result = await studentsService.importStudents(req.file.buffer, req.user!.schoolId);
             res.json({ data: result });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAcademicHistory(req: Request, res: Response, next: NextFunction) {
+        try {
+            const history = await studentsService.getAcademicHistory(req.params.id, req.user!.schoolId);
+            res.json({ history });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async generateAttestation(req: Request, res: Response, next: NextFunction) {
+        try {
+            const pdf = await studentsService.generateAttestation(req.params.id, req.user!.schoolId);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `inline; filename="attestation-${req.params.id}.pdf"`);
+            res.send(pdf);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async generateStudentCard(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { format = 'pdf', side = 'both' } = req.query;
+            const { id } = req.params;
+
+            // Import the PDF service
+            const { getOrGenerateCard } = await import('./students.pdf.service');
+
+            // Generate the card
+            const buffer = await getOrGenerateCard(
+                id,
+                format as 'pdf' | 'png',
+                side as 'front' | 'back' | 'both'
+            );
+
+            // Get student matricule for filename
+            const student = await prisma.student.findUnique({
+                where: { id },
+                select: { matricule: true },
+            });
+
+            const extension = format === 'pdf' ? 'pdf' : 'png';
+            const filename = `Carte_${student?.matricule || id}.${extension}`;
+
+            // Set response headers
+            res.setHeader(
+                'Content-Type',
+                format === 'pdf' ? 'application/pdf' : 'image/png'
+            );
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.send(buffer);
         } catch (error) {
             next(error);
         }
