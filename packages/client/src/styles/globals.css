@@ -93,6 +93,16 @@
 ::-webkit-scrollbar-thumb { background: #BDBDBD; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #757575; }
 
+/* ── Slide-up animation for bulk actions bar ──────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
 /* ── Mobile optimization ───────────────────────────────────────── */
 @media (max-width: 768px) {
   input, select, textarea {

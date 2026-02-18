@@ -16,3 +16,4 @@ export * from './utils/matricule';
 export * from './utils/gradeCalc';
 export * from './utils/currency';
 export * from './utils/validators';
+export * from './utils/names';

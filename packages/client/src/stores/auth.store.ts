@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import api from '../lib/api';
-import db from '../lib/offline/db';
+
 
 // ── Types ────────────────────────────────────────────────────────────────────
 export interface User {

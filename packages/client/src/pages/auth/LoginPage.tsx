@@ -66,6 +66,7 @@ export default function LoginPage() {
         resetAttempts,
         loginOffline,
         getDefaultRedirect,
+        setLockedUntil,
     } = useAuth();
 
     // ── Offline state ────────────────────────────────────────────────────
@@ -83,8 +84,7 @@ export default function LoginPage() {
         register,
         handleSubmit,
         watch,
-        setValue,
-        formState: { errors, isValid },
+        formState: { errors },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         mode: 'onChange',
@@ -191,6 +191,7 @@ export default function LoginPage() {
                     // The lockout timer will be handled by the countdown effect
                     resetAttempts();
                     // Manually set lock from server response
+                    setLockedUntil(unlockAt);
                     useOfflineStore.getState().setOnline(true); // ensure online status
                 } else if (!err?.response) {
                     // Network error — server unreachable
@@ -259,10 +260,10 @@ export default function LoginPage() {
                         <div
                             id="server-status-badge"
                             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${checkingServer
-                                    ? 'bg-neutral-100 text-neutral-500'
-                                    : serverReachable && isOnline
-                                        ? 'bg-green-50 text-green-700 border border-green-200'
-                                        : 'bg-red-50 text-red-700 border border-red-200'
+                                ? 'bg-neutral-100 text-neutral-500'
+                                : serverReachable && isOnline
+                                    ? 'bg-green-50 text-green-700 border border-green-200'
+                                    : 'bg-red-50 text-red-700 border border-red-200'
                                 }`}
                         >
                             {checkingServer ? (
@@ -322,8 +323,8 @@ export default function LoginPage() {
                                         (identifierInputRef as any).current = e;
                                     }}
                                     className={`w-full pl-10 pr-4 py-2.5 border rounded-lg text-sm transition-all outline-none ${errors.identifier
-                                            ? 'border-red-400 focus:ring-2 focus:ring-red-200'
-                                            : 'border-neutral-300 focus:ring-2 focus:ring-[#1B5E20]/20 focus:border-[#1B5E20]'
+                                        ? 'border-red-400 focus:ring-2 focus:ring-red-200'
+                                        : 'border-neutral-300 focus:ring-2 focus:ring-[#1B5E20]/20 focus:border-[#1B5E20]'
                                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                                 />
                                 {/* Identifier type badge */}
@@ -356,8 +357,8 @@ export default function LoginPage() {
                                     disabled={isLoading || isLocked}
                                     {...register('password')}
                                     className={`w-full pl-10 pr-12 py-2.5 border rounded-lg text-sm transition-all outline-none ${errors.password
-                                            ? 'border-red-400 focus:ring-2 focus:ring-red-200'
-                                            : 'border-neutral-300 focus:ring-2 focus:ring-[#1B5E20]/20 focus:border-[#1B5E20]'
+                                        ? 'border-red-400 focus:ring-2 focus:ring-red-200'
+                                        : 'border-neutral-300 focus:ring-2 focus:ring-[#1B5E20]/20 focus:border-[#1B5E20]'
                                         } disabled:opacity-50 disabled:cursor-not-allowed`}
                                 />
                                 <button
@@ -401,8 +402,8 @@ export default function LoginPage() {
                             id="login-button"
                             disabled={isLoading || isLocked || !identifierValue || !passwordValue}
                             className={`w-full h-11 rounded-lg font-semibold text-white transition-all flex items-center justify-center gap-2 ${isLoading || isLocked || !identifierValue || !passwordValue
-                                    ? 'bg-[#1B5E20]/70 cursor-not-allowed'
-                                    : 'bg-[#1B5E20] hover:bg-[#2E7D32] active:scale-[0.98]'
+                                ? 'bg-[#1B5E20]/70 cursor-not-allowed'
+                                : 'bg-[#1B5E20] hover:bg-[#2E7D32] active:scale-[0.98]'
                                 }`}
                         >
                             {isLoading ? (

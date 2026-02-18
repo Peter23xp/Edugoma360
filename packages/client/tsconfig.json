@@ -31,6 +31,12 @@
     "include": [
         "src"
     ],
+    "exclude": [
+        "**/*.test.tsx",
+        "**/*.test.ts",
+        "**/*.spec.tsx",
+        "**/*.spec.ts"
+    ],
     "references": [
         {
             "path": "../shared"

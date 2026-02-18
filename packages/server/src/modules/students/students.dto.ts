@@ -28,12 +28,30 @@ export const UpdateStudentDto = CreateStudentDto.partial().omit({
 
 export const StudentQueryDto = z.object({
     page: z.coerce.number().optional().default(1),
-    perPage: z.coerce.number().optional().default(20),
-    search: z.string().optional(),
-    classId: z.string().uuid().optional(),
-    sectionId: z.string().uuid().optional(),
-    statut: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
+    limit: z.coerce.number().optional().default(25),
+    q: z.string().optional(),
+    classId: z.string().optional(),
+    section: z.string().optional(),
+    status: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
     sexe: z.enum(['M', 'F']).optional(),
     sortBy: z.string().optional().default('nom'),
     sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
+    // Legacy support
+    search: z.string().optional(),
+    perPage: z.coerce.number().optional(),
+    statut: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
+    sectionId: z.string().optional(),
+});
+
+export const BatchArchiveDto = z.object({
+    ids: z.array(z.string().uuid()).min(1, 'Il faut au moins un élève'),
+    reason: z.string().optional().default('Archivage groupé'),
+});
+
+export const ExportQueryDto = z.object({
+    ids: z.string().optional(), // CSV of IDs
+    classId: z.string().optional(),
+    section: z.string().optional(),
+    status: z.string().optional(),
+    q: z.string().optional(),
 });

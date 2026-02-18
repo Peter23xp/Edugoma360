@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
+
 import { Alert } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import OtpInput from '@/components/shared/OtpInput';
@@ -86,19 +86,19 @@ export default function ForgotPasswordPage() {
     if (password.length < 8) {
       return { level: 1, label: 'Faible', color: 'bg-red-500' };
     }
-    
+
     const hasUpper = /[A-Z]/.test(password);
     const hasNumber = /\d/.test(password);
     const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
+
     if (password.length >= 10 && hasUpper && hasNumber && hasSpecial) {
       return { level: 4, label: 'Fort', color: 'bg-green-500' };
     }
-    
+
     if (password.length >= 8 && (hasUpper || hasNumber)) {
       return { level: 3, label: 'Moyen', color: 'bg-orange-500' };
     }
-    
+
     return { level: 2, label: 'Faible', color: 'bg-red-500' };
   };
 
@@ -106,12 +106,12 @@ export default function ForgotPasswordPage() {
     setState((prev) => ({ ...prev, error: null, isLoading: true }));
 
     const fullPhone = `+243${state.phone}`;
-    
+
     if (!PHONE_REGEX.test(fullPhone)) {
-      setState((prev) => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         error: 'Numéro de téléphone invalide. Format attendu : 81XXXXXXX, 82XXXXXXX, 97XXXXXXX, 98XXXXXXX ou 89XXXXXXX',
-        isLoading: false 
+        isLoading: false
       }));
       return;
     }
@@ -138,17 +138,17 @@ export default function ForgotPasswordPage() {
         isLoading: false,
       }));
     } catch (error: any) {
-      setState((prev) => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         error: error.message,
-        isLoading: false 
+        isLoading: false
       }));
     }
   };
 
   const handleResendOtp = async () => {
     if (state.resendCountdown > 0) return;
-    
+
     setState((prev) => ({ ...prev, error: null, isLoading: true }));
 
     try {
@@ -172,17 +172,17 @@ export default function ForgotPasswordPage() {
         isLoading: false,
       }));
     } catch (error: any) {
-      setState((prev) => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         error: error.message,
-        isLoading: false 
+        isLoading: false
       }));
     }
   };
 
   const handleVerifyOtp = async () => {
     const otpCode = state.otpValue.join('');
-    
+
     if (otpCode.length !== 6 || !/^\d{6}$/.test(otpCode)) {
       setState((prev) => ({ ...prev, error: 'Le code doit contenir 6 chiffres' }));
       return;
@@ -194,9 +194,9 @@ export default function ForgotPasswordPage() {
       const response = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           phone: `+243${state.phone}`,
-          otp: otpCode 
+          otp: otpCode
         }),
       });
 
@@ -213,10 +213,10 @@ export default function ForgotPasswordPage() {
         isLoading: false,
       }));
     } catch (error: any) {
-      setState((prev) => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         error: error.message,
-        isLoading: false 
+        isLoading: false
       }));
     }
   };
@@ -240,9 +240,9 @@ export default function ForgotPasswordPage() {
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           resetToken: state.resetToken,
-          newPassword: state.newPassword 
+          newPassword: state.newPassword
         }),
       });
 
@@ -258,10 +258,10 @@ export default function ForgotPasswordPage() {
         isLoading: false,
       }));
     } catch (error: any) {
-      setState((prev) => ({ 
-        ...prev, 
+      setState((prev) => ({
+        ...prev,
         error: error.message,
-        isLoading: false 
+        isLoading: false
       }));
     }
   };
@@ -345,7 +345,7 @@ export default function ForgotPasswordPage() {
                 </p>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleSendOtp}
                 disabled={state.isLoading || state.phone.length !== 9}
                 className="w-full bg-[#1B5E20] hover:bg-[#2E7D32]"
@@ -375,7 +375,7 @@ export default function ForgotPasswordPage() {
                 <p className="text-gray-600">Entrez le code à 6 chiffres reçu par SMS</p>
               </div>
 
-              <OtpInput 
+              <OtpInput
                 value={state.otpValue}
                 onChange={(value) => setState((prev) => ({ ...prev, otpValue: value }))}
               />
@@ -399,14 +399,14 @@ export default function ForgotPasswordPage() {
                     disabled={state.resendCountdown > 0 || state.isLoading}
                     className="text-[#1B5E20] p-0 h-auto"
                   >
-                    {state.resendCountdown > 0 
-                      ? `Renvoyer (${state.resendCountdown}s)` 
+                    {state.resendCountdown > 0
+                      ? `Renvoyer (${state.resendCountdown}s)`
                       : 'Renvoyer le code'}
                   </Button>
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleVerifyOtp}
                 disabled={state.isLoading || state.otpValue.join('').length !== 6 || state.otpCountdown === 0}
                 className="w-full bg-[#1B5E20] hover:bg-[#2E7D32]"
@@ -471,11 +471,10 @@ export default function ForgotPasswordPage() {
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-600">Force du mot de passe :</span>
-                      <span className={`font-medium ${
-                        passwordStrength.level === 4 ? 'text-green-600' :
+                      <span className={`font-medium ${passwordStrength.level === 4 ? 'text-green-600' :
                         passwordStrength.level === 3 ? 'text-orange-600' :
-                        'text-red-600'
-                      }`}>
+                          'text-red-600'
+                        }`}>
                         {passwordStrength.label}
                       </span>
                     </div>
@@ -483,9 +482,8 @@ export default function ForgotPasswordPage() {
                       {[1, 2, 3, 4].map((level) => (
                         <div
                           key={level}
-                          className={`h-2 flex-1 rounded ${
-                            level <= passwordStrength.level ? passwordStrength.color : 'bg-gray-200'
-                          }`}
+                          className={`h-2 flex-1 rounded ${level <= passwordStrength.level ? passwordStrength.color : 'bg-gray-200'
+                            }`}
                         />
                       ))}
                     </div>
@@ -493,7 +491,7 @@ export default function ForgotPasswordPage() {
                 )}
               </div>
 
-              <Button 
+              <Button
                 onClick={handleResetPassword}
                 disabled={state.isLoading || !state.newPassword || !state.confirmPassword}
                 className="w-full bg-[#1B5E20] hover:bg-[#2E7D32]"
@@ -511,7 +509,7 @@ export default function ForgotPasswordPage() {
                   <CheckCircle className="h-16 w-16 text-green-600" />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold text-gray-900">Mot de passe modifié avec succès !</h2>
                 <p className="text-gray-600">
@@ -519,7 +517,7 @@ export default function ForgotPasswordPage() {
                 </p>
               </div>
 
-              <Button 
+              <Button
                 onClick={() => navigate('/login')}
                 className="w-full bg-[#1B5E20] hover:bg-[#2E7D32]"
               >

@@ -1,20 +1,37 @@
 import prisma from '../../lib/prisma';
 import { generateMatricule, getNextSequence } from '@edugoma360/shared';
 import type { z } from 'zod';
-import type { CreateStudentDto, UpdateStudentDto, StudentQueryDto } from './students.dto';
+import type { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
 
 export class StudentsService {
     /**
-     * Get paginated students for a school
+     * Get paginated students for a school with advanced filters
      */
     async getStudents(schoolId: string, query: z.infer<typeof StudentQueryDto>) {
-        const { page, perPage, search, classId, statut, sexe, sortBy, sortOrder } = query;
-        const skip = (page - 1) * perPage;
+        // Merge legacy + new param names
+        const page = query.page ?? 1;
+        const limit = query.limit ?? query.perPage ?? 25;
+        const search = query.q ?? query.search;
+        const status = query.status ?? query.statut;
+        const section = query.section ?? query.sectionId;
+        const { classId, sortBy = 'nom', sortOrder = 'asc' } = query;
+
+        const skip = (page - 1) * limit;
 
         const where: any = {
             schoolId,
-            isActive: true,
         };
+
+        // By default, filter out archived unless explicitly requested
+        if (status === 'ARCHIVE') {
+            where.statut = 'ARCHIVE';
+        } else if (status) {
+            where.statut = status;
+            where.isActive = true;
+        } else {
+            // Default: only active (non-archived)
+            where.isActive = true;
+        }
 
         if (search) {
             where.OR = [
@@ -25,13 +42,26 @@ export class StudentsService {
             ];
         }
 
-        if (statut) where.statut = statut;
-        if (sexe) where.sexe = sexe;
+        if (query.sexe) where.sexe = query.sexe;
 
+        // Filter by class
         if (classId) {
             where.enrollments = {
                 some: {
                     classId,
+                    academicYear: { isActive: true },
+                },
+            };
+        }
+
+        // Filter by section
+        if (section) {
+            where.enrollments = {
+                some: {
+                    ...(where.enrollments?.some || {}),
+                    class: {
+                        section: { code: section },
+                    },
                     academicYear: { isActive: true },
                 },
             };
@@ -52,19 +82,38 @@ export class StudentsService {
                 },
                 orderBy: { [sortBy]: sortOrder },
                 skip,
-                take: perPage,
+                take: limit,
             }),
             prisma.student.count({ where }),
         ]);
 
+        // Map students for API response with class info
+        const data = students.map((s) => {
+            const currentEnrollment = s.enrollments[0];
+            return {
+                ...s,
+                className: currentEnrollment?.class?.name ?? null,
+                classId: currentEnrollment?.classId ?? null,
+                sectionName: currentEnrollment?.class?.section?.name ?? null,
+                sectionCode: currentEnrollment?.class?.section?.code ?? null,
+            };
+        });
+
+        const pages = Math.ceil(total / limit);
+
         return {
-            data: students,
+            data,
+            total,
+            page,
+            pages,
+            limit,
+            // Legacy format support
             meta: {
                 total,
                 page,
-                perPage,
-                totalPages: Math.ceil(total / perPage),
-                hasMore: skip + perPage < total,
+                perPage: limit,
+                totalPages: pages,
+                hasMore: skip + limit < total,
             },
         };
     }
@@ -181,6 +230,276 @@ export class StudentsService {
             where: { id },
             data: { statut: 'ARCHIVE', isActive: false },
         });
+    }
+
+    /**
+     * Batch archive multiple students
+     */
+    async batchArchive(schoolId: string, data: z.infer<typeof BatchArchiveDto>) {
+        const result = await prisma.student.updateMany({
+            where: {
+                id: { in: data.ids },
+                schoolId,
+            },
+            data: {
+                statut: 'ARCHIVE',
+                isActive: false,
+            },
+        });
+
+        return { archived: result.count };
+    }
+
+    /**
+     * Export students to Excel
+     */
+    async exportStudents(schoolId: string, query: z.infer<typeof ExportQueryDto>) {
+        const ExcelJS = (await import('exceljs')).default;
+
+        // Build filters
+        const where: any = { schoolId, isActive: true };
+
+        if (query.ids) {
+            const idList = query.ids.split(',').map((id) => id.trim());
+            where.id = { in: idList };
+        }
+        if (query.status) where.statut = query.status;
+        if (query.q) {
+            where.OR = [
+                { nom: { contains: query.q, mode: 'insensitive' } },
+                { postNom: { contains: query.q, mode: 'insensitive' } },
+                { prenom: { contains: query.q, mode: 'insensitive' } },
+                { matricule: { contains: query.q, mode: 'insensitive' } },
+            ];
+        }
+        if (query.classId) {
+            where.enrollments = {
+                some: {
+                    classId: query.classId,
+                    academicYear: { isActive: true },
+                },
+            };
+        }
+
+        const students = await prisma.student.findMany({
+            where,
+            include: {
+                enrollments: {
+                    where: { academicYear: { isActive: true } },
+                    include: { class: { include: { section: true } } },
+                    take: 1,
+                },
+            },
+            orderBy: { nom: 'asc' },
+        });
+
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'EduGoma 360';
+        workbook.created = new Date();
+
+        const sheet = workbook.addWorksheet('Élèves');
+
+        // Header row
+        sheet.columns = [
+            { header: 'Matricule', key: 'matricule', width: 15 },
+            { header: 'Nom', key: 'nom', width: 18 },
+            { header: 'Post-Nom', key: 'postNom', width: 18 },
+            { header: 'Prénom', key: 'prenom', width: 18 },
+            { header: 'Sexe', key: 'sexe', width: 8 },
+            { header: 'Date Naissance', key: 'dateNaissance', width: 15 },
+            { header: 'Lieu Naissance', key: 'lieuNaissance', width: 18 },
+            { header: 'Classe', key: 'classe', width: 12 },
+            { header: 'Section', key: 'section', width: 15 },
+            { header: 'Statut', key: 'statut', width: 12 },
+            { header: 'Nom Père', key: 'nomPere', width: 18 },
+            { header: 'Tél. Père', key: 'telPere', width: 15 },
+            { header: 'Nom Mère', key: 'nomMere', width: 18 },
+            { header: 'Tél. Mère', key: 'telMere', width: 15 },
+        ];
+
+        // Style header
+        const headerRow = sheet.getRow(1);
+        headerRow.font = { bold: true, size: 11 };
+        headerRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF1B5E20' },
+        };
+        headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+        headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+        // Data rows
+        for (const s of students) {
+            const enrollment = s.enrollments[0];
+            sheet.addRow({
+                matricule: s.matricule,
+                nom: s.nom,
+                postNom: s.postNom,
+                prenom: s.prenom ?? '',
+                sexe: s.sexe,
+                dateNaissance: new Date(s.dateNaissance).toLocaleDateString('fr-CD'),
+                lieuNaissance: s.lieuNaissance,
+                classe: enrollment?.class?.name ?? '',
+                section: enrollment?.class?.section?.name ?? '',
+                statut: s.statut,
+                nomPere: s.nomPere ?? '',
+                telPere: s.telPere ?? '',
+                nomMere: s.nomMere ?? '',
+                telMere: s.telMere ?? '',
+            });
+        }
+
+        return workbook.xlsx.writeBuffer();
+    }
+
+    /**
+     * Generate import template Excel file
+     */
+    async getImportTemplate() {
+        const ExcelJS = (await import('exceljs')).default;
+
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'EduGoma 360';
+        const sheet = workbook.addWorksheet('Modèle Import');
+
+        sheet.columns = [
+            { header: 'matricule', key: 'matricule', width: 15 },
+            { header: 'nom', key: 'nom', width: 18 },
+            { header: 'postNom', key: 'postNom', width: 18 },
+            { header: 'prenom', key: 'prenom', width: 18 },
+            { header: 'sexe', key: 'sexe', width: 8 },
+            { header: 'dateNaissance', key: 'dateNaissance', width: 15 },
+            { header: 'lieuNaissance', key: 'lieuNaissance', width: 18 },
+            { header: 'classe', key: 'classe', width: 12 },
+            { header: 'statut', key: 'statut', width: 12 },
+            { header: 'nomPere', key: 'nomPere', width: 18 },
+            { header: 'telPere', key: 'telPere', width: 15 },
+            { header: 'nomMere', key: 'nomMere', width: 18 },
+            { header: 'telMere', key: 'telMere', width: 15 },
+        ];
+
+        // Style header
+        const headerRow = sheet.getRow(1);
+        headerRow.font = { bold: true, size: 11 };
+        headerRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF1B5E20' },
+        };
+        headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
+
+        // Add example row
+        sheet.addRow({
+            matricule: 'NK-0001',
+            nom: 'AMISI',
+            postNom: 'KALOMBO',
+            prenom: 'Jean-Baptiste',
+            sexe: 'M',
+            dateNaissance: '2010-05-15',
+            lieuNaissance: 'Goma',
+            classe: '4ScA',
+            statut: 'NOUVEAU',
+            nomPere: 'AMISI Pierre',
+            telPere: '+243991234567',
+            nomMere: 'BAHATI Marie',
+            telMere: '+243992345678',
+        });
+
+        return workbook.xlsx.writeBuffer();
+    }
+
+    /**
+     * Import students from Excel buffer
+     */
+    async importStudents(buffer: Buffer, schoolId: string) {
+        const ExcelJS = (await import('exceljs')).default;
+        const { z } = await import('zod');
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(buffer);
+        const sheet = workbook.worksheets[0];
+
+        if (!sheet) {
+            throw new Error('Fichier Excel invalide : aucune feuille trouvée');
+        }
+
+        const rowSchema = z.object({
+            matricule: z.string().optional(),
+            nom: z.string().min(2),
+            postNom: z.string().min(2),
+            prenom: z.string().optional(),
+            sexe: z.enum(['M', 'F']),
+            dateNaissance: z.string(),
+            lieuNaissance: z.string().min(2),
+            statut: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE']).default('NOUVEAU'),
+        });
+
+        const imported: string[] = [];
+        const skipped: string[] = [];
+        const errors: Array<{ line: number; message: string }> = [];
+
+        // Get active academic year
+        const activeYear = await prisma.academicYear.findFirst({
+            where: { schoolId, isActive: true },
+        });
+        if (!activeYear) {
+            throw new Error('Aucune année académique active');
+        }
+
+        // Process rows (skip header)
+        sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+            if (rowNumber === 1) return; // Skip header
+
+            const values = row.values as any[];
+            // ExcelJS rows are 1-indexed, values[0] is empty
+            const rowData = {
+                matricule: String(values[1] ?? ''),
+                nom: String(values[2] ?? ''),
+                postNom: String(values[3] ?? ''),
+                prenom: String(values[4] ?? ''),
+                sexe: String(values[5] ?? ''),
+                dateNaissance: String(values[6] ?? ''),
+                lieuNaissance: String(values[7] ?? ''),
+                statut: String(values[9] ?? 'NOUVEAU'),
+            };
+
+            const parsed = rowSchema.safeParse(rowData);
+            if (!parsed.success) {
+                errors.push({
+                    line: rowNumber,
+                    message: parsed.error.errors.map((e) => e.message).join(', '),
+                });
+            }
+        });
+
+        // Batch create valid students (simplified — in production, use upsert)
+        let processedRows = 0;
+        const rowsToProcess: any[] = [];
+
+        sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+            if (rowNumber === 1) return;
+
+            const values = row.values as any[];
+            const rowData = {
+                nom: String(values[2] ?? ''),
+                postNom: String(values[3] ?? ''),
+                prenom: String(values[4] ?? '') || undefined,
+                sexe: String(values[5] ?? 'M'),
+                dateNaissance: String(values[6] ?? ''),
+                lieuNaissance: String(values[7] ?? ''),
+                statut: String(values[9] ?? 'NOUVEAU'),
+                matricule: String(values[1] ?? ''),
+            };
+            rowsToProcess.push(rowData);
+        });
+
+        // We'll return the counts for now; actual insertion done in controller transaction 
+        return {
+            imported: rowsToProcess.length - errors.length,
+            skipped: errors.length,
+            errors,
+            rows: rowsToProcess,
+        };
     }
 }
 

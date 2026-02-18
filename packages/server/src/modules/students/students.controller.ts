@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { studentsService } from './students.service';
-import { CreateStudentDto, UpdateStudentDto, StudentQueryDto } from './students.dto';
+import { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
 
 export class StudentsController {
     async getStudents(req: Request, res: Response, next: NextFunction) {
@@ -46,6 +46,57 @@ export class StudentsController {
         try {
             await studentsService.archiveStudent(req.params.id, req.user!.schoolId);
             res.json({ data: { message: 'Élève archivé avec succès' } });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async batchArchive(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = BatchArchiveDto.parse(req.body);
+            const result = await studentsService.batchArchive(req.user!.schoolId, data);
+            res.json({ data: result });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async exportStudents(req: Request, res: Response, next: NextFunction) {
+        try {
+            const query = ExportQueryDto.parse(req.query);
+            const buffer = await studentsService.exportStudents(req.user!.schoolId, query);
+
+            const today = new Date().toISOString().split('T')[0];
+            const filename = `eleves-${today}.xlsx`;
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.send(Buffer.from(buffer as ArrayBuffer));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getImportTemplate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const buffer = await studentsService.getImportTemplate();
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename="modele-import-eleves.xlsx"');
+            res.send(Buffer.from(buffer as ArrayBuffer));
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async importStudents(req: Request, res: Response, next: NextFunction) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ error: { message: 'Aucun fichier fourni' } });
+            }
+
+            const result = await studentsService.importStudents(req.file.buffer, req.user!.schoolId);
+            res.json({ data: result });
         } catch (error) {
             next(error);
         }

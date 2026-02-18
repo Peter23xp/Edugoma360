@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Receipt, Search, Loader2, Printer } from 'lucide-react';
 import api from '../../lib/api';
-import { formatFC, fcToUsd, formatUSD } from '@edugoma360/shared';
+import { formatFC, formatUSD } from '@edugoma360/shared';
 import { formatStudentName } from '../../lib/utils';
 import toast from 'react-hot-toast';
 

@@ -33,88 +33,88 @@ describe('LoginPage', () => {
     });
 
     it('renders correctly with disabled button initially', () => {
-        renderWithRouter:: <LoginPage />);
+        renderWithRouter(<LoginPage />);
 
-    expect(screen.getByText('EduGoma 360')).toBeInTheDocument();
-    expect(screen.getByLabelText(/Email ou Matricule/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Mot de passe/i)).toBeInTheDocument();
+        expect(screen.getByText('EduGoma 360')).toBeInTheDocument();
+        expect(screen.getByLabelText(/Email ou Matricule/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/Mot de passe/i)).toBeInTheDocument();
 
-    const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
-    expect(submitButton).toBeDisabled();
-});
-
-it('enables button when fields are filled', async () => {
-    renderWithRouter(<LoginPage />);
-
-    const identifierInput = screen.getByLabelText(/Email ou Matricule/i);
-    const passwordInput = screen.getByLabelText(/Mot de passe/i);
-
-    fireEvent.change(identifierInput, { target: { value: 'admin@edugoma360.cd' } });
-    fireEvent.change(passwordInput, { target: { value: 'password123' } });
-
-    const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
-    expect(submitButton).not.toBeDisabled();
-});
-
-it('shows loading state during submission', async () => {
-    useAuthStore.setState({ isLoading: true });
-    renderWithRouter(<LoginPage />);
-
-    const submitButton = screen.getByRole('button', { name: /Connexion en cours/i });
-    expect(submitButton).toBeDisabled();
-    expect(screen.getByLabelText(/Email ou Matricule/i)).toBeDisabled();
-});
-
-it('displays error message on invalid credentials', async () => {
-    const loginMock = vi.fn().mockRejectedValue({
-        response: { status: 401, data: { error: { message: 'Identifiants invalides' } } }
+        const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
+        expect(submitButton).toBeDisabled();
     });
 
-    // Mock the store login function
-    useAuthStore.setState({ login: loginMock });
+    it('enables button when fields are filled', async () => {
+        renderWithRouter(<LoginPage />);
 
-    renderWithRouter(<LoginPage />);
+        const identifierInput = screen.getByLabelText(/Email ou Matricule/i);
+        const passwordInput = screen.getByLabelText(/Mot de passe/i);
 
-    const identifierInput = screen.getByLabelText(/Email ou Matricule/i);
-    const passwordInput = screen.getByLabelText(/Mot de passe/i);
-    const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
+        fireEvent.change(identifierInput, { target: { value: 'admin@edugoma360.cd' } });
+        fireEvent.change(passwordInput, { target: { value: 'password123' } });
 
-    fireEvent.change(identifierInput, { target: { value: 'wrong@user.com' } });
-    fireEvent.change(passwordInput, { target: { value: 'wrongpass' } });
-    fireEvent.click(submitButton);
-
-    await waitFor(() => {
-        expect(screen.getByText(/Email\/matricule ou mot de passe incorrect/i)).toBeInTheDocument();
+        const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
+        expect(submitButton).not.toBeDisabled();
     });
-});
 
-it('shows offline banner when offline', () => {
-    useOfflineStore.setState({ isOnline: false });
-    renderWithRouter(<LoginPage />);
+    it('shows loading state during submission', async () => {
+        useAuthStore.setState({ isLoading: true });
+        renderWithRouter(<LoginPage />);
 
-    expect(screen.getByText(/Mode hors-ligne/i)).toBeInTheDocument();
-    expect(screen.getByText(/Continuer sans connexion/i)).toBeInTheDocument();
-});
-
-it('displays lockout message after 3 failed attempts', async () => {
-    useAuthStore.setState({ loginAttempts: 3 });
-    const loginMock = vi.fn().mockRejectedValue({
-        response: { status: 401 }
+        const submitButton = screen.getByRole('button', { name: /Connexion en cours/i });
+        expect(submitButton).toBeDisabled();
+        expect(screen.getByLabelText(/Email ou Matricule/i)).toBeDisabled();
     });
-    useAuthStore.setState({ login: loginMock });
 
-    renderWithRouter(<LoginPage />);
+    it('displays error message on invalid credentials', async () => {
+        const loginMock = vi.fn().mockRejectedValue({
+            response: { status: 401, data: { error: { message: 'Identifiants invalides' } } }
+        });
 
-    const identifierInput = screen.getByLabelText(/Email ou Matricule/i);
-    fireEvent.change(identifierInput, { target: { value: 'user@test.com' } });
-    const passwordInput = screen.getByLabelText(/Mot de passe/i);
-    fireEvent.change(passwordInput, { target: { value: 'password' } });
+        // Mock the store login function
+        useAuthStore.setState({ login: loginMock });
 
-    const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
-    fireEvent.click(submitButton);
+        renderWithRouter(<LoginPage />);
 
-    await waitFor(() => {
-        expect(screen.getByText(/Compte temporairement bloqué/i)).toBeInTheDocument();
+        const identifierInput = screen.getByLabelText(/Email ou Matricule/i);
+        const passwordInput = screen.getByLabelText(/Mot de passe/i);
+        const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
+
+        fireEvent.change(identifierInput, { target: { value: 'wrong@user.com' } });
+        fireEvent.change(passwordInput, { target: { value: 'wrongpass' } });
+        fireEvent.click(submitButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Email\/matricule ou mot de passe incorrect/i)).toBeInTheDocument();
+        });
     });
-});
+
+    it('shows offline banner when offline', () => {
+        useOfflineStore.setState({ isOnline: false });
+        renderWithRouter(<LoginPage />);
+
+        expect(screen.getByText(/Mode hors-ligne/i)).toBeInTheDocument();
+        expect(screen.getByText(/Continuer sans connexion/i)).toBeInTheDocument();
+    });
+
+    it('displays lockout message after 3 failed attempts', async () => {
+        useAuthStore.setState({ loginAttempts: 3 });
+        const loginMock = vi.fn().mockRejectedValue({
+            response: { status: 401 }
+        });
+        useAuthStore.setState({ login: loginMock });
+
+        renderWithRouter(<LoginPage />);
+
+        const identifierInput = screen.getByLabelText(/Email ou Matricule/i);
+        fireEvent.change(identifierInput, { target: { value: 'user@test.com' } });
+        const passwordInput = screen.getByLabelText(/Mot de passe/i);
+        fireEvent.change(passwordInput, { target: { value: 'password' } });
+
+        const submitButton = screen.getByRole('button', { name: /SE CONNECTER/i });
+        fireEvent.click(submitButton);
+
+        await waitFor(() => {
+            expect(screen.getByText(/Compte temporairement bloqué/i)).toBeInTheDocument();
+        });
+    });
 });

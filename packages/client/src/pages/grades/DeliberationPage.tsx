@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ClipboardList, CheckCircle, Loader2 } from 'lucide-react';
+import { ClipboardList, CheckCircle } from 'lucide-react';
 import api from '../../lib/api';
 import { useSchoolStore } from '../../stores/school.store';
 import DataTable from '../../components/shared/DataTable';

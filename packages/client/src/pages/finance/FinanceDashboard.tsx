@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Wallet, TrendingUp, Users, AlertCircle } from 'lucide-react';
+import { Wallet, TrendingUp, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
 import { formatFC } from '@edugoma360/shared';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';

@@ -78,14 +78,3 @@ export const UpdateStudentSchema = CreateStudentSchema.partial().omit({
 
 export type UpdateStudentInput = z.infer<typeof UpdateStudentSchema>;
 
-// ── Display Helper ────────────────────────────────────────────────────────────
-/**
- * Format un nom congolais dans l'ordre officiel : NOM POSTNOM Prénom
- */
-export function formatStudentName(student: Pick<Student, 'nom' | 'postNom' | 'prenom'>): string {
-    const parts = [student.nom.toUpperCase(), student.postNom.toUpperCase()];
-    if (student.prenom) {
-        parts.push(student.prenom);
-    }
-    return parts.join(' ');
-}
