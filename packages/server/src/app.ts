@@ -17,6 +17,9 @@ import smsRoutes from './modules/sms/sms.routes';
 import reportsRoutes from './modules/reports/reports.routes';
 import syncRoutes from './modules/sync/sync.routes';
 import settingsRoutes from './modules/settings/settings.routes';
+import statsRoutes from './modules/stats/stats.routes';
+import alertsRoutes from './modules/alerts/alerts.routes';
+import calendarRoutes from './modules/calendar/calendar.routes';
 
 const app = express();
 
@@ -52,6 +55,9 @@ app.use('/api/sms', smsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/stats', statsRoutes);
+app.use('/api/alerts', alertsRoutes);
+app.use('/api/calendar', calendarRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

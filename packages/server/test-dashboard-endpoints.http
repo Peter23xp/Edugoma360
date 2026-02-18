@@ -1,0 +1,60 @@
+### Variables
+@baseUrl = http://localhost:3000/api
+@token = YOUR_AUTH_TOKEN_HERE
+
+### 1. Test Stats - Enrollment
+GET {{baseUrl}}/stats/enrollment
+Authorization: Bearer {{token}}
+
+###
+
+### 2. Test Stats - Class Averages
+GET {{baseUrl}}/stats/class-averages
+Authorization: Bearer {{token}}
+
+###
+
+### 3. Test Attendance - Today Rate
+GET {{baseUrl}}/attendance/today-rate
+Authorization: Bearer {{token}}
+
+###
+
+### 4. Test Finance - Monthly Summary
+GET {{baseUrl}}/finance/monthly-summary
+Authorization: Bearer {{token}}
+
+###
+
+### 5. Test Finance - Recovery Chart
+GET {{baseUrl}}/finance/recovery-chart
+Authorization: Bearer {{token}}
+
+###
+
+### 6. Test Alerts - Open Alerts
+GET {{baseUrl}}/alerts?status=open
+Authorization: Bearer {{token}}
+
+###
+
+### 7. Test Calendar - Upcoming Events
+GET {{baseUrl}}/calendar/upcoming
+Authorization: Bearer {{token}}
+
+###
+
+### 8. Test Health Check (no auth needed)
+GET {{baseUrl}}/health
+
+###
+
+### 9. Login to get token
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "admin@school.com",
+  "password": "password123",
+  "rememberMe": false
+}

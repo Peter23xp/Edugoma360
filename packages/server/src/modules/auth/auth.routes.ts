@@ -11,4 +11,9 @@ router.post('/logout', authenticate, (req, res) => authController.logout(req, re
 router.get('/profile', authenticate, (req, res, next) => authController.getProfile(req, res, next));
 router.put('/change-password', authenticate, (req, res, next) => authController.changePassword(req, res, next));
 
+// Password reset via SMS OTP
+router.post('/forgot-password', authLimiter, (req, res, next) => authController.sendOtp(req, res, next));
+router.post('/verify-otp', authLimiter, (req, res, next) => authController.verifyOtp(req, res, next));
+router.post('/reset-password', authLimiter, (req, res, next) => authController.resetPassword(req, res, next));
+
 export default router;

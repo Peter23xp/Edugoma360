@@ -48,7 +48,7 @@ export async function parseExcelFile(
     sheetName?: string,
 ): Promise<Record<string, unknown>[]> {
     const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.load(buffer);
+    await workbook.xlsx.load(buffer as any);
 
     const worksheet = sheetName
         ? workbook.getWorksheet(sheetName)

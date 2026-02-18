@@ -11,23 +11,23 @@ export interface JwtPayload {
  * Generate an access token
  */
 export function generateToken(payload: JwtPayload): string {
-    return jwt.sign(payload, env.JWT_SECRET, {
+    return jwt.sign(payload, env.JWT_SECRET as string, {
         expiresIn: env.JWT_EXPIRES_IN,
-    });
+    } as jwt.SignOptions);
 }
 
 /**
  * Generate a refresh token
  */
 export function generateRefreshToken(payload: JwtPayload): string {
-    return jwt.sign(payload, env.JWT_SECRET, {
+    return jwt.sign(payload, env.JWT_SECRET as string, {
         expiresIn: env.JWT_REFRESH_EXPIRES_IN,
-    });
+    } as jwt.SignOptions);
 }
 
 /**
  * Verify and decode a token
  */
 export function verifyToken(token: string): JwtPayload {
-    return jwt.verify(token, env.JWT_SECRET) as JwtPayload;
+    return jwt.verify(token, env.JWT_SECRET as jwt.Secret) as JwtPayload;
 }

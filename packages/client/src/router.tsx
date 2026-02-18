@@ -6,7 +6,7 @@ import AppLayout from './components/layout/AppLayout';
 
 // Auth
 import LoginPage from './pages/auth/LoginPage';
-import ForgotPassword from './pages/auth/ForgotPassword';
+import ForgotPasswordPage from './pages/auth/ForgotPasswordPage';
 
 // Dashboard
 import DashboardPage from './pages/dashboard/DashboardPage';
@@ -62,7 +62,7 @@ export default function AppRouter() {
         <Routes>
             {/* Public */}
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
             {/* Protected */}
             <Route

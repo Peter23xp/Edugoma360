@@ -26,6 +26,13 @@ export class AttendanceController {
             res.json({ data: result });
         } catch (error) { next(error); }
     }
+    async getTodayRate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const schoolId = req.user!.schoolId;
+            const result = await attendanceService.getTodayRate(schoolId);
+            res.json({ data: result });
+        } catch (error) { next(error); }
+    }
 }
 
 export const attendanceController = new AttendanceController();

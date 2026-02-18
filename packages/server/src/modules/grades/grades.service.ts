@@ -226,7 +226,7 @@ export class GradesService {
 
         // Merge rankings
         return studentResults.map((sr) => {
-            const rankInfo = ranked.find((r) => r.studentId === sr.studentId);
+            const rankInfo = ranked.find((r: any) => r.studentId === sr.studentId);
             const decision = getDelibDecision(sr.generalAverage, sr.hasEliminatoryFailure);
             return {
                 ...sr,

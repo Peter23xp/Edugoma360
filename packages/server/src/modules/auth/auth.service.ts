@@ -194,6 +194,165 @@ export class AuthService {
         const { passwordHash: _, ...userWithoutPassword } = user;
         return userWithoutPassword;
     }
+
+    /**
+     * Send OTP for password reset
+     */
+    async sendOtp(phone: string) {
+        // Validate phone format
+        const PHONE_REGEX = /^\+243(81|82|97|98|89)\d{7}$/;
+        if (!PHONE_REGEX.test(phone)) {
+            throw new AuthError('INVALID_PHONE', 'Numéro de téléphone invalide');
+        }
+
+        // Check if user exists
+        const user = await prisma.user.findFirst({
+            where: { phone, isActive: true },
+        });
+
+        if (!user) {
+            throw new AuthError('PHONE_NOT_FOUND', 'Aucun compte trouvé avec ce numéro');
+        }
+
+        // Generate 6-digit OTP
+        const crypto = await import('crypto');
+        const otp = crypto.randomInt(100000, 999999).toString();
+
+        // Hash OTP before storing
+        const otpHash = await bcrypt.hash(otp, 10);
+
+        // Store OTP in database (expires in 10 minutes)
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+        await prisma.otpToken.create({
+            data: {
+                phone,
+                otpHash,
+                expiresAt,
+                used: false,
+            },
+        });
+
+        // Send SMS via Africa's Talking
+        try {
+            const smsService = await import('../sms/sms.service');
+            const message = `EduGoma360: Votre code de réinitialisation est ${otp}. Valable 10 minutes.`;
+            
+            await smsService.smsService.sendAndLog(user.schoolId, phone, message, 'fr');
+        } catch (error) {
+            console.error('SMS sending failed:', error);
+            // Continue even if SMS fails (for development)
+        }
+
+        // Mask phone number for response
+        const maskedPhone = phone.replace(/(\+243)(\d{2})(\d{3})(\d{3})(\d{3})/, '$1 $2X XXX XXX');
+
+        return {
+            success: true,
+            expiresIn: 600,
+            maskedPhone,
+        };
+    }
+
+    /**
+     * Verify OTP and generate reset token
+     */
+    async verifyOtp(phone: string, otp: string) {
+        // Validate OTP format
+        if (!/^\d{6}$/.test(otp)) {
+            throw new AuthError('INVALID_OTP', 'Code incorrect');
+        }
+
+        // Find the latest unused OTP for this phone
+        const otpToken = await prisma.otpToken.findFirst({
+            where: {
+                phone,
+                used: false,
+            },
+            orderBy: {
+                createdAt: 'desc',
+            },
+        });
+
+        if (!otpToken) {
+            throw new AuthError('INVALID_OTP', 'Code incorrect');
+        }
+
+        // Check if expired
+        if (otpToken.expiresAt < new Date()) {
+            throw new AuthError('OTP_EXPIRED', 'Code expiré. Demandez-en un nouveau.');
+        }
+
+        // Verify OTP
+        const isValid = await bcrypt.compare(otp, otpToken.otpHash);
+        if (!isValid) {
+            throw new AuthError('INVALID_OTP', 'Code incorrect');
+        }
+
+        // Mark OTP as used
+        await prisma.otpToken.update({
+            where: { id: otpToken.id },
+            data: { used: true },
+        });
+
+        // Generate reset token (valid for 10 minutes)
+        const jwt = await import('jsonwebtoken');
+        const resetToken = jwt.sign(
+            { phone, purpose: 'reset' },
+            env.JWT_SECRET,
+            { expiresIn: '10m' }
+        );
+
+        return {
+            success: true,
+            resetToken,
+        };
+    }
+
+    /**
+     * Reset password using reset token
+     */
+    async resetPassword(resetToken: string, newPassword: string) {
+        // Verify reset token
+        let payload: any;
+        try {
+            const jwt = await import('jsonwebtoken');
+            payload = jwt.verify(resetToken, env.JWT_SECRET);
+            
+            if (payload.purpose !== 'reset') {
+                throw new Error('Invalid token purpose');
+            }
+        } catch {
+            throw new AuthError('INVALID_RESET_TOKEN', 'Session expirée');
+        }
+
+        // Validate password strength
+        if (newPassword.length < 8) {
+            throw new AuthError('WEAK_PASSWORD', 'Le mot de passe doit contenir au moins 8 caractères');
+        }
+
+        // Find user
+        const user = await prisma.user.findFirst({
+            where: { phone: payload.phone, isActive: true },
+        });
+
+        if (!user) {
+            throw new AuthError('USER_NOT_FOUND', 'Utilisateur non trouvé');
+        }
+
+        // Hash new password
+        const passwordHash = await bcrypt.hash(newPassword, env.BCRYPT_ROUNDS);
+
+        // Update password
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { passwordHash },
+        });
+
+        return {
+            success: true,
+            message: 'Mot de passe modifié avec succès',
+        };
+    }
 }
 
 // ── Custom Auth Error ────────────────────────────────────────────────────────

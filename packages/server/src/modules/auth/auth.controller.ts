@@ -95,6 +95,81 @@ export class AuthController {
         });
         res.json({ data: { message: 'Déconnexion réussie' } });
     }
+
+    async sendOtp(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { phone } = req.body;
+            
+            if (!phone) {
+                res.status(400).json({
+                    error: { code: 'MISSING_PHONE', message: 'Numéro de téléphone requis' },
+                });
+                return;
+            }
+
+            const result = await authService.sendOtp(phone);
+            res.json(result);
+        } catch (error) {
+            if (error instanceof AuthError) {
+                const statusCode = error.code === 'PHONE_NOT_FOUND' ? 404 : 400;
+                res.status(statusCode).json({
+                    error: { code: error.code, message: error.message },
+                });
+                return;
+            }
+            next(error);
+        }
+    }
+
+    async verifyOtp(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { phone, otp } = req.body;
+            
+            if (!phone || !otp) {
+                res.status(400).json({
+                    error: { code: 'MISSING_FIELDS', message: 'Téléphone et code requis' },
+                });
+                return;
+            }
+
+            const result = await authService.verifyOtp(phone, otp);
+            res.json(result);
+        } catch (error) {
+            if (error instanceof AuthError) {
+                const statusCode = error.code === 'OTP_EXPIRED' ? 410 : 400;
+                res.status(statusCode).json({
+                    error: { code: error.code, message: error.message },
+                });
+                return;
+            }
+            next(error);
+        }
+    }
+
+    async resetPassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { resetToken, newPassword } = req.body;
+            
+            if (!resetToken || !newPassword) {
+                res.status(400).json({
+                    error: { code: 'MISSING_FIELDS', message: 'Token et nouveau mot de passe requis' },
+                });
+                return;
+            }
+
+            const result = await authService.resetPassword(resetToken, newPassword);
+            res.json(result);
+        } catch (error) {
+            if (error instanceof AuthError) {
+                const statusCode = error.code === 'INVALID_RESET_TOKEN' ? 401 : 400;
+                res.status(statusCode).json({
+                    error: { code: error.code, message: error.message },
+                });
+                return;
+            }
+            next(error);
+        }
+    }
 }
 
 export const authController = new AuthController();

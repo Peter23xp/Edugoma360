@@ -70,6 +70,36 @@ export class AttendanceService {
             attendanceRate: s.totalDays > 0 ? Math.round((s.totalPresent / s.totalDays) * 100) : 0,
         }));
     }
+    async getTodayRate(schoolId: string) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Get all active students
+        const totalStudents = await prisma.student.count({
+            where: { schoolId, isActive: true },
+        });
+
+        if (totalStudents === 0) {
+            return { rate: 0, present: 0, total: 0 };
+        }
+
+        // Count present students today
+        const presentCount = await prisma.attendance.count({
+            where: {
+                date: today,
+                status: 'PRESENT',
+                student: { schoolId, isActive: true },
+            },
+        });
+
+        const rate = Math.round((presentCount / totalStudents) * 100);
+
+        return {
+            rate,
+            present: presentCount,
+            total: totalStudents,
+        };
+    }
 }
 
 export const attendanceService = new AttendanceService();

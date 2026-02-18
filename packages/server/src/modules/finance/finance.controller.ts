@@ -32,6 +32,22 @@ export class FinanceController {
             res.json({ data: debts });
         } catch (error) { next(error); }
     }
+
+    async getMonthlySummary(req: Request, res: Response, next: NextFunction) {
+        try {
+            const schoolId = req.user!.schoolId;
+            const result = await financeService.getMonthlySummary(schoolId);
+            res.json({ data: result });
+        } catch (error) { next(error); }
+    }
+
+    async getRecoveryChart(req: Request, res: Response, next: NextFunction) {
+        try {
+            const schoolId = req.user!.schoolId;
+            const result = await financeService.getRecoveryChart(schoolId);
+            res.json({ data: result });
+        } catch (error) { next(error); }
+    }
 }
 
 export const financeController = new FinanceController();

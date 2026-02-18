@@ -68,6 +68,17 @@ model User {
   @@map("users")
 }
 
+model OtpToken {
+  id        String   @id @default(uuid())
+  phone     String
+  otpHash   String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("otp_tokens")
+}
+
 // ── ACADEMIC YEAR ─────────────────────────────────────────────────────────────
 model AcademicYear {
   id        String   @id @default(uuid())
