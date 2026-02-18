@@ -1,0 +1,34 @@
+﻿≡ƒÜÇ Creating Test Super Admin User...
+node.exe : PrismaClientInitializationError: 
+Au caractère Ligne:1 : 1
++ & "C:\Program Files\nodejs/node.exe" "C:\Users\Peter Akilimali\AppDat ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PrismaClientInitializationError: :String) [], RemoteEx 
+   ception
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Invalid `prisma.school.findFirst()` invocation in
+D:\PETER\Edugoma360\packages\server\prisma\create-test-admin.ts:11:38
+
+   8 console.log('≡ƒÜÇ Creating Test Super Admin User...');
+   9 
+  10 // 1. Get or create a school
+ΓåÆ 11 let school = await prisma.school.findFirst(
+error: Environment variable not found: DATABASE_URL.
+  -->  schema.prisma:9
+   | 
+ 8 |   provider = "sqlite"
+ 9 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at $n.handleRequestError 
+(D:\PETER\Edugoma360\node_modules\@prisma\client\runtime\library.js:121:7615)
+    at $n.handleAndLogRequestError 
+(D:\PETER\Edugoma360\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (D:\PETER\Edugoma360\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (D:\PETER\Edugoma360\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async main (D:\PETER\Edugoma360\packages\server\prisma\create-test-admin.ts:11:18) {
+  clientVersion: '5.22.0',
+  errorCode: undefined
+}
