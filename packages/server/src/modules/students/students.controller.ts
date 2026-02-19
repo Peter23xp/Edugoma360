@@ -72,7 +72,7 @@ export class StudentsController {
 
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-            res.send(Buffer.from(buffer as ArrayBuffer));
+            res.send(buffer);
         } catch (error) {
             next(error);
         }
@@ -84,7 +84,7 @@ export class StudentsController {
 
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.setHeader('Content-Disposition', 'attachment; filename="modele-import-eleves.xlsx"');
-            res.send(Buffer.from(buffer as ArrayBuffer));
+            res.send(buffer);
         } catch (error) {
             next(error);
         }
@@ -154,6 +154,14 @@ export class StudentsController {
             );
             res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
             res.send(buffer);
+        } catch (error) {
+            next(error);
+        }
+    }
+    async getPaymentSummary(req: Request, res: Response, next: NextFunction) {
+        try {
+            const result = await studentsService.getPaymentSummary(req.params.id, req.user!.schoolId);
+            res.json(result);
         } catch (error) {
             next(error);
         }

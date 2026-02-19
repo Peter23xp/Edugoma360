@@ -1,7 +1,9 @@
 import prisma from '../../lib/prisma';
-import { generateMatricule, getNextSequence } from '@edugoma360/shared';
+// import { generateMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
 import type { z } from 'zod';
 import type { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
+import { generateImportTemplate, importStudentsFromExcel } from './students.import.service';
+import { sendSms, SMS_TEMPLATES } from '../../lib/sms';
 
 export class StudentsService {
     /**
@@ -172,9 +174,13 @@ export class StudentsService {
             select: { matricule: true },
         });
 
-        const nextSeq = getNextSequence(lastStudent?.matricule ?? null);
+        const nextSeq = lastStudent ? parseInt(lastStudent.matricule.split('-').pop() || '0', 10) + 1 : 1;
         const schoolCode = 'ITG001'; // TODO: make configurable
-        const matricule = generateMatricule(schoolCode, nextSeq);
+
+        const provinceCode = getProvinceCode(school.province);
+        const cityCode = getCityCode(school.ville);
+
+        const matricule = generateMatricule(provinceCode, cityCode, schoolCode, nextSeq);
 
         const { classId, academicYearId, ecoleOrigine, resultatTenasosp, ...studentData } = data;
 
@@ -199,6 +205,14 @@ export class StudentsService {
                 },
             });
 
+            return student;
+        }).then(async (student) => {
+            // Send welcome SMS (non-blocking)
+            const phone = student.telPere || student.telMere || student.telTuteur;
+            if (phone) {
+                const message = SMS_TEMPLATES.fr.welcome(`${student.prenom || ''} ${student.nom}`, student.matricule, school.name);
+                sendSms(phone, message).catch(err => console.error('Failed to send welcome SMS:', err));
+            }
             return student;
         });
     }
@@ -356,149 +370,20 @@ export class StudentsService {
      * Generate import template Excel file
      */
     async getImportTemplate() {
-        const ExcelJS = (await import('exceljs')).default;
-
-        const workbook = new ExcelJS.Workbook();
-        workbook.creator = 'EduGoma 360';
-        const sheet = workbook.addWorksheet('Modèle Import');
-
-        sheet.columns = [
-            { header: 'matricule', key: 'matricule', width: 15 },
-            { header: 'nom', key: 'nom', width: 18 },
-            { header: 'postNom', key: 'postNom', width: 18 },
-            { header: 'prenom', key: 'prenom', width: 18 },
-            { header: 'sexe', key: 'sexe', width: 8 },
-            { header: 'dateNaissance', key: 'dateNaissance', width: 15 },
-            { header: 'lieuNaissance', key: 'lieuNaissance', width: 18 },
-            { header: 'classe', key: 'classe', width: 12 },
-            { header: 'statut', key: 'statut', width: 12 },
-            { header: 'nomPere', key: 'nomPere', width: 18 },
-            { header: 'telPere', key: 'telPere', width: 15 },
-            { header: 'nomMere', key: 'nomMere', width: 18 },
-            { header: 'telMere', key: 'telMere', width: 15 },
-        ];
-
-        // Style header
-        const headerRow = sheet.getRow(1);
-        headerRow.font = { bold: true, size: 11 };
-        headerRow.fill = {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: 'FF1B5E20' },
-        };
-        headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11 };
-
-        // Add example row
-        sheet.addRow({
-            matricule: 'NK-0001',
-            nom: 'AMISI',
-            postNom: 'KALOMBO',
-            prenom: 'Jean-Baptiste',
-            sexe: 'M',
-            dateNaissance: '2010-05-15',
-            lieuNaissance: 'Goma',
-            classe: '4ScA',
-            statut: 'NOUVEAU',
-            nomPere: 'AMISI Pierre',
-            telPere: '+243991234567',
-            nomMere: 'BAHATI Marie',
-            telMere: '+243992345678',
-        });
-
-        return workbook.xlsx.writeBuffer();
+        return generateImportTemplate();
     }
 
     /**
      * Import students from Excel buffer
      */
     async importStudents(buffer: Buffer, schoolId: string) {
-        const ExcelJS = (await import('exceljs')).default;
-        const { z } = await import('zod');
-
-        const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.load(buffer as any);
-        const sheet = workbook.worksheets[0];
-
-        if (!sheet) {
-            throw new Error('Fichier Excel invalide : aucune feuille trouvée');
-        }
-
-        const rowSchema = z.object({
-            matricule: z.string().optional(),
-            nom: z.string().min(2),
-            postNom: z.string().min(2),
-            prenom: z.string().optional(),
-            sexe: z.enum(['M', 'F']),
-            dateNaissance: z.string(),
-            lieuNaissance: z.string().min(2),
-            statut: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE']).default('NOUVEAU'),
-        });
-
-        const imported: string[] = [];
-        const skipped: string[] = [];
-        const errors: Array<{ line: number; message: string }> = [];
-
-        // Get active academic year
-        const activeYear = await prisma.academicYear.findFirst({
-            where: { schoolId, isActive: true },
-        });
-        if (!activeYear) {
-            throw new Error('Aucune année académique active');
-        }
-
-        // Process rows (skip header)
-        sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-            if (rowNumber === 1) return; // Skip header
-
-            const values = row.values as any[];
-            // ExcelJS rows are 1-indexed, values[0] is empty
-            const rowData = {
-                matricule: String(values[1] ?? ''),
-                nom: String(values[2] ?? ''),
-                postNom: String(values[3] ?? ''),
-                prenom: String(values[4] ?? ''),
-                sexe: String(values[5] ?? ''),
-                dateNaissance: String(values[6] ?? ''),
-                lieuNaissance: String(values[7] ?? ''),
-                statut: String(values[9] ?? 'NOUVEAU'),
-            };
-
-            const parsed = rowSchema.safeParse(rowData);
-            if (!parsed.success) {
-                errors.push({
-                    line: rowNumber,
-                    message: parsed.error.errors.map((e) => e.message).join(', '),
-                });
-            }
-        });
-
-        // Batch create valid students (simplified — in production, use upsert)
-        let processedRows = 0;
-        const rowsToProcess: any[] = [];
-
-        sheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-            if (rowNumber === 1) return;
-
-            const values = row.values as any[];
-            const rowData = {
-                nom: String(values[2] ?? ''),
-                postNom: String(values[3] ?? ''),
-                prenom: String(values[4] ?? '') || undefined,
-                sexe: String(values[5] ?? 'M'),
-                dateNaissance: String(values[6] ?? ''),
-                lieuNaissance: String(values[7] ?? ''),
-                statut: String(values[9] ?? 'NOUVEAU'),
-                matricule: String(values[1] ?? ''),
-            };
-            rowsToProcess.push(rowData);
-        });
-
-        // We'll return the counts for now; actual insertion done in controller transaction 
+        const result = await importStudentsFromExcel(buffer, schoolId);
         return {
-            imported: rowsToProcess.length - errors.length,
-            skipped: errors.length,
-            errors,
-            rows: rowsToProcess,
+            success: result.imported,
+            failed: result.errors.length,
+            skipped: result.skipped,
+            errors: result.errors,
+            students: result.students
         };
     }
 
@@ -620,6 +505,51 @@ export class StudentsService {
 
         return pdfContent;
     }
+
+    async getPaymentSummary(studentId: string, schoolId: string) {
+        const payments = await prisma.payment.findMany({
+            where: { studentId, schoolId }
+        });
+
+        const expected = payments.reduce((sum, p) => sum + p.amountDue, 0);
+        const paid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
+
+        return {
+            expected,
+            paid,
+            remaining: expected - paid
+        };
+    }
 }
 
 export const studentsService = new StudentsService();
+
+function getProvinceCode(province: string): string {
+    const codes: Record<string, string> = {
+        'Nord-Kivu': 'NK',
+        'Sud-Kivu': 'SK',
+        'Kinshasa': 'KIN',
+        'Haut-Katanga': 'HK'
+    };
+    return codes[province] || province.substring(0, 3).toUpperCase();
+}
+
+function getCityCode(ville: string): string {
+    const codes: Record<string, string> = {
+        'Goma': 'GOM',
+        'Bukavu': 'BKV',
+        'Kinshasa': 'KIN',
+        'Lubumbashi': 'LUB'
+    };
+    return codes[ville] || ville.substring(0, 3).toUpperCase();
+}
+
+function generateMatricule(
+    province: string,
+    ville: string,
+    schoolCode: string,
+    sequence: number
+): string {
+    const seq = sequence.toString().padStart(4, '0');
+    return `${province}-${ville}-${schoolCode}-${seq}`;
+}

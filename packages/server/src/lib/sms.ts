@@ -86,6 +86,9 @@ export const SMS_TEMPLATES = {
 
         reminder: (studentName: string, amount: string) =>
             `EduGoma360: Rappel - Frais scolaires en retard pour ${studentName}. Solde: ${amount}. Merci de régulariser.`,
+
+        welcome: (studentName: string, matricule: string, schoolName: string) =>
+            `Bienvenue à ${schoolName}. L'élève ${studentName} est inscrit(e). Matricule: ${matricule}.`,
     },
 
     // Swahili templates

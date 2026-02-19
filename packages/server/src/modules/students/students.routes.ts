@@ -47,6 +47,7 @@ router.delete('/:id', requirePermission('students:delete'), (req, res, next) => 
 
 // Student detail routes
 router.get('/:id/academic-history', requirePermission('students:read'), (req, res, next) => studentsController.getAcademicHistory(req, res, next));
+router.get('/:id/payment-summary', requirePermission('students:read'), (req, res, next) => studentsController.getPaymentSummary(req, res, next));
 router.get('/:id/attestation', requirePermission('students:read'), (req, res, next) => studentsController.generateAttestation(req, res, next));
 router.get('/:id/card', requirePermission('students:read'), (req, res, next) => studentsController.generateStudentCard(req, res, next));
 

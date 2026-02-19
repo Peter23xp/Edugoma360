@@ -31,7 +31,7 @@ export default function StudentFormPage() {
     const submitMutation = useMutation({
         mutationFn: async (data: typeof formData) => {
             const payload = new FormData();
-            
+
             // Add all form fields
             Object.entries(data).forEach(([key, value]) => {
                 if (key === 'photoFile' && value instanceof File) {
@@ -50,14 +50,21 @@ export default function StudentFormPage() {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
         },
-        onSuccess: () => {
+        onSuccess: (response) => {
             queryClient.invalidateQueries({ queryKey: ['students'] });
-            toast.success(
-                isEdit ? 'Élève modifié avec succès' : 'Élève inscrit avec succès',
-                { duration: 4000 }
-            );
-            resetForm();
-            navigate('/students');
+
+            if (isEdit) {
+                toast.success('Élève modifié avec succès', { duration: 4000 });
+                navigate('/students');
+            } else {
+                const newStudent = response.data.data;
+                toast.success(
+                    `Élève inscrit ! Matricule : ${newStudent.matricule}`,
+                    { duration: 6000, icon: '🎓' }
+                );
+                resetForm();
+                navigate(`/students/${newStudent.id}`);
+            }
         },
         onError: (error: any) => {
             const message = error.response?.data?.message || 'Erreur lors de l\'enregistrement';
@@ -111,11 +118,9 @@ export default function StudentFormPage() {
                         {isEdit ? 'Modifier l\'élève' : 'Nouvelle inscription'}
                     </h1>
 
-                    {/* Progress Bar */}
                     <ProgressBar
                         currentStep={currentStep}
-                        totalSteps={STEPS.length}
-                        steps={STEPS.map((s) => s.title)}
+                        steps={STEPS.map((s) => ({ id: s.id, label: s.title }))}
                     />
                 </div>
             </div>

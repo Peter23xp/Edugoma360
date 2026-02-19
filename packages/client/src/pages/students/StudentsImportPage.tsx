@@ -23,7 +23,7 @@ export default function StudentsImportPage() {
     const queryClient = useQueryClient();
 
     const [step, setStep] = useState<ImportStep>('upload');
-    const [file, setFile] = useState<File | null>(null);
+    const [_file, setFile] = useState<File | null>(null);
     const [parsedData, setParsedData] = useState<ParsedStudent[]>([]);
     const [importResult, setImportResult] = useState<ImportResult | null>(null);
 

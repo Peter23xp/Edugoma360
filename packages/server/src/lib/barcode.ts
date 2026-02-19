@@ -1,5 +1,5 @@
 import JsBarcode from 'jsbarcode';
-import { createCanvas } from 'canvas';
+import { createCanvas } from '@napi-rs/canvas';
 
 /**
  * Generate a barcode as a data URL

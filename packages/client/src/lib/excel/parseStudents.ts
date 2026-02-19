@@ -80,7 +80,7 @@ export async function parseStudentsFile(file: File): Promise<ParsedStudent[]> {
                 const parsed: ParsedStudent[] = dataRows
                     .map((row, index) => {
                         const rowNum = index + 2; // +2 because Excel starts at 1 and we skip header
-                        
+
                         // Skip empty rows
                         if (row.every((cell) => !cell || cell.toString().trim() === '')) {
                             return null;
@@ -139,7 +139,7 @@ function parseRow(row: any[]): Partial<StudentImportData> {
     return data;
 }
 
-function validateRow(data: Partial<StudentImportData>, rowNum: number): string[] {
+const validateRow = (data: Partial<StudentImportData>, _rowNum: number): string[] => {
     const errors: string[] = [];
 
     // Required fields
@@ -231,8 +231,8 @@ function validateRow(data: Partial<StudentImportData>, rowNum: number): string[]
             data.tuteurPrincipal === 'pere'
                 ? data.telPere
                 : data.tuteurPrincipal === 'mere'
-                ? data.telMere
-                : data.telTuteur;
+                    ? data.telMere
+                    : data.telTuteur;
 
         if (!tuteurPhone) {
             errors.push('Le tuteur principal doit avoir un numéro de téléphone');
@@ -242,7 +242,7 @@ function validateRow(data: Partial<StudentImportData>, rowNum: number): string[]
     return errors;
 }
 
-function checkWarnings(data: Partial<StudentImportData>, rowNum: number): string[] {
+const checkWarnings = (data: Partial<StudentImportData>, _rowNum: number): string[] => {
     const warnings: string[] = [];
 
     // Optional but recommended fields

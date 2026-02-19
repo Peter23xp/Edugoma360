@@ -1,5 +1,7 @@
 import { Phone, AlertCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import type { Student, Enrollment } from '@edugoma360/shared';
+import api from '../../lib/api';
 
 interface StudentWithDetails extends Student {
     enrollments?: (Enrollment & {
@@ -35,10 +37,10 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
     const phoneLabel = student.telPere
         ? 'père'
         : student.telMere
-        ? 'mère'
-        : student.telTuteur
-        ? 'tuteur'
-        : null;
+            ? 'mère'
+            : student.telTuteur
+                ? 'tuteur'
+                : null;
 
     // Status badge config
     const statusConfig: Record<
@@ -55,9 +57,16 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
 
     const status = statusConfig[student.statut] || statusConfig.NOUVEAU;
 
-    // TODO: Get payment status from API
-    const hasPaymentDue = false;
-    const amountDue = 0;
+
+    // Payment status
+    const { data: paymentSummary } = useQuery({
+        queryKey: ['payment-summary', student.id],
+        queryFn: () => api.get<{ expected: number; paid: number; remaining: number }>(`/students/${student.id}/payment-summary`),
+        enabled: !!student.id,
+    });
+
+    const hasPaymentDue = (paymentSummary?.data?.remaining || 0) > 0;
+    const amountDue = paymentSummary?.data?.remaining || 0;
 
     return (
         <div className="bg-white rounded-xl border border-neutral-300/50 p-6 shadow-sm">

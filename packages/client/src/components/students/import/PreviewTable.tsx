@@ -25,18 +25,7 @@ export default function PreviewTable({ data }: PreviewTableProps) {
         return 'valid';
     };
 
-    const getStatusIcon = (status: string) => {
-        switch (status) {
-            case 'valid':
-                return <CheckCircle2 size={16} className="text-green-600" />;
-            case 'warning':
-                return <AlertCircle size={16} className="text-amber-600" />;
-            case 'error':
-                return <XCircle size={16} className="text-red-600" />;
-            default:
-                return null;
-        }
-    };
+
 
     const getStatusBadge = (status: string) => {
         switch (status) {

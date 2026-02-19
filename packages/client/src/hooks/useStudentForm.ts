@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
 
@@ -232,8 +230,8 @@ export const useStudentForm = create<StudentFormState>((set, get) => ({
                 tuteurPrincipal: student.telPere
                     ? 'pere'
                     : student.telMere
-                    ? 'mere'
-                    : 'tuteur',
+                        ? 'mere'
+                        : 'tuteur',
             },
         });
     },

@@ -2,11 +2,11 @@ import puppeteer from 'puppeteer';
 import Handlebars from 'handlebars';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, PDFPage } from 'pdf-lib';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { generateBarcodeDataUrl } from '../../lib/barcode';
-import { prisma } from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 
 interface CardData {
     logoUrl: string;
@@ -184,7 +184,7 @@ async function mergePDFs(pdfBuffers: Buffer[]): Promise<Buffer> {
     for (const buffer of pdfBuffers) {
         const pdf = await PDFDocument.load(buffer);
         const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        pages.forEach((page) => mergedPdf.addPage(page));
+        pages.forEach((page: PDFPage) => mergedPdf.addPage(page));
     }
 
     const merged = await mergedPdf.save();
