@@ -265,8 +265,27 @@ model TeacherClassSubject {
   subjectId String
   subject   Subject @relation(fields: [subjectId], references: [id])
 
+  timetablePeriods TimetablePeriod[]
+
   @@unique([teacherId, classId, subjectId])
   @@map("teacher_class_subjects")
+}
+
+// ── TIMETABLE (Emploi du temps) ───────────────────────────────────────────────
+model TimetablePeriod {
+  id                     String               @id @default(uuid())
+  teacherClassSubjectId  String
+  teacherClassSubject    TeacherClassSubject  @relation(fields: [teacherClassSubjectId], references: [id], onDelete: Cascade)
+  dayOfWeek              String               // MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
+  periodSlot             Int                  // 1-8
+  startTime              String               // "07:30"
+  endTime                String               // "08:30"
+  createdAt              DateTime             @default(now())
+  updatedAt              DateTime             @updatedAt
+
+  @@unique([teacherClassSubjectId, dayOfWeek, periodSlot])
+  @@index([dayOfWeek, periodSlot])
+  @@map("timetable_periods")
 }
 
 // ── GRADE (Note) ──────────────────────────────────────────────────────────────

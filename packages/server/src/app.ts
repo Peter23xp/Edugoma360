@@ -9,6 +9,8 @@ import { errorHandler } from './middleware/errorHandler.middleware';
 // Import routes
 import authRoutes from './modules/auth/auth.routes';
 import studentsRoutes from './modules/students/students.routes';
+import classesRoutes from './modules/classes/classes.routes';
+import timetableRoutes from './modules/timetable/timetable.routes';
 import gradesRoutes from './modules/grades/grades.routes';
 import financeRoutes from './modules/finance/finance.routes';
 import attendanceRoutes from './modules/attendance/attendance.routes';
@@ -47,6 +49,8 @@ app.get('/api/health', (_req, res) => {
 // ── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentsRoutes);
+app.use('/api/classes', classesRoutes);
+app.use('/api/timetable', timetableRoutes);
 app.use('/api/grades', gradesRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/attendance', attendanceRoutes);

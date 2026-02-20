@@ -17,6 +17,10 @@ import StudentDetailPage from './pages/students/StudentDetailPage';
 import StudentFormPage from './pages/students/StudentFormPage';
 import StudentsImportPage from './pages/students/StudentsImportPage';
 
+// Academic
+import ClassesPage from './pages/academic/ClassesPage';
+import TimetablePage from './pages/academic/TimetablePage';
+
 // Grades
 import GradeEntryPage from './pages/grades/GradeEntryPage';
 import AveragesPage from './pages/grades/AveragesPage';
@@ -96,6 +100,10 @@ export default function AppRouter() {
                 <Route path="students/import" element={<StudentsImportPage />} />
                 <Route path="students/:id" element={<StudentDetailPage />} />
                 <Route path="students/:id/edit" element={<StudentFormPage />} />
+
+                {/* Academic */}
+                <Route path="classes" element={<ClassesPage />} />
+                <Route path="timetable" element={<TimetablePage />} />
 
                 {/* Grades */}
                 <Route path="grades" element={<GradeEntryPage />} />
