@@ -1,246 +1,214 @@
-// ── Calcul des Notes — Système Éducatif RDC ──────────────────────────────────
-// Fonctions de calcul officielles conformes au programme EPSP
-
-import type { EvalType } from '../types/grade.types';
-import { EVAL_WEIGHTS } from '../types/grade.types';
-
 /**
- * Score d'une évaluation
+ * Formules officielles de calcul des moyennes selon le système EPSP-RDC
+ *
+ * ⚠️  RÈGLES RDC (EPSP) :
+ *   - Interrogation : 30% (pondération 0.3)
+ *   - Travaux Pratiques : 20% (pondération 0.2)
+ *   - Examen : 50% (pondération 0.5)
+ *   - Arrondi : au 0.5 le plus proche (ex: 14.3 → 14.5 ; 14.7 → 15.0)
  */
-export interface EvalScore {
-    evalType: EvalType;
-    score: number;
-    maxScore: number;
+
+export interface SubjectGrade {
+    subjectId: string;
+    coefficient: number;
+    interro?: number | null;
+    tp?: number | null;
+    exam?: number | null;
+    maxScore: number; // 10 ou 20
 }
 
-/**
- * Moyenne d'une matière (pour un trimestre)
- */
 export interface SubjectAverage {
     subjectId: string;
-    subjectName: string;
-    coefficient: number;
-    average: number;
-    maxScore: number;
-    totalPoints: number;
-    isEliminatory: boolean;
-    isEliminated: boolean;
-    scores: EvalScore[];
-}
-
-/**
- * Résultat d'un élève (pour classement)
- */
-export interface StudentResult {
-    studentId: string;
-    studentName: string;
-    generalAverage: number;
-    totalPoints: number;
-    totalCoefficients: number;
+    average: number | null;
     rank: number;
-    hasEliminatoryFailure: boolean;
-    subjectAverages: SubjectAverage[];
+    isEliminatory: boolean;
+    hasFailed: boolean;
 }
 
-/**
- * Calcule la moyenne d'une matière pour un trimestre
- * Pondération par type d'évaluation selon le système officiel RDC :
- * - Interrogation : 25%
- * - TP : 15%
- * - Examen Trimestriel : 50%
- * - Examen de Synthèse : 10%
- * 
- * @param scores - Les notes de l'élève pour cette matière
- * @param customWeights - Pondérations personnalisées (optionnel)
- * @returns La moyenne pondérée sur la base du maxScore
- */
-export function calculateSubjectAverage(
-    scores: EvalScore[],
-    customWeights?: Partial<Record<EvalType, number>>,
-): number {
-    if (scores.length === 0) return 0;
+// ─────────────────────────────────────────────────────────────────────────────
+// ARRONDI RDC — au 0.5 le plus proche
+// Exemples : 14.3 → 14.5 | 14.7 → 15.0 | 14.25 → 14.5 | 14.74 → 15.0
+// ─────────────────────────────────────────────────────────────────────────────
+export function roundToHalf(value: number): number {
+    return Math.round(value * 2) / 2;
+}
 
-    const weights = { ...EVAL_WEIGHTS, ...customWeights };
-
-    // Group scores by eval type and calculate average per type
-    const scoresByType = new Map<EvalType, EvalScore[]>();
-    for (const score of scores) {
-        const existing = scoresByType.get(score.evalType) ?? [];
-        existing.push(score);
-        scoresByType.set(score.evalType, existing);
+// ─────────────────────────────────────────────────────────────────────────────
+// MOYENNE MATIÈRE
+// Formule officielle RDC : Inter×0.3 + TP×0.2 + Exam×0.5
+// - Retourne null si l'Examen est absent (note bloquante)
+// - Calcule une moyenne partielle si Inter ou TP manquant
+// ─────────────────────────────────────────────────────────────────────────────
+export function calculateSubjectAverage(grades: {
+    interro?: number | null;
+    tp?: number | null;
+    exam?: number | null;
+}): number | null {
+    // L'examen est OBLIGATOIRE pour calculer la moyenne
+    if (grades.exam === undefined || grades.exam === null) {
+        return null;
     }
 
-    let weightedSum = 0;
+    // Poids officiels RDC EPSP
+    const WEIGHTS = { interro: 0.3, tp: 0.2, exam: 0.5 };
+
+    let total = 0;
     let totalWeight = 0;
 
-    for (const [evalType, typeScores] of scoresByType) {
-        const weight = weights[evalType] ?? 0;
-        if (weight === 0) continue;
+    // Examen (obligatoire)
+    total += grades.exam * WEIGHTS.exam;
+    totalWeight += WEIGHTS.exam;
 
-        // Average all scores of the same type
-        const avgScore = typeScores.reduce((sum, s) => sum + (s.score / s.maxScore), 0) / typeScores.length;
-
-        weightedSum += avgScore * weight;
-        totalWeight += weight;
+    // Interrogation (optionnelle)
+    if (grades.interro !== undefined && grades.interro !== null) {
+        total += grades.interro * WEIGHTS.interro;
+        totalWeight += WEIGHTS.interro;
     }
 
-    if (totalWeight === 0) return 0;
+    // TP (optionnel)
+    if (grades.tp !== undefined && grades.tp !== null) {
+        total += grades.tp * WEIGHTS.tp;
+        totalWeight += WEIGHTS.tp;
+    }
 
-    // Return average normalized to maxScore (typically 20)
-    const maxScore = scores[0]?.maxScore ?? 20;
-    return Math.round((weightedSum / totalWeight) * maxScore * 100) / 100;
+    return totalWeight > 0 ? total / totalWeight : null;
 }
 
-/**
- * Calcule la moyenne générale pondérée par coefficients
- * 
- * @param subjectAverages - Moyennes par matière avec coefficients
- * @returns La moyenne générale pondérée
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// TOTAL DES POINTS
+// Formule : Σ(Moyenne_matière × Coefficient)
+// - Les matières sans note (null) sont exclues du total
+// ─────────────────────────────────────────────────────────────────────────────
+export function calculateTotalPoints(
+    grades: Array<{ average: number | null; coefficient: number }>
+): number {
+    const total = grades.reduce((sum, g) => {
+        if (g.average === null) return sum;
+        return sum + g.average * g.coefficient;
+    }, 0);
+
+    return Math.round(total * 100) / 100;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MOYENNE GÉNÉRALE (avec arrondi RDC au 0.5 près)
+// Formule : Total / Σ Coefficients
+// ─────────────────────────────────────────────────────────────────────────────
 export function calculateGeneralAverage(
-    subjectAverages: Array<{ average: number; coefficient: number; maxScore?: number }>,
-): { average: number; totalPoints: number; totalCoefficients: number } {
-    if (subjectAverages.length === 0) {
-        return { average: 0, totalPoints: 0, totalCoefficients: 0 };
-    }
-
-    let totalPoints = 0;
-    let totalCoefficients = 0;
-
-    for (const sa of subjectAverages) {
-        totalPoints += sa.average * sa.coefficient;
-        totalCoefficients += sa.coefficient;
-    }
-
-    if (totalCoefficients === 0) {
-        return { average: 0, totalPoints: 0, totalCoefficients: 0 };
-    }
-
-    const average = Math.round((totalPoints / totalCoefficients) * 100) / 100;
-
-    return { average, totalPoints, totalCoefficients };
+    totalPoints: number,
+    totalCoefficients: number
+): number {
+    if (totalCoefficients <= 0) return 0;
+    const raw = totalPoints / totalCoefficients;
+    return roundToHalf(raw);
 }
 
-/**
- * Calcule le classement des élèves avec gestion des ex-aequo
- * Les ex-aequo reçoivent le même rang, et le rang suivant est décalé.
- * 
- * @param students - Liste des résultats des élèves
- * @returns Les résultats avec les rangs attribués
- * 
- * @example
- * // Si 3 élèves ont les moyennes 18, 16, 16, 14
- * // Rangs: 1er, 2ème ex-aequo, 2ème ex-aequo, 4ème
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// CLASSEMENT (ex-æquo supportés)
+// - Tri décroissant par moyenne
+// - Ex-æquo : même rang
+// - Rang suivant = rang précédent + nombre d'ex-æquo
+// ─────────────────────────────────────────────────────────────────────────────
 export function calculateRanking(
-    students: Array<{ studentId: string; generalAverage: number; totalPoints: number }>,
-): Array<{ studentId: string; generalAverage: number; totalPoints: number; rank: number }> {
-    if (students.length === 0) return [];
-
-    // Sort by general average descending, then total points descending for tiebreaker
+    students: Array<{ id: string; average: number }>
+): Array<{ id: string; rank: number }> {
     const sorted = [...students].sort((a, b) => {
-        if (b.generalAverage !== a.generalAverage) {
-            return b.generalAverage - a.generalAverage;
-        }
-        return b.totalPoints - a.totalPoints;
+        if (b.average !== a.average) return b.average - a.average;
+        return 0; // tri stable pour ex-æquo
     });
 
-    const ranked = sorted.map((student, index) => {
-        let rank = index + 1;
+    const result: Array<{ id: string; rank: number }> = [];
+    let currentRank = 1;
 
-        // Check for ex-aequo with previous student
-        if (index > 0 && sorted[index - 1].generalAverage === student.generalAverage) {
-            // Find the rank of the first student with the same average
-            const firstSameAvg = sorted.findIndex((s) => s.generalAverage === student.generalAverage);
-            rank = firstSameAvg + 1;
+    for (let i = 0; i < sorted.length; i++) {
+        if (i > 0 && sorted[i].average < sorted[i - 1].average) {
+            currentRank = i + 1;
         }
-
-        return { ...student, rank };
-    });
-
-    return ranked;
-}
-
-/**
- * Détermine la décision de délibération basée sur la moyenne et les notes éliminatoires
- * Selon les normes EPSP-RDC :
- * - ≥ 70% (14/20) : Distinction
- * - ≥ 80% (16/20) : Grande Distinction
- * - ≥ 50% (10/20) : Admis
- * - < 50% (10/20) : Ajourné
- * - Note éliminatoire : Refusé (même si moyenne suffisante)
- * 
- * @param average - Moyenne générale
- * @param hasEliminatoryFailure - A une note en dessous du seuil éliminatoire
- * @param maxScore - Score maximum (défaut: 20)
- * @returns La décision suggérée
- */
-export function getDelibDecision(
-    average: number,
-    hasEliminatoryFailure: boolean,
-    maxScore: number = 20,
-): 'GREAT_DISTINCTION' | 'DISTINCTION' | 'ADMITTED' | 'ADJOURNED' | 'FAILED' {
-    // Eliminatory failure → FAILED regardless of average
-    if (hasEliminatoryFailure) {
-        return 'FAILED';
+        result.push({ id: sorted[i].id, rank: currentRank });
     }
 
-    const percentage = (average / maxScore) * 100;
-
-    if (percentage >= 80) return 'GREAT_DISTINCTION';
-    if (percentage >= 70) return 'DISTINCTION';
-    if (percentage >= 50) return 'ADMITTED';
-
-    return 'ADJOURNED';
+    return result;
 }
 
-/**
- * Vérifie si une note est en dessous du seuil éliminatoire
- * 
- * @param score - La note de l'élève
- * @param threshold - Le seuil éliminatoire
- * @param isEliminatory - Si la matière est éliminatoire
- * @returns true si la note est en dessous du seuil éliminatoire
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// DÉCISION AUTO (délibération)
+// ─────────────────────────────────────────────────────────────────────────────
+export function suggestDecision(average: number): string {
+    if (average >= 16) return 'GREAT_DISTINCTION';
+    if (average >= 14) return 'DISTINCTION';
+    if (average >= 10) return 'ADMITTED';
+    if (average >= 8) return 'ADJOURNED';
+    return 'FAILED';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// VÉRIFICATION NOTE ÉLIMINATOIRE
+// ─────────────────────────────────────────────────────────────────────────────
 export function checkEliminatory(
     score: number,
-    threshold: number | undefined | null,
-    isEliminatory: boolean,
+    threshold: number,
+    isEliminatorySubject: boolean
 ): boolean {
-    if (!isEliminatory || threshold == null) return false;
-    return score < threshold;
+    return isEliminatorySubject && score < threshold;
 }
 
-/**
- * Formatte la mention de délibération en français
- */
-export function getDelibDecisionLabel(
-    decision: string,
-): string {
-    const labels: Record<string, string> = {
-        GREAT_DISTINCTION: 'Grande Distinction',
-        DISTINCTION: 'Distinction',
-        ADMITTED: 'Admis',
-        ADJOURNED: 'Ajourné',
-        FAILED: 'Refusé',
-        MEDICAL: 'Cas Médical',
-    };
-    return labels[decision] ?? decision;
-}
-
-/**
- * Formatte un rang avec le suffixe approprié en français
- * @example formatRank(1) → "1er", formatRank(2) → "2ème"
- */
-export function formatRank(rank: number): string {
-    if (rank === 1) return '1er';
-    return `${rank}ème`;
-}
-
-/**
- * Calcule le pourcentage d'une note
- */
-export function scoreToPercentage(score: number, maxScore: number = 20): number {
+// ─────────────────────────────────────────────────────────────────────────────
+// NORMALISATION NOTE SUR /20
+// ─────────────────────────────────────────────────────────────────────────────
+export function normalizeScore(score: number, maxScore: number): number {
     if (maxScore === 0) return 0;
-    return Math.round((score / maxScore) * 100 * 100) / 100;
+    return (score / maxScore) * 20;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CALCUL MOYENNE MATIÈRE DEPUIS LISTE DE NOTES BRUTES
+// ─────────────────────────────────────────────────────────────────────────────
+export function calculateStudentSubjectAverage(
+    grades: { evalType: string; score: number; maxScore: number }[]
+): number | null {
+    const gradesByType: { interro?: number; tp?: number; exam?: number } = {};
+
+    grades.forEach((grade) => {
+        const normalized = normalizeScore(grade.score, grade.maxScore);
+
+        switch (grade.evalType) {
+            case 'INTERRO':
+                gradesByType.interro = normalized;
+                break;
+            case 'TP':
+                gradesByType.tp = normalized;
+                break;
+            case 'EXAM_TRIM':
+            case 'EXAM_SYNTH':
+                gradesByType.exam = normalized;
+                break;
+        }
+    });
+
+    return calculateSubjectAverage(gradesByType);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATISTIQUES DE CLASSE
+// ─────────────────────────────────────────────────────────────────────────────
+export function calculateClassStats(averages: number[]): {
+    classAverage: number;
+    successRate: number;
+    highestAverage: number;
+    lowestAverage: number;
+    standardDeviation: number;
+} {
+    if (averages.length === 0) {
+        return { classAverage: 0, successRate: 0, highestAverage: 0, lowestAverage: 0, standardDeviation: 0 };
+    }
+
+    const classAverage = roundToHalf(averages.reduce((a, b) => a + b, 0) / averages.length);
+    const successRate = Math.round((averages.filter((a) => a >= 10).length / averages.length) * 100);
+    const highestAverage = Math.max(...averages);
+    const lowestAverage = Math.min(...averages);
+
+    const variance = averages.reduce((sum, a) => sum + Math.pow(a - classAverage, 2), 0) / averages.length;
+    const standardDeviation = Math.round(Math.sqrt(variance) * 100) / 100;
+
+    return { classAverage, successRate, highestAverage, lowestAverage, standardDeviation };
 }

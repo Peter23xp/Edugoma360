@@ -20,11 +20,15 @@ import StudentsImportPage from './pages/students/StudentsImportPage';
 // Academic
 import ClassesPage from './pages/academic/ClassesPage';
 import TimetablePage from './pages/academic/TimetablePage';
+import GradeEntryPage from './pages/academic/GradeEntryPage';
+import ClassGradesPage from './pages/academic/ClassGradesPage';
 
 // Grades
-import GradeEntryPage from './pages/grades/GradeEntryPage';
-import AveragesPage from './pages/grades/AveragesPage';
+import AveragesPage from './pages/academic/AveragesPage';
 import DeliberationPage from './pages/grades/DeliberationPage';
+import PVPage from './pages/academic/PVPage';
+import PalmaresPage from './pages/academic/PalmaresPage';
+import AcademicBulletinPage from './pages/academic/BulletinPage';
 import BulletinPage from './pages/grades/BulletinPage';
 
 // Finance
@@ -103,13 +107,20 @@ export default function AppRouter() {
 
                 {/* Academic */}
                 <Route path="classes" element={<ClassesPage />} />
+                <Route path="classes/:classId/grades" element={<ClassGradesPage />} />
                 <Route path="timetable" element={<TimetablePage />} />
 
                 {/* Grades */}
                 <Route path="grades" element={<GradeEntryPage />} />
                 <Route path="grades/averages" element={<AveragesPage />} />
                 <Route path="grades/deliberation" element={<DeliberationPage />} />
+                <Route path="deliberation/pv" element={<PVPage />} />
+                <Route path="palmares" element={<PalmaresPage />} />
                 <Route path="grades/bulletin/:studentId" element={<BulletinPage />} />
+                <Route path="grades/bulletin" element={<BulletinPage />} />
+                <Route path="bulletin/batch" element={<BulletinPage />} />
+                <Route path="bulletin/:studentId/:termId" element={<AcademicBulletinPage />} />
+                <Route path="bulletin/:studentId" element={<AcademicBulletinPage />} />
 
                 {/* Finance */}
                 <Route path="finance" element={<FinanceDashboard />} />

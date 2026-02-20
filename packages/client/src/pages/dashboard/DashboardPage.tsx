@@ -310,10 +310,11 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
               <StatCard
                 title="Mes classes"
-                value={2}
+                value={averagesData?.data?.teacherClasses || 0}
                 subtitle="classes assignées"
                 icon={BookOpen}
                 iconColor="bg-blue-100 text-blue-600"
+                isLoading={loadingAverages}
               />
               <StatCard
                 title="Présence du jour"

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procès-Verbal de Délibération</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+        
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            color: #000;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 5px 0;
+            text-transform: uppercase;
+        }
+        
+        .header h2 {
+            font-size: 16pt;
+            font-weight: bold;
+            margin: 15px 0;
+            text-decoration: underline;
+        }
+        
+        .info-section {
+            margin: 20px 0;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            width: 150px;
+        }
+        
+        .info-value {
+            flex: 1;
+        }
+        
+        .stats-section {
+            margin: 30px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 5px 0;
+        }
+        
+        .stats-label {
+            font-weight: bold;
+        }
+        
+        .stats-value {
+            font-weight: bold;
+            font-size: 14pt;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+        
+        th {
+            background-color: #333;
+            color: white;
+            padding: 10px 5px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #000;
+        }
+        
+        td {
+            padding: 8px 5px;
+            border: 1px solid #ccc;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .decision-admitted {
+            background-color: #d4edda;
+            font-weight: bold;
+        }
+        
+        .decision-distinction {
+            background-color: #c3e6cb;
+            font-weight: bold;
+        }
+        
+        .decision-great-distinction {
+            background-color: #fff3cd;
+            font-weight: bold;
+        }
+        
+        .decision-adjourned {
+            background-color: #fff3cd;
+        }
+        
+        .decision-failed {
+            background-color: #f8d7da;
+        }
+        
+        .decision-medical {
+            background-color: #d1ecf1;
+        }
+        
+        .signature-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .signature-box {
+            width: 45%;
+            text-align: center;
+        }
+        
+        .signature-line {
+            margin-top: 60px;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 10pt;
+            font-style: italic;
+        }
+        
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>RÉPUBLIQUE DÉMOCRATIQUE DU CONGO</h1>
+        <h1>PROVINCE DU {{province}} — {{ville}}</h1>
+        <h2>PROCÈS-VERBAL DE DÉLIBÉRATION TRIMESTRIELLE</h2>
+    </div>
+    
+    <div class="info-section">
+        <div class="info-row">
+            <span class="info-label">École:</span>
+            <span class="info-value">{{schoolName}}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Classe:</span>
+            <span class="info-value">{{className}} - {{sectionName}}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Trimestre:</span>
+            <span class="info-value">{{termLabel}}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Année Scolaire:</span>
+            <span class="info-value">{{academicYear}}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Date:</span>
+            <span class="info-value">{{date}}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Président:</span>
+            <span class="info-value">{{prefetName}}, Préfet des Études</span>
+        </div>
+    </div>
+    
+    <div class="stats-section">
+        <h3 style="margin-top: 0;">RÉSULTATS GLOBAUX</h3>
+        <div class="stats-row">
+            <span class="stats-label">Élèves inscrits:</span>
+            <span class="stats-value">{{totalStudents}}</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">Admis (toutes catégories):</span>
+            <span class="stats-value" style="color: green;">{{totalAdmitted}} ({{successRate}}%)</span>
+        </div>
+        {{#if countGreatDistinction}}
+        <div class="stats-row" style="padding-left: 20px;">
+            <span>- Grande Distinction:</span>
+            <span>{{countGreatDistinction}}</span>
+        </div>
+        {{/if}}
+        {{#if countDistinction}}
+        <div class="stats-row" style="padding-left: 20px;">
+            <span>- Distinction:</span>
+            <span>{{countDistinction}}</span>
+        </div>
+        {{/if}}
+        {{#if countAdmitted}}
+        <div class="stats-row" style="padding-left: 20px;">
+            <span>- Admis simple:</span>
+            <span>{{countAdmitted}}</span>
+        </div>
+        {{/if}}
+        {{#if countAdjourned}}
+        <div class="stats-row">
+            <span class="stats-label">Ajournés:</span>
+            <span class="stats-value" style="color: orange;">{{countAdjourned}} ({{adjournedRate}}%)</span>
+        </div>
+        {{/if}}
+        {{#if countFailed}}
+        <div class="stats-row">
+            <span class="stats-label">Refusés:</span>
+            <span class="stats-value" style="color: red;">{{countFailed}} ({{failedRate}}%)</span>
+        </div>
+        {{/if}}
+        {{#if countMedical}}
+        <div class="stats-row">
+            <span class="stats-label">Reportés (Maladie):</span>
+            <span class="stats-value" style="color: blue;">{{countMedical}}</span>
+        </div>
+        {{/if}}
+    </div>
+    
+    <h3>RÉSULTATS DÉTAILLÉS PAR ÉLÈVE</h3>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">Rang</th>
+                <th style="width: 35%;">Nom de l'Élève</th>
+                <th style="width: 12%;">Moyenne</th>
+                <th style="width: 12%;">Points</th>
+                <th style="width: 36%;">Décision</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each students}}
+            <tr>
+                <td style="text-align: center; font-weight: bold;">{{this.rank}}</td>
+                <td>{{this.studentName}}</td>
+                <td style="text-align: center;">{{this.average}}/20</td>
+                <td style="text-align: center;">{{this.points}}</td>
+                <td class="decision-{{this.decisionClass}}">{{this.decisionLabel}}</td>
+            </tr>
+            {{#if this.justification}}
+            <tr>
+                <td colspan="5" style="font-size: 9pt; font-style: italic; background-color: #fffacd;">
+                    <strong>Justification:</strong> {{this.justification}}
+                </td>
+            </tr>
+            {{/if}}
+            {{/each}}
+        </tbody>
+    </table>
+    
+    {{#if modifiedDecisions}}
+    <div style="margin: 20px 0; padding: 10px; background-color: #fff3cd; border: 1px solid #ffc107;">
+        <strong>Note:</strong> {{modifiedDecisions}} décision(s) modifiée(s) par rapport aux suggestions automatiques.
+    </div>
+    {{/if}}
+    
+    <div class="signature-section">
+        <div class="signature-box">
+            <p>Fait à {{ville}}, le {{date}}</p>
+            <div class="signature-line">
+                <strong>Le Préfet des Études</strong><br>
+                {{prefetName}}
+            </div>
+        </div>
+        <div class="signature-box">
+            <p>&nbsp;</p>
+            <div class="signature-line">
+                <strong>Le Directeur</strong><br>
+                (Cachet de l'école)
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Document officiel généré par EduGoma360 - {{generatedAt}}</p>
+    </div>
+</body>
+</html>

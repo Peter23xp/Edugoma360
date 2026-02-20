@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 12mm 15mm;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', 'Helvetica Neue', sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.4;
+      color: #212121;
+      background: #fff;
+    }
+
+    /* ── HEADER ──────────────────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      border-bottom: 4px solid #1B5E20;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .header-logo {
+      width: 65px;
+      height: 65px;
+      object-fit: contain;
+      margin-right: 15px;
+      border: 2px solid #1B5E20;
+      border-radius: 4px;
+      padding: 3px;
+    }
+
+    .header-text {
+      flex: 1;
+      text-align: center;
+    }
+
+    .republic-label {
+      font-size: 7.5pt;
+      color: #616161;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .school-name {
+      font-size: 15pt;
+      font-weight: bold;
+      color: #1B5E20;
+      text-transform: uppercase;
+      margin: 3px 0;
+    }
+
+    .school-address {
+      font-size: 8.5pt;
+      color: #424242;
+    }
+
+    .bulletin-title {
+      font-size: 13pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 5px;
+      padding: 4px 12px;
+      border: 2px solid #1B5E20;
+      display: inline-block;
+      color: #1B5E20;
+    }
+
+    .academic-info {
+      font-size: 8.5pt;
+      color: #757575;
+      margin-top: 4px;
+    }
+
+    /* ── STUDENT INFO ─────────────────────────────────────────── */
+    .student-section {
+      display: flex;
+      gap: 12px;
+      margin: 12px 0;
+      border: 2px solid #1B5E20;
+      border-radius: 4px;
+      padding: 10px;
+      background: #F9FBE7;
+    }
+
+    .student-photo {
+      width: 80px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid #BDBDBD;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .student-photo-placeholder {
+      width: 80px;
+      height: 100px;
+      border: 1px dashed #BDBDBD;
+      border-radius: 3px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #F5F5F5;
+      color: #9E9E9E;
+      font-size: 8pt;
+      text-align: center;
+    }
+
+    .student-details {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px 12px;
+      align-content: start;
+    }
+
+    .student-detail-row {
+      font-size: 9.5pt;
+      display: flex;
+      gap: 4px;
+    }
+
+    .student-detail-label {
+      font-weight: bold;
+      color: #1B5E20;
+      white-space: nowrap;
+    }
+
+    .bulletin-number-badge {
+      grid-column: span 2;
+      background: #1B5E20;
+      color: white;
+      font-size: 8.5pt;
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 3px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    /* ── GRADE TABLE ──────────────────────────────────────────── */
+    table.grades {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 9.5pt;
+    }
+
+    table.grades thead tr {
+      background: #1B5E20;
+      color: white;
+    }
+
+    table.grades th {
+      padding: 7px 6px;
+      text-align: center;
+      font-size: 8.5pt;
+      font-weight: bold;
+      border: 1px solid #145214;
+    }
+
+    table.grades th:first-child {
+      text-align: left;
+      padding-left: 8px;
+    }
+
+    table.grades tbody tr:nth-child(even) {
+      background: #F5F5F5;
+    }
+
+    table.grades tbody tr:hover {
+      background: #E8F5E9;
+    }
+
+    table.grades td {
+      border: 1px solid #BDBDBD;
+      padding: 5px 6px;
+      text-align: center;
+    }
+
+    table.grades td:first-child {
+      text-align: left;
+      padding-left: 8px;
+      font-weight: 500;
+    }
+
+    table.grades td.low-score {
+      color: #B71C1C;
+      font-weight: bold;
+    }
+
+    table.grades tfoot tr {
+      background: #E8F5E9;
+      font-weight: bold;
+    }
+
+    table.grades tfoot td {
+      border: 1px solid #A5D6A7;
+      padding: 6px;
+      font-size: 9.5pt;
+    }
+
+    table.grades tfoot td.label {
+      text-align: right;
+      padding-right: 8px;
+      color: #1B5E20;
+    }
+
+    table.grades tfoot td.value {
+      text-align: center;
+      color: #212121;
+    }
+
+    /* ── APPRECIATION ─────────────────────────────────────────── */
+    .appreciation-section {
+      margin: 10px 0;
+    }
+
+    .appreciation-label {
+      font-weight: bold;
+      font-size: 9pt;
+      color: #1B5E20;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .appreciation-box {
+      border: 1px solid #BDBDBD;
+      padding: 8px 10px;
+      min-height: 48px;
+      font-style: italic;
+      color: #424242;
+      border-radius: 3px;
+      background: #FAFAFA;
+    }
+
+    /* ── DECISION ─────────────────────────────────────────────── */
+    .decision {
+      text-align: center;
+      font-size: 17pt;
+      font-weight: bold;
+      padding: 12px 20px;
+      margin: 12px 0;
+      border-radius: 4px;
+      border: 3px solid;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .decision.admitted {
+      border-color: #1B5E20;
+      color: #1B5E20;
+      background: #F1F8E9;
+    }
+
+    .decision.distinction {
+      border-color: #2E7D32;
+      color: #2E7D32;
+      background: #E8F5E9;
+    }
+
+    .decision.great-distinction {
+      border-color: #F57F17;
+      color: #E65100;
+      background: #FFF8E1;
+    }
+
+    .decision.adjourned {
+      border-color: #E65100;
+      color: #E65100;
+      background: #FFF3E0;
+    }
+
+    .decision.failed {
+      border-color: #B71C1C;
+      color: #B71C1C;
+      background: #FFEBEE;
+    }
+
+    .decision.medical {
+      border-color: #1565C0;
+      color: #1565C0;
+      background: #E3F2FD;
+    }
+
+    /* ── SIGNATURES ───────────────────────────────────────────── */
+    .signatures {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 25px;
+    }
+
+    .signature-box {
+      width: 42%;
+      border-top: 1.5px solid #212121;
+      padding-top: 8px;
+      text-align: center;
+      font-size: 8.5pt;
+      color: #424242;
+    }
+
+    .signature-box strong {
+      display: block;
+      margin-bottom: 3px;
+      font-size: 9pt;
+      color: #212121;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      font-size: 7.5pt;
+      color: #9E9E9E;
+      margin-top: 20px;
+      padding-top: 8px;
+      border-top: 1px solid #E0E0E0;
+    }
+
+    /* ── PRINT HELPERS ────────────────────────────────────────── */
+    @media print {
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ──────────────────────────────────────────────── -->
+  <div class="header">
+    {{#if logoUrl}}
+    <img src="{{logoUrl}}" class="header-logo" alt="Logo" />
+    {{/if}}
+    <div class="header-text">
+      <div class="republic-label">République Démocratique du Congo — Ministère de l'EPSP</div>
+      <div class="school-name">{{schoolName}}</div>
+      <div class="school-address">Province du {{province}} — {{ville}}{{#if commune}} — {{commune}}{{/if}}</div>
+      <div class="school-address">N° Agrément: {{agrement}} — Tél: {{telephone}}</div>
+      <div class="bulletin-title">Bulletin Scolaire</div>
+      <div class="academic-info">Année Scolaire {{academicYear}} — {{termLabel}}</div>
+    </div>
+  </div>
+
+  <!-- ── STUDENT INFO ─────────────────────────────────────────── -->
+  <div class="student-section">
+    {{#if studentPhoto}}
+    <img src="{{studentPhoto}}" class="student-photo" alt="Photo élève" />
+    {{else}}
+    <div class="student-photo-placeholder">Photo<br>N/A</div>
+    {{/if}}
+
+    <div class="student-details">
+      <div class="student-detail-row">
+        <span class="student-detail-label">Nom :</span>
+        <span>{{studentName}}</span>
+      </div>
+      <div class="student-detail-row">
+        <span class="student-detail-label">Matricule :</span>
+        <span>{{matricule}}</span>
+      </div>
+      <div class="student-detail-row">
+        <span class="student-detail-label">Classe :</span>
+        <span>{{className}}</span>
+      </div>
+      <div class="student-detail-row">
+        <span class="student-detail-label">Section :</span>
+        <span>{{sectionName}}</span>
+      </div>
+      <div class="student-detail-row">
+        <span class="student-detail-label">Sexe :</span>
+        <span>{{sexe}}</span>
+      </div>
+      <div class="student-detail-row">
+        <span class="student-detail-label">Naissance :</span>
+        <span>{{dateNaissance}}</span>
+      </div>
+      <div class="bulletin-number-badge">
+        N° Bulletin : {{bulletinNumber}} &nbsp;|&nbsp; Coût : 100 FC
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GRADE TABLE ──────────────────────────────────────────── -->
+  <table class="grades">
+    <thead>
+      <tr>
+        <th style="width:32%; text-align:left; padding-left:8px;">Matière</th>
+        <th style="width:7%;">Coeff</th>
+        <th style="width:9%;">Interro<br><span style="font-size:7pt; font-weight:normal;">/20</span></th>
+        <th style="width:9%;">TP<br><span style="font-size:7pt; font-weight:normal;">/20</span></th>
+        <th style="width:9%;">Exam<br><span style="font-size:7pt; font-weight:normal;">/20</span></th>
+        <th style="width:10%;">Total<br><span style="font-size:7pt; font-weight:normal;">Pts</span></th>
+        <th style="width:10%;">Moy<br><span style="font-size:7pt; font-weight:normal;">/20</span></th>
+        <th style="width:7%;">Rang</th>
+        <th style="width:7%;">Max</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each subjects}}
+      <tr>
+        <td>{{name}}</td>
+        <td>{{coefficient}}</td>
+        <td {{#if interroLow}}class="low-score"{{/if}}>{{#if interro}}{{interro}}{{else}}—{{/if}}</td>
+        <td {{#if tpLow}}class="low-score"{{/if}}>{{#if tp}}{{tp}}{{else}}—{{/if}}</td>
+        <td {{#if examLow}}class="low-score"{{/if}}>{{#if exam}}{{exam}}{{else}}—{{/if}}</td>
+        <td style="font-weight:600;">{{totalPts}}</td>
+        <td style="font-weight:700; {{#if averageLow}}color:#B71C1C;{{/if}}">{{average}}</td>
+        <td>{{subjectRank}}</td>
+        <td style="color:#757575; font-size:8.5pt;">{{classMax}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5" class="label">TOTAL POINTS :</td>
+        <td colspan="4" class="value" style="font-size:11pt;">
+          {{totalPoints}} / {{maxPoints}}
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="label">MOYENNE GÉNÉRALE :</td>
+        <td colspan="4" class="value" style="font-size:12pt; color:#1B5E20;">
+          {{generalAverage}} / 20
+        </td>
+      </tr>
+      <tr>
+        <td colspan="5" class="label">CLASSEMENT :</td>
+        <td colspan="4" class="value" style="font-size:11pt;">
+          {{rank}}{{rankSuffix}} sur {{totalStudents}} élèves
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- ── APPRECIATION ─────────────────────────────────────────── -->
+  <div class="appreciation-section">
+    <div class="appreciation-label">Appréciation du Préfet :</div>
+    <div class="appreciation-box">{{appreciation}}</div>
+  </div>
+
+  <!-- ── DECISION ─────────────────────────────────────────────── -->
+  <div class="decision {{decisionClass}}">
+    {{decisionLabel}}
+  </div>
+
+  <!-- ── SIGNATURES ───────────────────────────────────────────── -->
+  <div class="signatures">
+    <div class="signature-box">
+      <strong>Le Préfet des Études</strong>
+      {{prefetName}}<br>
+      [Cachet de l'école]<br><br>
+      _____________________
+    </div>
+    <div class="signature-box">
+      <strong>Visa du Parent / Tuteur</strong>
+      (Accusé de réception)<br><br><br>
+      _____________________
+    </div>
+  </div>
+
+  <!-- ── FOOTER ───────────────────────────────────────────────── -->
+  <div class="footer">
+    N° Agrément: {{agrement}} &nbsp;|&nbsp; Code EDU-NK &nbsp;|&nbsp; Édité le {{issuedDate}} &nbsp;|&nbsp; EduGoma 360
+  </div>
+
+</body>
+</html>

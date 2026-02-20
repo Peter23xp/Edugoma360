@@ -1,98 +1,398 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-    <title>Palmarès — {{schoolName}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palmarès</title>
     <style>
-        body {
-            font-family: 'Times New Roman', serif;
-            font-size: 11pt;
-            padding: 15mm;
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', 'Helvetica Neue', sans-serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #212121;
+        }
+
+        /* Header */
         .header {
             text-align: center;
-            margin-bottom: 15px;
+            border-bottom: 4px solid #1B5E20;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .header h1 {
+        .header-logo {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+
+        .republic {
+            font-size: 9pt;
+            color: #616161;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .school-name {
             font-size: 16pt;
+            font-weight: bold;
+            color: #1B5E20;
+            text-transform: uppercase;
+            margin: 5px 0;
+        }
+
+        .school-address {
+            font-size: 9pt;
+            color: #424242;
+        }
+
+        .palmares-title {
+            font-size: 18pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 15px 0 5px;
+            color: #1B5E20;
+        }
+
+        .class-info {
+            font-size: 13pt;
+            font-weight: bold;
+            color: #212121;
+            margin-bottom: 5px;
+        }
+
+        .academic-info {
+            font-size: 9pt;
+            color: #757575;
+        }
+
+        /* Table */
+        table.rankings {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+
+        table.rankings thead tr {
+            background: #1B5E20;
+            color: white;
+        }
+
+        table.rankings th {
+            padding: 10px 8px;
+            text-align: center;
+            font-weight: bold;
+            border: 1px solid #145214;
+        }
+
+        table.rankings th:nth-child(2) {
+            text-align: left;
+        }
+
+        table.rankings tbody tr:nth-child(even) {
+            background: #F5F5F5;
+        }
+
+        table.rankings tbody tr:hover {
+            background: #E8F5E9;
+        }
+
+        table.rankings td {
+            border: 1px solid #BDBDBD;
+            padding: 8px;
+            text-align: center;
+        }
+
+        table.rankings td:nth-child(2) {
+            text-align: left;
+            font-weight: 500;
+        }
+
+        /* Rank badges */
+        .rank-1 {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .rank-2 {
+            background: linear-gradient(135deg, #C0C0C0, #A8A8A8);
+            color: white;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .rank-3 {
+            background: linear-gradient(135deg, #CD7F32, #B8860B);
+            color: white;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        /* Mention badges */
+        .mention-great-distinction {
+            background: #FFF8E1;
+            color: #E65100;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #FFB300;
+        }
+
+        .mention-distinction {
+            background: #E8F5E9;
+            color: #2E7D32;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #66BB6A;
+        }
+
+        .mention-admitted {
+            background: #F1F8E9;
+            color: #558B2F;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #9CCC65;
+        }
+
+        .mention-adjourned {
+            background: #FFF3E0;
+            color: #E65100;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #FFB74D;
+        }
+
+        .mention-failed {
+            background: #FFEBEE;
+            color: #B71C1C;
+            padding: 3px 8px;
+            border-radius: 4px;
+            border: 1px solid #EF5350;
+        }
+
+        /* Summary */
+        .summary {
+            margin: 25px 0;
+            padding: 15px;
+            background: #F5F5F5;
+            border: 2px solid #1B5E20;
+            border-radius: 8px;
+        }
+
+        .summary h3 {
+            color: #1B5E20;
+            font-size: 12pt;
+            margin-bottom: 10px;
             text-transform: uppercase;
         }
 
-        .header h2 {
-            font-size: 12pt;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
         }
 
-        .header p {
+        .summary-item {
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .summary-label {
+            font-size: 8.5pt;
+            color: #757575;
+            text-transform: uppercase;
+        }
+
+        .summary-value {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1B5E20;
+            margin-top: 2px;
+        }
+
+        /* Signatures */
+        .signatures {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .signature-box {
+            width: 45%;
+            border-top: 2px solid #212121;
+            padding-top: 10px;
+            text-align: center;
+            font-size: 9pt;
+        }
+
+        .signature-box strong {
+            display: block;
+            margin-bottom: 5px;
             font-size: 10pt;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 5px 8px;
-            font-size: 10pt;
-        }
-
-        th {
-            background: #d0d0d0;
+        /* Footer */
+        .footer {
             text-align: center;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .bold {
-            font-weight: bold;
-        }
-
-        .distinction {
-            background: #e8f5e9;
-        }
-
-        .great-distinction {
-            background: #c8e6c9;
-            font-weight: bold;
+            font-size: 8pt;
+            color: #9E9E9E;
+            margin-top: 25px;
+            padding-top: 10px;
+            border-top: 1px solid #E0E0E0;
         }
 
         @media print {
             body {
-                padding: 8mm;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
             }
         }
     </style>
 </head>
-
 <body>
+    <!-- Header -->
     <div class="header">
-        <p>RÉPUBLIQUE DÉMOCRATIQUE DU CONGO — MEPST</p>
-        <h1>{{schoolName}}</h1>
-        <h2>PALMARÈS — {{termLabel}} — {{academicYear}}</h2>
-        <p>Classe: {{className}} — Section: {{sectionName}}</p>
+        {{#if logoUrl}}
+        <img src="{{logoUrl}}" class="header-logo" alt="Logo" />
+        {{/if}}
+        <div class="republic">République Démocratique du Congo</div>
+        <div class="school-name">{{schoolName}}</div>
+        <div class="school-address">Province du {{province}} — {{ville}}</div>
+        <div class="school-address">N° Agrément: {{agrement}}</div>
+        <div class="palmares-title">Palmarès</div>
+        <div class="class-info">{{className}} — {{sectionName}}</div>
+        <div class="academic-info">{{termLabel}} — Année Scolaire {{academicYear}}</div>
     </div>
-    <table>
+
+    <!-- Rankings Table -->
+    <table class="rankings">
         <thead>
             <tr>
-                <th>Rang</th>
-                <th>Nom de l'Élève</th>
-                <th>Matricule</th>
-                <th>Total Points</th>
-                <th>Moyenne Générale</th>
-                <th>Décision</th>
+                <th style="width: 8%;">Rang</th>
+                <th style="width: 40%;">Nom Complet</th>
+                <th style="width: 13%;">Moyenne</th>
+                <th style="width: 13%;">Points</th>
+                <th style="width: 26%;">Mention</th>
             </tr>
         </thead>
         <tbody>
-            {{studentRows}}
+            {{#each rankings}}
+            <tr>
+                <td>
+                    {{#if (eq rank 1)}}
+                    <span class="rank-1">{{badge}} {{rank}}</span>
+                    {{else}}{{#if (eq rank 2)}}
+                    <span class="rank-2">{{badge}} {{rank}}</span>
+                    {{else}}{{#if (eq rank 3)}}
+                    <span class="rank-3">{{badge}} {{rank}}</span>
+                    {{else}}
+                    {{rank}}
+                    {{/if}}{{/if}}{{/if}}
+                </td>
+                <td>{{studentName}}</td>
+                <td style="font-weight: bold;">{{generalAverage}}/20</td>
+                <td>{{totalPoints}}</td>
+                <td>
+                    {{#if (includes decision "GREAT_DISTINCTION")}}
+                    <span class="mention-great-distinction">{{mention}}</span>
+                    {{else}}{{#if (includes decision "DISTINCTION")}}
+                    <span class="mention-distinction">{{mention}}</span>
+                    {{else}}{{#if (includes decision "ADMITTED")}}
+                    <span class="mention-admitted">{{mention}}</span>
+                    {{else}}{{#if (includes decision "ADJOURNED")}}
+                    <span class="mention-adjourned">{{mention}}</span>
+                    {{else}}{{#if (includes decision "FAILED")}}
+                    <span class="mention-failed">{{mention}}</span>
+                    {{else}}
+                    {{mention}}
+                    {{/if}}{{/if}}{{/if}}{{/if}}{{/if}}
+                </td>
+            </tr>
+            {{/each}}
         </tbody>
     </table>
-</body>
 
+    <!-- Summary -->
+    <div class="summary">
+        <h3>Résumé Statistique</h3>
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-label">Total Élèves</div>
+                <div class="summary-value">{{totalStudents}}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Admis</div>
+                <div class="summary-value" style="color: #2E7D32;">{{passed}}</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Taux de Réussite</div>
+                <div class="summary-value" style="color: #2E7D32;">{{passRate}}%</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Moyenne de Classe</div>
+                <div class="summary-value">{{classAverage}}/20</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Meilleure Moyenne</div>
+                <div class="summary-value" style="color: #F57F17;">{{highest}}/20</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Plus Faible Moyenne</div>
+                <div class="summary-value" style="color: #B71C1C;">{{lowest}}/20</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signatures">
+        <div class="signature-box">
+            <strong>Le Préfet des Études</strong>
+            {{prefetName}}<br>
+            [Cachet de l'école]<br><br>
+            _____________________
+        </div>
+        <div class="signature-box">
+            <strong>Le Directeur</strong>
+            <br><br><br>
+            _____________________
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Document officiel édité le {{issuedDate}} — EduGoma 360
+    </div>
+
+    <script>
+        // Handlebars helpers
+        Handlebars.registerHelper('eq', function(a, b) {
+            return a === b;
+        });
+        Handlebars.registerHelper('includes', function(str, substr) {
+            return str && str.includes(substr);
+        });
+    </script>
+</body>
 </html>

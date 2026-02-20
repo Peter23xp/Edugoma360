@@ -1,282 +1,776 @@
 import prisma from '../../lib/prisma';
-import { calculateSubjectAverage, calculateGeneralAverage, calculateRanking, getDelibDecision, checkEliminatory } from '@edugoma360/shared';
-import type { z } from 'zod';
-import type { CreateGradeDto, BatchGradeDto, GradeQueryDto } from './grades.dto';
+
+interface GetGradesFilters {
+    classId?: string;
+    subjectId?: string;
+    termId?: string;
+    evalType?: string;
+    studentId?: string;
+}
+
+interface CreateGradeDto {
+    studentId: string;
+    subjectId: string;
+    termId: string;
+    evalType: string;
+    score: number;
+    observation?: string;
+}
+
+interface BatchGradeDto {
+    studentId: string;
+    score: number;
+    observation?: string;
+}
+
+interface SyncQueueItem {
+    id: string;
+    type: 'grade_create' | 'grade_update';
+    data: CreateGradeDto;
+    timestamp: number;
+}
 
 export class GradesService {
     /**
-     * Create or update a single grade (upsert)
+     * Get grades with filters
      */
-    async createOrUpdateGrade(data: z.infer<typeof CreateGradeDto>, userId: string) {
-        // Validate score against subject maxScore
-        const subject = await prisma.subject.findUnique({
-            where: { id: data.subjectId },
-        });
+    async getGrades(filters: GetGradesFilters, schoolId: string) {
+        const where: any = {};
 
-        if (!subject) throw new Error('Matière non trouvée');
-        if (data.score > subject.maxScore) {
-            throw new Error(`La note ne peut pas dépasser ${subject.maxScore}`);
+        // Verify access through school
+        if (filters.studentId) {
+            where.student = {
+                schoolId,
+            };
         }
 
-        // Check if grade is locked
-        const existingGrade = await prisma.grade.findUnique({
-            where: {
-                studentId_subjectId_termId_evalType: {
-                    studentId: data.studentId,
-                    subjectId: data.subjectId,
-                    termId: data.termId,
-                    evalType: data.evalType,
+        if (filters.subjectId) {
+            where.subjectId = filters.subjectId;
+        }
+
+        if (filters.termId) {
+            where.termId = filters.termId;
+        }
+
+        if (filters.evalType) {
+            where.evalType = filters.evalType;
+        }
+
+        // If classId provided, get students from that class
+        if (filters.classId) {
+            const enrollments = await prisma.enrollment.findMany({
+                where: {
+                    classId: filters.classId,
+                },
+                select: {
+                    studentId: true,
+                },
+            });
+
+            where.studentId = {
+                in: enrollments.map((e: any) => e.studentId),
+            };
+        }
+
+        const grades = await prisma.grade.findMany({
+            where,
+            include: {
+                student: {
+                    select: {
+                        id: true,
+                        matricule: true,
+                        nom: true,
+                        postNom: true,
+                        prenom: true,
+                    },
+                },
+                subject: {
+                    select: {
+                        id: true,
+                        name: true,
+                        abbreviation: true,
+                        maxScore: true,
+                    },
+                },
+                term: {
+                    select: {
+                        id: true,
+                        label: true,
+                    },
+                },
+            },
+            orderBy: {
+                student: {
+                    nom: 'asc',
                 },
             },
         });
 
-        if (existingGrade?.isLocked) {
-            throw new Error('Cette note est verrouillée et ne peut plus être modifiée');
+        return { grades };
+    }
+
+    /**
+     * Create or update grade
+     */
+    async upsertGrade(data: CreateGradeDto, schoolId: string, teacherId?: string) {
+        // Verify student belongs to school
+        const student = await prisma.student.findFirst({
+            where: {
+                id: data.studentId,
+                schoolId,
+            },
+        });
+
+        if (!student) {
+            throw new Error('STUDENT_NOT_FOUND');
         }
 
-        return prisma.grade.upsert({
+        // Verify subject belongs to school
+        const subject = await prisma.subject.findFirst({
             where: {
-                studentId_subjectId_termId_evalType: {
-                    studentId: data.studentId,
-                    subjectId: data.subjectId,
-                    termId: data.termId,
-                    evalType: data.evalType,
-                },
+                id: data.subjectId,
+                schoolId,
             },
-            update: {
-                score: data.score,
-                maxScore: data.maxScore,
-                observation: data.observation,
-                syncStatus: 'SYNCED',
+        });
+
+        if (!subject) {
+            throw new Error('SUBJECT_NOT_FOUND');
+        }
+
+        // Verify term exists
+        const term = await prisma.term.findFirst({
+            where: {
+                id: data.termId,
             },
-            create: {
+        });
+
+        if (!term) {
+            throw new Error('TERM_NOT_FOUND');
+        }
+
+        // Validate score
+        if (data.score < 0 || data.score > subject.maxScore) {
+            throw new Error(`INVALID_SCORE: La note doit être entre 0 et ${subject.maxScore}`);
+        }
+
+        // Check if grade already exists
+        const existing = await prisma.grade.findFirst({
+            where: {
                 studentId: data.studentId,
                 subjectId: data.subjectId,
                 termId: data.termId,
                 evalType: data.evalType,
-                score: data.score,
-                maxScore: data.maxScore,
-                observation: data.observation,
-                createdById: userId,
-                syncStatus: 'SYNCED',
             },
         });
-    }
 
-    /**
-     * Batch save grades (optimized transaction)
-     */
-    async batchSaveGrades(data: z.infer<typeof BatchGradeDto>, userId: string) {
-        return prisma.$transaction(
-            data.grades.map((grade) =>
-                prisma.grade.upsert({
-                    where: {
-                        studentId_subjectId_termId_evalType: {
-                            studentId: grade.studentId,
-                            subjectId: grade.subjectId,
-                            termId: grade.termId,
-                            evalType: grade.evalType,
-                        },
-                    },
-                    update: {
-                        score: grade.score,
-                        maxScore: grade.maxScore,
-                        observation: grade.observation,
-                        syncStatus: 'SYNCED',
-                    },
-                    create: {
-                        studentId: grade.studentId,
-                        subjectId: grade.subjectId,
-                        termId: grade.termId,
-                        evalType: grade.evalType,
-                        score: grade.score,
-                        maxScore: grade.maxScore,
-                        observation: grade.observation,
-                        createdById: userId,
-                        syncStatus: 'SYNCED',
-                    },
-                }),
-            ),
-        );
-    }
+        let grade;
 
-    /**
-     * Get grades for a class/subject/term
-     */
-    async getGrades(query: z.infer<typeof GradeQueryDto>) {
-        const where: any = {};
-        if (query.subjectId) where.subjectId = query.subjectId;
-        if (query.termId) where.termId = query.termId;
-        if (query.evalType) where.evalType = query.evalType;
-        if (query.studentId) where.studentId = query.studentId;
+        if (existing) {
+            // Check if locked
+            if (existing.isLocked) {
+                throw new Error('GRADE_LOCKED: Cette note est verrouillée');
+            }
 
-        if (query.classId) {
-            where.student = {
-                enrollments: {
-                    some: {
-                        classId: query.classId,
-                        academicYear: { isActive: true },
-                    },
+            // Update existing grade
+            grade = await prisma.grade.update({
+                where: { id: existing.id },
+                data: {
+                    score: data.score,
+                    observation: data.observation,
                 },
-            };
+                include: {
+                    student: true,
+                    subject: true,
+                    term: true,
+                },
+            });
+        } else {
+            // Create new grade - need createdById
+            if (!teacherId) {
+                throw new Error('TEACHER_ID_REQUIRED');
+            }
+
+            grade = await prisma.grade.create({
+                data: {
+                    studentId: data.studentId,
+                    subjectId: data.subjectId,
+                    termId: data.termId,
+                    evalType: data.evalType,
+                    score: data.score,
+                    maxScore: subject.maxScore,
+                    observation: data.observation,
+                    isLocked: false,
+                    createdById: teacherId,
+                },
+                include: {
+                    student: true,
+                    subject: true,
+                    term: true,
+                },
+            });
         }
 
-        return prisma.grade.findMany({
-            where,
-            include: {
-                student: { select: { id: true, nom: true, postNom: true, prenom: true, matricule: true } },
-                subject: { select: { id: true, name: true, abbreviation: true, maxScore: true } },
-                term: { select: { id: true, label: true, number: true } },
+        return { grade };
+    }
+
+    /**
+     * Batch create/update grades
+     */
+    async batchUpsertGrades(
+        grades: BatchGradeDto[],
+        subjectId: string,
+        termId: string,
+        evalType: string,
+        schoolId: string,
+        teacherId: string
+    ) {
+        const results = {
+            saved: 0,
+            errors: [] as Array<{ studentId: string; error: string }>,
+        };
+
+        for (const gradeData of grades) {
+            try {
+                await this.upsertGrade(
+                    {
+                        studentId: gradeData.studentId,
+                        subjectId,
+                        termId,
+                        evalType,
+                        score: gradeData.score,
+                        observation: gradeData.observation,
+                    },
+                    schoolId,
+                    teacherId
+                );
+                results.saved++;
+            } catch (error: any) {
+                results.errors.push({
+                    studentId: gradeData.studentId,
+                    error: error.message,
+                });
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * Lock grades for a class/subject/term/evalType
+     */
+    async lockGrades(
+        classId: string,
+        subjectId: string,
+        termId: string,
+        evalType: string,
+        schoolId: string
+    ) {
+        // Get all students in the class
+        const enrollments = await prisma.enrollment.findMany({
+            where: {
+                classId,
             },
-            orderBy: [{ student: { nom: 'asc' } }, { subject: { displayOrder: 'asc' } }],
+            select: {
+                studentId: true,
+            },
         });
+
+        const studentIds = enrollments.map((e: any) => e.studentId);
+
+        // Lock all grades
+        const result = await prisma.grade.updateMany({
+            where: {
+                studentId: { in: studentIds },
+                subjectId,
+                termId,
+                evalType,
+                student: {
+                    schoolId,
+                },
+            },
+            data: {
+                isLocked: true,
+            },
+        });
+
+        return { locked: result.count };
+    }
+
+    /**
+     * Unlock grades (Préfet only)
+     */
+    async unlockGrades(
+        classId: string,
+        subjectId: string,
+        termId: string,
+        evalType: string,
+        schoolId: string
+    ) {
+        // Get all students in the class
+        const enrollments = await prisma.enrollment.findMany({
+            where: {
+                classId,
+            },
+            select: {
+                studentId: true,
+            },
+        });
+
+        const studentIds = enrollments.map((e: any) => e.studentId);
+
+        // Unlock all grades
+        const result = await prisma.grade.updateMany({
+            where: {
+                studentId: { in: studentIds },
+                subjectId,
+                termId,
+                evalType,
+                student: {
+                    schoolId,
+                },
+            },
+            data: {
+                isLocked: false,
+            },
+        });
+
+        return { unlocked: result.count };
+    }
+
+    /**
+     * Batch sync from offline queue
+     */
+    async batchSync(queue: SyncQueueItem[], schoolId: string, deviceId: string, teacherId: string) {
+        const results = {
+            processed: 0,
+            conflicts: [] as Array<{ id: string; reason: string }>,
+        };
+
+        for (const item of queue) {
+            try {
+                await this.upsertGrade(item.data, schoolId, teacherId);
+                results.processed++;
+            } catch (error: any) {
+                results.conflicts.push({
+                    id: item.id,
+                    reason: error.message,
+                });
+            }
+        }
+
+        return results;
+    }
+    /**
+     * Get grades matrix for a class
+     */
+    async getClassMatrix(classId: string, termId: string, evalType: string, schoolId: string) {
+        // Verify class belongs to school
+        const classData = await prisma.class.findFirst({
+            where: {
+                id: classId,
+                schoolId,
+            },
+        });
+
+        if (!classData) {
+            throw new Error('CLASS_NOT_FOUND');
+        }
+
+        // Get all students in the class
+        const enrollments = await prisma.enrollment.findMany({
+            where: {
+                classId,
+            },
+            include: {
+                student: {
+                    select: {
+                        id: true,
+                        matricule: true,
+                        nom: true,
+                        postNom: true,
+                        prenom: true,
+                    },
+                },
+            },
+            orderBy: {
+                student: {
+                    nom: 'asc',
+                },
+            },
+        });
+
+        const students = enrollments.map((e: any) => e.student);
+
+        // Get all subjects for the class section
+        const subjectSections = await prisma.subjectSection.findMany({
+            where: {
+                sectionId: classData.sectionId,
+            },
+            include: {
+                subject: true,
+            },
+            orderBy: {
+                subject: {
+                    displayOrder: 'asc',
+                },
+            },
+        });
+
+        const subjects = subjectSections.map((ss: any) => ss.subject);
+
+        // Get all grades for this class/term/evalType
+        const grades = await prisma.grade.findMany({
+            where: {
+                studentId: {
+                    in: students.map((s: any) => s.id),
+                },
+                subjectId: {
+                    in: subjects.map((s: any) => s.id),
+                },
+                termId,
+                evalType,
+            },
+        });
+
+        // Build grades matrix
+        const gradesMatrix: Record<string, Record<string, number | null>> = {};
+        students.forEach((student: any) => {
+            gradesMatrix[student.id] = {};
+            subjects.forEach((subject: any) => {
+                const grade = grades.find(
+                    (g: any) => g.studentId === student.id && g.subjectId === subject.id
+                );
+                gradesMatrix[student.id][subject.id] = grade ? grade.score : null;
+            });
+        });
+
+        // Calculate averages and ranks
+        const averages: Record<string, number | null> = {};
+        const studentAverages: Array<{ studentId: string; average: number }> = [];
+
+        students.forEach((student: any) => {
+            const studentGrades = subjects
+                .map((subject: any) => gradesMatrix[student.id][subject.id])
+                .filter((g: any) => g !== null);
+
+            if (studentGrades.length === subjects.length) {
+                // All grades present
+                const sum = studentGrades.reduce((acc: number, g: any) => acc + g, 0);
+                const avg = sum / studentGrades.length;
+                averages[student.id] = avg;
+                studentAverages.push({ studentId: student.id, average: avg });
+            } else {
+                averages[student.id] = null;
+            }
+        });
+
+        // Calculate ranks
+        studentAverages.sort((a, b) => b.average - a.average);
+        const ranks: Record<string, number | null> = {};
+        studentAverages.forEach((sa, index) => {
+            ranks[sa.studentId] = index + 1;
+        });
+
+        // Find missing grades
+        const missing: Array<{
+            subjectId: string;
+            subjectName: string;
+            teacherId: string | null;
+            teacherName: string | null;
+            count: number;
+        }> = [];
+
+        for (const subject of subjects) {
+            const missingCount = students.filter(
+                (student: any) => gradesMatrix[student.id][subject.id] === null
+            ).length;
+
+            if (missingCount > 0) {
+                // Find teacher for this subject in this class
+                const assignment = await prisma.teacherClassSubject.findFirst({
+                    where: {
+                        classId,
+                        subjectId: subject.id,
+                    },
+                    include: {
+                        teacher: {
+                            select: {
+                                id: true,
+                                nom: true,
+                                prenom: true,
+                            },
+                        },
+                    },
+                });
+
+                missing.push({
+                    subjectId: subject.id,
+                    subjectName: subject.name,
+                    teacherId: assignment?.teacher.id || null,
+                    teacherName: assignment
+                        ? `${assignment.teacher.nom} ${assignment.teacher.prenom || ''}`
+                        : null,
+                    count: missingCount,
+                });
+            }
+        }
+
+        return {
+            matrix: {
+                students,
+                subjects,
+                grades: gradesMatrix,
+                averages,
+                ranks,
+            },
+            missing,
+        };
     }
 
     /**
      * Calculate averages for a class and term
      */
-    async calculateAverages(classId: string, termId: string) {
-        // Get all enrolled students
-        const enrollments = await prisma.enrollment.findMany({
+    async calculateAverages(classId: string, termId: string, schoolId: string) {
+        // Import calculation functions
+        const {
+            calculateStudentSubjectAverage,
+            calculateGeneralAverage,
+            calculateTotalPoints,
+            calculateRanking,
+            checkEliminatory,
+        } = await import('@edugoma360/shared/src/utils/gradeCalc');
+
+        // Verify class belongs to school
+        const classData = await prisma.class.findFirst({
             where: {
-                classId,
-                academicYear: { isActive: true },
+                id: classId,
+                schoolId,
             },
             include: {
-                student: true,
-                class: { include: { section: true } },
+                section: true,
             },
         });
 
-        // Get all subjects for this class's section
+        if (!classData) {
+            throw new Error('CLASS_NOT_FOUND');
+        }
+
+        // Get students in class
+        const enrollments = await prisma.enrollment.findMany({
+            where: {
+                classId,
+            },
+            include: {
+                student: true,
+            },
+        });
+
+        const studentIds = enrollments.map((e: any) => e.studentId);
+
+        // Get subjects for this section
         const subjectSections = await prisma.subjectSection.findMany({
             where: {
-                sectionId: enrollments[0]?.class.sectionId,
+                sectionId: classData.sectionId,
             },
             include: {
                 subject: true,
             },
         });
 
+        const subjects = subjectSections.map((ss: any) => ({
+            id: ss.subject.id,
+            name: ss.subject.name,
+            abbreviation: ss.subject.abbreviation,
+            coefficient: ss.coefficient,
+            maxScore: ss.subject.maxScore,
+            isEliminatory: ss.subject.isEliminatory,
+            elimThreshold: ss.subject.elimThreshold,
+        }));
+
         // Get all grades for this class and term
         const grades = await prisma.grade.findMany({
             where: {
+                studentId: { in: studentIds },
                 termId,
-                studentId: { in: enrollments.map((e) => e.studentId) },
             },
-            include: { subject: true },
+            include: {
+                subject: true,
+            },
         });
 
-        // Calculate per-student
-        const studentResults = enrollments.map((enrollment) => {
-            const studentGrades = grades.filter((g) => g.studentId === enrollment.studentId);
+        // Calculate averages for each student
+        const studentAverages = studentIds.map((studentId) => {
+            const student = enrollments.find((e: any) => e.studentId === studentId)!.student;
 
-            const subjectAverages = subjectSections.map((ss) => {
-                const subjectGrades = studentGrades
-                    .filter((g) => g.subjectId === ss.subjectId)
-                    .map((g) => ({
-                        evalType: g.evalType as any,
+            // Calculate subject averages
+            const subjectAverages = subjects.map((subject) => {
+                const studentGrades = grades.filter(
+                    (g: any) => g.studentId === studentId && g.subjectId === subject.id
+                );
+
+                const average = calculateStudentSubjectAverage(
+                    studentGrades.map((g: any) => ({
+                        evalType: g.evalType,
                         score: g.score,
                         maxScore: g.maxScore,
-                    }));
+                    }))
+                );
 
-                const average = calculateSubjectAverage(subjectGrades);
-                const isEliminated = checkEliminatory(
+                const hasFailed = checkEliminatory(
                     average,
-                    ss.subject.elimThreshold,
-                    ss.subject.isEliminatory,
+                    subject.elimThreshold || 5,
+                    subject.isEliminatory
                 );
 
                 return {
-                    subjectId: ss.subjectId,
-                    subjectName: ss.subject.name,
-                    coefficient: ss.coefficient,
+                    subjectId: subject.id,
+                    subjectName: subject.name,
                     average,
-                    maxScore: ss.subject.maxScore,
-                    totalPoints: average * ss.coefficient,
-                    isEliminatory: ss.subject.isEliminatory,
-                    isEliminated,
-                    scores: subjectGrades,
+                    hasFailed,
                 };
             });
 
-            const general = calculateGeneralAverage(subjectAverages);
-            const hasEliminatoryFailure = subjectAverages.some((sa) => sa.isEliminated);
+            // Calculate general average
+            const generalAverage = calculateGeneralAverage(
+                subjectAverages.map((sa) => ({
+                    average: sa.average,
+                    coefficient: subjects.find((s) => s.id === sa.subjectId)!.coefficient,
+                }))
+            );
+
+            // Calculate total points
+            const totalCoefficients = subjects.reduce((sum, s) => sum + s.coefficient, 0);
+            const totalPoints = calculateTotalPoints(generalAverage, totalCoefficients);
+
+            // Check for eliminatory failures
+            const hasEliminatoryFailure = subjectAverages.some((sa) => sa.hasFailed);
 
             return {
-                studentId: enrollment.studentId,
-                studentName: `${enrollment.student.nom} ${enrollment.student.postNom}`,
-                generalAverage: general.average,
-                totalPoints: general.totalPoints,
-                totalCoefficients: general.totalCoefficients,
-                hasEliminatoryFailure,
+                studentId,
+                studentName: `${student.nom} ${student.postNom}`,
                 subjectAverages,
-                rank: 0,
+                generalAverage,
+                totalPoints,
+                rank: 0 as number, // Will be calculated after
+                hasEliminatoryFailure,
             };
+        }) as unknown as Array<{
+            studentId: string;
+            studentName: string;
+            subjectAverages: any[];
+            generalAverage: number;
+            totalPoints: number;
+            rank: number;
+            hasEliminatoryFailure: boolean;
+        }>;
+
+        // Calculate rankings — cast input as any to handle shared-dist vs shared-src signature difference
+        const rankings = calculateRanking(
+            studentAverages.map((sa) => ({
+                id: sa.studentId,
+                totalPoints: sa.totalPoints,
+            })) as any
+        ) as Record<string, number>;
+
+        // Assign ranks
+        studentAverages.forEach((sa) => {
+            sa.rank = (rankings as Record<string, number>)[sa.studentId] ?? 0;
         });
 
-        // Calculate ranking
-        const ranked = calculateRanking(
-            studentResults.map((s) => ({
-                studentId: s.studentId,
-                generalAverage: s.generalAverage,
-                totalPoints: s.totalPoints,
-            })),
-        );
+        // Sort by rank
+        studentAverages.sort((a, b) => a.rank - b.rank);
 
-        // Merge rankings
-        return studentResults.map((sr) => {
-            const rankInfo = ranked.find((r: any) => r.studentId === sr.studentId);
-            const decision = getDelibDecision(sr.generalAverage, sr.hasEliminatoryFailure);
-            return {
-                ...sr,
-                rank: rankInfo?.rank ?? 0,
-                suggestedDecision: decision,
-            };
-        }).sort((a, b) => a.rank - b.rank);
+        return {
+            averages: studentAverages,
+            subjects: subjects.map((s) => ({
+                id: s.id,
+                name: s.name,
+                abbreviation: s.abbreviation,
+            })),
+            isValidated: false, // Check if deliberation exists
+        };
     }
 
     /**
-     * Lock grades after deliberation
+     * Get calculated averages
      */
-    async lockGrades(classId: string, termId: string) {
-        const enrollments = await prisma.enrollment.findMany({
-            where: { classId, academicYear: { isActive: true } },
-            select: { studentId: true },
+    async getAverages(classId: string, termId: string, schoolId: string) {
+        // Check if deliberation exists (means averages are validated)
+        const deliberation = await prisma.deliberation.findFirst({
+            where: {
+                classId,
+                termId,
+            },
         });
 
+        const isValidated = !!deliberation;
+
+        // Calculate averages
+        const result = await this.calculateAverages(classId, termId, schoolId);
+
+        return {
+            ...result,
+            isValidated,
+        };
+    }
+
+    /**
+     * Validate averages and create deliberation
+     */
+    async validateAverages(classId: string, termId: string, schoolId: string, userId: string) {
+        // Verify class belongs to school
+        const classData = await prisma.class.findFirst({
+            where: {
+                id: classId,
+                schoolId,
+            },
+        });
+
+        if (!classData) {
+            throw new Error('CLASS_NOT_FOUND');
+        }
+
+        // Check if deliberation already exists
+        const existing = await prisma.deliberation.findFirst({
+            where: {
+                classId,
+                termId,
+            },
+        });
+
+        if (existing) {
+            throw new Error('AVERAGES_ALREADY_VALIDATED');
+        }
+
+        // Create deliberation (validatedAt will be set when status changes to VALIDATED)
+        const deliberation = await prisma.deliberation.create({
+            data: {
+                classId,
+                termId,
+                status: 'DRAFT',
+            },
+        });
+
+        // Lock all grades for this class and term
         await prisma.grade.updateMany({
             where: {
+                student: {
+                    enrollments: {
+                        some: {
+                            classId,
+                        },
+                    },
+                },
                 termId,
-                studentId: { in: enrollments.map((e) => e.studentId) },
             },
-            data: { isLocked: true },
+            data: {
+                isLocked: true,
+            },
         });
 
-        return { message: 'Notes verrouillées avec succès' };
-    }
-
-    /**
-     * Handle sync of offline grades
-     */
-    async batchSyncOfflineGrades(
-        grades: Array<z.infer<typeof CreateGradeDto> & { syncStatus: string }>,
-        userId: string,
-    ) {
-        const results = [];
-        for (const grade of grades) {
-            try {
-                const saved = await this.createOrUpdateGrade(grade, userId);
-                results.push({ success: true, gradeId: saved.id });
-            } catch (error) {
-                results.push({
-                    success: false,
-                    studentId: grade.studentId,
-                    error: error instanceof Error ? error.message : 'Erreur inconnue',
-                });
-            }
-        }
-        return results;
+        return {
+            deliberationId: deliberation.id,
+        };
     }
 }
 

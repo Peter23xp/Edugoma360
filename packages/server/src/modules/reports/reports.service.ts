@@ -4,46 +4,50 @@ import { gradesService } from '../grades/grades.service';
 import { formatFC } from '@edugoma360/shared';
 
 export class ReportsService {
-    async generateBulletin(studentId: string, termId: string, schoolId: string): Promise<Buffer> {
-        const student = await prisma.student.findFirst({
-            where: { id: studentId, schoolId },
-            include: {
-                enrollments: {
-                    where: { academicYear: { isActive: true } },
-                    include: { class: { include: { section: true } }, academicYear: true },
-                    take: 1,
-                },
-            },
-        });
-        if (!student) throw new Error('Élève non trouvé');
+  async generateBulletin(studentId: string, termId: string, schoolId: string): Promise<Buffer> {
+    const student = await prisma.student.findFirst({
+      where: { id: studentId, schoolId },
+      include: {
+        enrollments: {
+          where: { academicYear: { isActive: true } },
+          include: { class: { include: { section: true } }, academicYear: true },
+          take: 1,
+        },
+      },
+    });
+    if (!student) throw new Error('Élève non trouvé');
 
-        const school = await prisma.school.findUnique({ where: { id: schoolId } });
-        if (!school) throw new Error('École non trouvée');
+    const school = await prisma.school.findUnique({ where: { id: schoolId } });
+    if (!school) throw new Error('École non trouvée');
 
-        const term = await prisma.term.findUnique({ where: { id: termId }, include: { academicYear: true } });
-        if (!term) throw new Error('Trimestre non trouvé');
+    const term = await prisma.term.findUnique({ where: { id: termId }, include: { academicYear: true } });
+    if (!term) throw new Error('Trimestre non trouvé');
 
-        const enrollment = student.enrollments[0];
-        if (!enrollment) throw new Error('Inscription non trouvée');
+    const enrollment = student.enrollments[0];
+    if (!enrollment) throw new Error('Inscription non trouvée');
 
-        // Get averages
-        const classResults = await gradesService.calculateAverages(enrollment.classId, termId);
-        const studentResult = classResults.find((r) => r.studentId === studentId);
+    // Get averages — calculateAverages now requires 3 args and returns { averages, subjects, isValidated }
+    const { averages: classResults } = await gradesService.calculateAverages(
+      enrollment.classId,
+      termId,
+      schoolId,
+    );
+    const studentResult = classResults.find((r: any) => r.studentId === studentId);
 
-        // Build subjects table rows
-        const subjectRows = studentResult?.subjectAverages.map((sa) => `
+    // Build subjects table rows
+    const subjectRows = studentResult?.subjectAverages.map((sa: any) => `
       <tr>
         <td>${sa.subjectName}</td>
-        <td class="center">${sa.coefficient}</td>
-        <td class="center">${sa.scores.find(s => s.evalType === 'INTERROGATION')?.score ?? '-'}</td>
-        <td class="center">${sa.scores.find(s => s.evalType === 'TP')?.score ?? '-'}</td>
-        <td class="center">${sa.scores.find(s => s.evalType === 'EXAMEN_TRIMESTRIEL')?.score ?? '-'}</td>
-        <td class="center">${sa.totalPoints.toFixed(1)}</td>
-        <td class="center bold">${sa.average.toFixed(1)}/${sa.maxScore}</td>
+        <td class="center">${sa.coefficient ?? '—'}</td>
+        <td class="center">${sa.interro ?? '-'}</td>
+        <td class="center">${sa.tp ?? '-'}</td>
+        <td class="center">${sa.exam ?? '-'}</td>
+        <td class="center">${(sa.average * (sa.coefficient ?? 1)).toFixed(1)}</td>
+        <td class="center bold">${sa.average.toFixed(2)}/20</td>
       </tr>
     `).join('') ?? '';
 
-        const html = `
+    const html = `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
@@ -118,10 +122,18 @@ export class ReportsService {
         </div>
 
         <div class="decision">
-          DÉCISION : ${studentResult?.suggestedDecision === 'ADMITTED' ? 'ADMIS' :
-                studentResult?.suggestedDecision === 'DISTINCTION' ? 'ADMIS AVEC DISTINCTION' :
-                    studentResult?.suggestedDecision === 'GREAT_DISTINCTION' ? 'ADMIS AVEC GRANDE DISTINCTION' :
-                        studentResult?.suggestedDecision === 'ADJOURNED' ? 'AJOURNÉ' : 'REFUSÉ'}
+          DÉCISION : ${(() => {
+        const d = studentResult?.hasEliminatoryFailure ? 'FAILED'
+          : (studentResult?.generalAverage ?? 0) >= 16 ? 'GREAT_DISTINCTION'
+            : (studentResult?.generalAverage ?? 0) >= 14 ? 'DISTINCTION'
+              : (studentResult?.generalAverage ?? 0) >= 10 ? 'ADMITTED'
+                : (studentResult?.generalAverage ?? 0) >= 8 ? 'ADJOURNED'
+                  : 'FAILED';
+        return d === 'ADMITTED' ? 'ADMIS'
+          : d === 'DISTINCTION' ? 'ADMIS AVEC DISTINCTION'
+            : d === 'GREAT_DISTINCTION' ? 'ADMIS AVEC GRANDE DISTINCTION'
+              : d === 'ADJOURNED' ? 'AJOURNÉ' : 'REFUSÉ';
+      })()}
         </div>
 
         <div class="signatures">
@@ -133,29 +145,29 @@ export class ReportsService {
     </body>
     </html>`;
 
-        return generatePdf(html);
-    }
+    return generatePdf(html);
+  }
 
-    async generatePalmares(classId: string, termId: string, schoolId: string): Promise<Buffer> {
-        const results = await gradesService.calculateAverages(classId, termId);
-        const classInfo = await prisma.class.findUnique({
-            where: { id: classId },
-            include: { section: true },
-        });
-        const school = await prisma.school.findUnique({ where: { id: schoolId } });
-        const term = await prisma.term.findUnique({ where: { id: termId }, include: { academicYear: true } });
+  async generatePalmares(classId: string, termId: string, schoolId: string): Promise<Buffer> {
+    const { averages: results } = await gradesService.calculateAverages(classId, termId, schoolId);
 
-        const rows = results.map((r) => `
+    const [classInfo, school, term] = await Promise.all([
+      prisma.class.findUnique({ where: { id: classId }, include: { section: true } }),
+      prisma.school.findUnique({ where: { id: schoolId } }),
+      prisma.term.findUnique({ where: { id: termId }, include: { academicYear: true } }),
+    ]);
+
+    const rows = results.map((r: any) => `
       <tr>
         <td class="center">${r.rank}</td>
         <td>${r.studentName}</td>
         <td class="center">${r.totalPoints.toFixed(1)}</td>
         <td class="center bold">${r.generalAverage.toFixed(2)}</td>
-        <td class="center">${r.suggestedDecision}</td>
+        <td class="center">${r.hasEliminatoryFailure ? 'REFUSÉ' : r.generalAverage >= 10 ? 'ADMIS' : 'AJOURNÉ'}</td>
       </tr>
     `).join('');
 
-        const html = `
+    const html = `
     <!DOCTYPE html>
     <html lang="fr">
     <head><meta charset="UTF-8">
@@ -176,22 +188,22 @@ export class ReportsService {
       </table>
     </body></html>`;
 
-        return generatePdf(html);
-    }
+    return generatePdf(html);
+  }
 
-    async generateReceipt(paymentId: string): Promise<Buffer> {
-        const payment = await prisma.payment.findUnique({
-            where: { id: paymentId },
-            include: {
-                student: true,
-                feeType: true,
-                school: true,
-                academicYear: true,
-            },
-        });
-        if (!payment) throw new Error('Paiement non trouvé');
+  async generateReceipt(paymentId: string): Promise<Buffer> {
+    const payment = await prisma.payment.findUnique({
+      where: { id: paymentId },
+      include: {
+        student: true,
+        feeType: true,
+        school: true,
+        academicYear: true,
+      },
+    });
+    if (!payment) throw new Error('Paiement non trouvé');
 
-        const html = `
+    const html = `
     <!DOCTYPE html>
     <html lang="fr"><head><meta charset="UTF-8">
     <style>
@@ -215,8 +227,8 @@ export class ReportsService {
       </div>
     </body></html>`;
 
-        return generatePdf(html, { format: 'A4' });
-    }
+    return generatePdf(html, { format: 'A4' });
+  }
 }
 
 export const reportsService = new ReportsService();

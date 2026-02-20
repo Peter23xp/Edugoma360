@@ -12,6 +12,7 @@ import studentsRoutes from './modules/students/students.routes';
 import classesRoutes from './modules/classes/classes.routes';
 import timetableRoutes from './modules/timetable/timetable.routes';
 import gradesRoutes from './modules/grades/grades.routes';
+import deliberationRoutes from './modules/deliberation/deliberation.routes';
 import financeRoutes from './modules/finance/finance.routes';
 import attendanceRoutes from './modules/attendance/attendance.routes';
 import teachersRoutes from './modules/teachers/teachers.routes';
@@ -22,6 +23,7 @@ import settingsRoutes from './modules/settings/settings.routes';
 import statsRoutes from './modules/stats/stats.routes';
 import alertsRoutes from './modules/alerts/alerts.routes';
 import calendarRoutes from './modules/calendar/calendar.routes';
+import bulletinsRoutes from './modules/bulletins/bulletins.routes';
 
 const app = express();
 
@@ -52,6 +54,7 @@ app.use('/api/students', studentsRoutes);
 app.use('/api/classes', classesRoutes);
 app.use('/api/timetable', timetableRoutes);
 app.use('/api/grades', gradesRoutes);
+app.use('/api/deliberation', deliberationRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/teachers', teachersRoutes);
@@ -62,6 +65,7 @@ app.use('/api/settings', settingsRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/bulletin', bulletinsRoutes);
 
 // ── 404 Handler ───────────────────────────────────────────────────────────────
 app.use((_req, res) => {

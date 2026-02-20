@@ -10,11 +10,13 @@ export default function FinanceDashboard() {
         queryFn: async () => (await api.get('/finance/stats')).data,
     });
 
-    const mockMonthly = [
-        { month: 'Sept', montant: 1250000 }, { month: 'Oct', montant: 980000 },
-        { month: 'Nov', montant: 1100000 }, { month: 'Déc', montant: 750000 },
-        { month: 'Jan', montant: 1350000 }, { month: 'Fév', montant: 890000 },
-    ];
+    // Fetch monthly revenue data
+    const { data: monthlyData } = useQuery({
+        queryKey: ['finance-monthly'],
+        queryFn: async () => (await api.get('/finance/monthly-revenue')).data,
+    });
+
+    const monthlyRevenue = monthlyData?.revenue || [];
 
     return (
         <div className="space-y-6">
@@ -43,15 +45,21 @@ export default function FinanceDashboard() {
 
             <div className="bg-white rounded-xl border border-neutral-300/50 p-5">
                 <h3 className="text-sm font-semibold text-neutral-900 mb-4">Recettes mensuelles (FC)</h3>
-                <ResponsiveContainer width="100%" height={280}>
-                    <BarChart data={mockMonthly}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" />
-                        <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                        <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
-                        <Tooltip formatter={(v: number) => formatFC(v)} />
-                        <Bar dataKey="montant" fill="#1B5E20" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
+                {monthlyRevenue.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={280}>
+                        <BarChart data={monthlyRevenue}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#F0F0F0" />
+                            <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+                            <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
+                            <Tooltip formatter={(v: number) => formatFC(v)} />
+                            <Bar dataKey="montant" fill="#1B5E20" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="h-[280px] flex items-center justify-center text-neutral-500 text-sm">
+                        Aucune donnée disponible
+                    </div>
+                )}
             </div>
         </div>
     );

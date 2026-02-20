@@ -249,3 +249,4 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
         </div>
     );
 }
+

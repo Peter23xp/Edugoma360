@@ -9,7 +9,24 @@ export type UserRole =
     | 'ENSEIGNANT'
     | 'PARENT';
 
-export type SchoolType = 'OFFICIELLE' | 'CONVENTIONNEE' | 'PRIVEE';
+// NOTE: SchoolType, School, AcademicYear, Class, Section are defined in school.types.ts
+
+// ── Teacher ───────────────────────────────────────────────────────────────────
+export type TeacherStatus = 'MECHANISE' | 'NON_PAYE' | 'NOUVELLE_UNITE' | 'VACATAIRE';
+
+export interface Teacher {
+    id: string;
+    schoolId: string;
+    nom: string;
+    postNom: string;
+    prenom?: string | null;
+    matriculeMepst?: string | null;
+    diplome?: string | null;
+    phone?: string | null;
+    statut: TeacherStatus;
+    isActive: boolean;
+}
+
 
 // ── User Interface ────────────────────────────────────────────────────────────
 export interface User {
@@ -32,7 +49,6 @@ export interface AuthUser extends Omit<User, 'updatedAt'> {
     school: {
         id: string;
         name: string;
-        type: SchoolType;
         province: string;
         ville: string;
     };
@@ -42,70 +58,6 @@ export interface LoginResponse {
     user: AuthUser;
     token: string;
     refreshToken?: string;
-}
-
-// ── School Interface ──────────────────────────────────────────────────────────
-export interface School {
-    id: string;
-    name: string;
-    logoUrl?: string | null;
-    type: SchoolType;
-    convention?: string | null;
-    agrement?: string | null;
-    province: string;
-    ville: string;
-    commune?: string | null;
-    adresse?: string | null;
-    telephone?: string | null;
-    email?: string | null;
-    isActive: boolean;
-    createdAt: Date | string;
-    updatedAt: Date | string;
-}
-
-// ── Teacher Interface ─────────────────────────────────────────────────────────
-export type TeacherStatus = 'MECHANISE' | 'NON_PAYE' | 'NOUVELLE_UNITE' | 'VACATAIRE';
-
-export interface Teacher {
-    id: string;
-    schoolId: string;
-    nom: string;
-    postNom: string;
-    prenom?: string | null;
-    matriculeMepst?: string | null;
-    diplome?: string | null;
-    phone?: string | null;
-    statut: TeacherStatus;
-    isActive: boolean;
-}
-
-// ── Academic Year ─────────────────────────────────────────────────────────────
-export interface AcademicYear {
-    id: string;
-    schoolId: string;
-    label: string;
-    startDate: Date | string;
-    endDate: Date | string;
-    isActive: boolean;
-}
-
-// ── Class & Section ───────────────────────────────────────────────────────────
-export interface Section {
-    id: string;
-    schoolId: string;
-    name: string;
-    code: string;
-    year: number;
-}
-
-export interface Class {
-    id: string;
-    schoolId: string;
-    sectionId: string;
-    name: string;
-    maxStudents: number;
-    isActive: boolean;
-    section?: Section;
 }
 
 // ── Zod Schemas ───────────────────────────────────────────────────────────────
