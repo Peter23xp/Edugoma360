@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
-import type { ClassAveragesData, StudentAverage } from '@edugoma360/shared/types/academic';
+import type { ClassAveragesData, StudentAverage } from '@edugoma360/shared/src/types/academic';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hook : useAverages — Moyennes d'une classe pour un trimestre
@@ -73,3 +73,4 @@ export function useTermAverages(studentId: string) {
         staleTime: 5 * 60 * 1000,
     });
 }
+

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
-import type { TimetablePeriod, TimetableConflict, DayOfWeek } from '@edugoma360/shared/types/academic';
+import type { TimetablePeriod, TimetableConflict, DayOfWeek } from '@edugoma360/shared/src/types/academic';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hook : useTimetableByTeacher — emploi du temps d'un enseignant
@@ -90,3 +90,4 @@ export function useTimetableEditor() {
         checkConflictsMutation,
     };
 }
+

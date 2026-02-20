@@ -1,7 +1,7 @@
 import { X, Save } from 'lucide-react';
 import { useState } from 'react';
-import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/constants/decisions';
-import type { DeliberationStudent } from '@edugoma360/shared/types/academic';
+import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/src/constants/decisions';
+import type { DeliberationStudent } from '@edugoma360/shared/src/types/academic';
 import DecisionBadge from './DecisionBadge';
 
 interface DecisionModalProps {
@@ -129,4 +129,6 @@ export default function DecisionModal({ student, onSave, onClose, isLoading }: D
         </div>
     );
 }
+
+
 

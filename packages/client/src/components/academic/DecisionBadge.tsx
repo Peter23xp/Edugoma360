@@ -1,4 +1,4 @@
-import { DELIB_DECISIONS, getDecisionColor, type DelibDecision } from '@edugoma360/shared/constants/decisions';
+import { DELIB_DECISIONS, getDecisionColor, type DelibDecision } from '@edugoma360/shared/src/constants/decisions';
 
 interface DecisionBadgeProps {
     decision: DelibDecision | null | undefined;
@@ -44,4 +44,5 @@ export default function DecisionBadge({ decision, size = 'md', showIcon = true }
         </span>
     );
 }
+
 

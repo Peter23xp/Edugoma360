@@ -1,5 +1,5 @@
 import { Users, CheckCircle, Clock, Award, XCircle, Star } from 'lucide-react';
-import type { DeliberationStats } from '@edugoma360/shared/types/academic';
+import type { DeliberationStats } from '@edugoma360/shared/src/types/academic';
 
 interface DeliberationStatsCardProps {
     stats: DeliberationStats;
@@ -106,4 +106,5 @@ export default function DeliberationStatsCard({ stats }: DeliberationStatsCardPr
         </div>
     );
 }
+
 

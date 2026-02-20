@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 import api from '../lib/api';
-import type { Grade, GradeFiltersState, GradesMatrixData } from '@edugoma360/shared/types/academic';
+import type { AcademicGrade, GradeFiltersState, GradesMatrixData } from '@edugoma360/shared/src/types/academic';
 import { addToGradeQueue } from '../lib/offline/gradeQueue';
 import { useOffline } from './useOffline';
 
@@ -25,7 +25,7 @@ export function useGrades(filters: Partial<GradeFiltersState> & { studentIds?: s
     const { isOffline } = useOffline();
     const queryClient = useQueryClient();
 
-    const query = useQuery<Grade[]>({
+    const query = useQuery<AcademicGrade[]>({
         queryKey: ['grades', filters],
         queryFn: async () => {
             const params: Record<string, string> = {};
@@ -113,7 +113,7 @@ export function useGrades(filters: Partial<GradeFiltersState> & { studentIds?: s
     });
 
     const gradeMap = useMemo(() => {
-        const map = new Map<string, Grade>();
+        const map = new Map<string, AcademicGrade>();
         (query.data ?? []).forEach((g) => {
             map.set(`${g.studentId}-${g.evalType}`, g);
         });
@@ -167,3 +167,4 @@ export function useGradeSync() {
 
     return { syncMutation };
 }
+

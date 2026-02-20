@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ClassAveragesData } from '@edugoma360/shared/types/academic';
+import type { ClassAveragesData } from '@edugoma360/shared/src/types/academic';
 
 interface AverageChartsProps {
     data: ClassAveragesData;
@@ -99,4 +99,5 @@ export default function AverageCharts({ data }: AverageChartsProps) {
         </div>
     );
 }
+
 

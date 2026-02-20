@@ -1,6 +1,6 @@
 import { Search, Filter, X } from 'lucide-react';
-import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/constants/evalTypes';
-import type { GradeFiltersState } from '@edugoma360/shared/types/academic';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/src/constants/evalTypes';
+import type { GradeFiltersState } from '@edugoma360/shared/src/types/academic';
 
 interface SubjectOption { id: string; name: string }
 interface ClassOption { id: string; name: string }
@@ -120,4 +120,6 @@ export default function GradeFilters({
         </div>
     );
 }
+
+
 

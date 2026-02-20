@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
-import type { AcademicClass, ClassWithStats, TeacherAssignment } from '@edugoma360/shared/types/academic';
+import type { AcademicClass, ClassWithStats, TeacherAssignment } from '@edugoma360/shared/src/types/academic';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Hook : useClasses — liste des classes
@@ -117,3 +117,4 @@ export function useClassDetail(classId: string) {
         isLoading: classQuery.isLoading || assignmentsQuery.isLoading,
     };
 }
+

@@ -1,5 +1,5 @@
 import { Users, TrendingUp, Award, BookOpen } from 'lucide-react';
-import type { ClassWithStats } from '@edugoma360/shared/types/academic';
+import type { ClassWithStats } from '@edugoma360/shared/src/types/academic';
 
 interface ClassStatsCardProps {
     classData: ClassWithStats;
@@ -72,4 +72,5 @@ export default function ClassStatsCard({ classData }: ClassStatsCardProps) {
         </div>
     );
 }
+
 

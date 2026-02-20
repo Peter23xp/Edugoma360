@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
-import type { DeliberationData, DeliberationStats } from '@edugoma360/shared/types/academic';
-import type { DelibDecision } from '@edugoma360/shared/constants/decisions';
+import type { DeliberationData, DeliberationStats } from '@edugoma360/shared/src/types/academic';
+import type { DelibDecision } from '@edugoma360/shared/src/constants/decisions';
 import { useMemo } from 'react';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -111,3 +111,5 @@ export function useDeliberation(classId: string, academicYearId: string) {
         exportPVMutation,
     };
 }
+
+
