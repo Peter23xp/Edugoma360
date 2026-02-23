@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { ChevronUp, ChevronDown, Edit2 } from 'lucide-react';
-import type { DeliberationStudent, DeliberationStatus } from '@edugoma360/shared/src/types/academic';
-import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/src/constants/decisions';
+import type { DeliberationStudent, DeliberationStatus } from '@edugoma360/shared/types/academic';
+import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/constants/decisions';
 import DecisionBadge from './DecisionBadge';
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface DeliberationTableProps {
     students: DeliberationStudent[];
@@ -19,7 +19,7 @@ interface DeliberationTableProps {
 type SortKey = 'rank' | 't1' | 't2' | 't3' | 'annual';
 type SortDir = 'asc' | 'desc';
 
-// ─── Couleurs de ligne selon décision ─────────────────────────────────────────
+// â”€â”€â”€ Couleurs de ligne selon décision â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const ROW_COLORS: Record<DelibDecision, string> = {
     ADMITTED: 'hover:bg-green-50',
@@ -30,7 +30,7 @@ const ROW_COLORS: Record<DelibDecision, string> = {
     MEDICAL: 'hover:bg-blue-50',
 };
 
-// ─── Composant ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Composant â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function DeliberationTable({
     students,
@@ -45,7 +45,7 @@ export default function DeliberationTable({
     const isPrefet = !!onEditDecision;
     const canEdit = status !== 'APPROVED';
 
-    // ── Tri ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Tri â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const sorted = useMemo(() => {
         const list = [...students];
         list.sort((a, b) => {
@@ -98,7 +98,7 @@ export default function DeliberationTable({
             <div className="overflow-x-auto">
                 <table className="w-full text-sm border-collapse">
 
-                    {/* ── Entête ── */}
+                    {/* â”€â”€ Entête â”€â”€ */}
                     <thead className="bg-neutral-100 border-b border-neutral-200">
                         <tr>
                             <th
@@ -154,12 +154,12 @@ export default function DeliberationTable({
                         </tr>
                     </thead>
 
-                    {/* ── Corps ── */}
+                    {/* â”€â”€ Corps â”€â”€ */}
                     <tbody className="divide-y divide-neutral-100">
                         {isLoading ? (
                             <tr>
                                 <td colSpan={8} className="py-12 text-center text-neutral-500 text-sm">
-                                    Chargement…
+                                    Chargementâ€¦
                                 </td>
                             </tr>
                         ) : sorted.length === 0 ? (
@@ -205,7 +205,7 @@ export default function DeliberationTable({
                                                     {student.studentMatricule}
                                                     {student.isEliminatory && (
                                                         <span className="ml-2 text-red-500 font-semibold">
-                                                            ⚠ Éliminatoire
+                                                            âš  Éliminatoire
                                                         </span>
                                                     )}
                                                 </p>
@@ -284,7 +284,7 @@ export default function DeliberationTable({
                 </table>
             </div>
 
-            {/* ── Pied : légende ── */}
+            {/* â”€â”€ Pied : légende â”€â”€ */}
             <div className="border-t border-neutral-200 bg-neutral-50 px-6 py-3">
                 <div className="flex flex-wrap gap-4 text-xs text-neutral-500">
                     {(Object.keys(DELIB_DECISIONS) as DelibDecision[]).map((key) => (

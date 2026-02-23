@@ -1,4 +1,4 @@
-import { RefreshCw, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+﻿import { RefreshCw, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
 import { useSync } from '../../hooks/useSync';
 import { useOffline } from '../../hooks/useOffline';
 import { formatDate } from '../../lib/utils';

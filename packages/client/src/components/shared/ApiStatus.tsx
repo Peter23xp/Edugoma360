@@ -1,4 +1,4 @@
-import { Wifi, WifiOff, Loader2 } from 'lucide-react';
+﻿import { Wifi, WifiOff, Loader2 } from 'lucide-react';
 import { useOffline } from '../../hooks/useOffline';
 
 export default function ApiStatus() {

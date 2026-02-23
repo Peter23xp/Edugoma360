@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { FileText, ExternalLink, AlertCircle, RefreshCw } from 'lucide-react';
 
 interface BulletinPDFViewerProps {
@@ -28,7 +28,7 @@ export default function BulletinPDFViewer({
                     <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0" />
                 </div>
                 <div className="text-center">
-                    <p className="text-sm font-semibold text-neutral-800">Génération du PDF en cours…</p>
+                    <p className="text-sm font-semibold text-neutral-800">Génération du PDF en coursâ€¦</p>
                     <p className="text-xs text-neutral-500 mt-1">Puppeteer rend le bulletin</p>
                 </div>
             </div>
@@ -84,7 +84,7 @@ export default function BulletinPDFViewer({
                     <FileText size={15} className="text-primary" />
                     <span className="text-sm font-medium text-neutral-700">
                         {studentName ? `Bulletin — ${studentName}` : 'Aperçu PDF'}
-                        {termName && <span className="text-neutral-400"> · {termName}</span>}
+                        {termName && <span className="text-neutral-400"> Â· {termName}</span>}
                     </span>
                 </div>
                 <a

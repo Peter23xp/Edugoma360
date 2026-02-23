@@ -1,7 +1,7 @@
-import { X, Save } from 'lucide-react';
+﻿import { X, Save } from 'lucide-react';
 import { useState } from 'react';
-import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/src/constants/decisions';
-import type { DeliberationStudent } from '@edugoma360/shared/src/types/academic';
+import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/constants/decisions';
+import type { DeliberationStudent } from '@edugoma360/shared/types/academic';
 import DecisionBadge from './DecisionBadge';
 
 interface DecisionModalProps {
@@ -102,7 +102,7 @@ export default function DecisionModal({ student, onSave, onClose, isLoading }: D
                             value={note}
                             onChange={(e) => setNote(e.target.value)}
                             rows={3}
-                            placeholder="Observation particulière du conseil de classe…"
+                            placeholder="Observation particulière du conseil de classeâ€¦"
                             className="w-full px-3 py-2 text-sm border border-neutral-200 rounded-lg resize-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none"
                         />
                     </div>
@@ -122,7 +122,7 @@ export default function DecisionModal({ student, onSave, onClose, isLoading }: D
                         className="flex-1 h-10 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                         <Save size={15} />
-                        {isLoading ? 'Enregistrement…' : 'Enregistrer'}
+                        {isLoading ? 'Enregistrementâ€¦' : 'Enregistrer'}
                     </button>
                 </div>
             </div>

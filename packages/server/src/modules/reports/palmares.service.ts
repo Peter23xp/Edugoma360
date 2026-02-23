@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 import { generatePdf } from '../../lib/pdf';
 import Handlebars from 'handlebars';
 import fs from 'fs/promises';
@@ -202,15 +202,15 @@ export class PalmaresService {
      * Get mention label
      */
     private getMention(decision: string, average: number, rank: number): string {
-        if (rank === 1) return '🥇 1er';
-        if (rank === 2) return '🥈 2ème';
-        if (rank === 3) return '🥉 3ème';
+        if (rank === 1) return 'ðŸ¥‡ 1er';
+        if (rank === 2) return 'ðŸ¥ˆ 2ème';
+        if (rank === 3) return 'ðŸ¥‰ 3ème';
 
         if (decision === 'GREAT_DISTINCTION') return 'Grande Distinction';
         if (decision === 'DISTINCTION') return 'Distinction';
         if (decision === 'ADMITTED') return 'Admis';
-        if (decision === 'ADJOURNED') return '⚠️ Ajourné';
-        if (decision === 'FAILED') return '❌ Refusé';
+        if (decision === 'ADJOURNED') return 'âš ï¸ Ajourné';
+        if (decision === 'FAILED') return 'âŒ Refusé';
         if (decision === 'MEDICAL') return 'Reporté';
 
         return 'Admis';
@@ -220,11 +220,11 @@ export class PalmaresService {
      * Get badge emoji
      */
     private getBadge(rank: number, decision: string): string {
-        if (rank === 1) return '🥇';
-        if (rank === 2) return '🥈';
-        if (rank === 3) return '🥉';
-        if (decision === 'ADJOURNED') return '⚠️';
-        if (decision === 'FAILED') return '❌';
+        if (rank === 1) return 'ðŸ¥‡';
+        if (rank === 2) return 'ðŸ¥ˆ';
+        if (rank === 3) return 'ðŸ¥‰';
+        if (decision === 'ADJOURNED') return 'âš ï¸';
+        if (decision === 'FAILED') return 'âŒ';
         return '';
     }
 }

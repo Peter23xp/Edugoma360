@@ -1,5 +1,5 @@
-import { Medal, Star, Trophy } from 'lucide-react';
-import type { PalmaresEntry } from '@edugoma360/shared/src/types/academic';
+﻿import { Medal, Star, Trophy } from 'lucide-react';
+import type { PalmaresEntry } from '@edugoma360/shared/types/academic';
 
 interface PalmaresRankingListProps {
     entries: PalmaresEntry[];

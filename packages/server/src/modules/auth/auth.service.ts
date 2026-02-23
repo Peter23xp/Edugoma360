@@ -1,10 +1,10 @@
-import bcrypt from 'bcryptjs';
+﻿import bcrypt from 'bcryptjs';
 import prisma from '../../lib/prisma';
 import { generateToken, generateRefreshToken } from '../../lib/jwt';
 import { env } from '../../config/env';
 import type { LoginInput, ChangePasswordInput } from './auth.dto';
 
-// ── Regex helpers ────────────────────────────────────────────────────────────
+// â”€â”€ Regex helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MATRICULE_REGEX = /^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]+-\d+$/i;
 
@@ -15,7 +15,7 @@ export class AuthService {
     async login(data: LoginInput) {
         const { identifier, password, rememberMe } = data;
 
-        // ── Detect identifier type and build Prisma where clause ─────────
+        // â”€â”€ Detect identifier type and build Prisma where clause â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let whereClause: any;
         if (EMAIL_REGEX.test(identifier)) {
             // Email login
@@ -48,21 +48,21 @@ export class AuthService {
             throw new AuthError('INVALID_CREDENTIALS', 'Email/matricule ou mot de passe incorrect.');
         }
 
-        // ── Verify password ─────────────────────────────────────────────
+        // â”€â”€ Verify password â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
         if (!isPasswordValid) {
             throw new AuthError('INVALID_CREDENTIALS', 'Email/matricule ou mot de passe incorrect.');
         }
 
-        // ── Check lockout (handled at controller level via loginAttempts) ─
+        // â”€â”€ Check lockout (handled at controller level via loginAttempts) â”€
 
-        // ── Update last login ───────────────────────────────────────────
+        // â”€â”€ Update last login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         await prisma.user.update({
             where: { id: user.id },
             data: { lastLoginAt: new Date() },
         });
 
-        // ── Generate tokens ─────────────────────────────────────────────
+        // â”€â”€ Generate tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const payload = {
             userId: user.id,
             schoolId: user.schoolId,
@@ -106,7 +106,7 @@ export class AuthService {
             });
             return { token: newToken, expiresIn: 28800 }; // 8h in seconds
         } catch {
-            throw new AuthError('INVALID_TOKEN', 'Token de rafraîchissement invalide ou expiré.');
+            throw new AuthError('INVALID_TOKEN', 'Token de rafraÃ®chissement invalide ou expiré.');
         }
     }
 
@@ -355,7 +355,7 @@ export class AuthService {
     }
 }
 
-// ── Custom Auth Error ────────────────────────────────────────────────────────
+// â”€â”€ Custom Auth Error â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export class AuthError extends Error {
     code: string;
     constructor(code: string, message: string) {

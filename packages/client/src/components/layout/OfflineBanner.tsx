@@ -1,4 +1,4 @@
-import { WifiOff, RefreshCw } from 'lucide-react';
+﻿import { WifiOff, RefreshCw } from 'lucide-react';
 import { useOffline } from '../../hooks/useOffline';
 import { useSync } from '../../hooks/useSync';
 

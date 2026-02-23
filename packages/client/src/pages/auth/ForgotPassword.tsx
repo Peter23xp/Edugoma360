@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import { Phone, ArrowLeft } from 'lucide-react';
 import logo from '../../assets/logo.svg';
 
@@ -38,7 +38,7 @@ export default function ForgotPassword() {
                         className="flex items-center justify-center gap-2 mt-6 text-sm text-primary hover:text-primary-dark font-medium"
                     >
                         <ArrowLeft size={16} />
-                        Retour à la connexion
+                        Retour Ã  la connexion
                     </Link>
                 </div>
             </div>

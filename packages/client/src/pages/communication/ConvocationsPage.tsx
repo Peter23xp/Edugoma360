@@ -1,4 +1,4 @@
-import { UserCheck } from 'lucide-react';
+﻿import { UserCheck } from 'lucide-react';
 import EmptyState from '../../components/shared/EmptyState';
 
 export default function ConvocationsPage() {

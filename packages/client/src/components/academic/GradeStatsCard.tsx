@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, AlertTriangle, TrendingUp } from 'lucide-react';
+﻿import { CheckCircle, Clock, AlertTriangle, TrendingUp } from 'lucide-react';
 import type { GradeStats } from '../../hooks/useGrades';
 
 interface GradeStatsCardProps {

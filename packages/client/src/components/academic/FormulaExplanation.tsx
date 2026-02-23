@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ChevronDown, ChevronUp, Info } from 'lucide-react';
 
 export default function FormulaExplanation() {
@@ -35,7 +35,7 @@ export default function FormulaExplanation() {
                         </h4>
                         <div className="space-y-2 text-neutral-700">
                             <p className="font-mono bg-neutral-50 p-2 rounded">
-                                Moyenne = (Interro × 20%) + (TP × 30%) + (Examen × 50%)
+                                Moyenne = (Interro Ã— 20%) + (TP Ã— 30%) + (Examen Ã— 50%)
                             </p>
                             <div className="text-xs space-y-1">
                                 <p>• Interrogation : 20% de la note finale</p>
@@ -52,7 +52,7 @@ export default function FormulaExplanation() {
                         </h4>
                         <div className="space-y-2 text-neutral-700">
                             <p className="font-mono bg-neutral-50 p-2 rounded">
-                                Moyenne Générale = Σ(Moyenne_Matière × Coefficient) / Σ(Coefficient)
+                                Moyenne Générale = Î£(Moyenne_Matière Ã— Coefficient) / Î£(Coefficient)
                             </p>
                             <div className="text-xs">
                                 <p>
@@ -68,7 +68,7 @@ export default function FormulaExplanation() {
                         <h4 className="font-semibold text-blue-900 mb-2">3. Total Points</h4>
                         <div className="space-y-2 text-neutral-700">
                             <p className="font-mono bg-neutral-50 p-2 rounded">
-                                Total Points = Moyenne_Générale × Total_Coefficients
+                                Total Points = Moyenne_Générale Ã— Total_Coefficients
                             </p>
                             <div className="text-xs">
                                 <p>
@@ -85,7 +85,7 @@ export default function FormulaExplanation() {
                         <div className="space-y-2 text-neutral-700 text-xs">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 bg-green-500 rounded-full" />
-                                <span>≥ 10/20 : Admis</span>
+                                <span>â‰¥ 10/20 : Admis</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 bg-orange-500 rounded-full" />
@@ -113,10 +113,10 @@ export default function FormulaExplanation() {
                             <p>• TP : 14/20</p>
                             <p>• Examen : 16/20</p>
                             <p className="font-mono bg-neutral-50 p-2 rounded mt-2">
-                                Moyenne = (12×0.2) + (14×0.3) + (16×0.5) = 14.6/20
+                                Moyenne = (12Ã—0.2) + (14Ã—0.3) + (16Ã—0.5) = 14.6/20
                             </p>
                             <p className="mt-2">
-                                Si total coefficients = 24, contribution aux points totaux = 14.6 × 4
+                                Si total coefficients = 24, contribution aux points totaux = 14.6 Ã— 4
                                 = 58.4 points
                             </p>
                         </div>

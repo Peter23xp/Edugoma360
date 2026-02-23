@@ -1,6 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarCheck, Save, Loader2, Cloud, CloudOff } from 'lucide-react';
+import { useClassesList } from '../../hooks/useClassesList';
 import api from '../../lib/api';
 import db from '../../lib/offline/db';
 import { enqueueSync } from '../../lib/offline/sync';
@@ -30,7 +31,7 @@ export default function DailyAttendancePage() {
     const [period, setPeriod] = useState<'MATIN' | 'APRES_MIDI'>('MATIN');
     const [rows, setRows] = useState<AttendanceRow[]>([]);
 
-    const { data: classes } = useQuery({ queryKey: ['classes-list'], queryFn: async () => (await api.get('/settings/classes')).data });
+    const { data: classes = [] } = useClassesList();
 
     const { isLoading } = useQuery({
         queryKey: ['attendance', classId, date, period],
@@ -101,8 +102,8 @@ export default function DailyAttendancePage() {
 
             {rows.length > 0 && (
                 <div className="bg-white rounded-xl border border-neutral-300/50 p-4 flex items-center gap-4 text-sm">
-                    <span className="text-success font-semibold">✓ {presentCount} Présent(s)</span>
-                    <span className="text-danger font-semibold">✗ {absentCount} Absent(s)</span>
+                    <span className="text-success font-semibold">âœ“ {presentCount} Présent(s)</span>
+                    <span className="text-danger font-semibold">âœ— {absentCount} Absent(s)</span>
                     <span className="text-neutral-400">{rows.length} total</span>
                 </div>
             )}

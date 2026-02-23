@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { CheckCircle2, AlertCircle, XCircle } from 'lucide-react';
 import type { ParsedStudent } from '../../../lib/excel/parseStudents';
 
@@ -117,7 +117,7 @@ export default function PreviewTable({ data }: PreviewTableProps) {
                         {filteredData.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="px-4 py-8 text-center text-neutral-500">
-                                    Aucune ligne à afficher avec ce filtre
+                                    Aucune ligne Ã  afficher avec ce filtre
                                 </td>
                             </tr>
                         ) : (

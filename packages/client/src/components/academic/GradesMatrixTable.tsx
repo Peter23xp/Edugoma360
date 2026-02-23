@@ -1,4 +1,4 @@
-/**
+﻿/**
  * GradesMatrixTable — alias de GradesMatrix
  *
  * L'audit SCR-013 attend le nom `GradesMatrixTable`.

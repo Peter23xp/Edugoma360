@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Receipt, Search, Loader2, Printer } from 'lucide-react';
 import api from '../../lib/api';
@@ -145,7 +145,7 @@ export default function PaymentFormPage() {
                 <div className="bg-white rounded-xl border border-neutral-300/50 p-8 text-center space-y-4">
                     <div className="w-16 h-16 bg-success-bg rounded-full flex items-center justify-center mx-auto"><Receipt size={28} className="text-success" /></div>
                     <h2 className="text-lg font-bold">Paiement enregistré !</h2>
-                    <p className="text-sm text-neutral-500">N° Reçu : <span className="font-mono font-bold">{String(receiptData.receiptNumber)}</span></p>
+                    <p className="text-sm text-neutral-500">NÂ° Reçu : <span className="font-mono font-bold">{String(receiptData.receiptNumber)}</span></p>
                     <div className="flex justify-center gap-3">
                         <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 text-sm border border-neutral-300 rounded-lg hover:bg-neutral-100"><Printer size={14} /> Imprimer le reçu</button>
                         <button onClick={() => { setReceiptData(null); setSelectedStudent(null); setFeeTypeId(''); setAmountPaid(0); }} className="px-4 py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark">Nouveau paiement</button>

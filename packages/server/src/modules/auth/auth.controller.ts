@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+﻿import { Request, Response, NextFunction } from 'express';
 import { authService, AuthError } from './auth.service';
 import { LoginDto, RefreshTokenDto, ChangePasswordDto } from './auth.dto';
 
@@ -8,7 +8,7 @@ export class AuthController {
             const data = LoginDto.parse(req.body);
             const result = await authService.login(data);
 
-            // ── Set refreshToken as httpOnly cookie ────────────────────────
+            // â”€â”€ Set refreshToken as httpOnly cookie â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             const cookieMaxAge = result.rememberMe
                 ? 30 * 24 * 60 * 60 * 1000  // 30 days
                 : undefined;                 // session cookie (closes with browser)
@@ -43,7 +43,7 @@ export class AuthController {
             const refreshToken = req.cookies?.refreshToken;
             if (!refreshToken) {
                 res.status(401).json({
-                    error: { code: 'NO_REFRESH_TOKEN', message: 'Token de rafraîchissement absent.' },
+                    error: { code: 'NO_REFRESH_TOKEN', message: 'Token de rafraÃ®chissement absent.' },
                 });
                 return;
             }

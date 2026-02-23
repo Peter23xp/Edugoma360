@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X, Loader2, Save } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -178,8 +178,8 @@ export default function TeacherAssignmentModal({
                     {/* Info */}
                     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <p className="text-sm text-blue-800">
-                            💡 Un enseignant peut être assigné à plusieurs matières dans plusieurs
-                            classes. Les attributions peuvent être modifiées à tout moment.
+                            ðŸ’¡ Un enseignant peut être assigné Ã  plusieurs matières dans plusieurs
+                            classes. Les attributions peuvent être modifiées Ã  tout moment.
                         </p>
                     </div>
                 </div>

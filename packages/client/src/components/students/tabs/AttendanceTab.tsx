@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import api from '../../../lib/api';
@@ -117,7 +117,7 @@ export default function AttendanceTab({ studentId }: AttendanceTabProps) {
 
     return (
         <div className="space-y-6">
-            {/* ── Stats Cards ────────────────────────────────────────────── */}
+            {/* â”€â”€ Stats Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatCard
                     label="Taux de présence"
@@ -141,7 +141,7 @@ export default function AttendanceTab({ studentId }: AttendanceTabProps) {
                 />
             </div>
 
-            {/* ── Calendar ───────────────────────────────────────────────── */}
+            {/* â”€â”€ Calendar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div>
                 <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-semibold text-neutral-900 capitalize">
@@ -224,7 +224,7 @@ export default function AttendanceTab({ studentId }: AttendanceTabProps) {
                 </div>
             </div>
 
-            {/* ── Absences Table ─────────────────────────────────────────── */}
+            {/* â”€â”€ Absences Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {data.records.filter((r) => r.status !== 'PRESENT').length > 0 && (
                 <div>
                     <h3 className="text-sm font-semibold text-neutral-900 mb-3">

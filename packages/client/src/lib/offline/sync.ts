@@ -1,4 +1,4 @@
-import db, { type SyncQueueItem } from './db';
+﻿import db, { type SyncQueueItem } from './db';
 import api from '../api';
 import { useOfflineStore } from '../../stores/offline.store';
 

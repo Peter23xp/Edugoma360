@@ -1,7 +1,8 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart3, Download } from 'lucide-react';
 import api from '../../lib/api';
+import { useClassesList } from '../../hooks/useClassesList';
 import { useSchoolStore } from '../../stores/school.store';
 import DataTable from '../../components/shared/DataTable';
 
@@ -9,7 +10,7 @@ export default function AveragesPage() {
     const { activeTermId } = useSchoolStore();
     const [classId, setClassId] = useState('');
 
-    const { data: classes } = useQuery({ queryKey: ['classes-list'], queryFn: async () => (await api.get('/settings/classes')).data });
+    const { data: classes = [] } = useClassesList();
 
     const { data: averages, isLoading } = useQuery({
         queryKey: ['averages', classId, activeTermId],

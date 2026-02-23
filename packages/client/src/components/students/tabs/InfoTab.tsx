@@ -1,4 +1,4 @@
-import { Phone, MessageSquare } from 'lucide-react';
+﻿import { Phone, MessageSquare } from 'lucide-react';
 import type { Student } from '@edugoma360/shared';
 
 interface InfoTabProps {
@@ -35,7 +35,7 @@ export default function InfoTab({ student }: InfoTabProps) {
 
     return (
         <div className="space-y-6">
-            {/* ── Identité ──────────────────────────────────────────────── */}
+            {/* â”€â”€ Identité â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div>
                 <h3 className="text-sm font-semibold text-neutral-900 mb-3">Identité</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,20 +53,20 @@ export default function InfoTab({ student }: InfoTabProps) {
                 </div>
             </div>
 
-            {/* ── Contacts Famille ──────────────────────────────────────── */}
+            {/* â”€â”€ Contacts Famille â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div>
                 <h3 className="text-sm font-semibold text-neutral-900 mb-3">Contacts Famille</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Père */}
                     <ParentCard
-                        title="PÈRE"
+                        title="PÃˆRE"
                         name={student.nomPere}
                         phone={student.telPere}
                     />
 
                     {/* Mère */}
                     <ParentCard
-                        title="MÈRE"
+                        title="MÃˆRE"
                         name={student.nomMere}
                         phone={student.telMere}
                     />

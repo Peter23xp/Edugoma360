@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+﻿import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, Filter, ChevronDown } from 'lucide-react';
 import { useClasses } from '../../hooks/useStudents';
 import { SCHOOL_SECTIONS } from '@edugoma360/shared';

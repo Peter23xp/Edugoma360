@@ -1,8 +1,8 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import api from '../lib/api';
 
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export interface User {
     id: string;
     schoolId: string;
@@ -35,7 +35,7 @@ interface AuthState {
     loginOffline: () => Promise<boolean>;
 }
 
-// ── Dexie helper: persist last user for offline access ───────────────────────
+// â”€â”€ Dexie helper: persist last user for offline access â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function persistUserOffline(user: User): Promise<void> {
     try {
         // Use a simple key-value approach: store in localStorage for offline user
@@ -55,7 +55,7 @@ function getOfflineUser(): User | null {
     }
 }
 
-// ── Zustand Store ────────────────────────────────────────────────────────────
+// â”€â”€ Zustand Store â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const useAuthStore = create<AuthState>()((set, get) => ({
     user: null,
     token: null,

@@ -1,4 +1,4 @@
-import { CheckCircle2, XCircle, ArrowRight, RotateCcw } from 'lucide-react';
+﻿import { CheckCircle2, XCircle, ArrowRight, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface ImportReportProps {
@@ -105,7 +105,7 @@ export default function ImportReport({ result, onReset }: ImportReportProps) {
                     </div>
 
                     <p className="text-xs text-red-700 mt-4">
-                        💡 Corrigez ces erreurs dans votre fichier Excel et réimportez les lignes
+                        ðŸ’¡ Corrigez ces erreurs dans votre fichier Excel et réimportez les lignes
                         concernées
                     </p>
                 </div>

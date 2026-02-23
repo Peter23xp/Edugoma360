@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calculator, Lock, FileSpreadsheet, Loader2, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -353,7 +353,7 @@ export default function AveragesPage() {
                         <div className="p-6 space-y-4">
                             <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                                 <p className="text-sm text-orange-800 font-medium">
-                                    ⚠️ Cette action est irréversible sans l'autorisation du Préfet.
+                                    âš ï¸ Cette action est irréversible sans l'autorisation du Préfet.
                                 </p>
                             </div>
 

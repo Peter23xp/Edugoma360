@@ -1,5 +1,5 @@
-import { Award, TrendingUp, AlertCircle, Star } from 'lucide-react';
-import type { StudentAverage } from '@edugoma360/shared/src/types/academic';
+﻿import { Award, TrendingUp, AlertCircle, Star } from 'lucide-react';
+import type { StudentAverage } from '@edugoma360/shared/types/academic';
 
 interface StudentAverageCardProps {
     student: StudentAverage;

@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, AlertTriangle, XCircle } from 'lucide-react';
+﻿import { CheckCircle, Clock, AlertTriangle, XCircle } from 'lucide-react';
 import GradeInput from './GradeInput';
 
 interface Student {

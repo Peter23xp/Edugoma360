@@ -1,4 +1,4 @@
-import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
+﻿import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card } from '../ui/card';
 

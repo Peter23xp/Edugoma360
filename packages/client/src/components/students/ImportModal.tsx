@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+﻿import { useState, useCallback, useRef } from 'react';
 import { X, Upload, Download, FileSpreadsheet, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import api from '../../lib/api';
 
@@ -196,7 +196,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
 
                 {/* Content */}
                 <div className="p-5">
-                    {/* ── Step 1: Upload ────────────────────────────────── */}
+                    {/* â”€â”€ Step 1: Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 'upload' && (
                         <div className="space-y-4">
                             {/* Drop zone */}
@@ -253,7 +253,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
                         </div>
                     )}
 
-                    {/* ── Step 2: Preview ───────────────────────────────── */}
+                    {/* â”€â”€ Step 2: Preview â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 'preview' && (
                         <div className="space-y-4">
                             <div className="flex items-center gap-3 text-sm">
@@ -346,7 +346,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
                         </div>
                     )}
 
-                    {/* ── Step 3: Confirm ───────────────────────────────── */}
+                    {/* â”€â”€ Step 3: Confirm â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 'confirm' && (
                         <div className="space-y-5 text-center">
                             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -390,7 +390,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
                         </div>
                     )}
 
-                    {/* ── Step 4: Result ────────────────────────────────── */}
+                    {/* â”€â”€ Step 4: Result â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 'result' && result && (
                         <div className="space-y-5 text-center">
                             <div className="w-16 h-16 rounded-full bg-success-bg flex items-center justify-center mx-auto">

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { Wallet, TrendingUp, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
 import { formatFC } from '@edugoma360/shared';

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, Upload, FileSpreadsheet, AlertCircle } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -112,7 +112,7 @@ export default function StudentsImportPage() {
                                    hover:text-primary transition-colors mb-4"
                     >
                         <ArrowLeft size={16} />
-                        Retour à la liste
+                        Retour Ã  la liste
                     </button>
 
                     <div className="flex items-center justify-between">
@@ -121,7 +121,7 @@ export default function StudentsImportPage() {
                                 Importer des élèves en masse
                             </h1>
                             <p className="text-sm text-neutral-600">
-                                Importez plusieurs élèves à la fois via un fichier Excel
+                                Importez plusieurs élèves Ã  la fois via un fichier Excel
                             </p>
                         </div>
 
@@ -162,7 +162,7 @@ export default function StudentsImportPage() {
                                         <li>Glissez-déposez ou sélectionnez le fichier dans la zone ci-dessus</li>
                                     </ol>
                                     <p className="text-xs text-blue-700 mt-3">
-                                        💡 Le modèle contient des exemples et la liste des classes disponibles
+                                        ðŸ’¡ Le modèle contient des exemples et la liste des classes disponibles
                                     </p>
                                 </div>
                             </div>
@@ -242,7 +242,7 @@ export default function StudentsImportPage() {
                         {errorCount > 0 && (
                             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                                 <p className="text-sm text-red-800">
-                                    ❌ Vous ne pouvez pas importer tant qu'il y a des erreurs.
+                                    âŒ Vous ne pouvez pas importer tant qu'il y a des erreurs.
                                     Corrigez le fichier et réimportez-le.
                                 </p>
                             </div>

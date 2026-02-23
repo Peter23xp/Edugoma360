@@ -1,4 +1,4 @@
-import { Trophy, Medal, Award, AlertTriangle, XCircle } from 'lucide-react';
+﻿import { Trophy, Medal, Award, AlertTriangle, XCircle } from 'lucide-react';
 
 interface RankingRow {
     rank: number;

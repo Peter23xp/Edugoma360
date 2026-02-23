@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Lock, Wifi, WifiOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/auth.store';
 import { useOffline } from '../../hooks/useOffline';
 import api from '../../lib/api';
-import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/src/constants/evalTypes';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/constants/evalTypes';
 import GradeEntryTable from '../../components/academic/GradeEntryTable';
 import LockGradesModal from '../../components/academic/LockGradesModal';
 import { addToGradeQueue, getQueueCount } from '../../lib/offline/gradeQueue';

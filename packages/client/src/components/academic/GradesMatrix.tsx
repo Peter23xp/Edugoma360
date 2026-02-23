@@ -1,4 +1,4 @@
-import { AlertTriangle } from 'lucide-react';
+﻿import { AlertTriangle } from 'lucide-react';
 
 interface Student {
     id: string;
@@ -183,7 +183,7 @@ export default function GradesMatrix({
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="text-green-600">14.5</span>
-                        <span className="text-neutral-600">Note ≥ 14</span>
+                        <span className="text-neutral-600">Note â‰¥ 14</span>
                     </div>
                     <div className="flex items-center gap-2">
                         <span className="text-red-700 font-bold flex items-center gap-1">

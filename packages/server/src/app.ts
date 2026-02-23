@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -27,7 +27,7 @@ import bulletinsRoutes from './modules/bulletins/bulletins.routes';
 
 const app = express();
 
-// ── Global Middleware ─────────────────────────────────────────────────────────
+// â”€â”€ Global Middleware â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(helmet());
 app.use(corsOptions);
 app.use(express.json({ limit: '10mb' }));
@@ -35,10 +35,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(apiLimiter);
 
-// ── Static Files (uploads) ────────────────────────────────────────────────────
+// â”€â”€ Static Files (uploads) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use('/uploads', express.static(path.join(__dirname, '..', '..', '..', 'uploads')));
 
-// ── Health Check ──────────────────────────────────────────────────────────────
+// â”€â”€ Health Check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/health', (_req, res) => {
     res.json({
         status: 'ok',
@@ -48,7 +48,7 @@ app.get('/api/health', (_req, res) => {
     });
 });
 
-// ── API Routes ────────────────────────────────────────────────────────────────
+// â”€â”€ API Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentsRoutes);
 app.use('/api/classes', classesRoutes);
@@ -67,7 +67,7 @@ app.use('/api/alerts', alertsRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/bulletin', bulletinsRoutes);
 
-// ── 404 Handler ───────────────────────────────────────────────────────────────
+// â”€â”€ 404 Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req, res) => {
     res.status(404).json({
         error: {
@@ -77,7 +77,7 @@ app.use((_req, res) => {
     });
 });
 
-// ── Error Handler ─────────────────────────────────────────────────────────────
+// â”€â”€ Error Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(errorHandler);
 
 export default app;

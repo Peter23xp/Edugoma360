@@ -1,5 +1,5 @@
-import { Users, TrendingUp, Award, BookOpen } from 'lucide-react';
-import type { ClassWithStats } from '@edugoma360/shared/src/types/academic';
+﻿import { Users, TrendingUp, Award, BookOpen } from 'lucide-react';
+import type { ClassWithStats } from '@edugoma360/shared/types/academic';
 
 interface ClassStatsCardProps {
     classData: ClassWithStats;
@@ -35,7 +35,7 @@ export default function ClassStatsCard({ classData }: ClassStatsCardProps) {
             value: classData.successRate !== null && classData.successRate !== undefined
                 ? `${classData.successRate}%`
                 : '—',
-            sub: 'Élèves ≥ 10/20',
+            sub: 'Élèves â‰¥ 10/20',
             color: (classData.successRate ?? 0) >= 50 ? 'text-green-600' : 'text-orange-600',
             bg: (classData.successRate ?? 0) >= 50 ? 'bg-green-50' : 'bg-orange-50',
         },

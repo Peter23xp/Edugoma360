@@ -1,4 +1,4 @@
-import { CheckCircle2, Edit2 } from 'lucide-react';
+﻿import { CheckCircle2, Edit2 } from 'lucide-react';
 import { useSetupWizard } from '../../hooks/useSetupWizard';
 
 export default function SetupSummary() {
@@ -98,7 +98,7 @@ export default function SetupSummary() {
                                 'fr-FR'
                             )
                             : ''
-                            } → ${formData.academicYear?.endDate
+                            } â†’ ${formData.academicYear?.endDate
                                 ? new Date(formData.academicYear.endDate).toLocaleDateString(
                                     'fr-FR'
                                 )

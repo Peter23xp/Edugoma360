@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+﻿import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Eye,
@@ -265,7 +265,7 @@ export default function StudentRow({ student, isSelected, onSelect, onAction }: 
     );
 }
 
-// ── Sub-component: Menu Item ──
+// â”€â”€ Sub-component: Menu Item â”€â”€
 function MenuItem({
     icon,
     label,

@@ -1,6 +1,6 @@
-import { Search, Filter, X } from 'lucide-react';
-import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/src/constants/evalTypes';
-import type { GradeFiltersState } from '@edugoma360/shared/src/types/academic';
+﻿import { Search, Filter, X } from 'lucide-react';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/constants/evalTypes';
+import type { GradeFiltersState } from '@edugoma360/shared/types/academic';
 
 interface SubjectOption { id: string; name: string }
 interface ClassOption { id: string; name: string }
@@ -44,7 +44,7 @@ export default function GradeFilters({
                         type="text"
                         value={searchValue}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        placeholder="Rechercher élève…"
+                        placeholder="Rechercher élèveâ€¦"
                         className="h-9 pl-9 pr-4 text-sm border border-neutral-200 rounded-lg bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none w-48"
                     />
                 </div>

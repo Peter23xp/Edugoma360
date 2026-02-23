@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+﻿import { Request, Response, NextFunction } from 'express';
 import { bulletinsService } from './bulletins.service';
 
 export class BulletinsController {

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { User, GraduationCap, Wallet, CalendarCheck } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../lib/api';
@@ -53,7 +53,7 @@ export default function ParentHomePage() {
             {(!children || children.length === 0) && (
                 <div className="text-center py-12 text-neutral-500 text-sm">
                     <User size={32} className="mx-auto mb-3 text-neutral-300" />
-                    Aucun enfant associé à ce compte
+                    Aucun enfant associé Ã  ce compte
                 </div>
             )}
         </div>

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useStudentForm } from '../../../hooks/useStudentForm';
 import api from '../../../lib/api';
@@ -156,7 +156,7 @@ export default function Step2Academic() {
                     </div>
                 )}
 
-                {/* Résultat TENASOSP (si classe ≥ 3ème) */}
+                {/* Résultat TENASOSP (si classe â‰¥ 3ème) */}
                 {showTenasosp && (
                     <div>
                         <label className="block text-sm font-medium text-neutral-700 mb-1.5">
@@ -179,7 +179,7 @@ export default function Step2Academic() {
                                        ${errors.resultatTenasosp ? 'border-red-500' : 'border-neutral-300'}`}
                         />
                         <p className="text-xs text-neutral-500 mt-1">
-                            Pourcentage obtenu au TENASOSP (0 à 100)
+                            Pourcentage obtenu au TENASOSP (0 Ã  100)
                         </p>
                         {errors.resultatTenasosp && (
                             <p className="text-xs text-red-600 mt-1">

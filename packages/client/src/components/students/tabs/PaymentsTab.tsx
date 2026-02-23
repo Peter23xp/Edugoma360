@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { DollarSign, Receipt } from 'lucide-react';
 import api from '../../../lib/api';
@@ -81,7 +81,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
 
     return (
         <div className="space-y-6">
-            {/* ── Summary Cards ──────────────────────────────────────────── */}
+            {/* â”€â”€ Summary Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <SummaryCard
                     label="Total dû"
@@ -100,7 +100,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                 />
             </div>
 
-            {/* ── Progress Bar ───────────────────────────────────────────── */}
+            {/* â”€â”€ Progress Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-medium text-neutral-600">
@@ -119,7 +119,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                 </div>
             </div>
 
-            {/* ── Payments Table ─────────────────────────────────────────── */}
+            {/* â”€â”€ Payments Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {payments.length > 0 ? (
                 <div>
                     <h3 className="text-sm font-semibold text-neutral-900 mb-3">
@@ -130,7 +130,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                             <thead>
                                 <tr className="border-b border-neutral-200">
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Reçu N°
+                                        Reçu NÂ°
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
                                         Type de frais
@@ -189,7 +189,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                 </div>
             )}
 
-            {/* ── Outstanding Fees ───────────────────────────────────────── */}
+            {/* â”€â”€ Outstanding Fees â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {summary.remaining > 0 && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-start justify-between gap-4">
@@ -198,7 +198,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                                 Solde dû
                             </p>
                             <p className="text-xs text-red-700">
-                                Il reste {summary.remaining.toLocaleString()} FC à payer pour
+                                Il reste {summary.remaining.toLocaleString()} FC Ã  payer pour
                                 cette année scolaire.
                             </p>
                         </div>
@@ -208,7 +208,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                                        bg-red-600 text-white rounded-lg hover:bg-red-700 
                                        transition-colors whitespace-nowrap"
                         >
-                            Enregistrer paiement →
+                            Enregistrer paiement â†’
                         </button>
                     </div>
                 </div>

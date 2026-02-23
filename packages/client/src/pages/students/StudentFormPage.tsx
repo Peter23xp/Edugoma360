@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -60,7 +60,7 @@ export default function StudentFormPage() {
                 const newStudent = response.data.data;
                 toast.success(
                     `Élève inscrit ! Matricule : ${newStudent.matricule}`,
-                    { duration: 6000, icon: '🎓' }
+                    { duration: 6000, icon: 'ðŸŽ“' }
                 );
                 resetForm();
                 navigate(`/students/${newStudent.id}`);
@@ -111,7 +111,7 @@ export default function StudentFormPage() {
                                    hover:text-primary transition-colors mb-4"
                     >
                         <ArrowLeft size={16} />
-                        Retour à la liste
+                        Retour Ã  la liste
                     </button>
 
                     <h1 className="text-2xl font-bold text-neutral-900 mb-6">

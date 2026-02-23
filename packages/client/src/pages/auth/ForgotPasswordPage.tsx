@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
     showConfirmPassword: false,
   });
 
-  // Compte à rebours OTP
+  // Compte Ã  rebours OTP
   useEffect(() => {
     if (state.otpCountdown > 0) {
       const timer = setTimeout(() => {
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
     }
   }, [state.otpCountdown]);
 
-  // Compte à rebours renvoyer
+  // Compte Ã  rebours renvoyer
   useEffect(() => {
     if (state.resendCountdown > 0) {
       const timer = setTimeout(() => {
@@ -341,7 +341,7 @@ export default function ForgotPasswordPage() {
                   />
                 </div>
                 <p className="text-xs text-gray-500">
-                  Opérateurs acceptés : Airtel · Vodacom · Orange
+                  Opérateurs acceptés : Airtel Â· Vodacom Â· Orange
                 </p>
               </div>
 
@@ -356,7 +356,7 @@ export default function ForgotPasswordPage() {
               <div className="text-center">
                 <Link to="/login" className="text-sm text-[#1B5E20] hover:underline flex items-center justify-center gap-1">
                   <ArrowLeft className="h-4 w-4" />
-                  Retour à la connexion
+                  Retour Ã  la connexion
                 </Link>
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function ForgotPasswordPage() {
                   </div>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">Code envoyé au {state.maskedPhone}</h2>
-                <p className="text-gray-600">Entrez le code à 6 chiffres reçu par SMS</p>
+                <p className="text-gray-600">Entrez le code Ã  6 chiffres reçu par SMS</p>
               </div>
 
               <OtpInput
@@ -521,7 +521,7 @@ export default function ForgotPasswordPage() {
                 onClick={() => navigate('/login')}
                 className="w-full bg-[#1B5E20] hover:bg-[#2E7D32]"
               >
-                Aller à la connexion
+                Aller Ã  la connexion
               </Button>
             </div>
           )}

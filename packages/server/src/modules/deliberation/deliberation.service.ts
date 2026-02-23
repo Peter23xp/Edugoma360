@@ -1,5 +1,5 @@
-import prisma from '../../lib/prisma';
-import { suggestDelibDecision } from '@edugoma360/shared/src/utils/gradeCalc';
+﻿import prisma from '../../lib/prisma';
+import { suggestDelibDecision } from '@edugoma360/shared/utils/gradeCalc';
 import { deliberationPdfService } from './deliberation.pdf.service';
 import { deliberationBulletinService } from './deliberation.bulletin.service';
 
@@ -82,7 +82,7 @@ export class DeliberationService {
 
         // Calculate averages for each student
         const { calculateStudentSubjectAverage, calculateGeneralAverage, calculateTotalPoints, checkEliminatory } =
-            await import('@edugoma360/shared/src/utils/gradeCalc');
+            await import('@edugoma360/shared/utils/gradeCalc');
 
         const students = studentIds.map((studentId) => {
             const student = enrollments.find((e: any) => e.studentId === studentId)!.student;
@@ -114,7 +114,7 @@ export class DeliberationService {
                 };
             });
 
-            // Calculate total points first (Σ(moyenne_matière × coefficient))
+            // Calculate total points first (Î£(moyenne_matière Ã— coefficient))
             const totalPoints = calculateTotalPoints(
                 subjectAverages.map((sa) => ({
                     average: sa.average,
@@ -122,7 +122,7 @@ export class DeliberationService {
                 }))
             );
 
-            // Calculate general average (totalPoints / Σcoefficients, arrondi 0.5)
+            // Calculate general average (totalPoints / Î£coefficients, arrondi 0.5)
             const totalCoefficients = subjects.reduce((sum, s) => sum + s.coefficient, 0);
             const generalAverage = calculateGeneralAverage(totalPoints, totalCoefficients);
 

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Calendar, Loader2, PlusCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -6,11 +6,11 @@ import { useAuthStore } from '../../stores/auth.store';
 import api from '../../lib/api';
 import TimetableGrid from '../../components/academic/TimetableGrid';
 import PeriodFormModal from '../../components/academic/PeriodFormModal';
-import type { TimetablePeriod, DayOfWeek } from '@edugoma360/shared/src/types/academic';
+import type { TimetablePeriod, DayOfWeek } from '@edugoma360/shared/types/academic';
 
 type ViewMode = 'teacher' | 'class';
 
-// ── Interface légère pour le modal ──────────────────────────────────────────
+// â”€â”€ Interface légère pour le modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface SelectedCell {
     dayOfWeek: DayOfWeek;
     periodNumber: number;
@@ -32,7 +32,7 @@ export default function TimetablePage() {
     // Modal état
     const [selectedCell, setSelectedCell] = useState<SelectedCell | null>(null);
 
-    // ── Emploi du temps principal ────────────────────────────────────────────
+    // â”€â”€ Emploi du temps principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const { data: timetableData, isLoading } = useQuery({
         queryKey: ['timetable', viewMode, selectedTeacherId, selectedClassId],
         queryFn: async () => {
@@ -50,7 +50,7 @@ export default function TimetablePage() {
             (viewMode === 'class' && !!selectedClassId),
     });
 
-    // ── Enseignants (Préfet) ─────────────────────────────────────────────────
+    // â”€â”€ Enseignants (Préfet) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const { data: teachersData } = useQuery({
         queryKey: ['teachers'],
         queryFn: async () => {
@@ -60,7 +60,7 @@ export default function TimetablePage() {
         enabled: isPrefet,
     });
 
-    // ── Classes ──────────────────────────────────────────────────────────────
+    // â”€â”€ Classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const { data: classesData } = useQuery({
         queryKey: ['classes'],
         queryFn: async () => {
@@ -69,7 +69,7 @@ export default function TimetablePage() {
         },
     });
 
-    // ── Matières (pour le modal) ─────────────────────────────────────────────
+    // â”€â”€ Matières (pour le modal) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const { data: subjectsData } = useQuery({
         queryKey: ['subjects'],
         queryFn: async () => {
@@ -79,7 +79,7 @@ export default function TimetablePage() {
         enabled: isPrefet, // seulement utile pour l'édition
     });
 
-    // ── Mutation : ajouter une période ───────────────────────────────────────
+    // â”€â”€ Mutation : ajouter une période â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const addPeriodMutation = useMutation({
         mutationFn: async (payload: {
             classId: string;
@@ -102,7 +102,7 @@ export default function TimetablePage() {
         },
     });
 
-    // ── Mutation : supprimer une période ─────────────────────────────────────
+    // â”€â”€ Mutation : supprimer une période â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const deletePeriodMutation = useMutation({
         mutationFn: async (periodId: string) => {
             const res = await api.delete(`/timetable/${periodId}`);
@@ -118,7 +118,7 @@ export default function TimetablePage() {
         },
     });
 
-    // ── Vérification conflits ─────────────────────────────────────────────────
+    // â”€â”€ Vérification conflits â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const checkConflicts = async (payload: {
         teacherId: string;
         classId: string;
@@ -134,19 +134,19 @@ export default function TimetablePage() {
         }
     };
 
-    // ── Handler : clic sur cellule (vide ou existante) ────────────────────────
+    // â”€â”€ Handler : clic sur cellule (vide ou existante) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleCellClick = (period: TimetablePeriod) => {
         if (!isPrefet) return;
 
         if (period.id === '__new__') {
-            // Cellule vide → création
+            // Cellule vide â†’ création
             setSelectedCell({
                 dayOfWeek: period.dayOfWeek,
                 periodNumber: period.periodNumber,
                 existingPeriod: undefined,
             });
         } else {
-            // Période existante → modification
+            // Période existante â†’ modification
             setSelectedCell({
                 dayOfWeek: period.dayOfWeek,
                 periodNumber: period.periodNumber,
@@ -167,7 +167,7 @@ export default function TimetablePage() {
     return (
         <div className="min-h-screen bg-neutral-50">
 
-            {/* ── En-tête ────────────────────────────────────────────────── */}
+            {/* â”€â”€ En-tête â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="bg-white border-b border-neutral-200">
                 <div className="max-w-7xl mx-auto px-6 py-6">
                     <div className="flex items-center justify-between mb-6">
@@ -179,7 +179,7 @@ export default function TimetablePage() {
                                 Consultez les horaires de cours
                                 {isPrefet && (
                                     <span className="ml-2 text-xs text-primary font-medium">
-                                        · Cliquez sur une cellule pour ajouter ou modifier un cours
+                                        Â· Cliquez sur une cellule pour ajouter ou modifier un cours
                                     </span>
                                 )}
                             </p>
@@ -205,7 +205,7 @@ export default function TimetablePage() {
                         </div>
                     </div>
 
-                    {/* ── Filtres ──────────────────────────────────────────── */}
+                    {/* â”€â”€ Filtres â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <div className="flex flex-wrap items-center gap-4">
 
                         {/* Basculer vue (Préfet seulement) */}
@@ -271,13 +271,13 @@ export default function TimetablePage() {
                 </div>
             </div>
 
-            {/* ── Contenu ────────────────────────────────────────────────── */}
+            {/* â”€â”€ Contenu â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="max-w-7xl mx-auto px-6 py-8">
                 {isLoading ? (
                     <div className="text-center py-12">
                         <Loader2 size={32} className="animate-spin mx-auto text-primary mb-4" />
                         <p className="text-sm text-neutral-600">
-                            Chargement de l'emploi du temps…
+                            Chargement de l'emploi du tempsâ€¦
                         </p>
                     </div>
                 ) : !selectedTeacherId && !selectedClassId ? (
@@ -347,7 +347,7 @@ export default function TimetablePage() {
                 )}
             </div>
 
-            {/* ── Modal PeriodFormModal ──────────────────────────────────── */}
+            {/* â”€â”€ Modal PeriodFormModal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {selectedCell && isPrefet && (
                 <PeriodFormModal
                     period={selectedCell.existingPeriod ?? null}

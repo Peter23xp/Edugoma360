@@ -1,4 +1,4 @@
-import { Phone, Mail, Globe, Facebook, MessageCircle, Twitter } from 'lucide-react';
+﻿import { Phone, Mail, Globe, Facebook, MessageCircle, Twitter } from 'lucide-react';
 import type { Step3Data } from '@edugoma360/shared';
 
 interface Step3ContactProps {

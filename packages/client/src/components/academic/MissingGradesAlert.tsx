@@ -1,4 +1,4 @@
-import { AlertTriangle, Send } from 'lucide-react';
+﻿import { AlertTriangle, Send } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -53,7 +53,7 @@ export default function MissingGradesAlert({
 
                 <div className="flex-1">
                     <h3 className="text-lg font-semibold text-orange-900 mb-2">
-                        ⚠️ Notes manquantes
+                        âš ï¸ Notes manquantes
                     </h3>
 
                     <p className="text-sm text-orange-800 mb-4">

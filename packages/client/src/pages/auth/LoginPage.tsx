@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+﻿import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,7 +20,7 @@ import {
 import toast from 'react-hot-toast';
 import logo from '../../assets/logo.svg';
 
-// ── Zod validation schema ────────────────────────────────────────────────────
+// â”€â”€ Zod validation schema â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const loginSchema = z.object({
     identifier: z.string().min(4, 'Minimum 4 caractères'),
     password: z.string().min(6, 'Minimum 6 caractères'),
@@ -29,7 +29,7 @@ const loginSchema = z.object({
 
 type LoginFormData = z.infer<typeof loginSchema>;
 
-// ── Regex patterns for identifier detection ──────────────────────────────────
+// â”€â”€ Regex patterns for identifier detection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MATRICULE_REGEX = /^[A-Z]{2}-[A-Z]{3}-[A-Z0-9]+-\d+$/i;
 
@@ -42,19 +42,19 @@ function getIdentifierType(value: string): 'email' | 'matricule' | 'phone' {
     return 'phone';
 }
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const MAX_ATTEMPTS = 3;
 const LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 minutes
 
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // LOGIN PAGE COMPONENT (SCR-001)
-// ══════════════════════════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 export default function LoginPage() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const identifierInputRef = useRef<HTMLInputElement>(null);
 
-    // ── Auth ─────────────────────────────────────────────────────────────
+    // â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const {
         login,
         isLoading,
@@ -69,17 +69,17 @@ export default function LoginPage() {
         setLockedUntil,
     } = useAuth();
 
-    // ── Offline state ────────────────────────────────────────────────────
+    // â”€â”€ Offline state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const isOnline = useOfflineStore((s) => s.isOnline);
 
-    // ── Local UI state ───────────────────────────────────────────────────
+    // â”€â”€ Local UI state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [lockCountdown, setLockCountdown] = useState('');
     const [serverReachable, setServerReachable] = useState(true);
     const [checkingServer, setCheckingServer] = useState(true);
 
-    // ── Form setup with react-hook-form + zod ────────────────────────────
+    // â”€â”€ Form setup with react-hook-form + zod â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const {
         register,
         handleSubmit,
@@ -99,7 +99,7 @@ export default function LoginPage() {
     const passwordValue = watch('password');
     const identifierType = getIdentifierType(identifierValue || '');
 
-    // ── Redirect if already authenticated ────────────────────────────────
+    // â”€â”€ Redirect if already authenticated â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (isAuthenticated && user) {
             const redirect = searchParams.get('redirect');
@@ -107,7 +107,7 @@ export default function LoginPage() {
         }
     }, [isAuthenticated, user, navigate, searchParams, getDefaultRedirect]);
 
-    // ── Server health check on mount ─────────────────────────────────────
+    // â”€â”€ Server health check on mount â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         let mounted = true;
         async function check() {
@@ -127,7 +127,7 @@ export default function LoginPage() {
         };
     }, []);
 
-    // ── Lockout countdown timer ──────────────────────────────────────────
+    // â”€â”€ Lockout countdown timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     useEffect(() => {
         if (!lockedUntil) {
             setLockCountdown('');
@@ -152,10 +152,10 @@ export default function LoginPage() {
         return () => clearInterval(timer);
     }, [lockedUntil, resetAttempts]);
 
-    // ── Check if account is locked ───────────────────────────────────────
+    // â”€â”€ Check if account is locked â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const isLocked = lockedUntil !== null && lockedUntil.getTime() > Date.now();
 
-    // ── Submit handler ───────────────────────────────────────────────────
+    // â”€â”€ Submit handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const onSubmit = useCallback(
         async (data: LoginFormData) => {
             if (isLocked) return;
@@ -197,7 +197,7 @@ export default function LoginPage() {
                     // Network error — server unreachable
                     setServerReachable(false);
                     toast.error('Serveur inaccessible. Vérifiez votre connexion.', {
-                        icon: '🔌',
+                        icon: 'ðŸ”Œ',
                         style: { background: '#F57C00', color: '#fff' },
                     });
                 } else {
@@ -208,12 +208,12 @@ export default function LoginPage() {
         [isLocked, login, resetAttempts, incrementAttempts, loginAttempts],
     );
 
-    // ── Continue offline handler ─────────────────────────────────────────
+    // â”€â”€ Continue offline handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleContinueOffline = useCallback(async () => {
         const success = await loginOffline();
         if (success) {
             toast.success('Mode hors-ligne activé', {
-                icon: '📴',
+                icon: 'ðŸ“´',
                 style: { background: '#F57C00', color: '#fff' },
             });
             navigate('/dashboard', { replace: true });
@@ -222,22 +222,22 @@ export default function LoginPage() {
         }
     }, [loginOffline, navigate]);
 
-    // ── Render ───────────────────────────────────────────────────────────
+    // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
         <div className="min-h-screen bg-neutral-50 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
-                {/* ── Offline banner ─────────────────────────────────────── */}
+                {/* â”€â”€ Offline banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 {!isOnline && (
                     <div
                         id="offline-banner"
                         className="mb-4 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-amber-800 text-sm"
                     >
                         <AlertTriangle size={16} className="shrink-0" />
-                        <span className="font-medium">⚠ Mode hors-ligne — Données locales utilisées</span>
+                        <span className="font-medium">âš  Mode hors-ligne — Données locales utilisées</span>
                     </div>
                 )}
 
-                {/* ── Card ──────────────────────────────────────────────── */}
+                {/* â”€â”€ Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="bg-white shadow-lg rounded-2xl p-8">
                     {/* Logo & Header */}
                     <div className="text-center mb-6">
@@ -255,7 +255,7 @@ export default function LoginPage() {
                         </p>
                     </div>
 
-                    {/* ── Server status badge ───────────────────────────── */}
+                    {/* â”€â”€ Server status badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <div className="flex justify-center mb-6">
                         <div
                             id="server-status-badge"
@@ -281,7 +281,7 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* ── Error message ──────────────────────────────────── */}
+                    {/* â”€â”€ Error message â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {errorMessage && (
                         <div
                             id="login-error"
@@ -292,14 +292,14 @@ export default function LoginPage() {
                                 <p className="font-medium">{errorMessage}</p>
                                 {isLocked && lockCountdown && (
                                     <p className="text-red-500 mt-1 font-mono text-lg">
-                                        ⏱ {lockCountdown}
+                                        â± {lockCountdown}
                                     </p>
                                 )}
                             </div>
                         </div>
                     )}
 
-                    {/* ── Form ───────────────────────────────────────────── */}
+                    {/* â”€â”€ Form â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" id="login-form">
                         {/* Identifier field */}
                         <div>
@@ -417,7 +417,7 @@ export default function LoginPage() {
                         </button>
                     </form>
 
-                    {/* ── Offline link ───────────────────────────────────── */}
+                    {/* â”€â”€ Offline link â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {(!isOnline || !serverReachable) && (
                         <div className="mt-5 text-center">
                             <p className="text-neutral-500 text-sm mb-1">Hors-ligne ?</p>
@@ -427,15 +427,15 @@ export default function LoginPage() {
                                 onClick={handleContinueOffline}
                                 className="text-amber-600 hover:text-amber-700 text-sm font-medium hover:underline transition-colors"
                             >
-                                Continuer sans connexion →
+                                Continuer sans connexion â†’
                             </button>
                         </div>
                     )}
                 </div>
 
-                {/* ── Footer ────────────────────────────────────────────── */}
+                {/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <p className="text-center text-neutral-400 text-xs mt-6" id="login-footer">
-                    v1.0 — EduGoma360 © {new Date().getFullYear()}
+                    v1.0 — EduGoma360 Â© {new Date().getFullYear()}
                 </p>
             </div>
         </div>

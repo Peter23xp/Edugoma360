@@ -1,4 +1,4 @@
-import { DELIB_DECISIONS, getDecisionColor, type DelibDecision } from '@edugoma360/shared/src/constants/decisions';
+﻿import { DELIB_DECISIONS, getDecisionColor, type DelibDecision } from '@edugoma360/shared/constants/decisions';
 
 interface DecisionBadgeProps {
     decision: DelibDecision | null | undefined;
@@ -8,11 +8,11 @@ interface DecisionBadgeProps {
 
 const DECISION_ICONS: Record<string, string> = {
     ADMITTED: '✅',
-    DISTINCTION: '🎖️',
-    GREAT_DISTINCTION: '🏆',
-    ADJOURNED: '⏳',
-    FAILED: '❌',
-    MEDICAL: '🏥',
+    DISTINCTION: 'ðŸŽ–ï¸',
+    GREAT_DISTINCTION: 'ðŸ†',
+    ADJOURNED: 'â³',
+    FAILED: 'âŒ',
+    MEDICAL: 'ðŸ¥',
 };
 
 export default function DecisionBadge({ decision, size = 'md', showIcon = true }: DecisionBadgeProps) {

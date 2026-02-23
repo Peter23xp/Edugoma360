@@ -1,4 +1,4 @@
-import { Download, Printer, Archive, X } from 'lucide-react';
+﻿import { Download, Printer, Archive, X } from 'lucide-react';
 
 interface BulkActionsBarProps {
     count: number;

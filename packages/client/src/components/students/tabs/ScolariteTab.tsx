@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { GraduationCap } from 'lucide-react';
 import api from '../../../lib/api';
 

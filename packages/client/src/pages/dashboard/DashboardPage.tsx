@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+﻿import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../stores/auth.store';
 import StatCard from '../../components/dashboard/StatCard';
 import AlertsPanel from '../../components/dashboard/AlertsPanel';
@@ -242,7 +242,7 @@ export default function DashboardPage() {
               <StatCard
                 title="Créances"
                 value={formatAmount((financeData?.data?.expected || 0) - (financeData?.data?.collected || 0))}
-                subtitle="à recouvrer"
+                subtitle="Ã  recouvrer"
                 icon={Receipt}
                 iconColor="bg-red-100 text-red-600"
                 isLoading={loadingFinance}

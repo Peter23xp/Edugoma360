@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 // Note: studentsPdfService was removed (non-existent export). Bulletin generation is now handled by BulletinsService.
 
 interface BulletinJob {

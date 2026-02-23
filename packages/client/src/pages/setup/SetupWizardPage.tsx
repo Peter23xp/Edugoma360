@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
@@ -92,7 +92,7 @@ export default function SetupWizardPage() {
             return res.data;
         },
         onSuccess: (data) => {
-            toast.success('✓ École configurée avec succès !');
+            toast.success('âœ“ École configurée avec succès !');
             clearDraft();
             reset();
 

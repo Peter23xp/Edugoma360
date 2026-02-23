@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+﻿import puppeteer from 'puppeteer';
 import Handlebars from 'handlebars';
 import { promises as fs } from 'fs';
 import path from 'path';

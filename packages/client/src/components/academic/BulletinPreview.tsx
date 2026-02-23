@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Download, Printer, ExternalLink, AlertCircle } from 'lucide-react';
-import type { BulletinData } from '@edugoma360/shared/src/types/academic';
+import type { BulletinData } from '@edugoma360/shared/types/academic';
 import DecisionBadge from './DecisionBadge';
 
 interface BulletinPreviewProps {
@@ -55,7 +55,7 @@ export default function BulletinPreview({ bulletin, onDownloadPDF, isGenerating 
                         className="h-9 px-4 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-60"
                     >
                         <Download size={15} />
-                        {isGenerating ? 'Génération…' : 'Télécharger PDF'}
+                        {isGenerating ? 'Générationâ€¦' : 'Télécharger PDF'}
                     </button>
                 </div>
             </div>

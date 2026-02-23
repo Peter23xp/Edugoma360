@@ -1,6 +1,6 @@
-import Dexie, { type Table } from 'dexie';
+﻿import Dexie, { type Table } from 'dexie';
 
-// ── Offline Database Schema ───────────────────────────────────────────────────
+// â”€â”€ Offline Database Schema â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // Tables mirror the server models for offline-first functionality
 
 export interface OfflineStudent {

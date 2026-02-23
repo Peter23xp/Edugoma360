@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -69,7 +69,7 @@ export default function ClassesPage() {
     };
 
     const handleArchive = (classId: string) => {
-        if (confirm('Êtes-vous sûr de vouloir archiver cette classe ?')) {
+        if (confirm('ÃŠtes-vous sûr de vouloir archiver cette classe ?')) {
             archiveMutation.mutate(classId);
         }
     };

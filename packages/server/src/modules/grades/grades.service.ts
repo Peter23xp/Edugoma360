@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 
 interface GetGradesFilters {
     classId?: string;
@@ -538,7 +538,7 @@ export class GradesService {
             calculateTotalPoints,
             calculateRanking,
             checkEliminatory,
-        } = await import('@edugoma360/shared/src/utils/gradeCalc');
+        } = await import('@edugoma360/shared/utils/gradeCalc');
 
         // Verify class belongs to school
         const classData = await prisma.class.findFirst({
@@ -634,7 +634,7 @@ export class GradesService {
                 };
             });
 
-            // Calculate total points first (Σ(moyenne_matière × coefficient))
+            // Calculate total points first (Î£(moyenne_matière Ã— coefficient))
             const totalPoints = calculateTotalPoints(
                 subjectAverages.map((sa) => ({
                     average: sa.average,
@@ -642,7 +642,7 @@ export class GradesService {
                 }))
             );
 
-            // Calculate general average (totalPoints / Σcoefficients, arrondi 0.5 RDC)
+            // Calculate general average (totalPoints / Î£coefficients, arrondi 0.5 RDC)
             const totalCoefficients = subjects.reduce((sum, s) => sum + s.coefficient, 0);
             const generalAverage = calculateGeneralAverage(totalPoints, totalCoefficients);
 

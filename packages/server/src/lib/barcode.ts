@@ -1,4 +1,4 @@
-import JsBarcode from 'jsbarcode';
+﻿import JsBarcode from 'jsbarcode';
 import { createCanvas } from '@napi-rs/canvas';
 
 /**

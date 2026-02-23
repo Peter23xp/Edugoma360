@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 
 export class SyncService {
     async processSyncQueue(items: any[], userId: string, schoolId: string) {

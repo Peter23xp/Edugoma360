@@ -1,4 +1,4 @@
-import { useStudentForm } from '../../../hooks/useStudentForm';
+﻿import { useStudentForm } from '../../../hooks/useStudentForm';
 import PhotoUpload from './PhotoUpload';
 
 const NATIONALITES = [
@@ -209,7 +209,7 @@ export default function Step1Identity() {
                         {NATIONALITES.map((nat) =>
                             nat === '---' ? (
                                 <option key={nat} disabled>
-                                    ───────────
+                                    â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
                                 </option>
                             ) : (
                                 <option key={nat} value={nat}>

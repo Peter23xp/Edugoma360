@@ -1,4 +1,4 @@
-import { RefreshCw, Check, AlertCircle } from 'lucide-react';
+﻿import { RefreshCw, Check, AlertCircle } from 'lucide-react';
 import { useSync } from '../../hooks/useSync';
 
 export default function SyncIndicator() {
@@ -23,7 +23,7 @@ export default function SyncIndicator() {
             ) : (
                 <AlertCircle size={12} />
             )}
-            {isSyncing ? 'Synchronisation...' : `${pendingCount} à synchroniser`}
+            {isSyncing ? 'Synchronisation...' : `${pendingCount} Ã  synchroniser`}
         </button>
     );
 }

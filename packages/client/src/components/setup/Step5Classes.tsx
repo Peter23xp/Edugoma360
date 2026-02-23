@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { SCHOOL_SECTIONS, generateClassName, type Step5Data, type SectionCode } from '@edugoma360/shared';
 
 interface Step5ClassesProps {
@@ -168,7 +168,7 @@ export default function Step5Classes({ data, onChange, errors }: Step5ClassesPro
                                                             </select>
                                                             {count > 0 && (
                                                                 <span className="text-xs text-neutral-500">
-                                                                    →{' '}
+                                                                    â†’{' '}
                                                                     {letters
                                                                         .map((l) =>
                                                                             generateClassName(
@@ -200,7 +200,7 @@ export default function Step5Classes({ data, onChange, errors }: Step5ClassesPro
             {data.classes && data.classes.length > 0 && (
                 <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
                     <p className="text-sm font-medium text-primary">
-                        ✓ {data.classes.length} classe{data.classes.length > 1 ? 's' : ''}{' '}
+                        âœ“ {data.classes.length} classe{data.classes.length > 1 ? 's' : ''}{' '}
                         créée{data.classes.length > 1 ? 's' : ''}
                     </p>
                     <p className="text-xs text-neutral-600 mt-1">

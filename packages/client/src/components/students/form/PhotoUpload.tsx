@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import { Upload, X, User } from 'lucide-react';
 
 interface PhotoUploadProps {

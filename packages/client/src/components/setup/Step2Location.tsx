@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { MapPin } from 'lucide-react';
 import { RDC_PROVINCES, NORD_KIVU_CITIES, type Step2Data } from '@edugoma360/shared';
 
@@ -126,7 +126,7 @@ export default function Step2Location({ data, onChange, errors }: Step2LocationP
                 <textarea
                     value={data.adresse || ''}
                     onChange={(e) => onChange({ ...data, adresse: e.target.value })}
-                    placeholder="Ex: Avenue de la Paix, N°12, près de la Ronde-Point Virunga"
+                    placeholder="Ex: Avenue de la Paix, NÂ°12, près de la Ronde-Point Virunga"
                     rows={3}
                     maxLength={200}
                     className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg 

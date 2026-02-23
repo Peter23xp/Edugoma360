@@ -1,4 +1,4 @@
-import { Users, BookOpen, MoreVertical } from 'lucide-react';
+﻿import { Users, BookOpen, MoreVertical } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
 
 interface ClassCardProps {

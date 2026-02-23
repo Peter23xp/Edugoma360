@@ -1,6 +1,6 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { CheckCircle, Clock, Lock, Shield, AlertCircle } from 'lucide-react';
-import type { DeliberationStatus } from '@edugoma360/shared/src/types/academic';
+import type { DeliberationStatus } from '@edugoma360/shared/types/academic';
 
 interface ApprovalWorkflowProps {
     status: DeliberationStatus;
@@ -125,7 +125,7 @@ export default function ApprovalWorkflow({
                     {showConfirm ? (
                         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 space-y-3">
                             <p className="text-sm font-medium text-yellow-800">
-                                ⚠️ Cette action est <strong>irréversible</strong>. La délibération sera définitivement approuvée et les bulletins pourront être générés.
+                                âš ï¸ Cette action est <strong>irréversible</strong>. La délibération sera définitivement approuvée et les bulletins pourront être générés.
                             </p>
                             <div className="flex gap-2">
                                 <button
@@ -140,7 +140,7 @@ export default function ApprovalWorkflow({
                                     className="flex-1 h-9 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-60"
                                 >
                                     <Shield size={14} />
-                                    {isApproving ? 'Approbation…' : 'Confirmer'}
+                                    {isApproving ? 'Approbationâ€¦' : 'Confirmer'}
                                 </button>
                             </div>
                         </div>

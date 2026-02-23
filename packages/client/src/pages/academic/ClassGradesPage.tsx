@@ -1,10 +1,10 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Printer, Send, Loader2, FileSpreadsheet, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
-import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/src/constants/evalTypes';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/constants/evalTypes';
 
 interface Student {
     id: string;
@@ -413,11 +413,10 @@ export default function ClassGradesPage() {
                                                             >
                                                                 {grade ? (
                                                                     <span
-                                                                        className={`text-sm font-medium ${
-                                                                            grade.score < subject.maxScore / 2
+                                                                        className={`text-sm font-medium ${grade.score < subject.maxScore / 2
                                                                                 ? 'text-red-600'
                                                                                 : 'text-green-600'
-                                                                        }`}
+                                                                            }`}
                                                                     >
                                                                         {grade.score.toFixed(1)}
                                                                     </span>
@@ -432,11 +431,10 @@ export default function ClassGradesPage() {
                                                     <td className="px-4 py-3 text-center">
                                                         {average !== null ? (
                                                             <span
-                                                                className={`text-sm font-bold ${
-                                                                    average < 10
+                                                                className={`text-sm font-bold ${average < 10
                                                                         ? 'text-red-600'
                                                                         : 'text-green-600'
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 {average.toFixed(2)}
                                                             </span>

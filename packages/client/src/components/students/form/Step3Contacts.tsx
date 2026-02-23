@@ -1,4 +1,4 @@
-import { useStudentForm } from '../../../hooks/useStudentForm';
+﻿import { useStudentForm } from '../../../hooks/useStudentForm';
 import { Phone, User } from 'lucide-react';
 
 export default function Step3Contacts() {
@@ -222,7 +222,7 @@ export default function Step3Contacts() {
             {!hasPhone && (
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                     <p className="text-sm text-amber-800">
-                        ⚠️ Veuillez fournir au moins un numéro de téléphone
+                        âš ï¸ Veuillez fournir au moins un numéro de téléphone
                     </p>
                 </div>
             )}

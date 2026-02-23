@@ -1,8 +1,8 @@
-import puppeteer from 'puppeteer';
+﻿import puppeteer from 'puppeteer';
 import Handlebars from 'handlebars';
 import fs from 'fs/promises';
 import path from 'path';
-import { DELIB_DECISIONS } from '@edugoma360/shared/src/constants/decisions';
+import { DELIB_DECISIONS } from '@edugoma360/shared/constants/decisions';
 
 interface PVData {
     schoolName: string;

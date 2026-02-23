@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 
 export class AlertsService {
   async getAlerts(schoolId: string, status?: string) {
@@ -105,7 +105,7 @@ export class AlertsService {
     }
 
     return {
-      alerts: alerts.slice(0, 10), // Limiter à 10 alertes
+      alerts: alerts.slice(0, 10), // Limiter Ã  10 alertes
       total: alerts.length,
     };
   }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
@@ -72,7 +72,7 @@ export default function StudentDetailPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
                 <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
-                    <span className="text-3xl">😕</span>
+                    <span className="text-3xl">ðŸ˜•</span>
                 </div>
                 <h2 className="text-xl font-bold text-neutral-900">Élève introuvable</h2>
                 <p className="text-sm text-neutral-500 text-center max-w-md">
@@ -85,7 +85,7 @@ export default function StudentDetailPage() {
                                transition-colors"
                 >
                     <ArrowLeft size={14} />
-                    Retour à la liste
+                    Retour Ã  la liste
                 </button>
             </div>
         );
@@ -104,7 +104,7 @@ export default function StudentDetailPage() {
 
     return (
         <div className="space-y-4 pb-8">
-            {/* ── Top Bar ──────────────────────────────────────────────────── */}
+            {/* â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="flex items-center justify-between">
                 <button
                     onClick={handleBack}
@@ -113,7 +113,7 @@ export default function StudentDetailPage() {
                                transition-colors"
                 >
                     <ArrowLeft size={16} />
-                    Retour à la liste
+                    Retour Ã  la liste
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -135,7 +135,7 @@ export default function StudentDetailPage() {
                 </div>
             </div>
 
-            {/* ── Archived Banner ──────────────────────────────────────────── */}
+            {/* â”€â”€ Archived Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {isArchived && (
                 <div className="bg-neutral-100 border border-neutral-300 rounded-lg px-4 py-3">
                     <p className="text-sm text-neutral-700">
@@ -145,10 +145,10 @@ export default function StudentDetailPage() {
                 </div>
             )}
 
-            {/* ── Student Header ───────────────────────────────────────────── */}
+            {/* â”€â”€ Student Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <StudentHeader student={student} />
 
-            {/* ── Tabs Navigation ──────────────────────────────────────────── */}
+            {/* â”€â”€ Tabs Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
                 <div className="border-b border-neutral-200">
                     <div className="flex overflow-x-auto scrollbar-hide">
@@ -169,7 +169,7 @@ export default function StudentDetailPage() {
                     </div>
                 </div>
 
-                {/* ── Tab Content ──────────────────────────────────────────── */}
+                {/* â”€â”€ Tab Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="p-6">
                     {activeTab === 'info' && <InfoTab student={student} />}
                     {activeTab === 'scolarite' && <ScolariteTab studentId={id!} />}

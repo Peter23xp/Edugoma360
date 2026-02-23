@@ -1,13 +1,13 @@
-import fs from 'fs/promises';
+﻿import fs from 'fs/promises';
 import path from 'path';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import Handlebars from 'handlebars';
 import prisma from '../../lib/prisma';
 import { generatePdf } from '../../lib/pdf';
-import { DELIB_DECISIONS } from '@edugoma360/shared/src/constants/decisions';
+import { DELIB_DECISIONS } from '@edugoma360/shared/constants/decisions';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface SubjectRow {
     name: string;
@@ -57,7 +57,7 @@ interface BulletinTemplateData {
     issuedDate: string;
 }
 
-// ── In-memory batch job storage ───────────────────────────────────────────────
+// â”€â”€ In-memory batch job storage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface BulletinBatchJob {
     id: string;
@@ -72,7 +72,7 @@ interface BulletinBatchJob {
 
 const batchJobs = new Map<string, BulletinBatchJob>();
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function getDecisionClass(decision: string): string {
     const map: Record<string, string> = {
@@ -87,7 +87,7 @@ function getDecisionClass(decision: string): string {
 }
 
 function getRankSuffix(rank: number): string {
-    return rank === 1 ? 'ᵉʳ' : 'ᵉ';
+    return rank === 1 ? 'áµ‰Ê³' : 'áµ‰';
 }
 
 function generateBulletinNumber(schoolId: string, studentId: string, termId: string): string {
@@ -105,7 +105,7 @@ function formatScore(score: number | null, maxScore = 20): { val: string; low: b
     return { val: score.toFixed(1), low: score / maxScore < 0.5 };
 }
 
-// ── Register custom Handlebars helpers ────────────────────────────────────────
+// â”€â”€ Register custom Handlebars helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 Handlebars.registerHelper('if', function (this: unknown, conditional: unknown, options: Handlebars.HelperOptions) {
     if (conditional) {
         return options.fn(this);
@@ -118,7 +118,7 @@ Handlebars.registerHelper('each', function (this: unknown, context: unknown[], o
     return context.map((item) => options.fn(item)).join('');
 });
 
-// ── Main Service ──────────────────────────────────────────────────────────────
+// â”€â”€ Main Service â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export class BulletinsService {
     private templatePath = path.join(__dirname, 'templates', 'bulletin.html');

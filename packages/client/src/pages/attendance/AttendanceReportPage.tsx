@@ -1,6 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BarChart3, Download } from 'lucide-react';
+import { useClassesList } from '../../hooks/useClassesList';
 import api from '../../lib/api';
 import DataTable from '../../components/shared/DataTable';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -8,7 +9,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 export default function AttendanceReportPage() {
     const [classId, setClassId] = useState('');
 
-    const { data: classes } = useQuery({ queryKey: ['classes-list'], queryFn: async () => (await api.get('/settings/classes')).data });
+    const { data: classes = [] } = useClassesList();
 
     const { data: report, isLoading } = useQuery({
         queryKey: ['attendance-report', classId],

@@ -1,76 +1,63 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+﻿import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api';
-import type { ClassAveragesData, StudentAverage } from '@edugoma360/shared/src/types/academic';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Hook : useAverages — Moyennes d'une classe pour un trimestre
-// ─────────────────────────────────────────────────────────────────────────────
+interface AverageData {
+    studentId: string;
+    matricule: string;
+    nom: string;
+    postNom: string;
+    prenom: string | null;
+    average: number;
+    totalPoints: number;
+    rank: number;
+    status: 'ADMITTED' | 'FAILED';
+}
 
-export function useAverages(classId: string, termId: string) {
-    const queryClient = useQueryClient();
+interface ClassAveragesResponse {
+    averages: AverageData[];
+    classAverage: number;
+    successRate: number;
+    highestAverage: number;
+    lowestAverage: number;
+}
 
-    const query = useQuery<ClassAveragesData>({
-        queryKey: ['averages', classId, termId],
+export function useClassAverages(classId: string, termId: string) {
+    return useQuery({
+        queryKey: ['averages', 'class', classId, termId],
         queryFn: async () => {
-            const res = await api.get(`/averages/class/${classId}`, { params: { termId } });
-            return res.data?.data ?? res.data;
+            const { data } = await api.get<ClassAveragesResponse>(
+                `/averages/class/${classId}`,
+                { params: { termId } }
+            );
+            return data;
         },
         enabled: !!classId && !!termId,
         staleTime: 2 * 60 * 1000, // 2 minutes
     });
-
-    // Recalcul forcé (ex: après verrouillage des notes)
-    const recalculateMutation = useMutation({
-        mutationFn: async () => {
-            const res = await api.post('/averages/recalculate', { classId, termId });
-            return res.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['averages', classId, termId] });
-        },
-    });
-
-    return {
-        ...query,
-        averages: query.data?.students ?? [],
-        classAverage: query.data?.classAverage ?? null,
-        successRate: query.data?.successRate ?? null,
-        highestAverage: query.data?.highestAverage ?? null,
-        lowestAverage: query.data?.lowestAverage ?? null,
-        termHistory: query.data?.termHistory ?? [],
-        recalculateMutation,
-    };
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Hook : useStudentAverage — Moyennes d'un élève spécifique
-// ─────────────────────────────────────────────────────────────────────────────
-
-export function useStudentAverage(studentId: string, termId: string) {
-    return useQuery<StudentAverage>({
-        queryKey: ['average-student', studentId, termId],
+export function useStudentAverages(studentId: string) {
+    return useQuery({
+        queryKey: ['averages', 'student', studentId],
         queryFn: async () => {
-            const res = await api.get(`/averages/student/${studentId}`, { params: { termId } });
-            return res.data?.data ?? res.data;
+            const { data } = await api.get(`/averages/student/${studentId}`);
+            return data;
         },
-        enabled: !!studentId && !!termId,
+        enabled: !!studentId,
         staleTime: 2 * 60 * 1000,
     });
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Hook : useTermAverages — Comparaison multi-trimestres pour un élève
-// ─────────────────────────────────────────────────────────────────────────────
+export function useRecalculateAverages() {
+    const queryClient = useQueryClient();
 
-export function useTermAverages(studentId: string) {
-    return useQuery<Array<{ termId: string; termName: string; average: number | null }>>({
-        queryKey: ['term-averages', studentId],
-        queryFn: async () => {
-            const res = await api.get(`/averages/student/${studentId}/terms`);
-            return res.data?.data ?? res.data ?? [];
+    return useMutation({
+        mutationFn: async ({ classId, termId }: { classId: string; termId: string }) => {
+            const { data } = await api.post('/averages/recalculate', { classId, termId });
+            return data;
         },
-        enabled: !!studentId,
-        staleTime: 5 * 60 * 1000,
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['averages', 'class', variables.classId] });
+        },
     });
 }
-

@@ -1,4 +1,4 @@
-import { Menu, Bell, RefreshCw, LogOut, User } from 'lucide-react';
+﻿import { Menu, Bell, RefreshCw, LogOut, User } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useOffline } from '../../hooks/useOffline';
 import { useSync } from '../../hooks/useSync';

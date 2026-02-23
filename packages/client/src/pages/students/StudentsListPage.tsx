@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+﻿import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
     Plus,
@@ -25,7 +25,7 @@ export default function StudentsListPage() {
     const { hasRole } = useAuth();
     const [searchParams, setSearchParams] = useSearchParams();
 
-    // ── Filter state, synced with URL ──────────────────────────────────────────
+    // â”€â”€ Filter state, synced with URL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const classId = searchParams.get('class') ?? '';
     const section = searchParams.get('section') ?? '';
     const status = searchParams.get('status') ?? 'NOUVEAU';
@@ -57,7 +57,7 @@ export default function StudentsListPage() {
     const setSearch = useCallback((v: string) => updateParams({ q: v, page: '1' }), [updateParams]);
     const setPage = useCallback((p: number) => updateParams({ page: String(p) }), [updateParams]);
 
-    // ── Data fetching ──────────────────────────────────────────────────────────
+    // â”€â”€ Data fetching â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const filters = useMemo(
         () => ({
             classId: classId || undefined,
@@ -80,7 +80,7 @@ export default function StudentsListPage() {
         archiveMutation,
     } = useStudents(filters);
 
-    // ── Selection state ────────────────────────────────────────────────────────
+    // â”€â”€ Selection state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
     // Reset selection on page/filter change
@@ -121,12 +121,12 @@ export default function StudentsListPage() {
         }
     }, [allOnPageSelected, students]);
 
-    // ── Modals ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Modals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const [importModalOpen, setImportModalOpen] = useState(false);
     const [archiveModalOpen, setArchiveModalOpen] = useState(false);
     const [archiveTargetId, setArchiveTargetId] = useState<string | null>(null);
 
-    // ── Actions ────────────────────────────────────────────────────────────────
+    // â”€â”€ Actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleRowAction = useCallback(
         (action: 'view' | 'edit' | 'card' | 'transfer' | 'archive', id: string) => {
             switch (action) {
@@ -193,7 +193,7 @@ export default function StudentsListPage() {
         window.location.reload();
     }, []);
 
-    // ── Page numbers for pagination ────────────────────────────────────────────
+    // â”€â”€ Page numbers for pagination â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const pageNumbers = useMemo(() => {
         const pages: (number | '...')[] = [];
         if (totalPages <= 7) {
@@ -214,7 +214,7 @@ export default function StudentsListPage() {
 
     return (
         <div className="space-y-4 pb-20">
-            {/* ── Header ─────────────────────────────────────────────────────── */}
+            {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
@@ -263,7 +263,7 @@ export default function StudentsListPage() {
                 )}
             </div>
 
-            {/* ── Filters ────────────────────────────────────────────────────── */}
+            {/* â”€â”€ Filters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <StudentFilters
                 classId={classId}
                 section={section}
@@ -275,7 +275,7 @@ export default function StudentsListPage() {
                 onSearchChange={setSearch}
             />
 
-            {/* ── Loading skeleton ────────────────────────────────────────── */}
+            {/* â”€â”€ Loading skeleton â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {isLoading && (
                 <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
                     <div className="animate-pulse space-y-0">
@@ -294,7 +294,7 @@ export default function StudentsListPage() {
                 </div>
             )}
 
-            {/* ── Empty state ─────────────────────────────────────────────── */}
+            {/* â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {!isLoading && students.length === 0 && (
                 <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
                     <EmptyState
@@ -323,7 +323,7 @@ export default function StudentsListPage() {
                 </div>
             )}
 
-            {/* ── Data table ──────────────────────────────────────────────── */}
+            {/* â”€â”€ Data table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             {!isLoading && students.length > 0 && (
                 <div
                     className={`bg-white rounded-xl border border-neutral-300/50 overflow-hidden shadow-sm transition-opacity duration-200 ${isFetching ? 'opacity-70' : 'opacity-100'
@@ -372,7 +372,7 @@ export default function StudentsListPage() {
                         </table>
                     </div>
 
-                    {/* ── Pagination ──────────────────────────────────────── */}
+                    {/* â”€â”€ Pagination â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-100">
                         <p className="text-xs text-neutral-500">
                             Total :{' '}
@@ -461,7 +461,7 @@ export default function StudentsListPage() {
                 </div>
             )}
 
-            {/* ── Bulk Actions Bar ───────────────────────────────────────── */}
+            {/* â”€â”€ Bulk Actions Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <BulkActionsBar
                 count={selectedIds.size}
                 onExport={handleBulkExport}
@@ -471,14 +471,14 @@ export default function StudentsListPage() {
                 isArchiving={batchArchiveMutation.isPending}
             />
 
-            {/* ── Import Modal ───────────────────────────────────────────── */}
+            {/* â”€â”€ Import Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <ImportModal
                 isOpen={importModalOpen}
                 onClose={() => setImportModalOpen(false)}
                 onSuccess={handleImportSuccess}
             />
 
-            {/* ── Archive Confirm Modal ───────────────────────────────────── */}
+            {/* â”€â”€ Archive Confirm Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <ConfirmModal
                 isOpen={archiveModalOpen}
                 title="Archiver cet élève ?"

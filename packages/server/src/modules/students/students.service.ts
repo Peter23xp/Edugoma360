@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 // import { generateMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
 import type { z } from 'zod';
 import type { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
@@ -458,7 +458,7 @@ export class StudentsService {
             en ${student.enrollments[0]?.class.name || 'N/A'}
             pour l'année scolaire ${student.enrollments[0]?.academicYear.label || 'N/A'}.
             
-            Fait à Goma, le ${new Date().toLocaleDateString('fr-FR')}
+            Fait Ã  Goma, le ${new Date().toLocaleDateString('fr-FR')}
         `);
 
         return pdfContent;
@@ -490,10 +490,10 @@ export class StudentsService {
             where: { id: schoolId },
         });
 
-        // TODO: Generate ID card PDF (85.6mm × 54mm)
+        // TODO: Generate ID card PDF (85.6mm Ã— 54mm)
         // For now, return a placeholder
         const pdfContent = Buffer.from(`
-            CARTE D'ÉLÈVE
+            CARTE D'ÉLÃˆVE
             
             ${school?.name}
             

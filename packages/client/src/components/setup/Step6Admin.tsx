@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Eye, EyeOff, Info, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import type { Step6Data } from '@edugoma360/shared';
 

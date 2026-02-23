@@ -1,4 +1,4 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import { alertsController } from './alerts.controller';
 import { authenticate } from '../../middleware/auth.middleware';
 

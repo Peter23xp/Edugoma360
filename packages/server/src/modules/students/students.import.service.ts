@@ -1,4 +1,4 @@
-import ExcelJS from 'exceljs';
+﻿import ExcelJS from 'exceljs';
 import { z } from 'zod';
 import prisma from '../../lib/prisma';
 // import { generateMatricule, getNextSequence } from '@edugoma360/shared';
@@ -6,7 +6,7 @@ import prisma from '../../lib/prisma';
 // Actually status is String in the schema but often mapped to enum if defined. The schema says "String // StudentStatus".
 // Let's use string literal union to match Zod schema.
 
-// ── SCHEMAS ───────────────────────────────────────────────────
+// â”€â”€ SCHEMAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const AVAILABLE_STATUSES = ['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE'] as const;
 
@@ -40,7 +40,7 @@ interface ImportResult {
     students: any[];
 }
 
-// ── TEMPLATE EXCEL ────────────────────────────────────────────
+// â”€â”€ TEMPLATE EXCEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function generateImportTemplate(): Promise<Buffer> {
     const workbook = new ExcelJS.Workbook();
@@ -117,7 +117,7 @@ export async function generateImportTemplate(): Promise<Buffer> {
     return (await workbook.xlsx.writeBuffer()) as any;
 }
 
-// ── IMPORT PRINCIPAL ──────────────────────────────────────────
+// â”€â”€ IMPORT PRINCIPAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export async function importStudentsFromExcel(
     fileBuffer: Buffer,
@@ -151,7 +151,7 @@ export async function importStudentsFromExcel(
     // Le code du prompt fait: await prisma.$transaction(async (tx) => { ... loop ... })
     // Si on veut importer partiellement, on ne doit pas wrapper toute la boucle dans une transaction
     // ou on wrap chaque élève. wrapper toute la boucle est plus sûr pour la consistance mais frustrant pour l'utilisateur.
-    // Le code prompt met tout dans transaction mais catch les erreurs à l'intérieur de la boucle ? 
+    // Le code prompt met tout dans transaction mais catch les erreurs Ã  l'intérieur de la boucle ? 
     // Ah non, le catch est DANS la boucle. Donc si une erreur survient, on loggue l'erreur et on continue.
     // Donc la transaction n'échoue QUE si une erreur non catchée survient (e.g. DB connection lost).
 
@@ -276,7 +276,7 @@ export async function importStudentsFromExcel(
     return result;
 }
 
-// ── HELPERS ───────────────────────────────────────────────────
+// â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function parseRowData(values: any): any {
     // ExcelJS values array is 1-indexed. index 0 is empty? usually.

@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle } from 'lucide-react';
+﻿import { AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface SubjectAverage {
     subjectId: string;

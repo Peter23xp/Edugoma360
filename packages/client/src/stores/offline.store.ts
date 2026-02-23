@@ -1,4 +1,4 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 
 interface OfflineState {
     isOnline: boolean;
@@ -28,7 +28,7 @@ export const useOfflineStore = create<OfflineState>((set) => ({
     setLastSync: (timestamp) => set({ lastSyncAt: timestamp }),
 }));
 
-// ── Listen for online/offline events ──────────────────────────────────────
+// â”€â”€ Listen for online/offline events â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 if (typeof window !== 'undefined') {
     window.addEventListener('online', () => useOfflineStore.getState().setOnline(true));
     window.addEventListener('offline', () => useOfflineStore.getState().setOnline(false));

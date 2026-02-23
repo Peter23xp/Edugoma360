@@ -1,4 +1,4 @@
-import { Lock } from 'lucide-react';
+﻿import { Lock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface GradeInputProps {

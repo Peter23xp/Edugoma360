@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { X, Save, AlertTriangle, Loader2 } from 'lucide-react';
 import type {
     TimetablePeriod,
     TimetableConflict,
     DayOfWeek,
-} from '@edugoma360/shared/src/types/academic';
+} from '@edugoma360/shared/types/academic';
 
-// ─── Types locaux ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Types locaux â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface TeacherOption {
     id: string;
@@ -60,7 +60,7 @@ interface PeriodFormModalProps {
     academicYearId: string;
 }
 
-// ─── Libellés jour / créneau ─────────────────────────────────────────────────
+// â”€â”€â”€ Libellés jour / créneau â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 const DAY_LABELS: Record<DayOfWeek, string> = {
     MONDAY: 'Lundi',
@@ -71,17 +71,17 @@ const DAY_LABELS: Record<DayOfWeek, string> = {
 };
 
 const PERIOD_TIMES: Record<number, string> = {
-    1: '07:30 – 08:30',
-    2: '08:30 – 09:30',
-    3: '10:00 – 11:00',
-    4: '11:00 – 12:00',
-    5: '13:00 – 14:00',
-    6: '14:00 – 15:00',
-    7: '15:00 – 16:00',
-    8: '16:00 – 17:00',
+    1: '07:30 â€“ 08:30',
+    2: '08:30 â€“ 09:30',
+    3: '10:00 â€“ 11:00',
+    4: '11:00 â€“ 12:00',
+    5: '13:00 â€“ 14:00',
+    6: '14:00 â€“ 15:00',
+    7: '15:00 â€“ 16:00',
+    8: '16:00 â€“ 17:00',
 };
 
-// ─── Composant ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Composant â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function PeriodFormModal({
     period,
@@ -99,12 +99,12 @@ export default function PeriodFormModal({
 }: PeriodFormModalProps) {
     const isEditing = !!period;
 
-    // ── Champs du formulaire ──
+    // â”€â”€ Champs du formulaire â”€â”€
     const [classId, setClassId] = useState(period?.classId ?? '');
     const [subjectId, setSubjectId] = useState(period?.subjectId ?? '');
     const [teacherId, setTeacherId] = useState(period?.teacherId ?? '');
 
-    // ── Vérification conflits ──
+    // â”€â”€ Vérification conflits â”€â”€
     const [detectedConflicts, setDetectedConflicts] = useState<TimetableConflict[]>([]);
     const [checkingConflicts, setCheckingConflicts] = useState(false);
 
@@ -150,14 +150,14 @@ export default function PeriodFormModal({
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
 
-                {/* ── En-tête ── */}
+                {/* â”€â”€ En-tête â”€â”€ */}
                 <div className="flex items-center justify-between p-6 border-b border-neutral-200">
                     <div>
                         <h2 className="text-lg font-bold text-neutral-900">
                             {isEditing ? 'Modifier le cours' : 'Ajouter un cours'}
                         </h2>
                         <p className="text-sm text-neutral-500 mt-0.5">
-                            {DAY_LABELS[dayOfWeek]} · Période {periodNumber}
+                            {DAY_LABELS[dayOfWeek]} Â· Période {periodNumber}
                             {PERIOD_TIMES[periodNumber] && (
                                 <span className="ml-1 text-neutral-400">
                                     ({PERIOD_TIMES[periodNumber]})
@@ -174,7 +174,7 @@ export default function PeriodFormModal({
                     </button>
                 </div>
 
-                {/* ── Corps ── */}
+                {/* â”€â”€ Corps â”€â”€ */}
                 <div className="p-6 space-y-5">
 
                     {/* Classe */}
@@ -243,15 +243,15 @@ export default function PeriodFormModal({
                         </select>
                     </div>
 
-                    {/* ── Indicateur vérification conflits ── */}
+                    {/* â”€â”€ Indicateur vérification conflits â”€â”€ */}
                     {isFormValid && checkingConflicts && (
                         <div className="flex items-center gap-2 text-sm text-neutral-500">
                             <Loader2 size={14} className="animate-spin" />
-                            Vérification des conflits…
+                            Vérification des conflitsâ€¦
                         </div>
                     )}
 
-                    {/* ── Conflits détectés ── */}
+                    {/* â”€â”€ Conflits détectés â”€â”€ */}
                     {!checkingConflicts && hasBlockingConflicts && (
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-2">
                             <div className="flex items-center gap-2 text-red-700 font-semibold text-sm">
@@ -274,7 +274,7 @@ export default function PeriodFormModal({
                         </div>
                     )}
 
-                    {/* ── Aucun conflit ── */}
+                    {/* â”€â”€ Aucun conflit â”€â”€ */}
                     {!checkingConflicts && isFormValid && !hasBlockingConflicts && (
                         <div className="flex items-center gap-2 text-sm text-green-600">
                             <span className="w-2 h-2 rounded-full bg-green-500 inline-block" />
@@ -283,7 +283,7 @@ export default function PeriodFormModal({
                     )}
                 </div>
 
-                {/* ── Pied de modal ── */}
+                {/* â”€â”€ Pied de modal â”€â”€ */}
                 <div className="flex items-center gap-3 p-6 border-t border-neutral-200">
                     {/* Supprimer (édition uniquement) */}
                     {isEditing && onDelete && (
@@ -320,7 +320,7 @@ export default function PeriodFormModal({
                         ) : (
                             <Save size={15} />
                         )}
-                        {isLoading ? 'Enregistrement…' : 'Enregistrer'}
+                        {isLoading ? 'Enregistrementâ€¦' : 'Enregistrer'}
                     </button>
                 </div>
             </div>

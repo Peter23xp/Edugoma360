@@ -1,4 +1,4 @@
-import { AlertCircle, AlertTriangle, Info, ChevronRight } from 'lucide-react';
+﻿import { AlertCircle, AlertTriangle, Info, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';

@@ -1,4 +1,4 @@
-import type { TimetablePeriod } from '@edugoma360/shared/src/types/academic';
+﻿import type { TimetablePeriod } from '@edugoma360/shared/types/academic';
 import TimetableCell from './TimetableCell';
 
 interface TimetableGridProps {
@@ -37,7 +37,7 @@ export default function TimetableGrid({
     canEdit = false,
 }: TimetableGridProps) {
 
-    // ── Indexer les périodes par jour + slot ─────────────────────────────────
+    // â”€â”€ Indexer les périodes par jour + slot â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const byDaySlot: Record<string, Record<number, TimetablePeriod>> = {};
     DAYS.forEach((d) => { byDaySlot[d.key] = {}; });
     periods.forEach((p) => {
@@ -45,7 +45,7 @@ export default function TimetableGrid({
         byDaySlot[p.dayOfWeek][p.periodNumber] = p;
     });
 
-    // ── Signal "cellule vide cliquée" ─────────────────────────────────────────
+    // â”€â”€ Signal "cellule vide cliquée" â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     // On recycle onEditPeriod avec un objet synthétique { id:'__new__', dayOfWeek, periodNumber }
     // TimetablePage détecte id === '__new__' pour ouvrir le modal en mode création.
     const handleAddCell = (dayKey: TimetablePeriod['dayOfWeek'], slot: number) => {
@@ -62,7 +62,7 @@ export default function TimetableGrid({
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
 
-                    {/* ── En-tête ─────────────────────────────────────────── */}
+                    {/* â”€â”€ En-tête â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <thead>
                         <tr className="bg-neutral-100">
                             <th className="border border-neutral-300 p-3 text-left text-sm
@@ -79,11 +79,11 @@ export default function TimetableGrid({
                         </tr>
                     </thead>
 
-                    {/* ── Corps ───────────────────────────────────────────── */}
+                    {/* â”€â”€ Corps â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     <tbody>
                         {PERIODS.map((row, idx) => {
 
-                            // ── Lignes de pause ──
+                            // â”€â”€ Lignes de pause â”€â”€
                             if (row.isBreak) {
                                 return (
                                     <tr key={`break-${idx}`}>
@@ -102,7 +102,7 @@ export default function TimetableGrid({
                                 );
                             }
 
-                            // ── Lignes de cours ──
+                            // â”€â”€ Lignes de cours â”€â”€
                             return (
                                 <tr key={row.slot}>
                                     <td className="border border-neutral-300 p-2 text-xs

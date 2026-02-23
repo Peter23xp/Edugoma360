@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+﻿import { useCallback, useEffect, useRef } from 'react';
 import { processQueue, startPeriodicSync } from '../lib/offline/sync';
 import { useOfflineStore } from '../stores/offline.store';
 import toast from 'react-hot-toast';

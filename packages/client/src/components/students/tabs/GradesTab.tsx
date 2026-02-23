@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen } from 'lucide-react';
 import api from '../../../lib/api';
@@ -107,7 +107,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
 
     return (
         <div className="space-y-6">
-            {/* ── Term Selector ──────────────────────────────────────────── */}
+            {/* â”€â”€ Term Selector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="flex gap-2">
                 {['T1', 'T2', 'T3'].map((term, idx) => (
                     <button
@@ -124,7 +124,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
                 ))}
             </div>
 
-            {/* ── Grades Table ───────────────────────────────────────────── */}
+            {/* â”€â”€ Grades Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="overflow-x-auto">
                 <table className="w-full">
                     <thead>
@@ -222,7 +222,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
                 </table>
             </div>
 
-            {/* ── Summary ────────────────────────────────────────────────── */}
+            {/* â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="border-t border-neutral-200 pt-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-6">

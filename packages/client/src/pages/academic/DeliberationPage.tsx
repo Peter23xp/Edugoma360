@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Loader2, AlertTriangle, FileText } from 'lucide-react';
@@ -7,8 +7,8 @@ import api from '../../lib/api';
 import DeliberationWizard from '../../components/academic/DeliberationWizard';
 import DecisionSelector from '../../components/academic/DecisionSelector';
 import DeliberationSummary from '../../components/academic/DeliberationSummary';
-import { DelibDecision } from '@edugoma360/shared/src/constants/decisions';
-import { suggestDelibDecision } from '@edugoma360/shared/src/utils/gradeCalc';
+import { DelibDecision } from '@edugoma360/shared/constants/decisions';
+import { suggestDelibDecision } from '@edugoma360/shared/utils/gradeCalc';
 
 export default function DeliberationPage() {
     const [searchParams] = useSearchParams();
@@ -217,7 +217,7 @@ export default function DeliberationPage() {
                             >
                                 {verification.allGradesEntered ? (
                                     <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
-                                        <span className="text-white text-sm">✓</span>
+                                        <span className="text-white text-sm">âœ“</span>
                                     </div>
                                 ) : (
                                     <AlertTriangle size={24} className="text-red-600" />
@@ -241,7 +241,7 @@ export default function DeliberationPage() {
                             >
                                 {verification.allGradesLocked ? (
                                     <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
-                                        <span className="text-white text-sm">✓</span>
+                                        <span className="text-white text-sm">âœ“</span>
                                     </div>
                                 ) : (
                                     <AlertTriangle size={24} className="text-red-600" />
@@ -261,7 +261,7 @@ export default function DeliberationPage() {
                             >
                                 {verification.averagesValidated ? (
                                     <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
-                                        <span className="text-white text-sm">✓</span>
+                                        <span className="text-white text-sm">âœ“</span>
                                     </div>
                                 ) : (
                                     <AlertTriangle size={24} className="text-red-600" />
@@ -466,7 +466,7 @@ export default function DeliberationPage() {
                                    hover:bg-neutral-100 rounded-lg transition-colors
                                    disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        ← Précédent
+                        â† Précédent
                     </button>
 
                     {currentStep < 4 ? (
@@ -477,7 +477,7 @@ export default function DeliberationPage() {
                                        hover:bg-primary/90 font-medium text-sm transition-colors
                                        disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Suivant →
+                            Suivant â†’
                         </button>
                     ) : (
                         <button
@@ -511,7 +511,7 @@ export default function DeliberationPage() {
                         <div className="p-6 space-y-4">
                             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                                 <p className="text-sm text-red-800 font-medium">
-                                    ⚠️ Cette action est IRRÉVERSIBLE
+                                    âš ï¸ Cette action est IRRÉVERSIBLE
                                 </p>
                             </div>
 
@@ -520,7 +520,7 @@ export default function DeliberationPage() {
                                 <ul className="list-disc list-inside space-y-1 text-neutral-600 ml-2">
                                     <li>Générer le Procès-Verbal (PV) en PDF</li>
                                     <li>Générer tous les bulletins de la classe</li>
-                                    <li>Envoyer un SMS à tous les parents</li>
+                                    <li>Envoyer un SMS Ã  tous les parents</li>
                                     <li>Verrouiller définitivement la délibération</li>
                                 </ul>
                             </div>

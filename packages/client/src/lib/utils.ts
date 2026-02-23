@@ -1,4 +1,4 @@
-import { type ClassValue, clsx } from 'clsx';
+﻿import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 /** Merge Tailwind classes safely */
@@ -26,7 +26,7 @@ export function formatStudentName(nom: string, postNom: string, prenom?: string 
 /** Truncate text with ellipsis */
 export function truncate(text: string, maxLength: number): string {
     if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength) + '…';
+    return text.slice(0, maxLength) + 'â€¦';
 }
 
 /** Debounce function */

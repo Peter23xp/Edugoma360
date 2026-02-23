@@ -1,11 +1,11 @@
-import { MoreVertical } from 'lucide-react';
+﻿import { MoreVertical } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import type { TimetablePeriod } from '@edugoma360/shared/src/types/academic';
+import type { TimetablePeriod } from '@edugoma360/shared/types/academic';
 
 interface TimetableCellProps {
     period: TimetablePeriod | null;
     onEdit?: (period: TimetablePeriod) => void;
-    onAdd?: () => void;          // ← appelé quand clic sur cellule vide (Préfet)
+    onAdd?: () => void;          // â† appelé quand clic sur cellule vide (Préfet)
     showTeacher?: boolean;
     canEdit?: boolean;
 }

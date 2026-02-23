@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+﻿import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { env } from '../config/env';
 
@@ -47,7 +47,7 @@ export function errorHandler(
                 res.status(409).json({
                     error: {
                         code: 'DUPLICATE_ENTRY',
-                        message: 'Cette entrée existe déjà.',
+                        message: 'Cette entrée existe déjÃ .',
                         field: (err as any).meta?.target?.[0],
                     },
                 });

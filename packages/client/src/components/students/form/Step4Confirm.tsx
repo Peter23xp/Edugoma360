@@ -1,4 +1,4 @@
-import { useStudentForm } from '../../../hooks/useStudentForm';
+﻿import { useStudentForm } from '../../../hooks/useStudentForm';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../lib/api';
 import { User, GraduationCap, Phone, CheckCircle2 } from 'lucide-react';
@@ -240,7 +240,7 @@ export default function Step4Confirm() {
             {/* Info Box */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-900">
-                    ℹ️ Un matricule unique sera généré automatiquement lors de l'enregistrement.
+                    â„¹ï¸ Un matricule unique sera généré automatiquement lors de l'enregistrement.
                     Un SMS de bienvenue sera envoyé au tuteur principal.
                 </p>
             </div>

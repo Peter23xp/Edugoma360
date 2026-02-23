@@ -1,7 +1,7 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+﻿import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../stores/auth.store';
 
-// ── Axios Instance ───────────────────────────────────────────────────────────
+// â”€â”€ Axios Instance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const api = axios.create({
     baseURL: '/api',
     timeout: 15000,
@@ -9,7 +9,7 @@ const api = axios.create({
     withCredentials: true, // Required for httpOnly cookies
 });
 
-// ── Request interceptor: attach JWT ──────────────────────────────────────────
+// â”€â”€ Request interceptor: attach JWT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     const token = useAuthStore.getState().token;
     if (token) {
@@ -18,7 +18,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     return config;
 });
 
-// ── Response interceptor: handle 401 + auto-refresh ─────────────────────────
+// â”€â”€ Response interceptor: handle 401 + auto-refresh â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let isRefreshing = false;
 let failedQueue: Array<{
     resolve: (value?: unknown) => void;
@@ -81,7 +81,7 @@ api.interceptors.response.use(
     },
 );
 
-// ── Online Check Utility ─────────────────────────────────────────────────────
+// â”€â”€ Online Check Utility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export async function checkServerHealth(): Promise<boolean> {
     try {
         await api.get('/health', { timeout: 5000 });

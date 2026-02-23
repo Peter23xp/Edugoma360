@@ -1,4 +1,4 @@
-import { env } from '../config/env';
+﻿import { env } from '../config/env';
 
 // Africa's Talking SMS wrapper
 
@@ -67,13 +67,13 @@ export async function sendBulkSms(
     return results;
 }
 
-// ── SMS Templates ─────────────────────────────────────────────────────────────
+// â”€â”€ SMS Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const SMS_TEMPLATES = {
     // French templates
     fr: {
         paymentConfirmation: (studentName: string, amount: string, receipt: string) =>
-            `EduGoma360: Paiement de ${amount} reçu pour ${studentName}. Reçu N°${receipt}. Merci.`,
+            `EduGoma360: Paiement de ${amount} reçu pour ${studentName}. Reçu NÂ°${receipt}. Merci.`,
 
         absenceNotice: (studentName: string, date: string, period: string) =>
             `EduGoma360: ${studentName} a été marqué(e) absent(e) le ${date} (${period}). Contactez l'école pour plus d'infos.`,
@@ -88,13 +88,13 @@ export const SMS_TEMPLATES = {
             `EduGoma360: Rappel - Frais scolaires en retard pour ${studentName}. Solde: ${amount}. Merci de régulariser.`,
 
         welcome: (studentName: string, matricule: string, schoolName: string) =>
-            `Bienvenue à ${schoolName}. L'élève ${studentName} est inscrit(e). Matricule: ${matricule}.`,
+            `Bienvenue Ã  ${schoolName}. L'élève ${studentName} est inscrit(e). Matricule: ${matricule}.`,
     },
 
     // Swahili templates
     sw: {
         paymentConfirmation: (studentName: string, amount: string, receipt: string) =>
-            `EduGoma360: Malipo ya ${amount} yamepokewa kwa ${studentName}. Risiti N°${receipt}. Asante.`,
+            `EduGoma360: Malipo ya ${amount} yamepokewa kwa ${studentName}. Risiti NÂ°${receipt}. Asante.`,
 
         absenceNotice: (studentName: string, date: string, period: string) =>
             `EduGoma360: ${studentName} hakuwepo shuleni tarehe ${date} (${period}). Wasiliana na shule kwa habari zaidi.`,

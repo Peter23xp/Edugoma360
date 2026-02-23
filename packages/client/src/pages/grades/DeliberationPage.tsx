@@ -1,7 +1,8 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClipboardList, CheckCircle } from 'lucide-react';
 import api from '../../lib/api';
+import { useClassesList } from '../../hooks/useClassesList';
 import { useSchoolStore } from '../../stores/school.store';
 import DataTable from '../../components/shared/DataTable';
 import ScreenBadge from '../../components/shared/ScreenBadge';
@@ -14,7 +15,7 @@ export default function DeliberationPage() {
     const [classId, setClassId] = useState('');
     const [showConfirm, setShowConfirm] = useState(false);
 
-    const { data: classes } = useQuery({ queryKey: ['classes-list'], queryFn: async () => (await api.get('/settings/classes')).data });
+    const { data: classes = [] } = useClassesList();
 
     const { data: delib, isLoading } = useQuery({
         queryKey: ['deliberation', classId, activeTermId],
@@ -66,7 +67,7 @@ export default function DeliberationPage() {
             <ConfirmModal
                 isOpen={showConfirm}
                 title="Valider la délibération"
-                message="Cette action verrouillera toutes les notes et les décisions seront définitives. Êtes-vous sûr ?"
+                message="Cette action verrouillera toutes les notes et les décisions seront définitives. ÃŠtes-vous sûr ?"
                 confirmLabel="Valider"
                 variant="warning"
                 onConfirm={() => { setShowConfirm(false); validateMutation.mutate(); }}

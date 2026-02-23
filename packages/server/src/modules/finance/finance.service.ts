@@ -1,4 +1,4 @@
-import prisma from '../../lib/prisma';
+﻿import prisma from '../../lib/prisma';
 import { generateReceiptNumber } from '@edugoma360/shared';
 import type { z } from 'zod';
 import type { CreatePaymentDto, FinanceQueryDto } from './finance.dto';

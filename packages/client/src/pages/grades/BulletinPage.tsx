@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+﻿import { useState, useCallback, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 import api from '../../lib/api';
 import { useSchoolStore } from '../../stores/school.store';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
+// â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface BatchJob {
     jobId: string;
@@ -31,7 +31,7 @@ interface BatchJob {
     createdAt: string;
 }
 
-// ── Batch Progress Panel ───────────────────────────────────────────────────────
+// â”€â”€ Batch Progress Panel â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function BatchProgressPanel({
     job,
@@ -53,7 +53,7 @@ function BatchProgressPanel({
                         <Loader2 size={20} className="animate-spin text-green-700" />
                     )}
                     <h3 className="font-semibold text-neutral-900">
-                        {isDone ? 'Génération terminée' : 'Génération en cours…'}
+                        {isDone ? 'Génération terminée' : 'Génération en coursâ€¦'}
                     </h3>
                 </div>
                 {!isDone && (
@@ -88,7 +88,7 @@ function BatchProgressPanel({
                 {job.status === 'pending' && (
                     <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 
                                      border border-amber-200 px-2 py-1 rounded-full">
-                        <Clock size={11} /> En attente…
+                        <Clock size={11} /> En attenteâ€¦
                     </span>
                 )}
                 {job.status === 'processing' && (
@@ -120,7 +120,7 @@ function BatchProgressPanel({
     );
 }
 
-// ── Main Page ─────────────────────────────────────────────────────────────────
+// â”€â”€ Main Page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function BulletinPage() {
     const { studentId, termId: termIdParam } = useParams<{ studentId?: string; termId?: string }>();
@@ -141,7 +141,7 @@ export default function BulletinPage() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
-    // ── Single bulletin PDF (fetched as blob for iframe preview) ───────────────
+    // â”€â”€ Single bulletin PDF (fetched as blob for iframe preview) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const {
         isLoading: bulletinLoading,
         error: bulletinError,
@@ -168,7 +168,7 @@ export default function BulletinPage() {
         staleTime: 5 * 60 * 1000, // 5 min cache
     });
 
-    // ── Batch job polling ───────────────────────────────────────────────────────
+    // â”€â”€ Batch job polling â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const { data: batchJob, refetch: refetchBatchJob } = useQuery<BatchJob>({
         queryKey: ['bulletin-batch-job', batchJobId],
         queryFn: async () => {
@@ -183,7 +183,7 @@ export default function BulletinPage() {
         },
     });
 
-    // ── Download single PDF ────────────────────────────────────────────────────
+    // â”€â”€ Download single PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleDownload = useCallback(async () => {
         if (!studentId || !termId) return;
         setIsGenerating(true);
@@ -206,7 +206,7 @@ export default function BulletinPage() {
         }
     }, [studentId, termId]);
 
-    // ── Print ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Print â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handlePrint = useCallback(() => {
         if (pdfBlobUrl) {
             // Open PDF in new tab — browser print dialog
@@ -217,7 +217,7 @@ export default function BulletinPage() {
         }
     }, [pdfBlobUrl]);
 
-    // ── Batch generation trigger ───────────────────────────────────────────────
+    // â”€â”€ Batch generation trigger â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const handleBatchGenerate = useCallback(async () => {
         if (!classId || !termId) return;
         setIsGenerating(true);
@@ -232,11 +232,11 @@ export default function BulletinPage() {
         }
     }, [classId, termId]);
 
-    // ── Render ─────────────────────────────────────────────────────────────────
+    // â”€â”€ Render â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     return (
         <div className="min-h-screen bg-neutral-50">
 
-            {/* ── Page Header ─────────────────────────────────────────── */}
+            {/* â”€â”€ Page Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="bg-white border-b border-neutral-200 shadow-sm">
                 <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -330,12 +330,12 @@ export default function BulletinPage() {
                 </div>
             </div>
 
-            {/* ── Page Body ────────────────────────────────────────────── */}
+            {/* â”€â”€ Page Body â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
 
-                {/* ══════════════════════════════════════════════════════
+                {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                     BATCH MODE
-                ══════════════════════════════════════════════════════ */}
+                â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
                 {isBatchMode && (
                     <div className="space-y-6">
 
@@ -353,7 +353,7 @@ export default function BulletinPage() {
                                     <p className="text-sm text-neutral-600 mt-1">
                                         Génère les bulletins officiels pour <strong>tous les élèves</strong> de
                                         la classe. La génération s'effectue en arrière-plan et les fichiers
-                                        seront disponibles au téléchargement à la fin.
+                                        seront disponibles au téléchargement Ã  la fin.
                                     </p>
                                     <div className="flex flex-wrap items-center gap-2 mt-3">
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50
@@ -364,7 +364,7 @@ export default function BulletinPage() {
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50
                                                           border border-blue-200 rounded-lg text-xs text-blue-700 font-medium">
                                             <Clock size={12} />
-                                            Environ 2–5 min selon l'effectif
+                                            Environ 2â€“5 min selon l'effectif
                                         </span>
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50
                                                           border border-green-200 rounded-lg text-xs text-green-700 font-medium">
@@ -459,9 +459,9 @@ export default function BulletinPage() {
                     </div>
                 )}
 
-                {/* ══════════════════════════════════════════════════════
+                {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
                     SINGLE BULLETIN MODE
-                ══════════════════════════════════════════════════════ */}
+                â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
                 {!isBatchMode && (
                     <div className="space-y-6">
 
@@ -472,7 +472,7 @@ export default function BulletinPage() {
                                 <h3 className="font-semibold text-amber-900 mb-1">Paramètres manquants</h3>
                                 <p className="text-sm text-amber-700">
                                     L'identifiant de l'élève ou du trimestre est introuvable.
-                                    Accédez à cette page depuis la fiche élève ou après délibération.
+                                    Accédez Ã  cette page depuis la fiche élève ou après délibération.
                                 </p>
                             </div>
                         )}
@@ -492,7 +492,7 @@ export default function BulletinPage() {
                                         </div>
                                     </div>
                                     <div className="text-center">
-                                        <p className="font-semibold text-neutral-800">Génération du bulletin…</p>
+                                        <p className="font-semibold text-neutral-800">Génération du bulletinâ€¦</p>
                                         <p className="text-sm text-neutral-400 mt-1">
                                             Cela peut prendre quelques secondes
                                         </p>
@@ -524,7 +524,7 @@ export default function BulletinPage() {
                                             className="px-4 py-2 text-sm font-medium text-neutral-700
                                                        border border-neutral-300 rounded-lg hover:bg-neutral-100 transition-colors"
                                         >
-                                            ← Retour
+                                            â† Retour
                                         </button>
                                         <button
                                             onClick={() => refetchBulletin()}

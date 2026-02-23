@@ -1,4 +1,4 @@
-import { Router } from 'express';
+﻿import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
 import { bulletinsController } from './bulletins.controller';
@@ -12,7 +12,7 @@ router.use(authenticate);
  * POST /api/bulletin/batch
  * Trigger batch bulletin generation for an entire class
  * Body: { classId: string, termId: string }
- * ⚠️ Must be declared BEFORE /:studentId/:termId to avoid Express routing conflicts
+ * âš ï¸ Must be declared BEFORE /:studentId/:termId to avoid Express routing conflicts
  */
 router.post(
     '/batch',
@@ -23,7 +23,7 @@ router.post(
 /**
  * GET /api/bulletin/batch/:jobId
  * Poll the status of a bulletin batch generation job
- * ⚠️ Must be declared BEFORE /:studentId/:termId to avoid 'batch' being matched as studentId
+ * âš ï¸ Must be declared BEFORE /:studentId/:termId to avoid 'batch' being matched as studentId
  */
 router.get(
     '/batch/:jobId',

@@ -1,4 +1,4 @@
-/// <reference lib="webworker" />
+﻿/// <reference lib="webworker" />
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
@@ -9,7 +9,7 @@ declare const self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
-// ── API calls: Network First (fall back to cache when offline) ────────────
+// â”€â”€ API calls: Network First (fall back to cache when offline) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 registerRoute(
     ({ url }) => url.pathname.startsWith('/api/'),
     new NetworkFirst({
@@ -30,7 +30,7 @@ registerRoute(
     'GET',
 );
 
-// ── Static assets: Cache First ────────────────────────────────────────────
+// â”€â”€ Static assets: Cache First â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 registerRoute(
     ({ request }) =>
         request.destination === 'style' ||
@@ -41,7 +41,7 @@ registerRoute(
     }),
 );
 
-// ── Images: Stale While Revalidate ────────────────────────────────────────
+// â”€â”€ Images: Stale While Revalidate â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 registerRoute(
     ({ request }) => request.destination === 'image',
     new StaleWhileRevalidate({
@@ -49,7 +49,7 @@ registerRoute(
     }),
 );
 
-// ── Handle offline page ───────────────────────────────────────────────────
+// â”€â”€ Handle offline page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 self.addEventListener('install', () => {
     self.skipWaiting();
 });

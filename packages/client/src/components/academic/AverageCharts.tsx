@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import type { ClassAveragesData } from '@edugoma360/shared/src/types/academic';
+﻿import { useMemo } from 'react';
+import type { ClassAveragesData } from '@edugoma360/shared/types/academic';
 
 interface AverageChartsProps {
     data: ClassAveragesData;
@@ -84,7 +84,7 @@ export default function AverageCharts({ data }: AverageChartsProps) {
                                     </div>
                                     <span className="text-xs text-neutral-500">{term.termName}</span>
                                     {i < termHistory.length - 1 && termHistory[i + 1].classAverage > term.classAverage && (
-                                        <span className="text-xs text-green-500">↑</span>
+                                        <span className="text-xs text-green-500">â†‘</span>
                                     )}
                                 </div>
                             );
