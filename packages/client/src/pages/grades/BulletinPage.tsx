@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
     Loader2,
     Download,
@@ -126,7 +126,6 @@ export default function BulletinPage() {
     const { studentId, termId: termIdParam } = useParams<{ studentId?: string; termId?: string }>();
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const { activeTermId, termLabel, academicYearLabel } = useSchoolStore();

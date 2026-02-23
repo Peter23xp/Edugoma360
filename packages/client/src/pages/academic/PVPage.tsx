@@ -28,8 +28,9 @@ export default function PVPage() {
             return response.data;
         },
         enabled: !!bulletinJobId,
-        refetchInterval: (data) => {
+        refetchInterval: (query) => {
             // Stop polling when job is completed or failed
+            const data = query.state.data as any;
             return data?.status === 'processing' || data?.status === 'pending' ? 2000 : false;
         },
     });
@@ -262,15 +263,15 @@ export default function PVPage() {
                         <p className="text-3xl font-bold text-neutral-900 mt-2">
                             {deliberationData?.results
                                 ? (
-                                      (deliberationData.results.filter(
-                                          (r: any) =>
-                                              r.decision === 'ADMITTED' ||
-                                              r.decision === 'DISTINCTION' ||
-                                              r.decision === 'GREAT_DISTINCTION'
-                                      ).length /
-                                          deliberationData.results.length) *
-                                      100
-                                  ).toFixed(0)
+                                    (deliberationData.results.filter(
+                                        (r: any) =>
+                                            r.decision === 'ADMITTED' ||
+                                            r.decision === 'DISTINCTION' ||
+                                            r.decision === 'GREAT_DISTINCTION'
+                                    ).length /
+                                        deliberationData.results.length) *
+                                    100
+                                ).toFixed(0)
                                 : 0}
                             %
                         </p>

@@ -1,26 +1,5 @@
+import type { TimetablePeriod } from '@edugoma360/shared/src/types/academic';
 import TimetableCell from './TimetableCell';
-
-interface TimetablePeriod {
-    id: string;
-    dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY';
-    periodSlot: number;
-    startTime: string;
-    endTime: string;
-    subject: {
-        name: string;
-        abbreviation: string;
-    };
-    class: {
-        name: string;
-        section: {
-            code: string;
-        };
-    };
-    teacher?: {
-        nom: string;
-        prenom: string | null;
-    };
-}
 
 interface TimetableGridProps {
     periods: TimetablePeriod[];
@@ -36,7 +15,7 @@ const DAYS = [
     { key: 'THURSDAY', label: 'Jeudi' },
     { key: 'FRIDAY', label: 'Vendredi' },
     { key: 'SATURDAY', label: 'Samedi' },
-];
+] as const;
 
 const PERIODS = [
     { slot: 1, start: '07:30', end: '08:30' },
@@ -57,91 +36,105 @@ export default function TimetableGrid({
     showTeacher = false,
     canEdit = false,
 }: TimetableGridProps) {
-    // Organiser les périodes par jour et slot
-    const periodsByDayAndSlot: Record<string, Record<number, TimetablePeriod>> = {};
 
-    DAYS.forEach((day) => {
-        periodsByDayAndSlot[day.key] = {};
+    // ── Indexer les périodes par jour + slot ─────────────────────────────────
+    const byDaySlot: Record<string, Record<number, TimetablePeriod>> = {};
+    DAYS.forEach((d) => { byDaySlot[d.key] = {}; });
+    periods.forEach((p) => {
+        if (!byDaySlot[p.dayOfWeek]) byDaySlot[p.dayOfWeek] = {};
+        byDaySlot[p.dayOfWeek][p.periodNumber] = p;
     });
 
-    periods.forEach((period) => {
-        if (!periodsByDayAndSlot[period.dayOfWeek]) {
-            periodsByDayAndSlot[period.dayOfWeek] = {};
-        }
-        periodsByDayAndSlot[period.dayOfWeek][period.periodSlot] = period;
-    });
+    // ── Signal "cellule vide cliquée" ─────────────────────────────────────────
+    // On recycle onEditPeriod avec un objet synthétique { id:'__new__', dayOfWeek, periodNumber }
+    // TimetablePage détecte id === '__new__' pour ouvrir le modal en mode création.
+    const handleAddCell = (dayKey: TimetablePeriod['dayOfWeek'], slot: number) => {
+        if (!canEdit || !onEditPeriod) return;
+        onEditPeriod({
+            id: '__new__',
+            dayOfWeek: dayKey,
+            periodNumber: slot,
+        } as TimetablePeriod);
+    };
 
     return (
         <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
             <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
+
+                    {/* ── En-tête ─────────────────────────────────────────── */}
                     <thead>
                         <tr className="bg-neutral-100">
-                            <th className="border border-neutral-300 p-3 text-left text-sm 
+                            <th className="border border-neutral-300 p-3 text-left text-sm
                                            font-semibold text-neutral-700 w-24">
                                 Horaire
                             </th>
                             {DAYS.map((day) => (
-                                <th
-                                    key={day.key}
-                                    className="border border-neutral-300 p-3 text-center text-sm 
-                                               font-semibold text-neutral-700"
-                                >
+                                <th key={day.key}
+                                    className="border border-neutral-300 p-3 text-center text-sm
+                                               font-semibold text-neutral-700">
                                     {day.label}
                                 </th>
                             ))}
                         </tr>
                     </thead>
+
+                    {/* ── Corps ───────────────────────────────────────────── */}
                     <tbody>
-                        {PERIODS.map((period, index) => {
-                            // Ligne de pause
-                            if (period.isBreak) {
+                        {PERIODS.map((row, idx) => {
+
+                            // ── Lignes de pause ──
+                            if (row.isBreak) {
                                 return (
-                                    <tr key={`break-${index}`}>
-                                        <td
-                                            className="border border-neutral-300 p-2 text-xs 
-                                                       text-neutral-600 bg-neutral-50"
-                                        >
-                                            {period.start}
+                                    <tr key={`break-${idx}`}>
+                                        <td className="border border-neutral-300 p-2 text-xs
+                                                       text-neutral-600 bg-neutral-50">
+                                            {row.start}
                                         </td>
-                                        <td
-                                            colSpan={6}
-                                            className="border border-neutral-300 p-3 text-center 
-                                                       bg-neutral-100"
-                                        >
+                                        <td colSpan={6}
+                                            className="border border-neutral-300 p-3 text-center
+                                                       bg-neutral-100">
                                             <span className="text-sm font-semibold text-neutral-700">
-                                                {period.label}
+                                                {row.label}
                                             </span>
                                         </td>
                                     </tr>
                                 );
                             }
 
-                            // Ligne de cours
+                            // ── Lignes de cours ──
                             return (
-                                <tr key={period.slot}>
-                                    <td
-                                        className="border border-neutral-300 p-2 text-xs 
-                                                   text-neutral-600 bg-neutral-50"
-                                    >
-                                        <div>{period.start}</div>
-                                        <div className="text-neutral-400">{period.end}</div>
+                                <tr key={row.slot}>
+                                    <td className="border border-neutral-300 p-2 text-xs
+                                                   text-neutral-600 bg-neutral-50">
+                                        <div>{row.start}</div>
+                                        <div className="text-neutral-400">{row.end}</div>
                                     </td>
-                                    {DAYS.map((day) => (
-                                        <td
-                                            key={`${day.key}-${period.slot}`}
-                                            className="border border-neutral-300 p-0"
-                                        >
-                                            <TimetableCell
-                                                period={
-                                                    periodsByDayAndSlot[day.key][period.slot] || null
-                                                }
-                                                onEdit={onEditPeriod}
-                                                showTeacher={showTeacher}
-                                                canEdit={canEdit}
-                                            />
-                                        </td>
-                                    ))}
+
+                                    {DAYS.map((day) => {
+                                        const existing =
+                                            byDaySlot[day.key]?.[row.slot] ?? null;
+
+                                        return (
+                                            <td key={`${day.key}-${row.slot}`}
+                                                className="border border-neutral-300 p-0">
+                                                <TimetableCell
+                                                    period={existing}
+                                                    onEdit={onEditPeriod}
+                                                    onAdd={
+                                                        canEdit && !existing
+                                                            ? () => handleAddCell(
+                                                                day.key as TimetablePeriod['dayOfWeek'],
+                                                                row.slot
+                                                            )
+                                                            : undefined
+                                                    }
+                                                    showTeacher={showTeacher}
+                                                    canEdit={canEdit}
+                                                />
+                                            </td>
+                                        );
+                                    })}
                                 </tr>
                             );
                         })}
@@ -151,4 +144,3 @@ export default function TimetableGrid({
         </div>
     );
 }
-

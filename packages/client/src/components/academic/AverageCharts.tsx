@@ -17,8 +17,8 @@ const RANGES = [
 export default function AverageCharts({ data }: AverageChartsProps) {
     const averages = useMemo(
         () => data.students
-            .map((s) => s.generalAverage)
-            .filter((a): a is number => a !== null),
+            .map((s: { generalAverage: number | null }) => s.generalAverage)
+            .filter((a: number | null): a is number => a !== null),
         [data.students]
     );
 
@@ -26,16 +26,16 @@ export default function AverageCharts({ data }: AverageChartsProps) {
     const distribution = useMemo(() =>
         RANGES.map((range) => ({
             ...range,
-            count: averages.filter((a) => a >= range.min && a < range.max).length,
+            count: averages.filter((a: number) => a >= range.min && a < range.max).length,
         })),
         [averages]
     );
 
-    const maxCount = Math.max(...distribution.map((d) => d.count), 1);
+    const maxCount = Math.max(...distribution.map((d: { count: number }) => d.count), 1);
 
     // Courbe évolution trimestre
     const termHistory = data.termHistory ?? [];
-    const maxAvg = Math.max(...termHistory.map((t) => t.classAverage), 20);
+    const maxAvg = Math.max(...termHistory.map((t: { classAverage: number }) => t.classAverage), 20);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -68,7 +68,7 @@ export default function AverageCharts({ data }: AverageChartsProps) {
                 <h3 className="text-sm font-semibold text-neutral-700 mb-4">Évolution trimestrielle</h3>
                 {termHistory.length > 0 ? (
                     <div className="flex items-end gap-4 h-36 pt-2">
-                        {termHistory.map((term, i) => {
+                        {termHistory.map((term: { termId: string; classAverage: number; termName: string }, i: number) => {
                             const heightPct = maxAvg > 0 ? (term.classAverage / maxAvg) * 100 : 0;
                             const isGood = term.classAverage >= 10;
                             return (

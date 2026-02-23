@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tantml/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Loader2, AlertTriangle, FileText, Send } from 'lucide-react';
+import { Loader2, AlertTriangle, FileText } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
 import DeliberationWizard from '../../components/academic/DeliberationWizard';
@@ -13,7 +13,6 @@ import { suggestDelibDecision } from '@edugoma360/shared/src/utils/gradeCalc';
 export default function DeliberationPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
 
     const classId = searchParams.get('classId');
     const termId = searchParams.get('termId');
@@ -133,7 +132,6 @@ export default function DeliberationPage() {
     };
 
     const canProceedToStep2 = verification.allGradesEntered && verification.allGradesLocked && verification.averagesValidated;
-    const canProceedToStep3 = currentStep >= 2;
     const canProceedToStep4 = () => {
         // Check all modified decisions have justifications
         return Object.entries(decisions).every(([studentId, d]) => {
@@ -212,11 +210,10 @@ export default function DeliberationPage() {
 
                         <div className="space-y-4">
                             <div
-                                className={`flex items-center gap-3 p-4 rounded-lg border ${
-                                    verification.allGradesEntered
-                                        ? 'bg-green-50 border-green-200'
-                                        : 'bg-red-50 border-red-200'
-                                }`}
+                                className={`flex items-center gap-3 p-4 rounded-lg border ${verification.allGradesEntered
+                                    ? 'bg-green-50 border-green-200'
+                                    : 'bg-red-50 border-red-200'
+                                    }`}
                             >
                                 {verification.allGradesEntered ? (
                                     <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
@@ -237,11 +234,10 @@ export default function DeliberationPage() {
                             </div>
 
                             <div
-                                className={`flex items-center gap-3 p-4 rounded-lg border ${
-                                    verification.allGradesLocked
-                                        ? 'bg-green-50 border-green-200'
-                                        : 'bg-red-50 border-red-200'
-                                }`}
+                                className={`flex items-center gap-3 p-4 rounded-lg border ${verification.allGradesLocked
+                                    ? 'bg-green-50 border-green-200'
+                                    : 'bg-red-50 border-red-200'
+                                    }`}
                             >
                                 {verification.allGradesLocked ? (
                                     <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
@@ -258,11 +254,10 @@ export default function DeliberationPage() {
                             </div>
 
                             <div
-                                className={`flex items-center gap-3 p-4 rounded-lg border ${
-                                    verification.averagesValidated
-                                        ? 'bg-green-50 border-green-200'
-                                        : 'bg-red-50 border-red-200'
-                                }`}
+                                className={`flex items-center gap-3 p-4 rounded-lg border ${verification.averagesValidated
+                                    ? 'bg-green-50 border-green-200'
+                                    : 'bg-red-50 border-red-200'
+                                    }`}
                             >
                                 {verification.averagesValidated ? (
                                     <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">

@@ -76,29 +76,39 @@ export class PalmaresService {
             throw new Error('DELIBERATION_NOT_VALIDATED');
         }
 
-        // Get all results
+        // Get all results (sans include student — pas de relation dans le schema)
         const results = await prisma.delibResult.findMany({
             where: {
                 deliberationId: deliberation.id,
-            },
-            include: {
-                student: true,
             },
             orderBy: {
                 rank: 'asc',
             },
         });
 
+        // Fetch students separately and join
+        const studentIds = results.map((r) => r.studentId);
+        const students = await prisma.student.findMany({
+            where: { id: { in: studentIds } },
+            select: { id: true, nom: true, postNom: true, prenom: true },
+        });
+        const studentMap = new Map(students.map((s) => [s.id, s]));
+
         // Build rankings
-        const rankings: RankingRow[] = results.map((r) => ({
-            rank: r.rank,
-            studentName: `${r.student.nom} ${r.student.postNom}${r.student.prenom ? ' ' + r.student.prenom : ''}`,
-            generalAverage: r.generalAverage,
-            totalPoints: r.totalPoints,
-            decision: r.decision,
-            mention: this.getMention(r.decision, r.generalAverage, r.rank),
-            badge: this.getBadge(r.rank, r.decision),
-        }));
+        const rankings: RankingRow[] = results.map((r) => {
+            const student = studentMap.get(r.studentId);
+            return {
+                rank: r.rank,
+                studentName: student
+                    ? `${student.nom} ${student.postNom}${student.prenom ? ' ' + student.prenom : ''}`
+                    : r.studentId,
+                generalAverage: r.generalAverage,
+                totalPoints: r.totalPoints,
+                decision: r.decision,
+                mention: this.getMention(r.decision, r.generalAverage, r.rank),
+                badge: this.getBadge(r.rank, r.decision),
+            };
+        });
 
         // Calculate summary
         const passed = results.filter((r) =>

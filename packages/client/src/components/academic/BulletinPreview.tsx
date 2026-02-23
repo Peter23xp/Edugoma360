@@ -141,7 +141,7 @@ function RectoContent({ bulletin }: { bulletin: BulletinData }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {bulletin.grades.map((grade, i) => (
+                    {bulletin.grades.map((grade: { subjectName: string; isEliminatory: boolean; coefficient: number; interro: number | null; tp: number | null; exam: number | null; average: number | null; rank?: number | null }, i: number) => (
                         <tr key={i} className={`${i % 2 === 0 ? 'bg-white' : 'bg-neutral-50'} ${grade.isEliminatory ? 'font-semibold' : ''}`}>
                             <td className="border border-neutral-300 px-2 py-1">
                                 {grade.subjectName}
@@ -241,7 +241,7 @@ function VersoContent({ bulletin }: { bulletin: BulletinData }) {
                     { label: 'Titulaire de classe', name: bulletin.homeroomTeacher },
                     { label: 'Le Préfet des études', name: bulletin.prefectSignature },
                     { label: 'Signature du Parent', name: null },
-                ].map((sig) => (
+                ].map((sig: { label: string; name: string | null | undefined }) => (
                     <div key={sig.label} className="text-center">
                         <p className="text-xs font-semibold text-neutral-700">{sig.label}</p>
                         <div className="h-16 border-b border-neutral-400 mt-4" />

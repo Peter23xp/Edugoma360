@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { SetupWizardData } from '@edugoma360/shared';
+import type { SetupWizardData, Step5Data } from '@edugoma360/shared';
 
 // Alias for better readability in components
 export interface FormDataAliases {
@@ -7,7 +7,7 @@ export interface FormDataAliases {
     location?: SetupWizardData['step2'];
     contact?: SetupWizardData['step3'];
     academicYear?: SetupWizardData['step4'];
-    classes?: SetupWizardData['step5']['classes'];
+    classes?: Step5Data;
     admin?: SetupWizardData['step6'];
 }
 
@@ -15,7 +15,7 @@ interface SetupWizardState {
     currentStep: number;
     formData: FormDataAliases;
     validationErrors: Record<string, string[]>;
-    
+
     nextStep: () => void;
     prevStep: () => void;
     goToStep: (step: number) => void;
@@ -23,7 +23,7 @@ interface SetupWizardState {
     setValidationErrors: (errors: Record<string, string[]>) => void;
     clearValidationErrors: () => void;
     reset: () => void;
-    
+
     // Draft management
     saveDraft: () => void;
     loadDraft: () => boolean;
@@ -36,7 +36,7 @@ export const useSetupWizard = create<SetupWizardState>((set, get) => ({
     currentStep: 1,
     formData: {},
     validationErrors: {},
-    
+
     nextStep: () => {
         const { currentStep } = get();
         if (currentStep < 6) {
@@ -44,20 +44,20 @@ export const useSetupWizard = create<SetupWizardState>((set, get) => ({
             get().saveDraft();
         }
     },
-    
+
     prevStep: () => {
         const { currentStep } = get();
         if (currentStep > 1) {
             set({ currentStep: currentStep - 1 });
         }
     },
-    
+
     goToStep: (step: number) => {
         if (step >= 1 && step <= 6) {
             set({ currentStep: step });
         }
     },
-    
+
     updateFormData: (step: keyof FormDataAliases, data: any) => {
         set((state) => ({
             formData: {
@@ -67,15 +67,15 @@ export const useSetupWizard = create<SetupWizardState>((set, get) => ({
         }));
         get().saveDraft();
     },
-    
+
     setValidationErrors: (errors: Record<string, string[]>) => {
         set({ validationErrors: errors });
     },
-    
+
     clearValidationErrors: () => {
         set({ validationErrors: {} });
     },
-    
+
     reset: () => {
         set({
             currentStep: 1,
@@ -84,7 +84,7 @@ export const useSetupWizard = create<SetupWizardState>((set, get) => ({
         });
         get().clearDraft();
     },
-    
+
     saveDraft: () => {
         try {
             const { formData, currentStep } = get();
@@ -96,13 +96,13 @@ export const useSetupWizard = create<SetupWizardState>((set, get) => ({
             console.error('Failed to save draft:', error);
         }
     },
-    
+
     loadDraft: () => {
         try {
             const draft = localStorage.getItem(DRAFT_KEY);
             if (draft) {
                 const { formData, currentStep, timestamp } = JSON.parse(draft);
-                
+
                 // Only load draft if it's less than 7 days old
                 const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
                 if (timestamp > sevenDaysAgo) {
@@ -115,7 +115,7 @@ export const useSetupWizard = create<SetupWizardState>((set, get) => ({
         }
         return false;
     },
-    
+
     clearDraft: () => {
         try {
             localStorage.removeItem(DRAFT_KEY);

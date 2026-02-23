@@ -1,4 +1,4 @@
-import { prisma } from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 
 type DayOfWeek = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY';
 
@@ -111,8 +111,8 @@ export class TimetableService {
                 section: {
                     id: period.teacherClassSubject.class.section.id,
                     name: period.teacherClassSubject.class.section.name,
-                    code: period.teacherClassSubject.class.section.code || 
-                          period.teacherClassSubject.class.section.name.substring(0, 3),
+                    code: period.teacherClassSubject.class.section.code ||
+                        period.teacherClassSubject.class.section.name.substring(0, 3),
                 },
             },
             subject: {
@@ -188,8 +188,8 @@ export class TimetableService {
                 section: {
                     id: period.teacherClassSubject.class.section.id,
                     name: period.teacherClassSubject.class.section.name,
-                    code: period.teacherClassSubject.class.section.code || 
-                          period.teacherClassSubject.class.section.name.substring(0, 3),
+                    code: period.teacherClassSubject.class.section.code ||
+                        period.teacherClassSubject.class.section.name.substring(0, 3),
                 },
             },
             subject: {

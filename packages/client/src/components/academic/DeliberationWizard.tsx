@@ -1,4 +1,4 @@
-import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 
 interface Step {
     number: number;
@@ -11,7 +11,7 @@ interface DeliberationWizardProps {
     steps: Step[];
 }
 
-export default function DeliberationWizard({ currentStep, steps }: DeliberationWizardProps) {
+export default function DeliberationWizard({ steps }: DeliberationWizardProps) {
     return (
         <div className="bg-white border-b border-neutral-200 px-6 py-4">
             <div className="max-w-4xl mx-auto">
@@ -24,13 +24,12 @@ export default function DeliberationWizard({ currentStep, steps }: DeliberationW
                                     <div
                                         className={`w-10 h-10 rounded-full flex items-center 
                                                    justify-center font-semibold text-sm transition-colors
-                                                   ${
-                                                       step.status === 'completed'
-                                                           ? 'bg-green-600 text-white'
-                                                           : step.status === 'active'
-                                                           ? 'bg-primary text-white'
-                                                           : 'bg-neutral-200 text-neutral-600'
-                                                   }`}
+                                                   ${step.status === 'completed'
+                                                ? 'bg-green-600 text-white'
+                                                : step.status === 'active'
+                                                    ? 'bg-primary text-white'
+                                                    : 'bg-neutral-200 text-neutral-600'
+                                            }`}
                                     >
                                         {step.status === 'completed' ? (
                                             <CheckCircle size={20} />
@@ -40,11 +39,10 @@ export default function DeliberationWizard({ currentStep, steps }: DeliberationW
                                     </div>
                                     <span
                                         className={`text-xs mt-2 font-medium
-                                                   ${
-                                                       step.status === 'active'
-                                                           ? 'text-primary'
-                                                           : 'text-neutral-600'
-                                                   }`}
+                                                   ${step.status === 'active'
+                                                ? 'text-primary'
+                                                : 'text-neutral-600'
+                                            }`}
                                     >
                                         {step.label}
                                     </span>
@@ -52,11 +50,10 @@ export default function DeliberationWizard({ currentStep, steps }: DeliberationW
                                 {index < steps.length - 1 && (
                                     <div
                                         className={`h-1 flex-1 mx-2 rounded transition-colors
-                                                   ${
-                                                       step.status === 'completed'
-                                                           ? 'bg-green-600'
-                                                           : 'bg-neutral-200'
-                                                   }`}
+                                                   ${step.status === 'completed'
+                                                ? 'bg-green-600'
+                                                : 'bg-neutral-200'
+                                            }`}
                                     />
                                 )}
                             </div>

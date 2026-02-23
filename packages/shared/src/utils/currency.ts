@@ -86,3 +86,16 @@ export function formatDualCurrency(
         return `${formatUSD(amount)} (≈ ${formatFC(fc)})`;
     }
 }
+
+/**
+ * Génère un numéro de reçu de paiement formaté
+ *
+ * @param schoolCode  - Code court de l'école (ex: "ITG001")
+ * @param year        - Année (ex: 2024)
+ * @param sequence    - Numéro séquentiel (ex: 42)
+ * @returns Numéro de reçu (ex: "ITG001-2024-042")
+ */
+export function generateReceiptNumber(schoolCode: string, year: number, sequence: number): string {
+    const seq = String(sequence).padStart(3, '0');
+    return `${schoolCode}-${year}-${seq}`;
+}

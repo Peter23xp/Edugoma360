@@ -127,11 +127,12 @@ export default function GradesMatrix({
                                                     {formatGrade(score)}
                                                 </span>
                                                 {isEliminatory && (
-                                                    <AlertTriangle
-                                                        size={14}
-                                                        className="text-red-600"
-                                                        title="Note éliminatoire"
-                                                    />
+                                                    <span title="Note éliminatoire">
+                                                        <AlertTriangle
+                                                            size={14}
+                                                            className="text-red-600"
+                                                        />
+                                                    </span>
                                                 )}
                                             </div>
                                         </td>
@@ -140,11 +141,10 @@ export default function GradesMatrix({
                                 <td className="px-4 py-3 text-center border-r border-neutral-200 
                                                bg-blue-50">
                                     <span
-                                        className={`text-sm font-semibold ${
-                                            averages[student.id] !== null
+                                        className={`text-sm font-semibold ${averages[student.id] !== null
                                                 ? 'text-blue-700'
                                                 : 'text-neutral-400 italic'
-                                        }`}
+                                            }`}
                                     >
                                         {averages[student.id] !== null
                                             ? averages[student.id]!.toFixed(2)
@@ -153,11 +153,10 @@ export default function GradesMatrix({
                                 </td>
                                 <td className="px-4 py-3 text-center bg-blue-50">
                                     <span
-                                        className={`text-sm font-bold ${
-                                            ranks[student.id] !== null
+                                        className={`text-sm font-bold ${ranks[student.id] !== null
                                                 ? 'text-primary'
                                                 : 'text-neutral-400 italic'
-                                        }`}
+                                            }`}
                                     >
                                         {ranks[student.id] !== null ? ranks[student.id] : '——'}
                                     </span>

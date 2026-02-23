@@ -1,7 +1,7 @@
-import { db } from './db';
+import db from './db';
 
-export interface SyncQueueItem {
-    id: string;
+export interface GradeSyncItem {
+    id: number;
     type: 'grade_create' | 'grade_update';
     data: {
         studentId: string;
@@ -21,46 +21,45 @@ export interface SyncQueueItem {
  */
 export async function addToGradeQueue(
     type: 'grade_create' | 'grade_update',
-    data: SyncQueueItem['data']
-): Promise<string> {
-    const item: SyncQueueItem = {
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    data: GradeSyncItem['data']
+): Promise<number> {
+    const item: Omit<GradeSyncItem, 'id'> = {
         type,
         data,
         timestamp: Date.now(),
         syncStatus: 'pending',
     };
 
-    await db.syncQueue.add(item);
-    return item.id;
+    const id = await (db.syncQueue as any).add(item);
+    return id;
 }
 
 /**
  * Get all pending items in the queue
  */
-export async function getPendingQueueItems(): Promise<SyncQueueItem[]> {
-    return db.syncQueue.where('syncStatus').equals('pending').toArray();
+export async function getPendingQueueItems(): Promise<GradeSyncItem[]> {
+    return (db.syncQueue as any).where('syncStatus').equals('pending').toArray();
 }
 
 /**
  * Get queue count
  */
 export async function getQueueCount(): Promise<number> {
-    return db.syncQueue.where('syncStatus').equals('pending').count();
+    return (db.syncQueue as any).where('syncStatus').equals('pending').count();
 }
 
 /**
  * Mark item as syncing
  */
-export async function markAsSyncing(id: string): Promise<void> {
-    await db.syncQueue.update(id, { syncStatus: 'syncing' });
+export async function markAsSyncing(id: number): Promise<void> {
+    await (db.syncQueue as any).update(id, { syncStatus: 'syncing' });
 }
 
 /**
  * Mark item as error
  */
-export async function markAsError(id: string, errorMessage: string): Promise<void> {
-    await db.syncQueue.update(id, {
+export async function markAsError(id: number, errorMessage: string): Promise<void> {
+    await (db.syncQueue as any).update(id, {
         syncStatus: 'error',
         errorMessage,
     });
@@ -69,28 +68,28 @@ export async function markAsError(id: string, errorMessage: string): Promise<voi
 /**
  * Remove item from queue (after successful sync)
  */
-export async function removeFromQueue(id: string): Promise<void> {
-    await db.syncQueue.delete(id);
+export async function removeFromQueue(id: number): Promise<void> {
+    await (db.syncQueue as any).delete(id);
 }
 
 /**
  * Clear all successfully synced items
  */
 export async function clearSyncedItems(): Promise<void> {
-    const pending = await db.syncQueue.where('syncStatus').equals('pending').toArray();
-    const syncing = await db.syncQueue.where('syncStatus').equals('syncing').toArray();
-    
+    const pending = await (db.syncQueue as any).where('syncStatus').equals('pending').toArray();
+    const syncing = await (db.syncQueue as any).where('syncStatus').equals('syncing').toArray();
+
     // Keep only pending and syncing items
     const keepIds = [...pending, ...syncing].map(item => item.id);
-    
-    await db.syncQueue.where('id').noneOf(keepIds).delete();
+
+    await (db.syncQueue as any).where('id').noneOf(keepIds).delete();
 }
 
 /**
  * Get error items
  */
-export async function getErrorItems(): Promise<SyncQueueItem[]> {
-    return db.syncQueue.where('syncStatus').equals('error').toArray();
+export async function getErrorItems(): Promise<GradeSyncItem[]> {
+    return (db.syncQueue as any).where('syncStatus').equals('error').toArray();
 }
 
 /**
@@ -98,9 +97,9 @@ export async function getErrorItems(): Promise<SyncQueueItem[]> {
  */
 export async function retryErrorItems(): Promise<void> {
     const errorItems = await getErrorItems();
-    
+
     for (const item of errorItems) {
-        await db.syncQueue.update(item.id, {
+        await (db.syncQueue as any).update(item.id, {
             syncStatus: 'pending',
             errorMessage: undefined,
         });

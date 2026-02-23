@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Info, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
-import { useSetupWizard } from '../../hooks/useSetupWizard';
+import type { Step6Data } from '@edugoma360/shared';
 
-export default function Step6Admin() {
-    const { formData, updateFormData, validationErrors } = useSetupWizard();
+interface Step6AdminProps {
+    data: Partial<Step6Data>;
+    onChange: (data: Partial<Step6Data>) => void;
+    errors: Record<string, string[]>;
+}
+
+export default function Step6Admin({ data, onChange, errors: validationErrors }: Step6AdminProps) {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const adminData = formData.admin || {
+    const adminData = data as Step6Data || {
         nom: '',
         postNom: '',
         prenom: '',
@@ -18,7 +23,7 @@ export default function Step6Admin() {
     };
 
     const handleChange = (field: string, value: string) => {
-        updateFormData('admin', {
+        onChange({
             ...adminData,
             [field]: value,
         });
@@ -51,7 +56,8 @@ export default function Step6Admin() {
             ? adminData.password === adminData.confirmPassword
             : null;
 
-    const errors = validationErrors.admin || {};
+    const errorsMap = validationErrors || {};
+    const getFieldError = (field: string) => errorsMap[field]?.[0];
 
     return (
         <div className="max-w-2xl mx-auto space-y-6">
@@ -81,14 +87,14 @@ export default function Step6Admin() {
                         placeholder="MUKASA"
                         className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
                                    focus:ring-primary/20 focus:border-primary transition-colors
-                                   ${errors.nom ? 'border-red-500' : 'border-neutral-300'}`}
+                                   ${getFieldError('nom') ? 'border-red-500' : 'border-neutral-300'}`}
                         aria-required="true"
-                        aria-invalid={!!errors.nom}
+                        aria-invalid={!!getFieldError('nom')}
                     />
-                    {errors.nom && (
+                    {getFieldError('nom') && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
                             <XCircle size={14} />
-                            {errors.nom[0]}
+                            {getFieldError('nom')}
                         </p>
                     )}
                 </div>
@@ -105,14 +111,14 @@ export default function Step6Admin() {
                         placeholder="KABILA"
                         className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
                                    focus:ring-primary/20 focus:border-primary transition-colors
-                                   ${errors.postNom ? 'border-red-500' : 'border-neutral-300'}`}
+                                   ${getFieldError('postNom') ? 'border-red-500' : 'border-neutral-300'}`}
                         aria-required="true"
-                        aria-invalid={!!errors.postNom}
+                        aria-invalid={!!getFieldError('postNom')}
                     />
-                    {errors.postNom && (
+                    {getFieldError('postNom') && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
                             <XCircle size={14} />
-                            {errors.postNom[0]}
+                            {getFieldError('postNom')}
                         </p>
                     )}
                 </div>
@@ -145,17 +151,17 @@ export default function Step6Admin() {
                         placeholder="+243 810 000 001"
                         className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
                                    focus:ring-primary/20 focus:border-primary transition-colors
-                                   ${errors.phone ? 'border-red-500' : 'border-neutral-300'}`}
+                                   ${getFieldError('phone') ? 'border-red-500' : 'border-neutral-300'}`}
                         aria-required="true"
-                        aria-invalid={!!errors.phone}
+                        aria-invalid={!!getFieldError('phone')}
                     />
                     <p className="text-xs text-neutral-500 mt-1">
                         Ce numéro servira pour l'authentification
                     </p>
-                    {errors.phone && (
+                    {getFieldError('phone') && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
                             <XCircle size={14} />
-                            {errors.phone[0]}
+                            {getFieldError('phone')}
                         </p>
                     )}
                 </div>
@@ -172,13 +178,13 @@ export default function Step6Admin() {
                         placeholder="prefet@institutgoma.cd"
                         className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
                                    focus:ring-primary/20 focus:border-primary transition-colors
-                                   ${errors.email ? 'border-red-500' : 'border-neutral-300'}`}
-                        aria-invalid={!!errors.email}
+                                   ${getFieldError('email') ? 'border-red-500' : 'border-neutral-300'}`}
+                        aria-invalid={!!getFieldError('email')}
                     />
-                    {errors.email && (
+                    {getFieldError('email') && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
                             <XCircle size={14} />
-                            {errors.email[0]}
+                            {getFieldError('email')}
                         </p>
                     )}
                 </div>
@@ -196,9 +202,9 @@ export default function Step6Admin() {
                             placeholder="••••••••"
                             className={`w-full px-4 py-2.5 pr-12 border rounded-lg focus:ring-2 
                                        focus:ring-primary/20 focus:border-primary transition-colors
-                                       ${errors.password ? 'border-red-500' : 'border-neutral-300'}`}
+                                       ${getFieldError('password') ? 'border-red-500' : 'border-neutral-300'}`}
                             aria-required="true"
-                            aria-invalid={!!errors.password}
+                            aria-invalid={!!getFieldError('password')}
                         />
                         <button
                             type="button"
@@ -222,13 +228,12 @@ export default function Step6Admin() {
                             </div>
                             <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
                                 <div
-                                    className={`h-full transition-all duration-300 ${
-                                        passwordStrength.score <= 2
-                                            ? 'bg-red-500'
-                                            : passwordStrength.score <= 4
+                                    className={`h-full transition-all duration-300 ${passwordStrength.score <= 2
+                                        ? 'bg-red-500'
+                                        : passwordStrength.score <= 4
                                             ? 'bg-orange-500'
                                             : 'bg-green-500'
-                                    }`}
+                                        }`}
                                     style={{ width: `${(passwordStrength.score / 6) * 100}%` }}
                                 />
                             </div>
@@ -238,10 +243,10 @@ export default function Step6Admin() {
                     <p className="text-xs text-neutral-500 mt-1.5">
                         Minimum 8 caractères, au moins 1 majuscule et 1 chiffre
                     </p>
-                    {errors.password && (
+                    {getFieldError('password') && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
                             <XCircle size={14} />
-                            {errors.password[0]}
+                            {getFieldError('password')}
                         </p>
                     )}
                 </div>
@@ -259,15 +264,14 @@ export default function Step6Admin() {
                             placeholder="••••••••"
                             className={`w-full px-4 py-2.5 pr-12 border rounded-lg focus:ring-2 
                                        focus:ring-primary/20 focus:border-primary transition-colors
-                                       ${
-                                           errors.confirmPassword || passwordsMatch === false
-                                               ? 'border-red-500'
-                                               : passwordsMatch === true
-                                               ? 'border-green-500'
-                                               : 'border-neutral-300'
-                                       }`}
+                                       ${getFieldError('confirmPassword') || passwordsMatch === false
+                                    ? 'border-red-500'
+                                    : passwordsMatch === true
+                                        ? 'border-green-500'
+                                        : 'border-neutral-300'
+                                }`}
                             aria-required="true"
-                            aria-invalid={!!errors.confirmPassword || passwordsMatch === false}
+                            aria-invalid={!!getFieldError('confirmPassword') || passwordsMatch === false}
                         />
                         <button
                             type="button"
@@ -301,10 +305,10 @@ export default function Step6Admin() {
                         </div>
                     )}
 
-                    {errors.confirmPassword && (
+                    {getFieldError('confirmPassword') && (
                         <p className="text-sm text-red-600 mt-1 flex items-center gap-1">
                             <XCircle size={14} />
-                            {errors.confirmPassword[0]}
+                            {getFieldError('confirmPassword')}
                         </p>
                     )}
                 </div>

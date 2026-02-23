@@ -2,7 +2,6 @@ import { Lock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface GradeInputProps {
-    studentId: string;
     currentValue: number | null;
     maxScore: number; // 10 or 20
     onChange: (value: number | null) => void;
@@ -11,7 +10,6 @@ interface GradeInputProps {
 }
 
 export default function GradeInput({
-    studentId,
     currentValue,
     maxScore,
     onChange,

@@ -13,7 +13,7 @@ import {
     calculateTotalPoints,
     calculateGeneralAverage,
     calculateRanking,
-    suggestDecision,
+    suggestDelibDecision,
     normalizeScore,
     calculateClassStats,
 } from './gradeCalc';
@@ -164,12 +164,12 @@ describe('calculateRanking — Ex-æquo', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // 6. suggestDecision — Décisions auto (5 cas)
 // ─────────────────────────────────────────────────────────────────────────────
-describe('suggestDecision — Seuils RDC', () => {
-    it('Moy ≥ 16 → GREAT_DISTINCTION', () => expect(suggestDecision(16)).toBe('GREAT_DISTINCTION'));
-    it('14 ≤ Moy < 16 → DISTINCTION', () => expect(suggestDecision(14)).toBe('DISTINCTION'));
-    it('10 ≤ Moy < 14 → ADMITTED', () => expect(suggestDecision(10)).toBe('ADMITTED'));
-    it('8 ≤ Moy < 10 → ADJOURNED', () => expect(suggestDecision(8)).toBe('ADJOURNED'));
-    it('Moy < 8 → FAILED', () => expect(suggestDecision(7.9)).toBe('FAILED'));
+describe('suggestDelibDecision — Seuils RDC', () => {
+    it('Moy ≥ 16 → GREAT_DISTINCTION', () => expect(suggestDelibDecision(16)).toBe('GREAT_DISTINCTION'));
+    it('14 ≤ Moy < 16 → DISTINCTION', () => expect(suggestDelibDecision(14)).toBe('DISTINCTION'));
+    it('10 ≤ Moy < 14 → ADMITTED', () => expect(suggestDelibDecision(10)).toBe('ADMITTED'));
+    it('8 ≤ Moy < 10 → ADJOURNED', () => expect(suggestDelibDecision(8)).toBe('ADJOURNED'));
+    it('Moy < 8 → FAILED', () => expect(suggestDelibDecision(7.9)).toBe('FAILED'));
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

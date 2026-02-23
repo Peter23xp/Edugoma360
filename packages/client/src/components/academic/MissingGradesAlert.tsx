@@ -42,7 +42,7 @@ export default function MissingGradesAlert({
     }
 
     return (
-        <div className="bg-orange-50 border-l-4 border-orange-500 rounded-lg p-6 mb-6">
+        <div className={`bg-orange-50 border-l-4 border-orange-500 rounded-lg p-6 mb-6 ${className}`}>
             <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                     <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center 

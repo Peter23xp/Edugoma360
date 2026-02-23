@@ -93,19 +93,17 @@ export default function SetupSummary() {
                 <SummarySection title="ANNÉE SCOLAIRE" onEdit={() => goToStep(4)}>
                     <SummaryItem
                         label="Année"
-                        value={`${formData.academicYear?.label} (${
-                            formData.academicYear?.startDate
-                                ? new Date(formData.academicYear.startDate).toLocaleDateString(
-                                      'fr-FR'
-                                  )
-                                : ''
-                        } → ${
-                            formData.academicYear?.endDate
+                        value={`${formData.academicYear?.label} (${formData.academicYear?.startDate
+                            ? new Date(formData.academicYear.startDate).toLocaleDateString(
+                                'fr-FR'
+                            )
+                            : ''
+                            } → ${formData.academicYear?.endDate
                                 ? new Date(formData.academicYear.endDate).toLocaleDateString(
-                                      'fr-FR'
-                                  )
+                                    'fr-FR'
+                                )
                                 : ''
-                        })`}
+                            })`}
                     />
                     <SummaryItem
                         label="Trimestres"
@@ -123,13 +121,13 @@ export default function SetupSummary() {
                 <SummarySection title="CLASSES" onEdit={() => goToStep(5)}>
                     <SummaryItem
                         label="Total"
-                        value={`${formData.classes?.length || 0} classes créées`}
+                        value={`${formData.classes?.classes?.length || 0} classes créées`}
                     />
-                    {formData.classes && formData.classes.length > 0 && (
+                    {formData.classes?.classes && formData.classes.classes.length > 0 && (
                         <div className="mt-2">
                             <p className="text-sm text-neutral-600 mb-1">Classes :</p>
                             <div className="flex flex-wrap gap-2">
-                                {formData.classes.slice(0, 10).map((cls, idx) => (
+                                {formData.classes.classes.slice(0, 10).map((cls: { name: string }, idx: number) => (
                                     <span
                                         key={idx}
                                         className="inline-flex items-center px-2.5 py-1 rounded-full 
@@ -138,20 +136,20 @@ export default function SetupSummary() {
                                         {cls.name}
                                     </span>
                                 ))}
-                                {formData.classes.length > 10 && (
+                                {formData.classes.classes.length > 10 && (
                                     <span className="text-xs text-neutral-500">
-                                        +{formData.classes.length - 10} autres
+                                        +{formData.classes.classes.length - 10} autres
                                     </span>
                                 )}
                             </div>
                         </div>
                     )}
-                    {formData.classes && (
+                    {formData.classes?.classes && (
                         <SummaryItem
                             label="Sections"
                             value={[
                                 ...new Set(
-                                    formData.classes.map((c) => c.sectionCode || c.sectionName)
+                                    formData.classes.classes.map((c: { sectionCode?: string; sectionName?: string }) => c.sectionCode || c.sectionName)
                                 ),
                             ].join(', ')}
                         />
@@ -162,9 +160,8 @@ export default function SetupSummary() {
                 <SummarySection title="ADMINISTRATEUR" onEdit={() => goToStep(6)}>
                     <SummaryItem
                         label="Nom complet"
-                        value={`${formData.admin?.nom || ''} ${formData.admin?.postNom || ''} ${
-                            formData.admin?.prenom || ''
-                        }`.trim()}
+                        value={`${formData.admin?.nom || ''} ${formData.admin?.postNom || ''} ${formData.admin?.prenom || ''
+                            }`.trim()}
                     />
                     <SummaryItem label="Rôle" value="Préfet (Directeur Académique)" />
                     <SummaryItem label="Téléphone" value={formData.admin?.phone} />

@@ -54,6 +54,15 @@ export type Permission =
     | 'deliberation:read'
     | 'deliberation:create'
     | 'deliberation:validate'
+    // Classes
+    | 'classes:read'
+    | 'classes:create'
+    | 'classes:update'
+    | 'classes:delete'
+    // Timetable
+    | 'timetable:read'
+    | 'timetable:create'
+    | 'timetable:delete'
     // Parent Portal
     | 'parent:view_child'
     | 'parent:view_grades'
@@ -75,6 +84,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
         'settings:read', 'settings:update', 'settings:users', 'settings:school', 'settings:academic_year',
         'sync:read', 'sync:manage',
         'deliberation:read', 'deliberation:create', 'deliberation:validate',
+        'classes:read', 'classes:create', 'classes:update', 'classes:delete',
+        'timetable:read', 'timetable:create', 'timetable:delete',
         'parent:view_child', 'parent:view_grades', 'parent:view_payments',
     ],
 
@@ -87,6 +98,8 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
         'reports:bulletins', 'reports:palmares', 'reports:pv', 'reports:statistics',
         'settings:read', 'settings:academic_year',
         'deliberation:read', 'deliberation:create', 'deliberation:validate',
+        'classes:read', 'classes:create', 'classes:update', 'classes:delete',
+        'timetable:read', 'timetable:create', 'timetable:delete',
     ],
 
     ECONOME: [

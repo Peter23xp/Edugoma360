@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/auth.store';
 import { useOffline } from '../../hooks/useOffline';
 import api from '../../lib/api';
-import { EVAL_TYPE_OPTIONS } from '../../../shared/src/constants/evalTypes';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/src/constants/evalTypes';
 import GradeEntryTable from '../../components/academic/GradeEntryTable';
 import LockGradesModal from '../../components/academic/LockGradesModal';
 import { addToGradeQueue, getQueueCount } from '../../lib/offline/gradeQueue';
@@ -200,8 +200,8 @@ export default function GradeEntryPage() {
     const average =
         gradedCount > 0
             ? Array.from(grades.values())
-                  .filter((g) => g.score !== null)
-                  .reduce((sum, g) => sum + g.score!, 0) / gradedCount
+                .filter((g) => g.score !== null)
+                .reduce((sum, g) => sum + g.score!, 0) / gradedCount
             : 0;
     const progressPercent = totalStudents > 0 ? (gradedCount / totalStudents) * 100 : 0;
 
@@ -213,7 +213,7 @@ export default function GradeEntryPage() {
     const selectedClass = classes.find((c: any) => c.id === selectedClassId);
     const selectedTerm = terms.find((t: any) => t.id === selectedTermId);
     const selectedEvalTypeLabel =
-        EVAL_TYPE_OPTIONS.find((e) => e.code === selectedEvalType)?.label || '';
+        EVAL_TYPE_OPTIONS.find((e: any) => e.code === selectedEvalType)?.label || '';
 
     return (
         <div className="min-h-screen bg-neutral-50">
@@ -328,7 +328,7 @@ export default function GradeEntryPage() {
                                            text-sm focus:ring-2 focus:ring-primary/20 
                                            focus:border-primary bg-white"
                             >
-                                {EVAL_TYPE_OPTIONS.map((evalType) => (
+                                {EVAL_TYPE_OPTIONS.map((evalType: any) => (
                                     <option key={evalType.code} value={evalType.code}>
                                         {evalType.label}
                                     </option>

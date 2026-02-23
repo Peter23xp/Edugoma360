@@ -58,6 +58,7 @@ export interface TimetablePeriod {
     className?: string;
     subjectId: string;
     subjectName: string;
+    sectionCode?: string;
     teacherId: string;
     teacherName: string;
     dayOfWeek: DayOfWeek;

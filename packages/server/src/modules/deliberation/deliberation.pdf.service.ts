@@ -53,7 +53,7 @@ export class DeliberationPdfService {
             const template = Handlebars.compile(templateHtml);
 
             // Register Handlebars helpers
-            Handlebars.registerHelper('if', function (conditional: any, options: any) {
+            Handlebars.registerHelper('if', function (this: any, conditional: any, options: any) {
                 if (conditional) {
                     return options.fn(this);
                 } else {
@@ -61,7 +61,7 @@ export class DeliberationPdfService {
                 }
             });
 
-            Handlebars.registerHelper('each', function (context: any, options: any) {
+            Handlebars.registerHelper('each', function (this: any, context: any, options: any) {
                 let ret = '';
                 for (let i = 0; i < context.length; i++) {
                     ret = ret + options.fn(context[i]);

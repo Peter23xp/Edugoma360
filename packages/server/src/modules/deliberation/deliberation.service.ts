@@ -102,7 +102,7 @@ export class DeliberationService {
                 );
 
                 const hasFailed = checkEliminatory(
-                    average,
+                    average ?? 0,
                     subject.elimThreshold || 5,
                     subject.isEliminatory
                 );
@@ -114,17 +114,17 @@ export class DeliberationService {
                 };
             });
 
-            // Calculate general average
-            const generalAverage = calculateGeneralAverage(
+            // Calculate total points first (Σ(moyenne_matière × coefficient))
+            const totalPoints = calculateTotalPoints(
                 subjectAverages.map((sa) => ({
                     average: sa.average,
                     coefficient: sa.coefficient,
                 }))
             );
 
-            // Calculate total points
+            // Calculate general average (totalPoints / Σcoefficients, arrondi 0.5)
             const totalCoefficients = subjects.reduce((sum, s) => sum + s.coefficient, 0);
-            const totalPoints = calculateTotalPoints(generalAverage, totalCoefficients);
+            const generalAverage = calculateGeneralAverage(totalPoints, totalCoefficients);
 
             // Check for eliminatory failures
             const hasEliminatoryFailure = subjectAverages.some((sa) => sa.hasFailed);

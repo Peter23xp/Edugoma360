@@ -3,6 +3,7 @@ import { env } from '../config/env';
 
 export interface JwtPayload {
     userId: string;
+    id?: string;         // alias de userId — rempli automatiquement par verifyToken
     schoolId: string;
     role: string;
 }
@@ -29,5 +30,10 @@ export function generateRefreshToken(payload: JwtPayload): string {
  * Verify and decode a token
  */
 export function verifyToken(token: string): JwtPayload {
-    return jwt.verify(token, env.JWT_SECRET as jwt.Secret) as JwtPayload;
+    const payload = jwt.verify(token, env.JWT_SECRET as jwt.Secret) as JwtPayload;
+    // Ensure `id` is populated for backward-compat with controllers using req.user!.id
+    if (!payload.id && payload.userId) {
+        payload.id = payload.userId;
+    }
+    return payload;
 }

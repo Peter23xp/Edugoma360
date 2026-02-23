@@ -617,7 +617,7 @@ export class GradesService {
                 );
 
                 const hasFailed = checkEliminatory(
-                    average,
+                    average ?? 0,
                     subject.elimThreshold || 5,
                     subject.isEliminatory
                 );
@@ -625,22 +625,26 @@ export class GradesService {
                 return {
                     subjectId: subject.id,
                     subjectName: subject.name,
+                    coefficient: subject.coefficient,
+                    interro: studentGrades.find((g: any) => g.evalType === 'INT')?.score,
+                    tp: studentGrades.find((g: any) => g.evalType === 'TP')?.score,
+                    exam: studentGrades.find((g: any) => g.evalType === 'EXAM')?.score,
                     average,
                     hasFailed,
                 };
             });
 
-            // Calculate general average
-            const generalAverage = calculateGeneralAverage(
+            // Calculate total points first (Σ(moyenne_matière × coefficient))
+            const totalPoints = calculateTotalPoints(
                 subjectAverages.map((sa) => ({
                     average: sa.average,
                     coefficient: subjects.find((s) => s.id === sa.subjectId)!.coefficient,
                 }))
             );
 
-            // Calculate total points
+            // Calculate general average (totalPoints / Σcoefficients, arrondi 0.5 RDC)
             const totalCoefficients = subjects.reduce((sum, s) => sum + s.coefficient, 0);
-            const totalPoints = calculateTotalPoints(generalAverage, totalCoefficients);
+            const generalAverage = calculateGeneralAverage(totalPoints, totalCoefficients);
 
             // Check for eliminatory failures
             const hasEliminatoryFailure = subjectAverages.some((sa) => sa.hasFailed);
@@ -664,17 +668,19 @@ export class GradesService {
             hasEliminatoryFailure: boolean;
         }>;
 
-        // Calculate rankings — cast input as any to handle shared-dist vs shared-src signature difference
-        const rankings = calculateRanking(
+        // Calculate rankings — calculateRanking returns Array<{id, rank}>
+        const rankingsArray = calculateRanking(
             studentAverages.map((sa) => ({
                 id: sa.studentId,
-                totalPoints: sa.totalPoints,
-            })) as any
-        ) as Record<string, number>;
+                average: sa.generalAverage ?? 0,
+            }))
+        );
+        const rankings: Record<string, number> = {};
+        rankingsArray.forEach((r) => { rankings[r.id] = r.rank; });
 
         // Assign ranks
         studentAverages.forEach((sa) => {
-            sa.rank = (rankings as Record<string, number>)[sa.studentId] ?? 0;
+            sa.rank = rankings[sa.studentId] ?? 0;
         });
 
         // Sort by rank

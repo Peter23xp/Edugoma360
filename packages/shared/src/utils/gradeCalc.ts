@@ -1,3 +1,5 @@
+import type { DelibDecision } from '../constants/decisions';
+
 /**
  * Formules officielles de calcul des moyennes selon le système EPSP-RDC
  *
@@ -30,7 +32,7 @@ export interface SubjectAverage {
 // Exemples : 14.3 → 14.5 | 14.7 → 15.0 | 14.25 → 14.5 | 14.74 → 15.0
 // ─────────────────────────────────────────────────────────────────────────────
 export function roundToHalf(value: number): number {
-    return Math.round(value * 2) / 2;
+    return Math.ceil(value * 2) / 2;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -133,7 +135,8 @@ export function calculateRanking(
 // ─────────────────────────────────────────────────────────────────────────────
 // DÉCISION AUTO (délibération)
 // ─────────────────────────────────────────────────────────────────────────────
-export function suggestDecision(average: number): string {
+export function suggestDelibDecision(average: number, hasEliminatoryFailure: boolean = false): DelibDecision {
+    if (hasEliminatoryFailure) return 'FAILED';
     if (average >= 16) return 'GREAT_DISTINCTION';
     if (average >= 14) return 'DISTINCTION';
     if (average >= 10) return 'ADMITTED';

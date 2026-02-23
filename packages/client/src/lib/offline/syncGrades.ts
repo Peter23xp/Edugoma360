@@ -16,7 +16,7 @@ import {
     markAsError,
     removeFromQueue,
     retryErrorItems,
-    type SyncQueueItem,
+    type GradeSyncItem,
 } from './gradeQueue';
 
 export interface SyncResult {
@@ -26,8 +26,8 @@ export interface SyncResult {
 }
 
 export interface ConflictItem {
-    queueId: string;
-    localData: SyncQueueItem['data'];
+    queueId: number;
+    localData: GradeSyncItem['data'];
     serverData: {
         score: number;
         updatedAt: string;
@@ -153,7 +153,7 @@ export async function syncGradesBatch(): Promise<SyncResult> {
 // Résoudre un conflit : garder la version locale
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function resolveConflictKeepLocal(queueId: string): Promise<void> {
+export async function resolveConflictKeepLocal(queueId: number): Promise<void> {
     const items = await getPendingQueueItems();
     const item = items.find((i) => i.id === queueId);
     if (!item) return;
@@ -172,7 +172,7 @@ export async function resolveConflictKeepLocal(queueId: string): Promise<void> {
 // Résoudre un conflit : garder la version serveur
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function resolveConflictKeepServer(queueId: string): Promise<void> {
+export async function resolveConflictKeepServer(queueId: number): Promise<void> {
     await removeFromQueue(queueId);
 }
 
@@ -212,7 +212,7 @@ export function stopAutoSync(): void {
 // Helpers privés
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function syncSingleItem(item: SyncQueueItem): Promise<void> {
+async function syncSingleItem(item: GradeSyncItem): Promise<void> {
     if (item.type === 'grade_create') {
         await api.post('/grades', item.data);
     } else {
@@ -229,7 +229,7 @@ function isConflictError(error: unknown): boolean {
     );
 }
 
-function extractConflict(item: SyncQueueItem, error: unknown): ConflictItem {
+function extractConflict(item: GradeSyncItem, error: unknown): ConflictItem {
     const serverData = (
         error as { response?: { data?: { serverData?: ConflictItem['serverData'] } } }
     )?.response?.data?.serverData ?? {

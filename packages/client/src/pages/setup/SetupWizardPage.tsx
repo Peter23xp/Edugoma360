@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
 import { useAuthStore } from '../../stores/auth.store';
+import { useSchoolStore } from '../../stores/school.store';
 import { useSetupWizard } from '../../hooks/useSetupWizard';
 import ProgressBar from '../../components/setup/ProgressBar';
 import Step1Identity from '../../components/setup/Step1Identity';
@@ -34,14 +35,15 @@ const STEPS = [
 
 export default function SetupWizardPage() {
     const navigate = useNavigate();
-    const { user, updateSchool } = useAuthStore();
+    const { } = useAuthStore();
+    const { setActiveSchool } = useSchoolStore();
     const {
         currentStep,
         formData,
         validationErrors,
         nextStep,
         prevStep,
-        goToStep,
+        updateFormData,
         setValidationErrors,
         clearValidationErrors,
         reset,
@@ -95,8 +97,13 @@ export default function SetupWizardPage() {
             reset();
 
             // Update auth store
+            // Update stores
             if (data.school) {
-                updateSchool(data.school);
+                setActiveSchool(data.school.id, data.school.name);
+            }
+            if (data.admin) {
+                // If the setup returned user data, update the auth store
+                // Note: Setup often requires being logged in as a temporary owner/superadmin
             }
 
             // Redirect to dashboard after 2 seconds
@@ -195,17 +202,53 @@ export default function SetupWizardPage() {
 
         switch (currentStep) {
             case 1:
-                return <Step1Identity />;
+                return (
+                    <Step1Identity
+                        data={formData.identity || {}}
+                        onChange={(data) => updateFormData('identity', data)}
+                        errors={validationErrors}
+                    />
+                );
             case 2:
-                return <Step2Location />;
+                return (
+                    <Step2Location
+                        data={formData.location || {}}
+                        onChange={(data) => updateFormData('location', data)}
+                        errors={validationErrors}
+                    />
+                );
             case 3:
-                return <Step3Contact />;
+                return (
+                    <Step3Contact
+                        data={formData.contact || {}}
+                        onChange={(data) => updateFormData('contact', data)}
+                        errors={validationErrors}
+                    />
+                );
             case 4:
-                return <Step4AcademicYear />;
+                return (
+                    <Step4AcademicYear
+                        data={formData.academicYear || {}}
+                        onChange={(data) => updateFormData('academicYear', data)}
+                        errors={validationErrors}
+                    />
+                );
             case 5:
-                return <Step5Classes />;
+                return (
+                    <Step5Classes
+                        data={formData.classes || {}}
+                        onChange={(data) => updateFormData('classes', data)}
+                        errors={validationErrors}
+                    />
+                );
             case 6:
-                return <Step6Admin />;
+                return (
+                    <Step6Admin
+                        data={formData.admin || {}}
+                        onChange={(data) => updateFormData('admin', data)}
+                        errors={validationErrors}
+                    />
+                );
             default:
                 return null;
         }

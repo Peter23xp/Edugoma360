@@ -111,7 +111,6 @@ export default function GradeEntryTable({
                                     </td>
                                     <td className="px-4 py-3">
                                         <GradeInput
-                                            studentId={student.id}
                                             currentValue={gradeData.score}
                                             maxScore={maxScore}
                                             onChange={(value) => onGradeChange(student.id, value)}

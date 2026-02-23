@@ -1,27 +1,11 @@
 import { MoreVertical } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-
-interface TimetablePeriod {
-    id: string;
-    subject: {
-        name: string;
-        abbreviation: string;
-    };
-    class: {
-        name: string;
-        section: {
-            code: string;
-        };
-    };
-    teacher?: {
-        nom: string;
-        prenom: string | null;
-    };
-}
+import type { TimetablePeriod } from '@edugoma360/shared/src/types/academic';
 
 interface TimetableCellProps {
     period: TimetablePeriod | null;
     onEdit?: (period: TimetablePeriod) => void;
+    onAdd?: () => void;          // ← appelé quand clic sur cellule vide (Préfet)
     showTeacher?: boolean;
     canEdit?: boolean;
 }
@@ -40,6 +24,7 @@ const SECTION_COLORS: Record<string, string> = {
 export default function TimetableCell({
     period,
     onEdit,
+    onAdd,
     showTeacher = false,
     canEdit = false,
 }: TimetableCellProps) {
@@ -65,15 +50,22 @@ export default function TimetableCell({
     // Cellule vide
     if (!period) {
         return (
-            <div className="h-24 border border-neutral-200 bg-neutral-50 flex items-center 
-                            justify-center">
+            <div
+                onClick={canEdit && onAdd ? onAdd : undefined}
+                className={`h-24 border border-neutral-200 bg-neutral-50 flex flex-col
+                            items-center justify-center gap-1 transition-colors
+                            ${canEdit && onAdd ? 'cursor-pointer hover:bg-primary/5 hover:border-primary/30 group' : ''}`}
+            >
                 <span className="text-sm text-neutral-400 font-medium">LIBRE</span>
+                {canEdit && onAdd && (
+                    <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">+ Ajouter</span>
+                )}
             </div>
         );
     }
 
     // Déterminer la couleur selon la section
-    const sectionCode = period.class.section.code.substring(0, 3);
+    const sectionCode = period.sectionCode?.substring(0, 3) || '—';
     const colorClass = SECTION_COLORS[sectionCode] || 'bg-neutral-100 text-neutral-700 border-neutral-300';
 
     return (
@@ -110,11 +102,11 @@ export default function TimetableCell({
 
             {/* Content */}
             <div className="space-y-1">
-                <p className="text-sm font-bold leading-tight">{period.subject.abbreviation}</p>
-                <p className="text-xs font-medium">{period.class.name}</p>
-                {showTeacher && period.teacher && (
+                <p className="text-sm font-bold leading-tight">{period.subjectName}</p>
+                <p className="text-xs font-medium">{period.className}</p>
+                {showTeacher && period.teacherName && (
                     <p className="text-xs opacity-75">
-                        {period.teacher.nom} {period.teacher.prenom || ''}
+                        {period.teacherName}
                     </p>
                 )}
             </div>

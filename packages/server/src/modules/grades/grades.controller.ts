@@ -37,7 +37,7 @@ export class GradesController {
                     observation,
                 },
                 req.user!.schoolId,
-                req.user!.id
+                req.user!.userId
             );
 
             res.json(result);
@@ -56,7 +56,7 @@ export class GradesController {
                 termId,
                 evalType,
                 req.user!.schoolId,
-                req.user!.id
+                req.user!.userId
             );
 
             res.json(result);
@@ -109,7 +109,7 @@ export class GradesController {
                 queue,
                 req.user!.schoolId,
                 deviceId,
-                req.user!.id
+                req.user!.userId
             );
 
             res.json(result);
@@ -180,7 +180,7 @@ export class GradesController {
                 classId,
                 termId,
                 req.user!.schoolId,
-                req.user!.id
+                req.user!.userId
             );
 
             res.json(result);

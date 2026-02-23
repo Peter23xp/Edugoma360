@@ -1,5 +1,5 @@
 import { CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
-import { DELIB_DECISIONS, DelibDecision } from '@edugoma360/shared/src/constants/decisions';
+import { DelibDecision } from '@edugoma360/shared/src/constants/decisions';
 
 interface DeliberationSummaryProps {
     className: string;
