@@ -60,7 +60,7 @@ export default function StudentFormPage() {
                 const newStudent = response.data.data;
                 toast.success(
                     `Élève inscrit ! Matricule : ${newStudent.matricule}`,
-                    { duration: 6000, icon: 'ðŸŽ“' }
+                    { duration: 6000, icon: '🎓' }
                 );
                 resetForm();
                 navigate(`/students/${newStudent.id}`);
@@ -188,3 +188,4 @@ export default function StudentFormPage() {
         </div>
     );
 }
+

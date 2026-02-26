@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+﻿﻿import { Request, Response, NextFunction } from 'express';
 import { financeService } from './finance.service';
 import { CreatePaymentDto, FinanceQueryDto } from './finance.dto';
 
@@ -46,6 +46,22 @@ export class FinanceController {
             const schoolId = req.user!.schoolId;
             const result = await financeService.getRecoveryChart(schoolId);
             res.json({ data: result });
+        } catch (error) { next(error); }
+    }
+
+    async getStats(req: Request, res: Response, next: NextFunction) {
+        try {
+            const schoolId = req.user!.schoolId;
+            const stats = await financeService.getStats(schoolId);
+            res.json({ data: stats });
+        } catch (error) { next(error); }
+    }
+
+    async getMonthlyRevenue(req: Request, res: Response, next: NextFunction) {
+        try {
+            const schoolId = req.user!.schoolId;
+            const revenue = await financeService.getMonthlyRevenue(schoolId);
+            res.json({ data: revenue });
         } catch (error) { next(error); }
     }
 }

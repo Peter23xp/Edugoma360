@@ -8,11 +8,11 @@ interface DecisionBadgeProps {
 
 const DECISION_ICONS: Record<string, string> = {
     ADMITTED: '✅',
-    DISTINCTION: 'ðŸŽ–ï¸',
-    GREAT_DISTINCTION: 'ðŸ†',
-    ADJOURNED: 'â³',
-    FAILED: 'âŒ',
-    MEDICAL: 'ðŸ¥',
+    DISTINCTION: '🎖️',
+    GREAT_DISTINCTION: '🏆',
+    ADJOURNED: '⏳',
+    FAILED: '❌',
+    MEDICAL: '🏥',
 };
 
 export default function DecisionBadge({ decision, size = 'md', showIcon = true }: DecisionBadgeProps) {
@@ -44,5 +44,6 @@ export default function DecisionBadge({ decision, size = 'md', showIcon = true }
         </span>
     );
 }
+
 
 

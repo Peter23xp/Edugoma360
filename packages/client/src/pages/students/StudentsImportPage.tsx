@@ -65,27 +65,58 @@ export default function StudentsImportPage() {
 
     // Import mutation
     const importMutation = useMutation({
-        mutationFn: async (data: ParsedStudent[]) => {
-            const validRows = data.filter((row) => row.errors.length === 0);
-            const payload = validRows.map((row) => row.data);
+        mutationFn: async (file: File) => {
+            const formData = new FormData();
+            formData.append('file', file);
 
-            const response = await api.post('/students/import', { students: payload });
-            return response.data;
+            const response = await api.post('/students/import', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            return response.data.data;
         },
-        onSuccess: (data: ImportResult) => {
-            setImportResult(data);
+        onSuccess: (data: any) => {
+            setImportResult({
+                success: data.imported,
+                failed: data.skipped + data.errors.length,
+                errors: data.errors,
+                students: data.students,
+            });
             setStep('report');
             queryClient.invalidateQueries({ queryKey: ['students'] });
-            toast.success(`${data.success} élèves importés avec succès`);
+            
+            if (data.imported > 0) {
+                toast.success(`${data.imported} élève${data.imported > 1 ? 's' : ''} importé${data.imported > 1 ? 's' : ''} avec succès`);
+            }
+            
+            if (data.errors.length > 0) {
+                toast.error(`${data.errors.length} erreur${data.errors.length > 1 ? 's' : ''} détectée${data.errors.length > 1 ? 's' : ''}`);
+            }
         },
         onError: (error: any) => {
-            toast.error(error.response?.data?.message || 'Erreur lors de l\'import');
+            const errorMessage = error.response?.data?.error?.message || error.response?.data?.message || 'Erreur lors de l\'import';
+            
+            if (errorMessage.includes('Colonnes manquantes') || errorMessage.includes('Fichier invalide')) {
+                toast.error(
+                    'Fichier invalide. Téléchargez le modèle depuis l\'application et utilisez-le.',
+                    { duration: 6000 }
+                );
+            } else {
+                toast.error(errorMessage);
+            }
+            
+            setStep('preview');
         },
     });
 
     const handleImport = () => {
+        if (!_file) {
+            toast.error('Aucun fichier sélectionné');
+            return;
+        }
         setStep('importing');
-        importMutation.mutate(parsedData);
+        importMutation.mutate(_file);
     };
 
     const handleReset = () => {
@@ -162,7 +193,7 @@ export default function StudentsImportPage() {
                                         <li>Glissez-déposez ou sélectionnez le fichier dans la zone ci-dessus</li>
                                     </ol>
                                     <p className="text-xs text-blue-700 mt-3">
-                                        ðŸ’¡ Le modèle contient des exemples et la liste des classes disponibles
+                                        💡 Le modèle contient des exemples et la liste des classes disponibles
                                     </p>
                                 </div>
                             </div>
@@ -281,3 +312,4 @@ export default function StudentsImportPage() {
         </div>
     );
 }
+

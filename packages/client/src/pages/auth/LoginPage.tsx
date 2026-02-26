@@ -197,8 +197,7 @@ export default function LoginPage() {
                     // Network error — server unreachable
                     setServerReachable(false);
                     toast.error('Serveur inaccessible. Vérifiez votre connexion.', {
-                        icon: 'ðŸ”Œ',
-                        style: { background: '#F57C00', color: '#fff' },
+                        icon: '🔌', style: { background: '#F57C00', color: '#fff' },
                     });
                 } else {
                     setErrorMessage(errorData?.message || 'Erreur inattendue. Veuillez réessayer.');
@@ -213,8 +212,7 @@ export default function LoginPage() {
         const success = await loginOffline();
         if (success) {
             toast.success('Mode hors-ligne activé', {
-                icon: 'ðŸ“´',
-                style: { background: '#F57C00', color: '#fff' },
+                icon: '🔴', style: { background: '#F57C00', color: '#fff' },
             });
             navigate('/dashboard', { replace: true });
         } else {
@@ -441,3 +439,4 @@ export default function LoginPage() {
         </div>
     );
 }
+

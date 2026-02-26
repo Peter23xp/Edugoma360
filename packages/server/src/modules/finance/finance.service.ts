@@ -146,6 +146,47 @@ export class FinanceService {
 
         return { months };
     }
+
+    async getStats(schoolId: string) {
+        const academicYear = await prisma.academicYear.findFirst({ where: { schoolId, isActive: true } });
+        if (!academicYear) return { totalRevenue: 0, totalExpected: 0, totalDebt: 0, currency: 'FC' };
+
+        const feeTypes = await prisma.feeType.findMany({ where: { schoolId, isActive: true } });
+        const activeStudents = await prisma.student.count({ where: { schoolId, isActive: true } });
+        const totalExpected = feeTypes.reduce((sum, ft) => sum + ft.amount, 0) * activeStudents;
+
+        const payments = await prisma.payment.findMany({
+            where: { schoolId, academicYearId: academicYear.id },
+        });
+
+        const totalRevenue = payments.reduce((sum, p) => sum + p.amountPaid, 0);
+        const totalDebt = totalExpected - totalRevenue;
+
+        return { totalRevenue, totalExpected, totalDebt, currency: 'FC' };
+    }
+
+    async getMonthlyRevenue(schoolId: string) {
+        const now = new Date();
+        const months: any[] = [];
+
+        for (let i = 11; i >= 0; i--) {
+            const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+            const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+            const label = new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric' }).format(date);
+
+            const payments = await prisma.payment.findMany({
+                where: { schoolId, paidAt: { gte: firstDay, lte: lastDay } },
+            });
+
+            const revenue = payments.reduce((sum, p) => sum + p.amountPaid, 0);
+            months.push({ month: label, revenue });
+        }
+
+        return months;
+    }
 }
 
 export const financeService = new FinanceService();
+

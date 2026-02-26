@@ -88,7 +88,10 @@ export const SMS_TEMPLATES = {
             `EduGoma360: Rappel - Frais scolaires en retard pour ${studentName}. Solde: ${amount}. Merci de régulariser.`,
 
         welcome: (studentName: string, matricule: string, schoolName: string) =>
-            `Bienvenue Ã  ${schoolName}. L'élève ${studentName} est inscrit(e). Matricule: ${matricule}.`,
+            `Bienvenue à ${schoolName}. L'élève ${studentName} est inscrit(e). Matricule: ${matricule}.`,
+
+        teacherWelcome: (name: string, matricule: string) =>
+            `EduGoma360: Bienvenue ${name} ! Votre matricule enseignant est ${matricule}. Connectez-vous sur edugoma360.cd`,
     },
 
     // Swahili templates

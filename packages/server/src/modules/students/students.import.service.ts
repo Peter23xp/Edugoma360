@@ -82,6 +82,7 @@ export async function generateImportTemplate(): Promise<Buffer> {
 
     // Exemple ligne 2 (valide)
     sheet.addRow({
+        matricule: '',  // Laissez vide, sera généré automatiquement
         nom: 'AMISI',
         postNom: 'KALOMBO',
         prenom: 'Jean-Baptiste',
@@ -102,17 +103,92 @@ export async function generateImportTemplate(): Promise<Buffer> {
         tuteurPrincipal: 'pere'
     });
 
+    // Exemple ligne 3 (avec erreur pour démonstration)
+    sheet.addRow({
+        matricule: '',
+        nom: 'MUKENDI',
+        postNom: 'K',  // ❌ Trop court (< 2 caractères)
+        prenom: 'Joseph',
+        sexe: 'X',  // ❌ Doit être M ou F
+        dateNaissance: '32/13/2008',  // ❌ Date invalide
+        lieuNaissance: 'Goma',
+        nationalite: 'Congolaise',
+        classe: 'ClasseInexistante',  // ❌ Classe n'existe pas
+        statut: 'INVALIDE',  // ❌ Statut invalide
+        ecoleOrigine: '',
+        resultatTenasosp: 150,  // ❌ Doit être entre 0 et 100
+        nomPere: 'MUKENDI PIERRE',
+        telPere: '0810000000',  // ❌ Format invalide (manque +243)
+        nomMere: 'KAHINDO ALICE',
+        telMere: '+243820000000',
+        nomTuteur: '',
+        telTuteur: '+243810000000',
+        tuteurPrincipal: 'pere'
+    });
+
+    // Colorer la ligne d'erreur en rouge
+    sheet.getRow(3).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFFFCCCC' }
+    };
+
     // Feuille 2 : Instructions
     const instructions = workbook.addWorksheet('Instructions');
-    instructions.addRow(['GUIDE D\'IMPORTATION - EDUGOMA 360']);
+    
+    instructions.getColumn(1).width = 80;
+    
+    instructions.addRow(['═══════════════════════════════════════════════════════════════════════════']);
+    instructions.addRow(['    GUIDE D\'IMPORTATION - EDUGOMA 360']);
+    instructions.addRow(['═══════════════════════════════════════════════════════════════════════════']);
     instructions.addRow([]);
-    instructions.addRow(['1. Remplissez une ligne par élève dans la feuille "Élèves"']);
-    instructions.addRow(['2. Les colonnes marquées * sont obligatoires']);
-    instructions.addRow(['3. Formats acceptés:']);
-    instructions.addRow(['   - Date: JJ/MM/AAAA (ex: 12/03/2008)']);
-    instructions.addRow(['   - Téléphone: +243XXXXXXXXX (Airtel: 81/82, Vodacom: 97/98)']);
-    instructions.addRow(['   - Sexe: M ou F']);
-    instructions.addRow(['4. Sauvegardez et importez le fichier']);
+    
+    instructions.addRow(['📋 ÉTAPES À SUIVRE :']);
+    instructions.addRow([]);
+    instructions.addRow(['1. NE SUPPRIMEZ AUCUNE COLONNE du fichier (même si vous ne les utilisez pas)']);
+    instructions.addRow(['2. Remplissez une ligne par élève dans la feuille "Élèves"']);
+    instructions.addRow(['3. Les colonnes marquées * sont OBLIGATOIRES']);
+    instructions.addRow(['4. Laissez les colonnes vides si vous n\'avez pas les données (sauf colonnes *)']);
+    instructions.addRow(['5. Sauvegardez et importez le fichier']);
+    instructions.addRow([]);
+    
+    instructions.addRow(['📝 FORMATS ACCEPTÉS :']);
+    instructions.addRow([]);
+    instructions.addRow(['   • Date : JJ/MM/AAAA (ex: 12/03/2008)']);
+    instructions.addRow(['   • Téléphone : +243XXXXXXXXX (Airtel: 81/82/84/85, Vodacom: 97/98/99, Orange: 80/81/89/90/91)']);
+    instructions.addRow(['   • Sexe : M ou F (majuscule)']);
+    instructions.addRow(['   • Statut : NOUVEAU, REDOUBLANT, TRANSFERE, DEPLACE, REFUGIE, ARCHIVE']);
+    instructions.addRow([]);
+    
+    instructions.addRow(['⚠️ ATTENTION :']);
+    instructions.addRow([]);
+    instructions.addRow(['   • Le nom de la CLASSE doit correspondre EXACTEMENT à une classe existante']);
+    instructions.addRow(['   • Les noms et postNoms doivent avoir au moins 2 caractères']);
+    instructions.addRow(['   • La colonne "matricule" sera ignorée (généré automatiquement)']);
+    instructions.addRow(['   • Les doublons (même nom + postNom + date naissance) seront ignorés']);
+    instructions.addRow([]);
+    
+    instructions.addRow(['✅ EXEMPLE :']);
+    instructions.addRow([]);
+    instructions.addRow(['   Ligne 2 de la feuille "Élèves" = exemple VALIDE']);
+    instructions.addRow(['   Ligne 3 de la feuille "Élèves" = exemple avec ERREURS (fond rouge)']);
+    instructions.addRow([]);
+    
+    instructions.addRow(['💡 ASTUCE :']);
+    instructions.addRow([]);
+    instructions.addRow(['   Copiez la ligne 2 et modifiez les valeurs pour ajouter vos élèves.']);
+    instructions.addRow(['   Cela garantit que l\'ordre des colonnes est correct.']);
+    instructions.addRow([]);
+    
+    instructions.addRow(['═══════════════════════════════════════════════════════════════════════════']);
+
+    // Formater le titre
+    instructions.getRow(2).font = { bold: true, size: 14, color: { argb: 'FF2E7D32' } };
+    instructions.getRow(5).font = { bold: true, size: 12 };
+    instructions.getRow(13).font = { bold: true, size: 12 };
+    instructions.getRow(20).font = { bold: true, size: 12, color: { argb: 'FFFF6B00' } };
+    instructions.getRow(28).font = { bold: true, size: 12 };
+    instructions.getRow(33).font = { bold: true, size: 12 };
 
     return (await workbook.xlsx.writeBuffer()) as any;
 }
@@ -131,11 +207,44 @@ export async function importStudentsFromExcel(
         throw new Error('Feuille "Élèves" introuvable');
     }
 
+    // Vérifier que le fichier a les bonnes colonnes
+    const headerRow = worksheet.getRow(1);
+    const expectedHeaders = [
+        'matricule', 'nom *', 'postNom *', 'prenom', 'sexe *', 
+        'dateNaissance *', 'lieuNaissance *', 'nationalite *', 'classe *', 
+        'statut *', 'ecoleOrigine', 'resultatTenasosp', 'nomPere', 
+        'telPere', 'nomMere', 'telMere', 'nomTuteur', 'telTuteur', 'tuteurPrincipal'
+    ];
+
+    const actualHeaders: string[] = [];
+    headerRow.eachCell((cell, colNumber) => {
+        if (colNumber <= expectedHeaders.length) {
+            actualHeaders.push(String(cell.value || '').toLowerCase().trim());
+        }
+    });
+
+    // Vérifier les colonnes essentielles
+    const essentialColumns = ['nom', 'postnom', 'sexe', 'datenaissance', 'classe', 'statut'];
+    const missingColumns = essentialColumns.filter(col => 
+        !actualHeaders.some(header => header.includes(col))
+    );
+
+    if (missingColumns.length > 0) {
+        throw new Error(
+            `❌ Fichier invalide. Colonnes manquantes: ${missingColumns.join(', ')}. ` +
+            `Veuillez télécharger le modèle depuis l'application et l'utiliser.`
+        );
+    }
+
+    console.log(`✅ Structure du fichier validée`);
+
     const rows: { rowNumber: number; data: any }[] = [];
     worksheet.eachRow((row, rowNumber) => {
         if (rowNumber === 1) return; // Skip headers
         rows.push({ rowNumber, data: row.values });
     });
+
+    console.log(`📊 Import: ${rows.length} lignes détectées pour l'école ${schoolId}`);
 
     const result: ImportResult = {
         imported: 0,
@@ -160,13 +269,17 @@ export async function importStudentsFromExcel(
             try {
                 // Parse la ligne
                 const rawData = parseRowData(data);
+                console.log(`📝 Ligne ${rowNumber}:`, JSON.stringify(rawData, null, 2));
 
                 // Zod validation
                 const validationResult = importRowSchema.safeParse(rawData);
                 if (!validationResult.success) {
+                    const errorMsg = validationResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+                    console.log(`❌ Ligne ${rowNumber} - Validation échouée:`, errorMsg);
+                    console.log(`   💡 Vérifiez que les colonnes de votre fichier Excel correspondent au modèle`);
                     result.errors.push({
                         row: rowNumber,
-                        message: validationResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+                        message: errorMsg
                     });
                     continue;
                 }
@@ -185,6 +298,7 @@ export async function importStudentsFromExcel(
                 });
 
                 if (existing) {
+                    console.log(`⏭️  Ligne ${rowNumber} - Doublon détecté`);
                     result.skipped++;
                     continue;
                 }
@@ -203,6 +317,7 @@ export async function importStudentsFromExcel(
                 });
 
                 if (!classe) {
+                    console.log(`❌ Ligne ${rowNumber} - Classe "${validated.classe}" introuvable`);
                     result.errors.push({
                         row: rowNumber,
                         message: `Classe "${validated.classe}" introuvable`
@@ -228,6 +343,8 @@ export async function importStudentsFromExcel(
                     'ISS001', // TODO: school.code field might not exist in Prisma schema yet? Schema check: School has convention, agrement, etc. but not explicitly 'code'. Using default.
                     nextSeq
                 );
+
+                console.log(`✅ Ligne ${rowNumber} - Création élève ${matricule}`);
 
                 // Créer l'élève
                 const student = await tx.student.create({
@@ -263,6 +380,7 @@ export async function importStudentsFromExcel(
                 result.students.push(student);
 
             } catch (error: any) {
+                console.error(`❌ Ligne ${rowNumber} - Erreur:`, error.message);
                 result.errors.push({
                     row: rowNumber,
                     message: error.message || 'Erreur inconnue'
@@ -272,6 +390,8 @@ export async function importStudentsFromExcel(
     }, {
         timeout: 60000 // 1 minute timeout for large files
     });
+
+    console.log(`📊 Import terminé: ${result.imported} importés, ${result.skipped} ignorés, ${result.errors.length} erreurs`);
 
     return result;
 }

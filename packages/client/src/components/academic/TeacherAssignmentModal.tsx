@@ -178,8 +178,8 @@ export default function TeacherAssignmentModal({
                     {/* Info */}
                     <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                         <p className="text-sm text-blue-800">
-                            ðŸ’¡ Un enseignant peut être assigné Ã  plusieurs matières dans plusieurs
-                            classes. Les attributions peuvent être modifiées Ã  tout moment.
+                            💡 Un enseignant peut être assigné à plusieurs matières dans plusieurs
+                            classes. Les attributions peuvent être modifiées à tout moment.
                         </p>
                     </div>
                 </div>
@@ -218,4 +218,5 @@ export default function TeacherAssignmentModal({
         </div>
     );
 }
+
 

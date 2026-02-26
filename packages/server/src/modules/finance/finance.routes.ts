@@ -12,5 +12,7 @@ router.get('/balance/:studentId', requirePermission('finance:read'), (req, res, 
 router.get('/debts', requirePermission('finance:reports'), (req, res, next) => financeController.getDebts(req, res, next));
 router.get('/monthly-summary', (req, res, next) => financeController.getMonthlySummary(req, res, next));
 router.get('/recovery-chart', (req, res, next) => financeController.getRecoveryChart(req, res, next));
+router.get('/stats', requirePermission('finance:read'), (req, res, next) => financeController.getStats(req, res, next));
+router.get('/monthly-revenue', requirePermission('finance:read'), (req, res, next) => financeController.getMonthlyRevenue(req, res, next));
 
 export default router;

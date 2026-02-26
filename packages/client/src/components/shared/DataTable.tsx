@@ -40,7 +40,7 @@ export default function DataTable<T extends Record<string, unknown>>({
         );
     }
 
-    if (data.length === 0) {
+    if (!data || !Array.isArray(data) || data.length === 0) {
         return (
             <div className="bg-white rounded-xl border border-neutral-300/50 p-12 text-center">
                 <p className="text-neutral-500 text-sm">{emptyMessage}</p>

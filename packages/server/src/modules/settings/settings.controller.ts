@@ -57,6 +57,33 @@ export class SettingsController {
             next(error);
         }
     }
+
+    async getContext(req: Request, res: Response, next: NextFunction) {
+        try {
+            const context = await settingsService.getContext(req.user!.schoolId);
+            res.json({ data: context });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getTerms(req: Request, res: Response, next: NextFunction) {
+        try {
+            const terms = await settingsService.getTerms(req.user!.schoolId);
+            res.json({ data: terms });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getSections(req: Request, res: Response, next: NextFunction) {
+        try {
+            const sections = await settingsService.getSections(req.user!.schoolId);
+            res.json({ data: sections });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export const settingsController = new SettingsController();

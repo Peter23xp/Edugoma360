@@ -35,7 +35,7 @@ export default function DebtsPage() {
                     <button className="flex items-center gap-2 px-3 py-2 text-sm border border-neutral-300 rounded-lg hover:bg-neutral-100"><Download size={14} /> Exporter</button>
                 </div>
             </div>
-            <DataTable columns={columns} data={data?.students ?? []} isLoading={isLoading} emptyMessage="Aucun impayé — Tous les élèves sont en règle ðŸŽ‰" />
+            <DataTable columns={columns} data={data?.students ?? []} isLoading={isLoading} emptyMessage="Aucun impayé — Tous les élèves sont en règle 🎉" />
         </div>
     );
 }

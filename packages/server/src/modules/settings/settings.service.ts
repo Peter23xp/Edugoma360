@@ -83,6 +83,38 @@ export class SettingsService {
             orderBy: { displayOrder: 'asc' },
         });
     }
+
+    async getContext(schoolId: string) {
+        const school = await prisma.school.findUnique({
+            where: { id: schoolId },
+        });
+
+        const activeYear = await prisma.academicYear.findFirst({
+            where: { schoolId, isActive: true },
+            include: { terms: true },
+        });
+
+        return {
+            school,
+            academicYear: activeYear,
+        };
+    }
+
+    async getTerms(schoolId: string) {
+        const activeYear = await prisma.academicYear.findFirst({
+            where: { schoolId, isActive: true },
+            include: { terms: { orderBy: { number: 'asc' } } },
+        });
+
+        return activeYear?.terms || [];
+    }
+
+    async getSections(schoolId: string) {
+        return prisma.section.findMany({
+            where: { schoolId },
+            orderBy: { name: 'asc' },
+        });
+    }
 }
 
 export const settingsService = new SettingsService();

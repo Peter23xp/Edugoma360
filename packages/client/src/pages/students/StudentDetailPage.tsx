@@ -72,7 +72,7 @@ export default function StudentDetailPage() {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
                 <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
-                    <span className="text-3xl">ðŸ˜•</span>
+                    <span className="text-3xl">😕</span>
                 </div>
                 <h2 className="text-xl font-bold text-neutral-900">Élève introuvable</h2>
                 <p className="text-sm text-neutral-500 text-center max-w-md">

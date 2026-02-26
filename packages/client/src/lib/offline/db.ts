@@ -71,6 +71,7 @@ export interface SyncQueueItem {
     action: 'create' | 'update' | 'delete';
     payload: string; // JSON stringified
     attempts: number;
+    syncStatus: 'pending' | 'syncing' | 'error';
     lastAttemptAt?: number;
     errorMsg?: string;
     createdAt: number;
@@ -91,7 +92,7 @@ class EduGomaDB extends Dexie {
             grades: '++id, serverId, studentId, subjectId, termId, evalType, syncStatus, [studentId+subjectId+termId+evalType]',
             attendances: '++id, serverId, studentId, classId, date, period, syncStatus, [studentId+date+period]',
             payments: '++id, serverId, receiptNumber, studentId, feeTypeId, syncStatus',
-            syncQueue: '++id, entityType, entityId, action, createdAt',
+            syncQueue: '++id, entityType, entityId, action, syncStatus, createdAt',
         });
     }
 }

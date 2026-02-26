@@ -14,6 +14,21 @@ export function generateMatricule(
 }
 
 /**
+ * Génère un matricule unique pour un enseignant
+ * Format: PROVINCE-VILLE-CODE_ECOLE-ENS-SEQUENCE
+ * Exemple: NK-GOM-ISS001-ENS-0234
+ */
+export function generateTeacherMatricule(
+    province: string,
+    ville: string,
+    schoolCode: string,
+    sequence: number
+): string {
+    const seq = sequence.toString().padStart(4, '0');
+    return `${province}-${ville}-${schoolCode}-ENS-${seq}`;
+}
+
+/**
  * Obtient le code de province (2-3 lettres)
  */
 export function getProvinceCode(province: string): string {

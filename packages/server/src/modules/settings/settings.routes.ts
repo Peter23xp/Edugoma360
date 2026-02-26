@@ -19,4 +19,13 @@ router.get('/classes', requirePermission('settings:read'), (req, res, next) => s
 // Subjects management
 router.get('/subjects', requirePermission('settings:read'), (req, res, next) => settingsController.getSubjects(req, res, next));
 
+// Context (school info + current academic year)
+router.get('/context', requirePermission('settings:read'), (req, res, next) => settingsController.getContext(req, res, next));
+
+// Terms (periods)
+router.get('/terms', requirePermission('settings:read'), (req, res, next) => settingsController.getTerms(req, res, next));
+
+// Sections
+router.get('/sections', requirePermission('settings:read'), (req, res, next) => settingsController.getSections(req, res, next));
+
 export default router;

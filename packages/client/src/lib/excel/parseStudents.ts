@@ -31,24 +31,25 @@ export interface ParsedStudent {
 const PHONE_REGEX = /^\+243(81|82|97|98|89|90|91|92|93|94|95|96|97|98|99)\d{7}$/;
 
 const COLUMN_MAPPING = {
-    A: 'nom',
-    B: 'postNom',
-    C: 'prenom',
-    D: 'sexe',
-    E: 'dateNaissance',
-    F: 'lieuNaissance',
-    G: 'nationalite',
-    H: 'className',
-    I: 'statut',
-    J: 'ecoleOrigine',
-    K: 'resultatTenasosp',
-    L: 'nomPere',
-    M: 'telPere',
-    N: 'nomMere',
-    O: 'telMere',
-    P: 'nomTuteur',
-    Q: 'telTuteur',
-    R: 'tuteurPrincipal',
+    A: 'matricule',  // Ignoré mais présent dans le template
+    B: 'nom',
+    C: 'postNom',
+    D: 'prenom',
+    E: 'sexe',
+    F: 'dateNaissance',
+    G: 'lieuNaissance',
+    H: 'nationalite',
+    I: 'className',
+    J: 'statut',
+    K: 'ecoleOrigine',
+    L: 'resultatTenasosp',
+    M: 'nomPere',
+    N: 'telPere',
+    O: 'nomMere',
+    P: 'telMere',
+    Q: 'nomTuteur',
+    R: 'telTuteur',
+    S: 'tuteurPrincipal',
 };
 
 export async function parseStudentsFile(file: File): Promise<ParsedStudent[]> {
@@ -115,6 +116,11 @@ function parseRow(row: any[]): Partial<StudentImportData> {
     row.forEach((cell, index) => {
         const columnLetter = String.fromCharCode(65 + index); // A, B, C, ...
         const fieldName = COLUMN_MAPPING[columnLetter as keyof typeof COLUMN_MAPPING];
+
+        // Skip matricule column (A) - it's auto-generated
+        if (fieldName === 'matricule') {
+            return;
+        }
 
         if (fieldName && cell !== undefined && cell !== null && cell !== '') {
             const value = cell.toString().trim();

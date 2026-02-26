@@ -105,7 +105,7 @@ export default function ImportReport({ result, onReset }: ImportReportProps) {
                     </div>
 
                     <p className="text-xs text-red-700 mt-4">
-                        ðŸ’¡ Corrigez ces erreurs dans votre fichier Excel et réimportez les lignes
+                        💡 Corrigez ces erreurs dans votre fichier Excel et réimportez les lignes
                         concernées
                     </p>
                 </div>
@@ -135,3 +135,4 @@ export default function ImportReport({ result, onReset }: ImportReportProps) {
         </div>
     );
 }
+

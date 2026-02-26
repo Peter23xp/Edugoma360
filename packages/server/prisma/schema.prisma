@@ -169,6 +169,7 @@ model Subject {
   sections    SubjectSection[]
   grades      Grade[]
   assignments TeacherClassSubject[]
+  teachers    Teacher[]             @relation("TeacherSubjects")
 
   @@unique([schoolId, abbreviation])
   @@map("subjects")
@@ -239,35 +240,76 @@ model Enrollment {
 
 // ── TEACHER ───────────────────────────────────────────────────────────────────
 model Teacher {
-  id             String        @id @default(uuid())
-  schoolId       String
-  school         School        @relation(fields: [schoolId], references: [id])
-  nom            String
-  postNom        String
-  prenom         String?
-  matriculeMepst String?
-  diplome        String?
-  phone          String?
-  statut         String        @default("NON_PAYE") // TeacherStatus
-  isActive       Boolean       @default(true)
+  id               String        @id @default(uuid())
+  schoolId         String
+  school           School        @relation(fields: [schoolId], references: [id])
+  matricule        String        @unique
+  matriculeMepst   String?       // Matricule national
+  nom              String
+  postNom          String
+  prenom           String?
+  sexe             String        // M / F
+  dateNaissance    DateTime?
+  lieuNaissance    String?
+  nationalite      String        @default("Congolaise")
+  telephone        String?
+  email            String?
+  adresse          String?
+  photoUrl         String?
+  
+  // Qualifications
+  niveauEtudes     String?
+  domaineFormation String?
+  universite       String?
+  anneeObtention   Int?
+  specialisations  String?
+  
+  // Professionnel
+  statut           String        @default("ACTIF") // TeacherStatus
+  dateEmbauche     DateTime?
+  typeContrat      String?       // PERMANENT, TEMPORAIRE, VACATION, STAGIAIRE
+  fonction         String?       // PREFET, DIRECTEUR, etc.
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
-  assignments TeacherClassSubject[]
+  subjects         Subject[]     @relation("TeacherSubjects")
+  certificats      TeacherCertificate[]
+  assignments      TeacherClassSubject[]
 
+  @@unique([schoolId, telephone])
   @@map("teachers")
+}
+
+model TeacherCertificate {
+  id          String  @id @default(uuid())
+  teacherId   String
+  teacher     Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  nom         String
+  organisme   String
+  annee       Int
+  fichierUrl  String?
+
+  @@map("teacher_certificates")
 }
 
 model TeacherClassSubject {
   id        String  @id @default(uuid())
   teacherId String
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacher   Teacher @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   classId   String
-  class     Class   @relation(fields: [classId], references: [id])
+  class     Class   @relation(fields: [classId], references: [id], onDelete: Cascade)
   subjectId String
-  subject   Subject @relation(fields: [subjectId], references: [id])
+  subject   Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  
+  academicYearId String
+  // On pourrait ajouter @relation vers AcademicYear ici si on veut
+  
+  volumeHoraire Int? @default(0)
 
   timetablePeriods TimetablePeriod[]
 
-  @@unique([teacherId, classId, subjectId])
+  @@unique([teacherId, classId, subjectId, academicYearId])
   @@map("teacher_class_subjects")
 }
 
