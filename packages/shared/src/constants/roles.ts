@@ -93,7 +93,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
         'students:read', 'students:create', 'students:update', 'students:export',
         'grades:read', 'grades:create', 'grades:update', 'grades:lock', 'grades:export',
         'attendance:read', 'attendance:create', 'attendance:update', 'attendance:reports',
-        'teachers:read', 'teachers:create', 'teachers:update',
+        'teachers:read', 'teachers:create', 'teachers:update', 'teachers:delete',
         'sms:send', 'sms:read', 'sms:templates',
         'reports:bulletins', 'reports:palmares', 'reports:pv', 'reports:statistics',
         'settings:read', 'settings:academic_year',

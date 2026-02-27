@@ -24,6 +24,8 @@ import statsRoutes from './modules/stats/stats.routes';
 import alertsRoutes from './modules/alerts/alerts.routes';
 import calendarRoutes from './modules/calendar/calendar.routes';
 import bulletinsRoutes from './modules/bulletins/bulletins.routes';
+import assignmentsRoutes from './modules/assignments/assignments.routes';
+import absencesRoutes from './modules/absences/absences.routes';
 
 const app = express();
 
@@ -66,6 +68,8 @@ app.use('/api/stats', statsRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/bulletin', bulletinsRoutes);
+app.use('/api/assignments', assignmentsRoutes);
+app.use('/api/absences', absencesRoutes);
 
 // â”€â”€ 404 Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req, res) => {

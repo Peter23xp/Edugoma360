@@ -39,10 +39,10 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({
                     )}
                 </div>
                 <div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-green-700 transition-colors uppercase">
-                        {teacher.nom} {teacher.postNom}
+                    <h3 className="font-bold text-gray-900 group-hover:text-green-700 transition-colors uppercase text-base leading-tight">
+                        {teacher.nom} {teacher.postNom} <span className="capitalize">{teacher.prenom}</span>
                     </h3>
-                    <p className="text-sm text-gray-500 font-medium">{teacher.fonction || 'Enseignant'}</p>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{teacher.matricule}</div>
                     <div className="flex items-center gap-1.5 mt-1">
                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: status.color }} />
                         <span className="text-xs font-semibold" style={{ color: status.color }}>{status.label}</span>
@@ -62,10 +62,10 @@ export const TeacherCard: React.FC<TeacherCardProps> = ({
                     </span>
                 </div>
                 {teacher.telephone && (
-                    <div className="flex items-center gap-3 text-gray-600">
+                    <a href={`tel:${teacher.telephone}`} className="flex items-center gap-3 text-gray-600 hover:text-green-700 transition-colors">
                         <Phone size={16} className="text-green-600" />
-                        <span className="text-sm">{teacher.telephone}</span>
-                    </div>
+                        <span className="text-sm font-bold">{teacher.telephone}</span>
+                    </a>
                 )}
             </div>
 

@@ -12,6 +12,7 @@ datasource db {
 // ── SCHOOL (Multi-tenant) ─────────────────────────────────────────────────────
 model School {
   id           String     @id @default(uuid())
+  code         String     ? // Code MEPST ou code interne (ex: ISG001)
   name         String
   logoUrl      String?
   type         String     // SchoolType
@@ -38,6 +39,8 @@ model School {
   payments      Payment[]
   smsLogs       SmsLog[]
   settings      Setting[]
+  teacherAttendances TeacherAttendance[]
+  teacherLeaves      TeacherLeave[]
 
   @@map("schools")
 }
@@ -61,7 +64,10 @@ model User {
 
   gradesCreated   Grade[]
   paymentsCreated Payment[]
-  attendanceTaken Attendance[]
+  attendanceTaken        Attendance[]
+  teacherAttendanceTaken TeacherAttendance[]
+  leaveProcessing        TeacherLeave[]    @relation("LeaveProcessor")
+  teacher                Teacher?
 
   @@unique([schoolId, phone])
   @@unique([schoolId, email])
@@ -263,6 +269,7 @@ model Teacher {
   universite       String?
   anneeObtention   Int?
   specialisations  String?
+  compteBancaire   String?       // N° de compte pour la paie
   
   // Professionnel
   statut           String        @default("ACTIF") // TeacherStatus
@@ -272,13 +279,43 @@ model Teacher {
   isActive         Boolean       @default(true)
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
+  
+  userId           String?       @unique
+  user             User?         @relation(fields: [userId], references: [id])
 
+  congeGlobal      Int           @default(20)  // Jours de congé par an (standard RDC: 20-25j)
+  congePris        Int           @default(0)
+  
   subjects         Subject[]     @relation("TeacherSubjects")
   certificats      TeacherCertificate[]
   assignments      TeacherClassSubject[]
+  attendances      TeacherAttendance[]
+  leaves           TeacherLeave[]
 
   @@unique([schoolId, telephone])
   @@map("teachers")
+}
+
+model TeacherLeave {
+  id            String    @id @default(uuid())
+  teacherId     String
+  teacher       Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  schoolId      String
+  school        School    @relation(fields: [schoolId], references: [id])
+  type          String    // MALADIE, ANNUEL, MATERNITE, DECES, CIRCONSTANCE
+  startDate     DateTime
+  endDate       DateTime
+  daysCount     Int
+  status        String    @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  reason        String
+  observations  String?
+  certificatUrl String?
+  processedById String?
+  processedBy   User?     @relation("LeaveProcessor", fields: [processedById], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("teacher_leaves")
 }
 
 model TeacherCertificate {
@@ -407,6 +444,23 @@ model Attendance {
 
   @@unique([studentId, date, period])
   @@map("attendances")
+}
+
+model TeacherAttendance {
+  id            String    @id @default(uuid())
+  teacherId     String
+  teacher       Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  schoolId      String
+  school        School    @relation(fields: [schoolId], references: [id])
+  date          DateTime
+  status        String    // PRESENT, ABSENT, RETARD, CONGE
+  justification String?
+  recordedById  String
+  recordedBy    User      @relation(fields: [recordedById], references: [id])
+  createdAt     DateTime  @default(now())
+
+  @@unique([teacherId, date])
+  @@map("teacher_attendances")
 }
 
 // ── DISCIPLINE ────────────────────────────────────────────────────────────────

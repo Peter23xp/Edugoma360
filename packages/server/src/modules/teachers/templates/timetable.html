@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #1e293b;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #15803d;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .school-info h1 {
+            font-size: 20px;
+            color: #15803d;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .teacher-info {
+            text-align: right;
+        }
+
+        .teacher-info h2 {
+            font-size: 18px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 900;
+            background: #f1f5f9;
+            padding: 8px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid #cbd5e1;
+            padding: 8px;
+            text-align: center;
+            min-height: 60px;
+        }
+
+        th {
+            background: #f8fafc;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+
+        .period-number {
+            font-weight: bold;
+            width: 80px;
+            background: #f8fafc;
+        }
+
+        .content {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .subject {
+            color: #15803d;
+            display: block;
+        }
+
+        .class {
+            color: #64748b;
+            font-size: 10px;
+            display: block;
+            margin-top: 4px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+        }
+
+        .stats {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="school-info">
+            <h1>{{SCHOOL_NAME}}</h1>
+            <p>{{SCHOOL_PROVINCE}} | {{SCHOOL_VILLE}}</p>
+        </div>
+        <div class="teacher-info">
+            <h2>{{TEACHER_NAME}}</h2>
+            <p>Matricule: {{MATRICULE}} | Année: {{ACADEMIC_YEAR}}</p>
+        </div>
+    </div>
+
+    <div class="title">HORAIRE DE TRAVAIL HEBDOMADAIRE</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="period-number">Période</th>
+                <th>LUNDI</th>
+                <th>MARDI</th>
+                <th>MERCREDI</th>
+                <th>JEUDI</th>
+                <th>VENDREDI</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{TABLE_BODY}}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div class="stats">
+            CHARGE HORAIRE : {{TOTAL_PERIODS}} PERIODES / SEMAINE
+        </div>
+        <div>
+            Généré le: {{DATE_TODAY}} | Signature du Préfet : ________________________
+        </div>
+    </div>
+</body>
+
+</html>

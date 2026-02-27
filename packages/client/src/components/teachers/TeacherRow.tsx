@@ -1,102 +1,259 @@
-import React from 'react';
-import { Eye, Edit, Trash2, MoreVertical, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
-import { TEACHER_STATUS } from '@edugoma360/shared';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+    Eye,
+    Edit,
+    Archive,
+    MoreVertical,
+} from 'lucide-react';
 
 interface TeacherRowProps {
     teacher: any;
-    onView: (id: string) => void;
-    onEdit: (id: string) => void;
-    onDelete: (id: string) => void;
-    isSelected?: boolean;
-    onSelect?: (id: string) => void;
+    isSelected: boolean;
+    onSelect: (id: string, checked: boolean) => void;
+    onAction: (action: 'view' | 'edit' | 'archive', id: string) => void;
 }
 
-export const TeacherRow: React.FC<TeacherRowProps> = ({
-    teacher,
-    onView,
-    onEdit,
-    onDelete,
-    isSelected,
-    onSelect,
-}) => {
-    const status = TEACHER_STATUS[teacher.statut as keyof typeof TEACHER_STATUS] || TEACHER_STATUS.ACTIF;
+const AVATAR_COLORS = [
+    'bg-emerald-500',
+    'bg-blue-500',
+    'bg-violet-500',
+    'bg-amber-500',
+    'bg-rose-500',
+    'bg-cyan-500',
+    'bg-teal-500',
+    'bg-indigo-500',
+    'bg-orange-500',
+    'bg-pink-500',
+];
+
+function getAvatarColor(nom: string): string {
+    const idx = (nom || 'A').charCodeAt(0) % AVATAR_COLORS.length;
+    return AVATAR_COLORS[idx] || AVATAR_COLORS[0];
+}
+
+const STATUS_CONFIG: Record<string, { label: string; className: string; icon?: React.ReactNode }> = {
+    ACTIF: {
+        label: 'Actif',
+        className: 'bg-success-bg text-success',
+    },
+    EN_CONGE: {
+        label: 'En congé',
+        className: 'bg-warning-bg text-warning',
+    },
+    SUSPENDU: {
+        label: 'Suspendu',
+        className: 'bg-danger-bg text-danger',
+    },
+    ARCHIVE: {
+        label: 'Archivé',
+        className: 'bg-neutral-100 text-neutral-500',
+    },
+};
+
+export function TeacherRow({ teacher, isSelected, onSelect, onAction }: TeacherRowProps) {
+    const navigate = useNavigate();
+    const [menuOpen, setMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (!menuOpen) return;
+        const handler = (e: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+                setMenuOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, [menuOpen]);
+
+    const initials = `${(teacher.nom || '').charAt(0)}${(teacher.postNom || '').charAt(0)}`.toUpperCase();
+    const statusCfg = STATUS_CONFIG[teacher.statut] ?? STATUS_CONFIG.ACTIF;
+    const isArchived = teacher.statut === 'ARCHIVE';
     const subjects = teacher.subjects?.map((s: any) => s.name).join(', ') || 'Aucune matière';
     const classesCount = new Set(teacher.assignments?.map((a: any) => a.classId)).size;
 
+    const handleRowClick = (e: React.MouseEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-no-navigate]')) return;
+        navigate(`/teachers/${teacher.id}`);
+    };
+
     return (
         <tr
-            onClick={() => onView(teacher.id)}
-            className={`group hover:bg-green-50/30 border-b border-gray-100 transition-colors cursor-pointer ${isSelected ? 'bg-green-50' : ''}`}
+            onClick={handleRowClick}
+            className={`
+                group transition-all duration-150 cursor-pointer
+                ${isArchived ? 'opacity-50' : ''}
+                ${isSelected ? 'bg-primary/5 hover:bg-primary/8' : 'hover:bg-neutral-50'}
+            `}
         >
-            <td className="py-4 px-4 w-10">
-                <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={(e) => {
-                        e.stopPropagation();
-                        onSelect?.(teacher.id);
-                    }}
-                    className="rounded border-gray-300 text-green-700 focus:ring-green-500 w-4 h-4"
-                />
-            </td>
-            <td className="py-4 px-4 whitespace-nowrap">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center overflow-hidden border border-green-100 shrink-0">
-                        {teacher.photoUrl ? (
-                            <img src={teacher.photoUrl} alt={teacher.nom} className="w-full h-full object-cover" />
-                        ) : (
-                            <span className="text-sm font-bold text-green-700 uppercase">
-                                {teacher.nom.charAt(0)}{teacher.postNom.charAt(0)}
-                            </span>
-                        )}
-                    </div>
-                    <div>
-                        <div className="font-bold text-gray-900 group-hover:text-green-700 transition-colors uppercase">
-                            {teacher.nom} {teacher.postNom}
-                        </div>
-                        <div className="text-xs text-gray-500 font-medium">{teacher.matricule}</div>
-                    </div>
+            {/* Checkbox */}
+            <td className="w-12 px-3 py-3" data-no-navigate>
+                <div className="flex items-center justify-center">
+                    <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(e) => {
+                            e.stopPropagation();
+                            onSelect(teacher.id, e.target.checked);
+                        }}
+                        className="w-4 h-4 rounded border-neutral-300 text-primary 
+                                   focus:ring-primary/20 cursor-pointer transition-colors"
+                    />
                 </div>
             </td>
-            <td className="py-4 px-4 truncate max-w-[200px]">
-                <div className="text-sm text-gray-700">{subjects}</div>
+
+            {/* Photo / Avatar */}
+            <td className="w-14 px-2 py-3">
+                {teacher.photoUrl ? (
+                    <img
+                        src={teacher.photoUrl}
+                        alt={`${teacher.nom} ${teacher.postNom}`}
+                        className="w-9 h-9 rounded-full object-cover ring-2 ring-white shadow-sm"
+                    />
+                ) : (
+                    <div
+                        className={`
+                            w-9 h-9 rounded-full flex items-center justify-center 
+                            text-white text-xs font-bold shadow-sm
+                            ${getAvatarColor(teacher.nom)}
+                        `}
+                    >
+                        {initials}
+                    </div>
+                )}
             </td>
-            <td className="py-4 px-4 whitespace-nowrap text-center">
-                <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-100">
-                    {classesCount}
+
+            {/* Matricule */}
+            <td className="px-3 py-3">
+                <span className="font-mono text-xs text-primary/80 bg-primary/5 px-2 py-0.5 rounded">
+                    {teacher.matricule}
                 </span>
             </td>
-            <td className="py-4 px-4 whitespace-nowrap">
+
+            {/* Nom Complet */}
+            <td className="px-3 py-3 min-w-[200px]">
+                <div className="flex flex-col">
+                    <span className="text-sm font-semibold text-neutral-900 leading-tight">
+                        <span className="uppercase">{teacher.nom}</span>{' '}
+                        <span className="uppercase">{teacher.postNom}</span>
+                        {teacher.prenom && (
+                            <span className="font-normal text-neutral-700 capitalize"> {teacher.prenom}</span>
+                        )}
+                    </span>
+                    <span className="text-[11px] text-neutral-400 mt-0.5 md:hidden truncate max-w-[150px]">
+                        {subjects}
+                    </span>
+                </div>
+            </td>
+
+            {/* Matières */}
+            <td className="px-3 py-3 hidden md:table-cell max-w-[200px]">
+                <span className="text-xs text-neutral-500 truncate block">
+                    {subjects}
+                </span>
+            </td>
+
+            {/* Classes (count) */}
+            <td className="px-3 py-3 text-center hidden sm:table-cell">
+                <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-md bg-info-bg text-info text-xs font-semibold">
+                    {classesCount} {classesCount > 1 ? 'classes' : 'classe'}
+                </span>
+            </td>
+
+            {/* Statut */}
+            <td className="px-3 py-3 hidden sm:table-cell">
                 <span
-                    className="px-2.5 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1.5"
-                    style={{ backgroundColor: `${status.color}15`, color: status.color }}
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusCfg.className}`}
                 >
-                    <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: status.color }} />
-                    {status.label}
+                    {statusCfg.label}
                 </span>
             </td>
-            <td className="py-4 px-4 text-right whitespace-nowrap">
-                <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+
+            {/* Actions menu */}
+            <td className="w-12 px-2 py-3" data-no-navigate>
+                <div className="relative" ref={menuRef}>
                     <button
-                        onClick={(e) => { e.stopPropagation(); onEdit(teacher.id); }}
-                        className="p-2 text-gray-400 hover:text-green-600 rounded-lg hover:bg-green-100 transition-colors"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setMenuOpen(!menuOpen);
+                        }}
+                        className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 
+                                   hover:bg-neutral-100 transition-colors opacity-0 group-hover:opacity-100
+                                   focus:opacity-100"
+                        aria-label="Actions"
                     >
-                        <Edit size={18} />
+                        <MoreVertical size={16} />
                     </button>
-                    <button
-                        onClick={(e) => { e.stopPropagation(); onDelete(teacher.id); }}
-                        className="p-2 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50 transition-colors"
-                    >
-                        <Trash2 size={18} />
-                    </button>
-                    <button
-                        onClick={(e) => { e.stopPropagation(); }}
-                        className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
-                    >
-                        <MoreVertical size={18} />
-                    </button>
+
+                    {menuOpen && (
+                        <div
+                            className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl 
+                                       shadow-lg border border-neutral-200 py-1.5 z-50 animate-fade-in"
+                        >
+                            <MenuItem
+                                icon={<Eye size={14} />}
+                                label="Voir la fiche"
+                                onClick={() => {
+                                    onAction('view', teacher.id);
+                                    setMenuOpen(false);
+                                }}
+                            />
+                            <MenuItem
+                                icon={<Edit size={14} />}
+                                label="Modifier"
+                                onClick={() => {
+                                    onAction('edit', teacher.id);
+                                    setMenuOpen(false);
+                                }}
+                            />
+                            <div className="my-1 border-t border-neutral-100" />
+                            <MenuItem
+                                icon={<Archive size={14} />}
+                                label="Archiver"
+                                onClick={() => {
+                                    onAction('archive', teacher.id);
+                                    setMenuOpen(false);
+                                }}
+                                variant="danger"
+                            />
+                        </div>
+                    )}
                 </div>
             </td>
         </tr>
     );
-};
+}
+
+// —— Sub-component: Menu Item ——
+function MenuItem({
+    icon,
+    label,
+    onClick,
+    variant = 'default',
+}: {
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
+    variant?: 'default' | 'danger';
+}) {
+    return (
+        <button
+            onClick={(e) => {
+                e.stopPropagation();
+                onClick();
+            }}
+            className={`
+                w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors
+                ${variant === 'danger'
+                    ? 'text-danger hover:bg-danger-bg'
+                    : 'text-neutral-700 hover:bg-neutral-50'
+                }
+            `}
+        >
+            {icon}
+            {label}
+        </button>
+    );
+}

@@ -17,6 +17,14 @@ import StudentDetailPage from './pages/students/StudentDetailPage';
 import StudentFormPage from './pages/students/StudentFormPage';
 import StudentsImportPage from './pages/students/StudentsImportPage';
 
+// Teachers
+import { TeachersListPage } from './pages/teachers/TeachersListPage';
+import { TeacherDetailPage } from './pages/teachers/TeacherDetailPage';
+import { TeacherFormPage } from './pages/teachers/TeacherFormPage';
+import AssignmentsPage from './pages/teachers/AssignmentsPage';
+import TeacherReportsPage from './pages/teachers/ReportsPage';
+import AbsencesPage from './pages/teachers/AbsencesPage';
+
 // Academic
 import ClassesPage from './pages/academic/ClassesPage';
 import TimetablePage from './pages/academic/TimetablePage';
@@ -104,6 +112,15 @@ export default function AppRouter() {
                 <Route path="students/import" element={<StudentsImportPage />} />
                 <Route path="students/:id" element={<StudentDetailPage />} />
                 <Route path="students/:id/edit" element={<StudentFormPage />} />
+
+                {/* Teachers */}
+                <Route path="teachers" element={<TeachersListPage />} />
+                <Route path="teachers/new" element={<TeacherFormPage />} />
+                <Route path="teachers/:id" element={<TeacherDetailPage />} />
+                <Route path="teachers/:id/edit" element={<TeacherFormPage />} />
+                <Route path="teachers/assignments" element={<AssignmentsPage />} />
+                <Route path="teachers/reports" element={<TeacherReportsPage />} />
+                <Route path="teachers/absences" element={<AbsencesPage />} />
 
                 {/* Academic */}
                 <Route path="classes" element={<ClassesPage />} />

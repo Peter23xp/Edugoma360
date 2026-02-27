@@ -94,6 +94,15 @@ class EduGomaDB extends Dexie {
             payments: '++id, serverId, receiptNumber, studentId, feeTypeId, syncStatus',
             syncQueue: '++id, entityType, entityId, action, syncStatus, createdAt',
         });
+
+        // Version 2 — added additional indexes; bump whenever schema changes to avoid SchemaDiff warnings
+        this.version(2).stores({
+            students: 'id, schoolId, matricule, nom, classId, lastSynced, [schoolId+classId]',
+            grades: '++id, serverId, studentId, subjectId, termId, evalType, syncStatus, localUpdatedAt, [studentId+subjectId+termId+evalType]',
+            attendances: '++id, serverId, studentId, classId, date, period, syncStatus, localUpdatedAt, [studentId+date+period]',
+            payments: '++id, serverId, receiptNumber, studentId, feeTypeId, syncStatus, localUpdatedAt',
+            syncQueue: '++id, entityType, entityId, action, syncStatus, createdAt, lastAttemptAt',
+        });
     }
 }
 

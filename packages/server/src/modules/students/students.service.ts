@@ -1,5 +1,5 @@
 ﻿import prisma from '../../lib/prisma';
-// import { generateMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
+import { generateMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
 import type { z } from 'zod';
 import type { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
 import { generateImportTemplate, importStudentsFromExcel } from './students.import.service';
@@ -162,7 +162,7 @@ export class StudentsService {
         // Get the school code for matricule generation
         const school = await prisma.school.findUnique({
             where: { id: schoolId },
-            select: { name: true, ville: true, province: true },
+            select: { name: true, ville: true, province: true, code: true },
         });
 
         if (!school) throw new Error('École non trouvée');
@@ -175,7 +175,7 @@ export class StudentsService {
         });
 
         const nextSeq = lastStudent ? parseInt(lastStudent.matricule.split('-').pop() || '0', 10) + 1 : 1;
-        const schoolCode = 'ITG001'; // TODO: make configurable
+        const schoolCode = school.code || 'ISG001';
 
         const provinceCode = getProvinceCode(school.province);
         const cityCode = getCityCode(school.ville);
@@ -523,33 +523,3 @@ export class StudentsService {
 }
 
 export const studentsService = new StudentsService();
-
-function getProvinceCode(province: string): string {
-    const codes: Record<string, string> = {
-        'Nord-Kivu': 'NK',
-        'Sud-Kivu': 'SK',
-        'Kinshasa': 'KIN',
-        'Haut-Katanga': 'HK'
-    };
-    return codes[province] || province.substring(0, 3).toUpperCase();
-}
-
-function getCityCode(ville: string): string {
-    const codes: Record<string, string> = {
-        'Goma': 'GOM',
-        'Bukavu': 'BKV',
-        'Kinshasa': 'KIN',
-        'Lubumbashi': 'LUB'
-    };
-    return codes[ville] || ville.substring(0, 3).toUpperCase();
-}
-
-function generateMatricule(
-    province: string,
-    ville: string,
-    schoolCode: string,
-    sequence: number
-): string {
-    const seq = sequence.toString().padStart(4, '0');
-    return `${province}-${ville}-${schoolCode}-${seq}`;
-}

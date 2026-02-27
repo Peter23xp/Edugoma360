@@ -8,3 +8,5 @@ export * from './user.types';
 export * from './school.types';
 export * from './api.types';
 export * from './academic';
+export * from './teacher';
+export * from './absence';

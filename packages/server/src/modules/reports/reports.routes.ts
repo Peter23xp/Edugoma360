@@ -3,9 +3,13 @@ import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
 import { reportsController } from './reports.controller';
 import { palmaresService } from './palmares.service';
+import teacherReportsRoutes from './teachers-reports.routes';
 
 const router = Router();
 router.use(authenticate);
+
+// Teacher reports
+router.use('/teachers', teacherReportsRoutes);
 
 // Bulletin routes
 router.get('/bulletin/:studentId/:termId', requirePermission('reports:bulletins'), (req, res, next) => reportsController.generateBulletin(req, res, next));

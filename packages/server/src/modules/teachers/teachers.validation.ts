@@ -11,9 +11,12 @@ export const step1Schema = z.object({
         .max(subYears(new Date(), 21), "L'enseignant doit avoir au moins 21 ans"),
     lieuNaissance: z.string().min(2).max(100),
     nationalite: z.string().min(2),
-    telephone: z.string().regex(/^\+243(81|82|97|98|89)\d{7}$/, "Numéro congolais invalide"),
+    telephone: z.string()
+        .transform(s => s.replace(/\s+/g, '')) // strip spaces: "+243 81..." -> "+24381..."
+        .pipe(z.string().regex(/^\+243(81|82|97|98|89)\d{7}$/, "Format attendu: +243810000000")),
     email: z.string().email().optional().or(z.literal('')),
     adresse: z.string().min(10).max(200),
+    photoUrl: z.string().url().optional().or(z.literal('')),
 });
 
 export const step2Schema = z.object({
@@ -29,7 +32,7 @@ export const step2Schema = z.object({
         nom: z.string(),
         organisme: z.string(),
         annee: z.coerce.number(),
-        // fichier is handled via multipart/form-data, so we might just have URLs or metadata here
+        fichierUrl: z.string().url().optional().or(z.literal('')),
     })).optional()
 });
 

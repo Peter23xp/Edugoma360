@@ -1,9 +1,102 @@
 ﻿import prisma from '../../lib/prisma';
-import { generateTeacherMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
+import { generateTeacherMatricule, extractTeacherSequence, getProvinceCode } from '@edugoma360/shared';
 import { CreateTeacherDto, UpdateTeacherDto, TeacherFilters } from './teachers.dto';
 import { sendSms, SMS_TEMPLATES } from '../../lib/sms';
+import bcrypt from 'bcryptjs';
+import ExcelJS from 'exceljs';
+import { isValidTeacherMatricule } from '@edugoma360/shared';
+import path from 'path';
+import fs from 'fs/promises';
+import { format } from 'date-fns';
+import { generatePdf } from '../../lib/pdf';
+import { timetableService } from '../timetable/timetable.service';
 
 export class TeachersService {
+    /**
+     * Import teachers from Excel
+     */
+    async importTeachers(schoolId: string, filePath: string) {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(filePath);
+        const worksheet = workbook.getWorksheet(1);
+        if (!worksheet) throw new Error('Le fichier Excel est vide');
+
+        const school = await prisma.school.findUnique({
+            where: { id: schoolId },
+            select: { name: true, ville: true, province: true, id: true }
+        });
+        if (!school) throw new Error('École non trouvée');
+
+        let imported = 0;
+        let errors = 0;
+
+        const passwordHash = await bcrypt.hash('Edugoma2025', 10);
+        const currentYear = new Date().getFullYear();
+
+        // Iterating through rows, skipping header
+        for (let rowNumber = 2; rowNumber <= worksheet.rowCount; rowNumber++) {
+            const row = worksheet.getRow(rowNumber);
+            const nom = row.getCell(1).text?.toString().trim().toUpperCase();
+            const postNom = row.getCell(2).text?.toString().trim().toUpperCase();
+            const prenom = row.getCell(3).text?.toString().trim();
+            const genre = row.getCell(4).text?.toString().trim().toUpperCase() as 'M' | 'F';
+            const phone = row.getCell(5).text?.toString().trim();
+
+            if (!nom || !postNom || !genre) continue;
+
+            try {
+                // Generate unique matricule
+                const lastTeacher = await prisma.teacher.findFirst({
+                    where: { schoolId },
+                    orderBy: { matricule: 'desc' }
+                });
+                const sequence = lastTeacher ? extractTeacherSequence(lastTeacher.matricule) + 1 : 1;
+                const matricule = generateTeacherMatricule(
+                    currentYear,
+                    school.province || 'KIN',
+                    school.name.substring(0, 3).toUpperCase(),
+                    sequence
+                );
+
+                await prisma.$transaction(async (tx) => {
+                    const user = await tx.user.create({
+                        data: {
+                            schoolId,
+                            nom,
+                            postNom,
+                            prenom,
+                            phone: phone || '',
+                            email: `${matricule.toLowerCase()}@temp.edugoma360.cd`,
+                            passwordHash,
+                            role: 'ENSEIGNANT'
+                        }
+                    });
+
+                    await (tx as any).teacher.create({
+                        data: {
+                            schoolId,
+                            matricule,
+                            userId: user.id,
+                            nom,
+                            postNom,
+                            prenom,
+                            sexe: genre, // Use 'sexe' from schema
+                            telephone: phone,
+                            statut: 'ACTIF',
+                            isActive: true
+                        }
+                    });
+                });
+                imported++;
+            } catch (e) {
+                console.error(`Import error row ${rowNumber}:`, e);
+                errors++;
+            }
+        }
+
+        return { count: imported, errors };
+    }
+
     /**
      * Get paginated teachers with filters
      */
@@ -97,11 +190,34 @@ export class TeachersService {
         return teacher;
     }
 
+    async getGlobalStats(schoolId: string) {
+        const [total, active, onLeave, studentCount] = await Promise.all([
+            prisma.teacher.count({ where: { schoolId } }),
+            prisma.teacher.count({ where: { schoolId, statut: 'ACTIF' } }),
+            prisma.teacher.count({ where: { schoolId, statut: 'EN_CONGE' } }),
+            prisma.student.count({ where: { schoolId, isActive: true } }),
+        ]);
+
+        const ratio = active > 0 ? (studentCount / active) : 0;
+
+        return {
+            totalTeachers: total,
+            activeTeachers: active,
+            onLeave,
+            suspended: total - active - onLeave,
+            studentTeacherRatio: Math.round(ratio * 10) / 10,
+            avgClassesPerTeacher: 0,
+        };
+    }
+
     /**
      * Create a new teacher
      */
     async createTeacher(schoolId: string, data: CreateTeacherDto) {
-        const school = await prisma.school.findUnique({ where: { id: schoolId } });
+        const school = await prisma.school.findUnique({
+            where: { id: schoolId },
+            select: { name: true, ville: true, province: true }
+        });
         if (!school) throw new Error('École non trouvée');
 
         // Check if phone or email already exists
@@ -120,27 +236,22 @@ export class TeachersService {
             if (existing.email === data.email) throw new Error('Cet email est déjà utilisé');
         }
 
-        // Generate matricule
+        // Generate matricule: ENS-{PROVINCE}-{SEQ}
         const lastTeacher = await prisma.teacher.findFirst({
             where: { schoolId },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            select: { matricule: true }
         });
 
-        const sequence = lastTeacher
-            ? parseInt(lastTeacher.matricule.split('-').pop() || '0') + 1
-            : 1;
-
-        // Use ITG001 as default school code or extract from school name if needed
-        // In students.service it was ITG001
-        const schoolCode = 'ISG001'; // Should be school.code but School model doesn't have it yet?
-        // Let's check School model again. line 17: type String, but no code?
-        // Wait, line 20-21: province, ville.
+        const lastSequence = lastTeacher
+            ? extractTeacherSequence(lastTeacher.matricule)
+            : 0;
 
         const matricule = generateTeacherMatricule(
-            getProvinceCode(school.province),
-            getCityCode(school.ville),
-            schoolCode,
-            sequence
+            new Date().getFullYear(),
+            school.province || 'KIN',
+            school.name.substring(0, 3).toUpperCase(),
+            lastSequence + 1
         );
 
         const activeYear = await prisma.academicYear.findFirst({
@@ -151,14 +262,37 @@ export class TeachersService {
             throw new Error('Aucune année scolaire active trouvée pour les affectations');
         }
 
+        const passwordHash = await bcrypt.hash('Edugoma2025', 10);
+        const userEmail = data.email || `${matricule.toLowerCase()}@temp.edugoma360.cd`;
+
         return prisma.$transaction(async (tx) => {
+            // 1. Create User Account
+            const user = await tx.user.create({
+                data: {
+                    schoolId,
+                    nom: data.nom.toUpperCase(),
+                    postNom: data.postNom.toUpperCase(),
+                    prenom: data.prenom ? data.prenom.charAt(0).toUpperCase() + data.prenom.slice(1).toLowerCase() : null,
+                    phone: data.telephone,
+                    email: userEmail,
+                    passwordHash,
+                    role: 'ENSEIGNANT',
+                    isActive: true
+                }
+            });
+
             const { matieres, affectations, certificats, ...rest } = data;
 
+            // 2. Create Teacher Profile
             const teacher = await tx.teacher.create({
                 data: {
                     ...rest,
+                    nom: data.nom.toUpperCase(),
+                    postNom: data.postNom.toUpperCase(),
+                    prenom: data.prenom ? data.prenom.charAt(0).toUpperCase() + data.prenom.slice(1).toLowerCase() : null,
                     schoolId,
                     matricule,
+                    user: { connect: { id: user.id } },
                     subjects: {
                         connect: matieres.map(id => ({ id }))
                     },
@@ -167,12 +301,13 @@ export class TeachersService {
                             nom: c.nom,
                             organisme: c.organisme,
                             annee: c.annee,
-                            // fichierUrl: handled earlier
+                            fichierUrl: c.fichierUrl,
                         }))
                     }
-                }
+                } as any
             });
 
+            // 3. Handle Assignments
             if (affectations?.length && activeYear) {
                 await Promise.all(
                     affectations.map(aff => tx.teacherClassSubject.create({
@@ -189,7 +324,7 @@ export class TeachersService {
 
             return teacher;
         }).then(async (teacher) => {
-            // Send SMS
+            // Send SMS Welcome
             if (teacher.telephone) {
                 const message = SMS_TEMPLATES.fr.teacherWelcome(`${teacher.prenom || ''} ${teacher.nom}`, teacher.matricule);
                 sendSms(teacher.telephone, message).catch(err => console.error('SMS Error:', err));
@@ -230,7 +365,8 @@ export class TeachersService {
                         teacherId: id,
                         nom: c.nom,
                         organisme: c.organisme,
-                        annee: c.annee
+                        annee: c.annee,
+                        fichierUrl: c.fichierUrl
                     }))
                 });
             }
@@ -294,6 +430,165 @@ export class TeachersService {
             where: { id },
             data: { statut: 'ARCHIVE', isActive: false }
         });
+    }
+
+    /**
+     * Get academic statistics for a teacher
+     */
+    async getTeacherStats(teacherId: string, termId?: string) {
+        const assignments = await prisma.teacherClassSubject.findMany({
+            where: { teacherId },
+            include: {
+                class: true,
+                subject: true,
+            }
+        });
+
+        // For each assignment get student grades
+        const classStats = await Promise.all(
+            assignments.map(async (asgn) => {
+                const gradeWhere: any = { subjectId: asgn.subjectId };
+                if (termId) gradeWhere.termId = termId;
+
+                const grades = await prisma.grade.findMany({
+                    where: gradeWhere,
+                    include: {
+                        student: {
+                            include: {
+                                enrollments: {
+                                    where: { classId: asgn.classId }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Only grades for students in this class
+                const classGrades = grades.filter(g => g.student.enrollments.length > 0);
+                const avg = classGrades.length > 0
+                    ? classGrades.reduce((sum, g) => sum + g.score, 0) / classGrades.length
+                    : 0;
+
+                const passed = classGrades.filter(g => g.score >= 10).length;
+                const successRate = classGrades.length > 0
+                    ? Math.round((passed / classGrades.length) * 100)
+                    : 0;
+
+                const excellence = classGrades.filter(g => g.score >= 16).length;
+
+                return {
+                    className: asgn.class.name,
+                    subjectName: asgn.subject.name,
+                    studentCount: classGrades.length,
+                    average: Math.round(avg * 10) / 10,
+                    successRate,
+                    excellence,
+                    missingGrades: 0,
+                };
+            })
+        );
+
+        const globalAvg = classStats.length > 0
+            ? classStats.reduce((sum, c) => sum + c.average, 0) / classStats.length
+            : 0;
+
+        return {
+            classes: classStats,
+            globalAverage: Math.round(globalAvg * 10) / 10,
+            totalClasses: assignments.length,
+            classStats,
+        };
+    }
+
+    /**
+     * Generate teaching contract PDF
+     */
+    async getContractPdf(teacherId: string, schoolId: string): Promise<Buffer> {
+        const teacher: any = await this.getTeacherById(teacherId, schoolId);
+        const school = await prisma.school.findUnique({ where: { id: schoolId } });
+        if (!school) throw new Error('École non trouvée');
+
+        const templatePath = path.join(__dirname, 'templates', 'contract.html');
+        let html = await fs.readFile(templatePath, 'utf8');
+
+        // Mapping placeholders
+        const data: Record<string, string> = {
+            SCHOOL_NAME: school.name,
+            SCHOOL_PROVINCE: school.province || 'NORD-KIVU',
+            SCHOOL_VILLE: school.ville || 'GOMA',
+            TEACHER_NAME: `${teacher.nom} ${teacher.postNom} ${teacher.prenom || ''}`.trim().toUpperCase(),
+            MATRICULE: teacher.matricule,
+            DATE_NAISSANCE: teacher.dateNaissance ? format(new Date(teacher.dateNaissance), 'dd/MM/yyyy') : '',
+            LIEU_NAISSANCE: teacher.lieuNaissance?.toUpperCase() || '',
+            ADRESSE: teacher.adresse?.toUpperCase() || '',
+            TYPE_CONTRAT: teacher.typeContrat?.toUpperCase() || 'DÉTERMINÉE',
+            TYPE_CONTRAT_DESC: teacher.typeContrat === 'PERMANENT' ? 'INDÉTERMINÉE' : 'DÉTERMINÉE',
+            FONCTION: teacher.fonction?.toUpperCase() || 'ENSEIGNANT',
+            MATIERE_PRINCIPALE: teacher.subjects?.[0]?.name?.toUpperCase() || 'TOUTES MATIÈRES',
+            DATE_EMBAUCHE: teacher.dateEmbauche ? format(new Date(teacher.dateEmbauche), 'dd/MM/yyyy') : format(new Date(), 'dd/MM/yyyy'),
+            COMPTE_BANCAIRE: teacher.compteBancaire || 'À PRÉCISER',
+            DATE_TODAY: format(new Date(), 'dd/MM/yyyy'),
+        };
+
+        for (const [key, value] of Object.entries(data)) {
+            html = html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+        }
+
+        return generatePdf(html);
+    }
+
+    /**
+     * Generate teacher timetable PDF
+     */
+    async getTimetablePdf(teacherId: string, schoolId: string): Promise<Buffer> {
+        const teacher: any = await this.getTeacherById(teacherId, schoolId);
+        const school = await prisma.school.findUnique({ where: { id: schoolId } });
+        if (!school) throw new Error('École non trouvée');
+
+        const { periods } = await timetableService.getTeacherTimetable(teacherId, schoolId);
+
+        const templatePath = path.join(__dirname, 'templates', 'timetable.html');
+        let html = await fs.readFile(templatePath, 'utf8');
+
+        // Build Table body
+        const days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+        const slots = [1, 2, 3, 4, 5, 6, 7];
+        let tableRows = '';
+
+        for (const slot of slots) {
+            tableRows += `<tr><td class="period-number">${slot}è Période</td>`;
+            for (const day of days) {
+                const period = periods.find(p => p.dayOfWeek === day && p.periodSlot === slot);
+                if (period) {
+                    tableRows += `<td>
+                        <span class="subject">${period.subject.name}</span>
+                        <span class="class">${period.class.name}</span>
+                    </td>`;
+                } else {
+                    tableRows += '<td>—</td>';
+                }
+            }
+            tableRows += '</tr>';
+        }
+
+        // Mapping placeholders
+        const data: Record<string, string> = {
+            SCHOOL_NAME: school.name,
+            SCHOOL_PROVINCE: school.province || 'NORD-KIVU',
+            SCHOOL_VILLE: school.ville || 'GOMA',
+            TEACHER_NAME: `${teacher.nom} ${teacher.postNom} ${teacher.prenom || ''}`.trim().toUpperCase(),
+            MATRICULE: teacher.matricule,
+            ACADEMIC_YEAR: '2023-2024', // Should be dynamic
+            TABLE_BODY: tableRows,
+            TOTAL_PERIODS: periods.length.toString(),
+            DATE_TODAY: format(new Date(), 'dd/MM/yyyy'),
+        };
+
+        for (const [key, value] of Object.entries(data)) {
+            html = html.replace(new RegExp(`{{${key}}}`, 'g'), value);
+        }
+
+        return generatePdf(html, { landscape: true });
     }
 }
 

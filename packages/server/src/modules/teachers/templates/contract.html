@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Arial', sans-serif; color: #1e293b; line-height: 1.6; margin: 40px; }
+        .header { text-align: center; border-bottom: 3px solid #15803d; padding-bottom: 20px; margin-bottom: 30px; }
+        .logo { font-size: 24px; font-weight: 900; color: #15803d; text-transform: uppercase; }
+        .school-name { font-size: 18px; font-weight: bold; }
+        .title { text-align: center; font-size: 22px; font-weight: 900; text-transform: uppercase; margin: 30px 0; border: 2px solid #1e293b; padding: 10px; }
+        .article { margin-bottom: 20px; }
+        .article-title { font-weight: bold; text-transform: uppercase; text-decoration: underline; margin-bottom: 5px; }
+        .footer { margin-top: 50px; display: flex; justify-content: space-between; }
+        .signature-box { width: 45%; border-top: 1px solid #1e293b; padding-top: 10px; text-align: center; }
+        .data { font-weight: bold; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">EDUGOMA 360</div>
+        <div class="school-name">{{SCHOOL_NAME}}</div>
+        <div>{{SCHOOL_PROVINCE}} | {{SCHOOL_VILLE}}</div>
+    </div>
+
+    <div class="title">CONTRAT DE TRAVAIL À DURÉE {{TYPE_CONTRAT}}</div>
+
+    <p>Entre l'école <span class="data">{{SCHOOL_NAME}}</span> représentée par son Directeur/Préfet d'une part,</p>
+    <p>Et Monsieur/Madame <span class="data">{{TEACHER_NAME}}</span>, matricule <span class="data">{{MATRICULE}}</span>, né(e) le {{DATE_NAISSANCE}} à {{LIEU_NAISSANCE}}, résidant au {{ADRESSE}}, ci-après dénommé(e) "L'Enseignant(e)" d'autre part.</p>
+
+    <div class="article">
+        <div class="article-title">Article 1 : Objet</div>
+        <p>L'Enseignant est engagé en qualité de <span class="data">{{FONCTION}}</span> de la matière <span class="data">{{MATIERE_PRINCIPALE}}</span>.</p>
+    </div>
+
+    <div class="article">
+        <div class="article-title">Article 2 : Durée</div>
+        <p>Le présent contrat est conclu pour une durée {{TYPE_CONTRAT_DESC}} commençant le <span class="data">{{DATE_EMBAUCHE}}</span>.</p>
+    </div>
+
+    <div class="article">
+        <div class="article-title">Article 3 : Obligations de l'Enseignant</div>
+        <p>L'enseignant s'engage à assurer les cours, la préparation des leçons, la correction des interrogations et examens, ainsi que la participation aux réunions pédagogiques.</p>
+    </div>
+
+    <div class="article">
+        <div class="article-title">Article 4 : Rémunération</div>
+        <p>La rémunération est fixée selon la grille barémique de l'établissement et sera versée mensuellement sur le compte bancaire <span class="data">{{COMPTE_BANCAIRE}}</span>.</p>
+    </div>
+
+    <div class="article">
+        <div class="article-title">Article 5 : Congés</div>
+        <p>L'enseignant bénéficie d'un congé annuel de <span class="data">20 jours</span> ouvrables conformément au code du travail de la RDC.</p>
+    </div>
+
+    <div class="article">
+        <div class="article-title">Article 6 : Résiliation</div>
+        <p>Chaque partie peut résilier le contrat moyennant un préavis écrit d'un mois.</p>
+    </div>
+
+    <div class="article">
+        <div class="article-title">Article 7 : Règlement Intérieur</div>
+        <p>L'enseignant déclare avoir pris connaissance du règlement intérieur de l'école et s'engage à le respecter sous peine de sanctions.</p>
+    </div>
+
+    <p style="margin-top: 40px;">Fait à {{SCHOOL_VILLE}}, le {{DATE_TODAY}} en deux exemplaires originaux.</p>
+
+    <div class="footer">
+        <div class="signature-box">
+            L'Enseignant<br>(Précédé de "Lu et approuvé")
+        </div>
+        <div class="signature-box">
+            Pour l'Établissement<br>Le Préfet / Directeur
+        </div>
+    </div>
+</body>
+</html>

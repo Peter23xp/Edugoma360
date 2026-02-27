@@ -1,7 +1,7 @@
 ﻿import ExcelJS from 'exceljs';
 import { z } from 'zod';
 import prisma from '../../lib/prisma';
-// import { generateMatricule, getNextSequence } from '@edugoma360/shared';
+import { generateMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
 // Prisma types are usually auto-generated. Let's assume StudentStatus is available or we'll define it locally to be safe.
 // Actually status is String in the schema but often mapped to enum if defined. The schema says "String // StudentStatus".
 // Let's use string literal union to match Zod schema.
@@ -135,14 +135,14 @@ export async function generateImportTemplate(): Promise<Buffer> {
 
     // Feuille 2 : Instructions
     const instructions = workbook.addWorksheet('Instructions');
-    
+
     instructions.getColumn(1).width = 80;
-    
+
     instructions.addRow(['═══════════════════════════════════════════════════════════════════════════']);
     instructions.addRow(['    GUIDE D\'IMPORTATION - EDUGOMA 360']);
     instructions.addRow(['═══════════════════════════════════════════════════════════════════════════']);
     instructions.addRow([]);
-    
+
     instructions.addRow(['📋 ÉTAPES À SUIVRE :']);
     instructions.addRow([]);
     instructions.addRow(['1. NE SUPPRIMEZ AUCUNE COLONNE du fichier (même si vous ne les utilisez pas)']);
@@ -151,7 +151,7 @@ export async function generateImportTemplate(): Promise<Buffer> {
     instructions.addRow(['4. Laissez les colonnes vides si vous n\'avez pas les données (sauf colonnes *)']);
     instructions.addRow(['5. Sauvegardez et importez le fichier']);
     instructions.addRow([]);
-    
+
     instructions.addRow(['📝 FORMATS ACCEPTÉS :']);
     instructions.addRow([]);
     instructions.addRow(['   • Date : JJ/MM/AAAA (ex: 12/03/2008)']);
@@ -159,7 +159,7 @@ export async function generateImportTemplate(): Promise<Buffer> {
     instructions.addRow(['   • Sexe : M ou F (majuscule)']);
     instructions.addRow(['   • Statut : NOUVEAU, REDOUBLANT, TRANSFERE, DEPLACE, REFUGIE, ARCHIVE']);
     instructions.addRow([]);
-    
+
     instructions.addRow(['⚠️ ATTENTION :']);
     instructions.addRow([]);
     instructions.addRow(['   • Le nom de la CLASSE doit correspondre EXACTEMENT à une classe existante']);
@@ -167,19 +167,19 @@ export async function generateImportTemplate(): Promise<Buffer> {
     instructions.addRow(['   • La colonne "matricule" sera ignorée (généré automatiquement)']);
     instructions.addRow(['   • Les doublons (même nom + postNom + date naissance) seront ignorés']);
     instructions.addRow([]);
-    
+
     instructions.addRow(['✅ EXEMPLE :']);
     instructions.addRow([]);
     instructions.addRow(['   Ligne 2 de la feuille "Élèves" = exemple VALIDE']);
     instructions.addRow(['   Ligne 3 de la feuille "Élèves" = exemple avec ERREURS (fond rouge)']);
     instructions.addRow([]);
-    
+
     instructions.addRow(['💡 ASTUCE :']);
     instructions.addRow([]);
     instructions.addRow(['   Copiez la ligne 2 et modifiez les valeurs pour ajouter vos élèves.']);
     instructions.addRow(['   Cela garantit que l\'ordre des colonnes est correct.']);
     instructions.addRow([]);
-    
+
     instructions.addRow(['═══════════════════════════════════════════════════════════════════════════']);
 
     // Formater le titre
@@ -210,9 +210,9 @@ export async function importStudentsFromExcel(
     // Vérifier que le fichier a les bonnes colonnes
     const headerRow = worksheet.getRow(1);
     const expectedHeaders = [
-        'matricule', 'nom *', 'postNom *', 'prenom', 'sexe *', 
-        'dateNaissance *', 'lieuNaissance *', 'nationalite *', 'classe *', 
-        'statut *', 'ecoleOrigine', 'resultatTenasosp', 'nomPere', 
+        'matricule', 'nom *', 'postNom *', 'prenom', 'sexe *',
+        'dateNaissance *', 'lieuNaissance *', 'nationalite *', 'classe *',
+        'statut *', 'ecoleOrigine', 'resultatTenasosp', 'nomPere',
         'telPere', 'nomMere', 'telMere', 'nomTuteur', 'telTuteur', 'tuteurPrincipal'
     ];
 
@@ -225,7 +225,7 @@ export async function importStudentsFromExcel(
 
     // Vérifier les colonnes essentielles
     const essentialColumns = ['nom', 'postnom', 'sexe', 'datenaissance', 'classe', 'statut'];
-    const missingColumns = essentialColumns.filter(col => 
+    const missingColumns = essentialColumns.filter(col =>
         !actualHeaders.some(header => header.includes(col))
     );
 
@@ -340,7 +340,7 @@ export async function importStudentsFromExcel(
                 const matricule = generateMatricule(
                     getProvinceCode(school!.province),
                     getCityCode(school!.ville),
-                    'ISS001', // TODO: school.code field might not exist in Prisma schema yet? Schema check: School has convention, agrement, etc. but not explicitly 'code'. Using default.
+                    school!.code || 'ISG001',
                     nextSeq
                 );
 
@@ -435,39 +435,4 @@ function parseDate(dateStr: unknown): Date {
     }
 
     throw new Error(`Format de date invalide: ${dateStr}`);
-}
-
-function getProvinceCode(province: string): string {
-    const codes: Record<string, string> = {
-        'Nord-Kivu': 'NK',
-        'Sud-Kivu': 'SK',
-        'Kinshasa': 'KIN',
-        'Haut-Katanga': 'HK'
-        // ... autres provinces
-    };
-    return codes[province] || province.substring(0, 3).toUpperCase();
-}
-
-function getCityCode(ville: string): string {
-    const codes: Record<string, string> = {
-        'Goma': 'GOM',
-        'Bukavu': 'BKV',
-        'Kinshasa': 'KIN',
-        'Lubumbashi': 'LUB'
-        // ... autres villes
-    };
-    return codes[ville] || ville.substring(0, 3).toUpperCase();
-}
-
-/**
- * Génère un matricule unique pour un élève
- */
-function generateMatricule(
-    province: string,
-    ville: string,
-    schoolCode: string,
-    sequence: number
-): string {
-    const seq = sequence.toString().padStart(4, '0');
-    return `${province}-${ville}-${schoolCode}-${seq}`;
 }

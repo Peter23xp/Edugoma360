@@ -2,7 +2,7 @@
 import {
     LayoutDashboard, Users, GraduationCap, Wallet, CalendarCheck,
     MessageSquare, FileBarChart, Settings, X, BookOpen, TrendingUp,
-    Receipt, ClipboardList, Send, UserCheck, Cog,
+    Receipt, ClipboardList, Send, UserCheck, Cog, Briefcase
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import logo from '../../assets/logo.svg';
@@ -16,6 +16,17 @@ interface SidebarProps {
 const navItems = [
     { label: 'Tableau de bord', icon: LayoutDashboard, path: '/', roles: ['*'] },
     { label: 'Élèves', icon: Users, path: '/students', roles: ['SUPER_ADMIN', 'PREFET', 'SECRETAIRE', 'ENSEIGNANT'] },
+    {
+        label: 'Enseignants',
+        icon: Briefcase,
+        roles: ['SUPER_ADMIN', 'PREFET'],
+        children: [
+            { label: 'Liste & Gestion', icon: Users, path: '/teachers' },
+            { label: 'Affectations', icon: ClipboardList, path: '/teachers/assignments' },
+            { label: 'Absences', icon: CalendarCheck, path: '/teachers/absences' },
+            { label: 'Rapports', icon: FileBarChart, path: '/teachers/reports' },
+        ],
+    },
     {
         label: 'Notes',
         icon: GraduationCap,
