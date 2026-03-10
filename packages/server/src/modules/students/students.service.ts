@@ -428,41 +428,116 @@ export class StudentsService {
                         class: true,
                         academicYear: true,
                     },
-                    where: {
-                        academicYear: {
-                            isActive: true,
-                        },
-                    },
+                    where: { academicYear: { isActive: true } },
                 },
             },
         });
 
-        if (!student) {
-            throw new Error('Élève introuvable');
-        }
+        if (!student) throw new Error('Élève introuvable');
 
-        const school = await prisma.school.findUnique({
-            where: { id: schoolId },
+        const school = await prisma.school.findUnique({ where: { id: schoolId } });
+
+        // Generate real PDF with pdf-lib
+        const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib');
+
+        const pdfDoc = await PDFDocument.create();
+        const page = pdfDoc.addPage([595, 842]); // A4
+
+        const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        const enrollment = student.enrollments[0];
+        const today = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+        const fullName = `${student.nom} ${student.postNom} ${student.prenom || ''}`.trim();
+
+        // ── Header ──────────────────────────────────────────────────────────
+        page.drawText('RÉPUBLIQUE DÉMOCRATIQUE DU CONGO', {
+            x: 50, y: 800, size: 11, font: fontBold, color: rgb(0.1, 0.1, 0.5),
+        });
+        page.drawText('Ministère de l\'Enseignement Primaire, Secondaire et Technique', {
+            x: 50, y: 782, size: 9, font: fontRegular, color: rgb(0.3, 0.3, 0.3),
+        });
+        page.drawText(school?.name || 'École', {
+            x: 50, y: 760, size: 14, font: fontBold, color: rgb(0.05, 0.3, 0.05),
         });
 
-        // TODO: Generate PDF using Puppeteer or PDFKit
-        // For now, return a placeholder
-        const pdfContent = Buffer.from(`
-            ATTESTATION D'INSCRIPTION SCOLAIRE
-            
-            École: ${school?.name}
-            
-            Je soussigné(e), Préfet de l'${school?.name}, certifie que
-            ${student.nom} ${student.postNom} ${student.prenom || ''},
-            matricule ${student.matricule}, est régulièrement inscrit(e)
-            en ${student.enrollments[0]?.class.name || 'N/A'}
-            pour l'année scolaire ${student.enrollments[0]?.academicYear.label || 'N/A'}.
-            
-            Fait Ã  Goma, le ${new Date().toLocaleDateString('fr-FR')}
-        `);
+        // ── Separator ─────────────────────────────────────────────────────
+        page.drawLine({ start: { x: 50, y: 748 }, end: { x: 545, y: 748 }, thickness: 2, color: rgb(0.1, 0.1, 0.5) });
 
-        return pdfContent;
+        // ── Title ─────────────────────────────────────────────────────────
+        page.drawText('ATTESTATION D\'INSCRIPTION SCOLAIRE', {
+            x: 120, y: 710, size: 16, font: fontBold, color: rgb(0.1, 0.1, 0.5),
+        });
+        page.drawLine({ start: { x: 120, y: 702 }, end: { x: 475, y: 702 }, thickness: 1, color: rgb(0.7, 0.7, 0.7) });
+
+        // ── Body ──────────────────────────────────────────────────────────
+        const lineH = 24;
+        let y = 650;
+
+        const lines = [
+            `Je soussigné(e), Préfet de l'établissement ${school?.name || ''},`,
+            `certifie que l'élève :`,
+        ];
+
+        for (const line of lines) {
+            page.drawText(line, { x: 70, y, size: 12, font: fontRegular, color: rgb(0.2, 0.2, 0.2) });
+            y -= lineH;
+        }
+
+        y -= 10;
+        // Student info block
+        const infoLines = [
+            { label: 'Nom complet :', value: fullName.toUpperCase() },
+            { label: 'Matricule :', value: student.matricule },
+            { label: 'Date de naissance :', value: new Date(student.dateNaissance).toLocaleDateString('fr-FR') },
+            { label: 'Classe :', value: enrollment?.class.name || 'N/A' },
+            { label: 'Année scolaire :', value: enrollment?.academicYear.label || 'N/A' },
+        ];
+
+        for (const info of infoLines) {
+            page.drawText(info.label, { x: 90, y, size: 12, font: fontBold, color: rgb(0.2, 0.2, 0.2) });
+            page.drawText(info.value, { x: 230, y, size: 12, font: fontRegular, color: rgb(0.1, 0.1, 0.1) });
+            y -= lineH;
+        }
+
+        y -= 10;
+        page.drawText(`est régulièrement inscrit(e) dans notre établissement pour l'année scolaire`, {
+            x: 70, y, size: 12, font: fontRegular, color: rgb(0.2, 0.2, 0.2),
+        });
+        y -= lineH;
+        page.drawText(`${enrollment?.academicYear.label || 'en cours'}.`, {
+            x: 70, y, size: 12, font: fontRegular, color: rgb(0.2, 0.2, 0.2),
+        });
+
+        y -= 40;
+        page.drawText(`La présente attestation est délivrée à la demande de l'intéressé(e) pour`, {
+            x: 70, y, size: 12, font: fontRegular, color: rgb(0.2, 0.2, 0.2),
+        });
+        y -= lineH;
+        page.drawText(`servir et valoir ce que de droit.`, {
+            x: 70, y, size: 12, font: fontRegular, color: rgb(0.2, 0.2, 0.2),
+        });
+
+        // ── Date & Signature ─────────────────────────────────────────────
+        y -= 60;
+        page.drawText(`Fait à Goma, le ${today}`, {
+            x: 350, y, size: 11, font: fontRegular, color: rgb(0.2, 0.2, 0.2),
+        });
+        y -= lineH * 4;
+        page.drawText('Le Préfet', {
+            x: 400, y, size: 11, font: fontBold, color: rgb(0.2, 0.2, 0.2),
+        });
+
+        // ── Footer ────────────────────────────────────────────────────────
+        page.drawLine({ start: { x: 50, y: 60 }, end: { x: 545, y: 60 }, thickness: 0.5, color: rgb(0.8, 0.8, 0.8) });
+        page.drawText(`Document généré par EduGoma 360 — ${today}`, {
+            x: 160, y: 45, size: 8, font: fontRegular, color: rgb(0.6, 0.6, 0.6),
+        });
+
+        const pdfBytes = await pdfDoc.save();
+        return Buffer.from(pdfBytes);
     }
+
 
     async generateStudentCard(studentId: string, schoolId: string) {
         const student = await prisma.student.findFirst({
@@ -490,10 +565,10 @@ export class StudentsService {
             where: { id: schoolId },
         });
 
-        // TODO: Generate ID card PDF (85.6mm Ã— 54mm)
+        // TODO: Generate ID card PDF (85.6mm à 54mm)
         // For now, return a placeholder
         const pdfContent = Buffer.from(`
-            CARTE D'ÉLÃˆVE
+            CARTE D'ÉLÈVE
             
             ${school?.name}
             

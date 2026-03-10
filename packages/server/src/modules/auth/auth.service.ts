@@ -106,7 +106,7 @@ export class AuthService {
             });
             return { token: newToken, expiresIn: 28800 }; // 8h in seconds
         } catch {
-            throw new AuthError('INVALID_TOKEN', 'Token de rafraÃ®chissement invalide ou expiré.');
+            throw new AuthError('INVALID_TOKEN', 'Token de rafraîchissement invalide ou expiré.');
         }
     }
 

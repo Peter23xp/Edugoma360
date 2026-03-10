@@ -69,7 +69,7 @@ export default function CalendarPanel({ events, isLoading }: CalendarPanelProps)
         ) : events.length === 0 ? (
           <div className="text-center py-8">
             <Calendar size={32} className="mx-auto text-neutral-300 mb-2" />
-            <p className="text-sm text-neutral-600">Aucun événement Ã  venir</p>
+            <p className="text-sm text-neutral-600">Aucun événement à venir</p>
           </div>
         ) : (
           <div className="space-y-2">

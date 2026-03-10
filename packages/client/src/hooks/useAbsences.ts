@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../lib/api';
 
-const BASE = '/api/absences';
+const BASE = '/absences';
 
 export interface AbsenceFilters {
     teacherId?: string;
@@ -18,7 +18,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     const absencesQuery = useQuery({
         queryKey: ['absences', filters],
         queryFn: async () => {
-            const { data } = await axios.get(BASE, { params: filters });
+            const { data } = await api.get(BASE, { params: filters });
             return data;
         },
     });
@@ -27,7 +27,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     const statsQuery = useQuery({
         queryKey: ['absences-stats'],
         queryFn: async () => {
-            const { data } = await axios.get(`${BASE}/stats`);
+            const { data } = await api.get(`${BASE}/stats`);
             return data;
         },
     });
@@ -36,7 +36,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     const balanceQuery = useQuery({
         queryKey: ['absences-balance'],
         queryFn: async () => {
-            const { data } = await axios.get(`${BASE}/my-balance`);
+            const { data } = await api.get(`${BASE}/my-balance`);
             return data;
         },
     });
@@ -44,7 +44,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     // Create leave request
     const createMutation = useMutation({
         mutationFn: async (payload: any) => {
-            const { data } = await axios.post(BASE, payload);
+            const { data } = await api.post(BASE, payload);
             return data;
         },
         onSuccess: () => {
@@ -57,7 +57,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     // Approve a request
     const approveMutation = useMutation({
         mutationFn: async ({ id, observations }: { id: string; observations?: string }) => {
-            const { data } = await axios.put(`${BASE}/${id}/approve`, { observations });
+            const { data } = await api.put(`${BASE}/${id}/approve`, { observations });
             return data;
         },
         onSuccess: () => {
@@ -69,7 +69,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     // Reject a request
     const rejectMutation = useMutation({
         mutationFn: async ({ id, observations }: { id: string; observations: string }) => {
-            const { data } = await axios.put(`${BASE}/${id}/reject`, { observations });
+            const { data } = await api.put(`${BASE}/${id}/reject`, { observations });
             return data;
         },
         onSuccess: () => {
@@ -81,7 +81,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
     // Cancel a request (teacher)
     const cancelMutation = useMutation({
         mutationFn: async (id: string) => {
-            const { data } = await axios.delete(`${BASE}/${id}`);
+            const { data } = await api.delete(`${BASE}/${id}`);
             return data;
         },
         onSuccess: () => {

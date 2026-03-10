@@ -240,7 +240,7 @@ export class TimetableService {
         });
 
         if (!assignment) {
-            throw new Error('ASSIGNMENT_NOT_FOUND: Cet enseignant n\'est pas assigné Ã  cette matière pour cette classe');
+            throw new Error('ASSIGNMENT_NOT_FOUND: Cet enseignant n\'est pas assigné à cette matière pour cette classe');
         }
 
         // Check for conflicts - teacher already has a class at this time
@@ -255,7 +255,7 @@ export class TimetableService {
         });
 
         if (teacherConflict) {
-            throw new Error('TEACHER_CONFLICT: Cet enseignant a déjÃ  un cours Ã  cet horaire');
+            throw new Error('TEACHER_CONFLICT: Cet enseignant a déjà un cours à cet horaire');
         }
 
         // Check for conflicts - class already has a course at this time
@@ -270,7 +270,7 @@ export class TimetableService {
         });
 
         if (classConflict) {
-            throw new Error('CLASS_CONFLICT: Cette classe a déjÃ  un cours Ã  cet horaire');
+            throw new Error('CLASS_CONFLICT: Cette classe a déjà un cours à cet horaire');
         }
 
         // Get time from period slot

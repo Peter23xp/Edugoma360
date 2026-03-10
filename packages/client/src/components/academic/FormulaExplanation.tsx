@@ -35,7 +35,7 @@ export default function FormulaExplanation() {
                         </h4>
                         <div className="space-y-2 text-neutral-700">
                             <p className="font-mono bg-neutral-50 p-2 rounded">
-                                Moyenne = (Interro Ã— 20%) + (TP Ã— 30%) + (Examen Ã— 50%)
+                                Moyenne = (Interro à 20%) + (TP à 30%) + (Examen à 50%)
                             </p>
                             <div className="text-xs space-y-1">
                                 <p>• Interrogation : 20% de la note finale</p>
@@ -52,7 +52,7 @@ export default function FormulaExplanation() {
                         </h4>
                         <div className="space-y-2 text-neutral-700">
                             <p className="font-mono bg-neutral-50 p-2 rounded">
-                                Moyenne Générale = Î£(Moyenne_Matière Ã— Coefficient) / Î£(Coefficient)
+                                Moyenne Générale = Î£(Moyenne_Matière à Coefficient) / Î£(Coefficient)
                             </p>
                             <div className="text-xs">
                                 <p>
@@ -68,7 +68,7 @@ export default function FormulaExplanation() {
                         <h4 className="font-semibold text-blue-900 mb-2">3. Total Points</h4>
                         <div className="space-y-2 text-neutral-700">
                             <p className="font-mono bg-neutral-50 p-2 rounded">
-                                Total Points = Moyenne_Générale Ã— Total_Coefficients
+                                Total Points = Moyenne_Générale à Total_Coefficients
                             </p>
                             <div className="text-xs">
                                 <p>
@@ -113,10 +113,10 @@ export default function FormulaExplanation() {
                             <p>• TP : 14/20</p>
                             <p>• Examen : 16/20</p>
                             <p className="font-mono bg-neutral-50 p-2 rounded mt-2">
-                                Moyenne = (12Ã—0.2) + (14Ã—0.3) + (16Ã—0.5) = 14.6/20
+                                Moyenne = (12à0.2) + (14à0.3) + (16à0.5) = 14.6/20
                             </p>
                             <p className="mt-2">
-                                Si total coefficients = 24, contribution aux points totaux = 14.6 Ã— 4
+                                Si total coefficients = 24, contribution aux points totaux = 14.6 à 4
                                 = 58.4 points
                             </p>
                         </div>

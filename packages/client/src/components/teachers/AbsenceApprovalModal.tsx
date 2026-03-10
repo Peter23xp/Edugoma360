@@ -34,67 +34,79 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
     if (!isOpen || !request) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden border-2 border-slate-50 animate-in zoom-in-95 duration-300">
-                <div className="p-8 border-b-2 border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20"><ShieldCheck size={24} /></div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-neutral-300/50">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gradient-to-br from-primary to-primary-dark text-white rounded-lg shadow-md shadow-primary/20">
+                            <ShieldCheck size={18} />
+                        </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight leading-none mb-1">Traiter la demande</h2>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{request.teacher.nom} {request.teacher.prenom}</p>
+                            <h2 className="text-base font-bold text-neutral-900">Traiter la demande</h2>
+                            <p className="text-xs text-neutral-500">{request.teacher.nom} {request.teacher.prenom}</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 bg-white hover:bg-slate-100 text-slate-300 rounded-2xl transition-all border border-slate-50"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 text-neutral-400 rounded-lg transition-colors">
+                        <X size={18} />
+                    </button>
                 </div>
 
-                <div className="p-8 space-y-6">
-                    <div className="bg-slate-50 p-6 rounded-3xl border-2 border-slate-100/50 space-y-4">
+                {/* Body */}
+                <div className="px-6 py-5 space-y-5">
+                    {/* Request details */}
+                    <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-3">
                         <div className="flex justify-between items-start">
                             <div>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Type de Congé</p>
-                                <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{request.type}</p>
+                                <p className="text-xs text-neutral-500">Type de congé</p>
+                                <p className="text-sm font-semibold text-neutral-800">{request.type}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Durée</p>
-                                <p className="text-sm font-black text-slate-800 uppercase tracking-tight">{request.daysCount} Jours</p>
+                                <p className="text-xs text-neutral-500">Durée</p>
+                                <p className="text-sm font-semibold text-neutral-800">{request.daysCount} jours</p>
                             </div>
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Période</p>
-                            <p className="text-sm font-bold text-slate-800 capitalize">
+                            <p className="text-xs text-neutral-500">Période</p>
+                            <p className="text-sm font-medium text-neutral-800 capitalize">
                                 Du {format(new Date(request.startDate), 'dd MMMM', { locale: fr })} au {format(new Date(request.endDate), 'dd MMMM yyyy', { locale: fr })}
                             </p>
                         </div>
                         <div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Motif de l'enseignant</p>
-                            <p className="text-sm font-medium text-slate-600 leading-relaxed italic">"{request.reason}"</p>
+                            <p className="text-xs text-neutral-500">Motif de l'enseignant</p>
+                            <p className="text-sm text-neutral-600 leading-relaxed italic">"{request.reason}"</p>
                         </div>
                         {request.certificatUrl && (
-                            <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Pièce jointe</span>
+                            <div className="pt-2 border-t border-neutral-200 flex items-center justify-between">
+                                <span className="text-xs text-neutral-500">Pièce jointe</span>
                                 <a
                                     href={request.certificatUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="px-4 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100 hover:bg-blue-100 transition-all"
+                                    className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium 
+                                               border border-blue-100 hover:bg-blue-100 transition-colors"
                                 >
-                                    Voir Certificat
+                                    Voir certificat
                                 </a>
                             </div>
                         )}
                     </div>
 
+                    {/* Observations */}
                     <div>
-                        <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Observations du Préfet</label>
+                        <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Observations du préfet</label>
                         <textarea
                             value={observations}
                             onChange={(e) => setObservations(e.target.value)}
-                            className="w-full h-24 p-5 text-sm bg-white border-2 border-slate-100 rounded-[32px] focus:border-primary focus:outline-none transition-all resize-none font-medium"
+                            className="w-full h-24 px-3 py-2.5 text-sm bg-neutral-50 border border-neutral-200 rounded-xl 
+                                       focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 
+                                       transition-all resize-none"
                             placeholder="Saisissez vos commentaires ou instructions..."
                         />
                     </div>
 
-                    <div className="flex gap-4">
+                    {/* Actions */}
+                    <div className="flex gap-3">
                         <button
                             onClick={() => {
                                 if (!observations.trim()) {
@@ -105,8 +117,10 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
                             }}
                             disabled={mutation.isPending}
                             className={cn(
-                                "flex-1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2",
-                                !observations.trim() ? "bg-slate-100 text-slate-400 cursor-not-allowed" : "bg-rose-50 hover:bg-rose-100 text-rose-600"
+                                "flex-1 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2",
+                                !observations.trim()
+                                    ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
+                                    : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
                             )}
                         >
                             <XCircle size={14} /> Refuser
@@ -114,7 +128,8 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
                         <button
                             onClick={() => mutation.mutate({ status: 'APPROVED', observations })}
                             disabled={mutation.isPending}
-                            className="flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-emerald-600/20 flex items-center justify-center gap-2"
+                            className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl 
+                                       text-sm font-medium transition-all shadow-md flex items-center justify-center gap-2"
                         >
                             <CheckCircle2 size={14} /> Approuver
                         </button>

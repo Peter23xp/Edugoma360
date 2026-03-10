@@ -69,7 +69,7 @@ export default function ClassesPage() {
     };
 
     const handleArchive = (classId: string) => {
-        if (confirm('ÃŠtes-vous sûr de vouloir archiver cette classe ?')) {
+        if (confirm('Êtes-vous sûr de vouloir archiver cette classe ?')) {
             archiveMutation.mutate(classId);
         }
     };

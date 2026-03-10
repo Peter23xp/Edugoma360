@@ -6,21 +6,15 @@ import { toast } from 'react-hot-toast';
 import { parseISO, isWeekend, addDays } from 'date-fns';
 import { useAuthStore, User } from '../../stores/auth.store';
 
-/**
- * Calcule la durée en jours excluant les weekends (Frontend version)
- */
 function calculateDurationExcludingWeekends(startStr: string, endStr: string): number {
     if (!startStr || !endStr) return 0;
     const start = parseISO(startStr);
     const end = parseISO(endStr);
     if (end < start) return 0;
-
     let count = 0;
     let current = start;
     while (current <= end) {
-        if (!isWeekend(current)) {
-            count++;
-        }
+        if (!isWeekend(current)) count++;
         current = addDays(current, 1);
     }
     return count;
@@ -56,7 +50,6 @@ export default function AbsenceRequestModal({ isOpen, onClose }: AbsenceRequestM
 
     const [myProfile, setMyProfile] = useState<any>(null);
 
-    // Automatically set teacherId if user is a teacher
     useEffect(() => {
         if (isTeacher) {
             api.get('/teachers').then(res => {
@@ -73,7 +66,6 @@ export default function AbsenceRequestModal({ isOpen, onClose }: AbsenceRequestM
 
     const mutation = useMutation({
         mutationFn: (data: any) => {
-            // Gender validation for MATERNITE
             const selectedTeacher = isTeacher ? myProfile : teachers.find((t: any) => t.id === data.teacherId);
             if (data.type === 'MATERNITE' && selectedTeacher?.sexe === 'M') {
                 throw new Error('Le congé de maternité est réservé aux enseignantes.');
@@ -87,139 +79,154 @@ export default function AbsenceRequestModal({ isOpen, onClose }: AbsenceRequestM
             onClose();
         },
         onError: (error: any) => {
-            toast.error(error.response?.data?.message || error.message || 'Erreur lors de l\'envoi');
+            toast.error(error.response?.data?.message || error.message || "Erreur lors de l'envoi");
         }
     });
 
     if (!isOpen) return null;
 
+    const inputClass = "w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm text-neutral-900 appearance-none";
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden border-2 border-slate-50 animate-in zoom-in-95 duration-300">
-                <div className="p-8 border-b-2 border-slate-50 flex justify-between items-center bg-slate-50/50">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-primary text-white rounded-2xl shadow-lg shadow-primary/20"><Calendar size={24} /></div>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-neutral-300/50">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-gradient-to-br from-primary to-primary-dark text-white rounded-lg shadow-md shadow-primary/20">
+                            <Calendar size={18} />
+                        </div>
                         <div>
-                            <h2 className="text-xl font-black text-slate-800 uppercase tracking-tight leading-none mb-1">Nouvelle Demande</h2>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Congés & Absences</p>
+                            <h2 className="text-base font-bold text-neutral-900">Nouvelle demande</h2>
+                            <p className="text-xs text-neutral-500">Congés & absences</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 bg-white hover:bg-slate-100 text-slate-300 rounded-2xl transition-all border border-slate-50"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-neutral-100 text-neutral-400 rounded-lg transition-colors">
+                        <X size={18} />
+                    </button>
                 </div>
 
-                <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(formData); }} className="p-8 space-y-6">
-                    <div className="grid grid-cols-1 gap-6">
-                        {!isTeacher ? (
-                            <div>
-                                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Enseignant</label>
-                                <select
-                                    required
-                                    value={formData.teacherId}
-                                    onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
-                                    className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-primary focus:outline-none transition-all font-bold text-slate-900 appearance-none"
-                                >
-                                    <option value="">Sélectionner un enseignant</option>
-                                    {teachers.map((t: any) => (
-                                        <option key={t.id} value={t.id}>{t.matricule} - {t.nom} {t.prenom}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        ) : (
-                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-primary font-black shadow-sm">
-                                    {user?.nom?.[0]}{user?.postNom?.[0]}
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compte demandeur</p>
-                                    <p className="text-sm font-black text-slate-800 uppercase">{user?.nom} {user?.postNom} {user?.prenom}</p>
-                                </div>
-                            </div>
-                        )}
-
+                {/* Form */}
+                <form onSubmit={(e) => { e.preventDefault(); mutation.mutate(formData); }} className="px-6 py-5 space-y-4">
+                    {!isTeacher ? (
                         <div>
-                            <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Type de congé</label>
+                            <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Enseignant</label>
                             <select
-                                value={formData.type}
-                                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                                className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-primary focus:outline-none transition-all font-bold text-slate-900 appearance-none"
+                                required
+                                value={formData.teacherId}
+                                onChange={(e) => setFormData({ ...formData, teacherId: e.target.value })}
+                                className={inputClass}
                             >
-                                <option value="ANNUEL">Annuel (Droit: 20j/an)</option>
-                                <option value="MALADIE">Maladie (Besoin de certificat)</option>
-                                <option value="PERSONNEL">Affaire Personnelle (Déduit du solde)</option>
-                                <option value="MATERNITE">Maternité / Paternité</option>
-                                <option value="DECES">Décès / Deuil</option>
-                                <option value="FORMATION">Formation / Stage</option>
-                                <option value="CIRCONSTANCE">Circonstance particulière</option>
+                                <option value="">Sélectionner un enseignant</option>
+                                {teachers.map((t: any) => (
+                                    <option key={t.id} value={t.id}>{t.matricule} - {t.nom} {t.prenom}</option>
+                                ))}
                             </select>
                         </div>
-
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Date de début</label>
-                                <input
-                                    type="date"
-                                    required
-                                    value={formData.startDate}
-                                    onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                                    className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-primary focus:outline-none transition-all font-bold text-slate-900"
-                                />
+                    ) : (
+                        <div className="p-3 bg-neutral-50 rounded-xl border border-neutral-200 flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center text-primary font-bold shadow-sm border border-neutral-100 text-sm">
+                                {user?.nom?.[0]}{user?.postNom?.[0]}
                             </div>
                             <div>
-                                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Date de fin</label>
-                                <input
-                                    type="date"
-                                    required
-                                    value={formData.endDate}
-                                    onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                                    className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-primary focus:outline-none transition-all font-bold text-slate-900"
-                                />
+                                <p className="text-xs text-neutral-500">Compte demandeur</p>
+                                <p className="text-sm font-semibold text-neutral-800">{user?.nom} {user?.postNom} {user?.prenom}</p>
                             </div>
                         </div>
+                    )}
 
-                        {duration > 0 && (
-                            <div className="p-4 bg-blue-50 border border-blue-100 rounded-2xl flex items-center justify-between">
-                                <span className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Durée estimée</span>
-                                <span className="text-sm font-black text-blue-700">{duration} jours <span className="text-[10px] opacity-60">(Hors weekends)</span></span>
-                            </div>
-                        )}
+                    <div>
+                        <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Type de congé</label>
+                        <select
+                            value={formData.type}
+                            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                            className={inputClass}
+                        >
+                            <option value="ANNUEL">Annuel (Droit: 20j/an)</option>
+                            <option value="MALADIE">Maladie (Besoin de certificat)</option>
+                            <option value="PERSONNEL">Affaire personnelle (Déduit du solde)</option>
+                            <option value="MATERNITE">Maternité / Paternité</option>
+                            <option value="DECES">Décès / Deuil</option>
+                            <option value="FORMATION">Formation / Stage</option>
+                            <option value="CIRCONSTANCE">Circonstance particulière</option>
+                        </select>
+                    </div>
 
-                        {formData.type === 'MALADIE' && (
-                            <div>
-                                <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Certificat médical (URL)</label>
-                                <input
-                                    type="text"
-                                    value={formData.certificatUrl}
-                                    onChange={(e) => setFormData({ ...formData, certificatUrl: e.target.value })}
-                                    placeholder="Lien vers le certificat (optionnel mais recommandé)"
-                                    className="w-full px-6 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-primary focus:outline-none transition-all font-bold text-slate-900"
-                                />
-                            </div>
-                        )}
-
+                    <div className="grid grid-cols-2 gap-3">
                         <div>
-                            <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest mb-3 ml-1">Motif / Justification</label>
-                            <textarea
+                            <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Date de début</label>
+                            <input
+                                type="date"
                                 required
-                                value={formData.reason}
-                                onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                                className="w-full h-24 p-5 text-sm bg-slate-50 border-2 border-slate-50 rounded-[32px] focus:bg-white focus:border-primary focus:outline-none transition-all resize-none font-medium"
-                                placeholder="Détaillez la raison de l'absence..."
+                                value={formData.startDate}
+                                onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                                className={inputClass}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Date de fin</label>
+                            <input
+                                type="date"
+                                required
+                                value={formData.endDate}
+                                onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                                className={inputClass}
                             />
                         </div>
                     </div>
 
-                    <div className="pt-4 flex gap-4">
+                    {duration > 0 && (
+                        <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-center justify-between">
+                            <span className="text-xs text-blue-600 font-medium">Durée estimée</span>
+                            <span className="text-sm font-bold text-blue-800">
+                                {duration} jours <span className="text-xs font-normal text-blue-500">(hors weekends)</span>
+                            </span>
+                        </div>
+                    )}
+
+                    {formData.type === 'MALADIE' && (
+                        <div>
+                            <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Certificat médical (URL)</label>
+                            <input
+                                type="text"
+                                value={formData.certificatUrl}
+                                onChange={(e) => setFormData({ ...formData, certificatUrl: e.target.value })}
+                                placeholder="Lien vers le certificat (optionnel mais recommandé)"
+                                className={inputClass}
+                            />
+                        </div>
+                    )}
+
+                    <div>
+                        <label className="block text-xs font-semibold text-neutral-600 mb-1.5">Motif / Justification</label>
+                        <textarea
+                            required
+                            value={formData.reason}
+                            onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                            className="w-full h-24 px-3 py-2.5 text-sm bg-neutral-50 border border-neutral-200 rounded-xl 
+                                       focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 
+                                       transition-all resize-none"
+                            placeholder="Détaillez la raison de l'absence..."
+                        />
+                    </div>
+
+                    {/* Footer */}
+                    <div className="pt-2 flex gap-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-4 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all"
+                            className="flex-1 py-2.5 border border-neutral-300 text-neutral-700 rounded-xl 
+                                       text-sm font-medium hover:bg-neutral-50 transition-colors"
                         >
                             Annuler
                         </button>
                         <button
                             type="submit"
                             disabled={mutation.isPending}
-                            className="flex-1 py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-slate-900/20 flex items-center justify-center gap-2"
+                            className="flex-1 py-2.5 bg-gradient-to-r from-primary to-primary-light text-white 
+                                       rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-primary/25 
+                                       transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md 
+                                       flex items-center justify-center gap-2"
                         >
                             {mutation.isPending ? 'Envoi...' : <><Send size={14} /> Soumettre</>}
                         </button>

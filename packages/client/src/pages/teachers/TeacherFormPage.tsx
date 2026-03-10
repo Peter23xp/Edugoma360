@@ -96,9 +96,19 @@ export const TeacherFormPage: React.FC = () => {
             createMutation.mutate(data, {
                 onSuccess: (res) => {
                     toast.success('Enseignant ajouté avec succès');
-                    setTimeout(() => navigate(`/teachers/${res.teacher.id}`), 2000);
+                    const teacherId = res.data?.id || res.teacher?.id || res.id;
+                    if (teacherId) {
+                        setTimeout(() => navigate(`/teachers/${teacherId}`), 2000);
+                    } else {
+                        setTimeout(() => navigate('/teachers'), 2000);
+                    }
                 },
-                onError: (error: any) => toast.error(error.response?.data?.message || 'Erreur lors de l\'ajout'),
+                onError: (error: any) => {
+                    const message = error.response?.data?.error?.message ||
+                        error.response?.data?.message ||
+                        'Erreur lors de l\'ajout';
+                    toast.error(message);
+                },
             });
         }
     };

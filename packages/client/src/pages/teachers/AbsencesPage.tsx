@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calendar, Plus, List } from 'lucide-react';
 import { useAbsences } from '../../hooks/useAbsences';
 import AbsenceStatsCards from '../../components/teachers/AbsenceStatsCards';
@@ -36,57 +36,72 @@ export default function AbsencesPage() {
     }));
 
     return (
-        <div className="p-4 md:p-8 space-y-8 animate-in fade-in duration-500">
-            {/* HEADER */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-                <div>
-                    <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight flex items-center gap-3">
-                        <Calendar size={24} className="text-green-700" />
-                        Gestion des Absences
-                    </h1>
-                    <p className="text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">
-                        Suivi des congés et absences du personnel enseignant
-                    </p>
-                </div>
+        <div className="space-y-4 pb-20">
+            {/* —— Header —— */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
+                        <Calendar size={22} className="text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
+                            Gestion des absences
+                        </h1>
+                        <p className="text-sm text-neutral-500">
+                            Suivi des congés et absences du personnel enseignant
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2">
                     {/* View toggle */}
-                    <div className="flex bg-gray-50 p-1 rounded-2xl border border-gray-100">
+                    <div className="flex bg-neutral-100 p-1 rounded-xl border border-neutral-200">
                         <button
                             id="view-list"
                             onClick={() => setView('list')}
-                            className={`p-2.5 rounded-xl transition-all ${view === 'list' ? 'bg-white text-green-700 shadow-sm ring-1 ring-black/5' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`p-2 rounded-lg transition-all duration-200 ${view === 'list'
+                                    ? 'bg-white text-primary shadow-sm'
+                                    : 'text-neutral-400 hover:text-neutral-600'
+                                }`}
                         >
-                            <List size={20} />
+                            <List size={18} />
                         </button>
                         <button
                             id="view-calendar"
                             onClick={() => setView('calendar')}
-                            className={`p-2.5 rounded-xl transition-all ${view === 'calendar' ? 'bg-white text-green-700 shadow-sm ring-1 ring-black/5' : 'text-gray-400 hover:text-gray-600'}`}
+                            className={`p-2 rounded-lg transition-all duration-200 ${view === 'calendar'
+                                    ? 'bg-white text-primary shadow-sm'
+                                    : 'text-neutral-400 hover:text-neutral-600'
+                                }`}
                         >
-                            <Calendar size={20} />
+                            <Calendar size={18} />
                         </button>
                     </div>
 
                     <button
                         id="new-absence-request"
                         onClick={() => setIsRequestModalOpen(true)}
-                        className="flex items-center gap-2 px-6 py-3 bg-green-700 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-green-700/20 hover:bg-green-800 transition-all active:scale-95"
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium 
+                                   bg-gradient-to-r from-primary to-primary-light text-white 
+                                   rounded-xl hover:shadow-lg hover:shadow-primary/25 
+                                   transition-all duration-200 hover:-translate-y-0.5 shadow-md"
                     >
-                        <Plus size={20} /> Nouvelle Demande
+                        <Plus size={15} />
+                        <span>Nouvelle demande</span>
                     </button>
                 </div>
             </div>
 
-            {/* STATS */}
+            {/* —— Stats —— */}
             <AbsenceStatsCards stats={isPrefet ? stats : balance} isTeacher={isTeacher} />
 
-            {/* CONTENT */}
+            {/* —— Content —— */}
             {view === 'calendar' ? (
                 <AbsenceCalendar events={calendarEvents} />
             ) : (
-                <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gray-50/30">
-                        <h3 className="text-sm font-black text-gray-800 uppercase tracking-widest">Demandes de Congés</h3>
+                <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden shadow-sm">
+                    <div className="px-4 py-3 border-b border-neutral-100 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-neutral-700">Demandes de congés</h3>
                     </div>
                     <AbsencesList
                         requests={requests}

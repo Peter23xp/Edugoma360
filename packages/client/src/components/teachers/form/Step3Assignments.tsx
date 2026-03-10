@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Briefcase, Calendar, School, UserCheck, AlertCircle, BookOpen, CheckSquare } from 'lucide-react';
-import axios from 'axios';
+import api from '../../../lib/api';
 import { SUBJECTS_LIST } from '@edugoma360/shared';
 
 interface Assignment {
@@ -42,7 +42,7 @@ export const Step3Assignments: React.FC<Step3AssignmentsProps> = ({ form }) => {
     useEffect(() => {
         const fetchClasses = async () => {
             try {
-                const { data } = await axios.get('/api/classes');
+                const { data } = await api.get('/classes');
                 setClasses(data.data || []);
             } catch (error) {
                 console.error('Failed to fetch classes', error);

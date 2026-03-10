@@ -520,7 +520,7 @@ export default function DeliberationPage() {
                                 <ul className="list-disc list-inside space-y-1 text-neutral-600 ml-2">
                                     <li>Générer le Procès-Verbal (PV) en PDF</li>
                                     <li>Générer tous les bulletins de la classe</li>
-                                    <li>Envoyer un SMS Ã  tous les parents</li>
+                                    <li>Envoyer un SMS à tous les parents</li>
                                     <li>Verrouiller définitivement la délibération</li>
                                 </ul>
                             </div>

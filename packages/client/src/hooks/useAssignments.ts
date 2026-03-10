@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../lib/api';
 import { toast } from 'react-hot-toast';
 
-const API_URL = '/api/assignments';
+const API_URL = '/assignments';
 
 export interface MatrixFilters {
     academicYearId: string;
@@ -18,7 +18,7 @@ export function useAssignments(filters: MatrixFilters) {
     const matrixQuery = useQuery({
         queryKey: ['assignments', filters],
         queryFn: async () => {
-            const response = await axios.get(API_URL, { params: filters });
+            const response = await api.get(API_URL, { params: filters });
             return response.data;
         },
         enabled: !!filters.academicYearId,
@@ -27,7 +27,7 @@ export function useAssignments(filters: MatrixFilters) {
     // Create/Update assignment
     const assignMutation = useMutation({
         mutationFn: async (data: any) => {
-            const response = await axios.post(API_URL, {
+            const response = await api.post(API_URL, {
                 ...data,
                 academicYearId: filters.academicYearId
             });
@@ -49,7 +49,7 @@ export function useAssignments(filters: MatrixFilters) {
     // Bulk assign
     const bulkAssignMutation = useMutation({
         mutationFn: async (data: any) => {
-            const response = await axios.post(`${API_URL}/bulk`, {
+            const response = await api.post(`${API_URL}/bulk`, {
                 ...data,
                 academicYearId: filters.academicYearId
             });
@@ -64,7 +64,7 @@ export function useAssignments(filters: MatrixFilters) {
     // Remove assignment
     const removeMutation = useMutation({
         mutationFn: async (id: string) => {
-            const response = await axios.delete(`${API_URL}/${id}`);
+            const response = await api.delete(`${API_URL}/${id}`);
             return response.data;
         },
         onSuccess: () => {

@@ -23,7 +23,7 @@ export default function SyncIndicator() {
             ) : (
                 <AlertCircle size={12} />
             )}
-            {isSyncing ? 'Synchronisation...' : `${pendingCount} Ã  synchroniser`}
+            {isSyncing ? 'Synchronisation...' : `${pendingCount} à synchroniser`}
         </button>
     );
 }

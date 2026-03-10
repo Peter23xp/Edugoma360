@@ -18,7 +18,8 @@ export const CreateStudentDto = z.object({
     classId: z.string().uuid(),
     academicYearId: z.string().uuid(),
     ecoleOrigine: z.string().optional(),
-    resultatTenasosp: z.number().optional(),
+    resultatTenasosp: z.coerce.number().optional(),
+    photoUrl: z.string().optional(),
 });
 
 export const UpdateStudentDto = CreateStudentDto.partial().omit({

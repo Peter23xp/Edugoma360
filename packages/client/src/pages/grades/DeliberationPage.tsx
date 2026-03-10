@@ -67,7 +67,7 @@ export default function DeliberationPage() {
             <ConfirmModal
                 isOpen={showConfirm}
                 title="Valider la délibération"
-                message="Cette action verrouillera toutes les notes et les décisions seront définitives. ÃŠtes-vous sûr ?"
+                message="Cette action verrouillera toutes les notes et les décisions seront définitives. Êtes-vous sûr ?"
                 confirmLabel="Valider"
                 variant="warning"
                 onConfirm={() => { setShowConfirm(false); validateMutation.mutate(); }}

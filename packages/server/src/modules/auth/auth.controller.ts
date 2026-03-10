@@ -43,7 +43,7 @@ export class AuthController {
             const refreshToken = req.cookies?.refreshToken;
             if (!refreshToken) {
                 res.status(401).json({
-                    error: { code: 'NO_REFRESH_TOKEN', message: 'Token de rafraÃ®chissement absent.' },
+                    error: { code: 'NO_REFRESH_TOKEN', message: 'Token de rafraîchissement absent.' },
                 });
                 return;
             }

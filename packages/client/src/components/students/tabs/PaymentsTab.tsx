@@ -130,7 +130,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                             <thead>
                                 <tr className="border-b border-neutral-200">
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Reçu NÂ°
+                                        Reçu N°
                                     </th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
                                         Type de frais
@@ -198,7 +198,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                                 Solde dû
                             </p>
                             <p className="text-xs text-red-700">
-                                Il reste {summary.remaining.toLocaleString()} FC Ã  payer pour
+                                Il reste {summary.remaining.toLocaleString()} FC à payer pour
                                 cette année scolaire.
                             </p>
                         </div>

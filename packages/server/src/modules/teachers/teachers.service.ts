@@ -1,5 +1,5 @@
 ﻿import prisma from '../../lib/prisma';
-import { generateTeacherMatricule, extractTeacherSequence, getProvinceCode } from '@edugoma360/shared';
+import { generateTeacherMatricule, extractTeacherSequence, getProvinceCode, SUBJECTS_LIST } from '@edugoma360/shared';
 import { CreateTeacherDto, UpdateTeacherDto, TeacherFilters } from './teachers.dto';
 import { sendSms, SMS_TEMPLATES } from '../../lib/sms';
 import bcrypt from 'bcryptjs';
@@ -236,20 +236,19 @@ export class TeachersService {
             if (existing.email === data.email) throw new Error('Cet email est déjà utilisé');
         }
 
-        // Generate matricule: ENS-{PROVINCE}-{SEQ}
+        // Generate matricule: ENS-{YEAR}-{PROV}-{CITY}-{SEQ}
         const lastTeacher = await prisma.teacher.findFirst({
             where: { schoolId },
             orderBy: { createdAt: 'desc' },
             select: { matricule: true }
         });
 
-        const lastSequence = lastTeacher
-            ? extractTeacherSequence(lastTeacher.matricule)
-            : 0;
+        const lastSequence = lastTeacher ? extractTeacherSequence(lastTeacher.matricule) : 0;
+        const provinceCode = getProvinceCode(school.province || 'Nord-Kivu');
 
         const matricule = generateTeacherMatricule(
             new Date().getFullYear(),
-            school.province || 'KIN',
+            provinceCode,
             school.name.substring(0, 3).toUpperCase(),
             lastSequence + 1
         );
@@ -258,79 +257,145 @@ export class TeachersService {
             where: { schoolId, isActive: true }
         });
 
-        if (!activeYear && data.affectations?.length) {
-            throw new Error('Aucune année scolaire active trouvée pour les affectations');
-        }
-
         const passwordHash = await bcrypt.hash('Edugoma2025', 10);
         const userEmail = data.email || `${matricule.toLowerCase()}@temp.edugoma360.cd`;
 
-        return prisma.$transaction(async (tx) => {
-            // 1. Create User Account
-            const user = await tx.user.create({
-                data: {
-                    schoolId,
-                    nom: data.nom.toUpperCase(),
-                    postNom: data.postNom.toUpperCase(),
-                    prenom: data.prenom ? data.prenom.charAt(0).toUpperCase() + data.prenom.slice(1).toLowerCase() : null,
-                    phone: data.telephone,
-                    email: userEmail,
-                    passwordHash,
-                    role: 'ENSEIGNANT',
-                    isActive: true
-                }
-            });
+        try {
+            const result = await prisma.$transaction(async (tx) => {
+                // 1. Resolve Subjects (Step 2 selection)
+                const { matieres, affectations, certificats, ...rest } = data;
+                const resolvedSubjectIds: string[] = [];
 
-            const { matieres, affectations, certificats, ...rest } = data;
+                if (matieres && matieres.length > 0) {
+                    for (const code of matieres) {
+                        // Chercher par ID ou par Code (abbreviation) pour cette école
+                        let subject = await tx.subject.findFirst({
+                            where: {
+                                OR: [
+                                    { id: code },
+                                    { schoolId, abbreviation: code }
+                                ]
+                            }
+                        });
 
-            // 2. Create Teacher Profile
-            const teacher = await tx.teacher.create({
-                data: {
-                    ...rest,
-                    nom: data.nom.toUpperCase(),
-                    postNom: data.postNom.toUpperCase(),
-                    prenom: data.prenom ? data.prenom.charAt(0).toUpperCase() + data.prenom.slice(1).toLowerCase() : null,
-                    schoolId,
-                    matricule,
-                    user: { connect: { id: user.id } },
-                    subjects: {
-                        connect: matieres.map(id => ({ id }))
-                    },
-                    certificats: {
-                        create: certificats?.map(c => ({
-                            nom: c.nom,
-                            organisme: c.organisme,
-                            annee: c.annee,
-                            fichierUrl: c.fichierUrl,
-                        }))
-                    }
-                } as any
-            });
-
-            // 3. Handle Assignments
-            if (affectations?.length && activeYear) {
-                await Promise.all(
-                    affectations.map(aff => tx.teacherClassSubject.create({
-                        data: {
-                            teacherId: teacher.id,
-                            classId: aff.classeId,
-                            subjectId: aff.matiereId,
-                            volumeHoraire: aff.volumeHoraire,
-                            academicYearId: activeYear.id
+                        // Si non trouvé, créer le sujet standard
+                        if (!subject) {
+                            const standard = SUBJECTS_LIST.find(s => s.id === code);
+                            if (standard) {
+                                subject = await tx.subject.create({
+                                    data: {
+                                        schoolId,
+                                        name: standard.name,
+                                        abbreviation: standard.id,
+                                        maxScore: 20
+                                    }
+                                });
+                            }
                         }
-                    }))
-                );
-            }
 
-            return teacher;
-        }).then(async (teacher) => {
-            // Send SMS Welcome
+                        if (subject) resolvedSubjectIds.push(subject.id);
+                    }
+                }
+
+                // 2. Create User Account
+                const user = await tx.user.create({
+                    data: {
+                        schoolId,
+                        nom: data.nom.toUpperCase(),
+                        postNom: data.postNom.toUpperCase(),
+                        prenom: data.prenom ? data.prenom.charAt(0).toUpperCase() + data.prenom.slice(1).toLowerCase() : null,
+                        phone: data.telephone,
+                        email: userEmail,
+                        passwordHash,
+                        role: 'ENSEIGNANT',
+                        isActive: true
+                    }
+                });
+
+                // 3. Create Teacher Profile
+                const teacher = await tx.teacher.create({
+                    data: {
+                        nom: data.nom.toUpperCase(),
+                        postNom: data.postNom.toUpperCase(),
+                        prenom: data.prenom ? data.prenom.charAt(0).toUpperCase() + data.prenom.slice(1).toLowerCase() : null,
+                        sexe: data.sexe,
+                        dateNaissance: data.dateNaissance,
+                        lieuNaissance: data.lieuNaissance,
+                        nationalite: data.nationalite || 'Congolaise',
+                        telephone: data.telephone,
+                        email: data.email,
+                        adresse: data.adresse,
+                        photoUrl: data.photoUrl,
+                        niveauEtudes: data.niveauEtudes,
+                        domaineFormation: data.domaineFormation,
+                        universite: data.universite,
+                        anneeObtention: data.anneeObtention,
+                        specialisations: data.specialisations,
+                        statut: data.statut || 'ACTIF',
+                        dateEmbauche: data.dateEmbauche,
+                        typeContrat: data.typeContrat,
+                        fonction: data.fonction,
+
+                        school: { connect: { id: schoolId } },
+                        user: { connect: { id: user.id } },
+                        matricule,
+
+                        subjects: {
+                            connect: resolvedSubjectIds.map(id => ({ id }))
+                        },
+                        certificats: {
+                            create: certificats?.map(c => ({
+                                nom: c.nom,
+                                organisme: c.organisme,
+                                annee: c.annee,
+                                fichierUrl: c.fichierUrl,
+                            })) || []
+                        }
+                    }
+                });
+
+                // 4. Handle Assignments (Step 3)
+                if (affectations && affectations.length > 0) {
+                    if (!activeYear) {
+                        throw new Error("L'année scolaire active n'a pas été trouvée. Impossible d'enregistrer les affectations.");
+                    }
+
+                    for (const aff of affectations) {
+                        // Résoudre la matière de l'affectation si c'est un code
+                        let asgnSubjId = aff.matiereId;
+                        if (!asgnSubjId.includes('-') && asgnSubjId.length < 10) { // Probablement un code standard
+                            const subj = await tx.subject.findFirst({
+                                where: { schoolId, abbreviation: asgnSubjId }
+                            });
+                            if (subj) asgnSubjId = subj.id;
+                        }
+
+                        await tx.teacherClassSubject.create({
+                            data: {
+                                teacherId: teacher.id,
+                                classId: aff.classeId,
+                                subjectId: asgnSubjId,
+                                volumeHoraire: aff.volumeHoraire,
+                                academicYearId: activeYear.id
+                            }
+                        });
+                    }
+                }
+
+                return teacher;
+            });
+
+            // Send SMS Welcome (outside transaction)
             if (teacher.telephone) {
                 const message = SMS_TEMPLATES.fr.teacherWelcome(`${teacher.prenom || ''} ${teacher.nom}`, teacher.matricule);
                 sendSms(teacher.telephone, message).catch(err => console.error('SMS Error:', err));
             }
+
             return teacher;
-        });
+        } catch (error) {
+            console.error('[TeachersService.createTeacher] FATAL ERROR:', error);
+            throw error;
+        }
     }
 
     /**

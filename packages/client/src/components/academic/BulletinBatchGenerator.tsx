@@ -68,7 +68,7 @@ export default function BulletinBatchGenerator({ classes, terms, onClose }: Bull
                                 <label className="text-sm font-medium text-neutral-700">Classe</label>
                                 <select value={classId} onChange={(e) => setClassId(e.target.value)}
                                     className="w-full h-10 px-3 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20">
-                                    <option value="">Sélectionner une classeâ€¦</option>
+                                    <option value="">Sélectionner une classe…</option>
                                     {classes.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                                 </select>
                             </div>
@@ -76,7 +76,7 @@ export default function BulletinBatchGenerator({ classes, terms, onClose }: Bull
                                 <label className="text-sm font-medium text-neutral-700">Trimestre</label>
                                 <select value={termId} onChange={(e) => setTermId(e.target.value)}
                                     className="w-full h-10 px-3 text-sm border border-neutral-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20">
-                                    <option value="">Sélectionner un trimestreâ€¦</option>
+                                    <option value="">Sélectionner un trimestre…</option>
                                     {terms.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
                                 </select>
                             </div>
@@ -90,7 +90,7 @@ export default function BulletinBatchGenerator({ classes, terms, onClose }: Bull
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-neutral-500 flex items-center gap-2">
                                             <Loader2 size={14} className="animate-spin text-primary" />
-                                            Génération en coursâ€¦
+                                            Génération en cours…
                                         </span>
                                         <span className="font-semibold">{job?.processed}/{job?.total}</span>
                                     </div>
@@ -133,7 +133,7 @@ export default function BulletinBatchGenerator({ classes, terms, onClose }: Bull
                         <button onClick={() => generateMutation.mutate()}
                             disabled={!classId || !termId || generateMutation.isPending}
                             className="flex-1 h-10 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 flex items-center justify-center gap-2 disabled:opacity-50">
-                            {generateMutation.isPending ? <><Loader2 size={15} className="animate-spin" /> Lancementâ€¦</> : <><FileDown size={15} /> Générer</>}
+                            {generateMutation.isPending ? <><Loader2 size={15} className="animate-spin" /> Lancement…</> : <><FileDown size={15} /> Générer</>}
                         </button>
                     </div>
                 )}

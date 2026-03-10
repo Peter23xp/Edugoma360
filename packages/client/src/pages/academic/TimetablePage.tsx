@@ -277,7 +277,7 @@ export default function TimetablePage() {
                     <div className="text-center py-12">
                         <Loader2 size={32} className="animate-spin mx-auto text-primary mb-4" />
                         <p className="text-sm text-neutral-600">
-                            Chargement de l'emploi du tempsâ€¦
+                            Chargement de l'emploi du temps…
                         </p>
                     </div>
                 ) : !selectedTeacherId && !selectedClassId ? (

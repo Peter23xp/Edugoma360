@@ -143,7 +143,7 @@ export default function StudentsImportPage() {
                                    hover:text-primary transition-colors mb-4"
                     >
                         <ArrowLeft size={16} />
-                        Retour Ã  la liste
+                        Retour à la liste
                     </button>
 
                     <div className="flex items-center justify-between">
@@ -152,7 +152,7 @@ export default function StudentsImportPage() {
                                 Importer des élèves en masse
                             </h1>
                             <p className="text-sm text-neutral-600">
-                                Importez plusieurs élèves Ã  la fois via un fichier Excel
+                                Importez plusieurs élèves à la fois via un fichier Excel
                             </p>
                         </div>
 

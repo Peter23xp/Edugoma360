@@ -303,7 +303,7 @@ export function useStudentData(studentId?: string) {
         queryKey: ['student', studentId],
         queryFn: async () => {
             const res = await api.get(`/students/${studentId}`);
-            return res.data.student;
+            return res.data.data ?? res.data.student;
         },
         enabled: !!studentId,
     });

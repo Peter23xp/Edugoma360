@@ -60,7 +60,7 @@ export function useClasses(filters?: { sectionId?: string; academicYearId?: stri
         },
     });
 
-    // Attribuer un enseignant Ã  une matière
+    // Attribuer un enseignant à une matière
     const assignTeacherMutation = useMutation({
         mutationFn: async (payload: {
             classId: string;

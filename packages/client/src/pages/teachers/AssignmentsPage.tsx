@@ -8,7 +8,7 @@ import { QuickAssignModal } from '../../components/teachers/assignments/QuickAss
 import { BulkAssignModal } from '../../components/teachers/assignments/BulkAssignModal';
 import { ConflictWarning } from '../../components/teachers/assignments/ConflictWarning';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../../lib/api';
 import { Download, Settings2, Loader2, Layers } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { toast } from 'react-hot-toast';
@@ -35,13 +35,12 @@ const AssignmentsPage: React.FC = () => {
     const { data: academicYears = [] } = useQuery({
         queryKey: ['academic-years'],
         queryFn: async () => {
-            const res = await axios.get('/api/settings/academic-years');
+            const res = await api.get('/settings/academic-years');
             const years = res.data.data.map((y: any) => ({
                 id: y.id,
                 label: y.name,
                 isActive: y.isActive
             }));
-            // Set default active year
             const active = years.find((y: any) => y.isActive);
             if (active && !filters.academicYearId) {
                 setFilters(prev => ({ ...prev, academicYearId: active.id }));
@@ -53,7 +52,7 @@ const AssignmentsPage: React.FC = () => {
     const { data: sections = [] } = useQuery({
         queryKey: ['sections'],
         queryFn: async () => {
-            const res = await axios.get('/api/settings/sections');
+            const res = await api.get('/settings/sections');
             return res.data.data;
         }
     });
@@ -67,18 +66,14 @@ const AssignmentsPage: React.FC = () => {
         remove
     } = useAssignments(filters);
 
-    // Fetch all teachers for modals (no filters)
     const { teachersQuery } = useTeachers({ limit: 1000 });
     const allTeachers = teachersQuery.data?.data || [];
-
-    // Fetch all classes for bulk assign (no filters)
     const { classes: allClasses } = useClasses({ isActive: true });
 
     // 4. HANDLERS
     const handleOpenAssign = (classId: string, subjectId: string) => {
         const cls = matrixData.classes.find((c: any) => c.id === classId);
         const subj = matrixData.subjects.find((s: any) => s.id === subjectId);
-
         setAssignmentContext({
             classId,
             className: cls?.name,
@@ -109,12 +104,11 @@ const AssignmentsPage: React.FC = () => {
 
     const handleReplace = async () => {
         try {
-            await axios.put(`/api/assignments/${conflictData.assignmentId}`, {
+            await api.put(`/assignments/${conflictData.assignmentId}`, {
                 teacherId: conflictData.newTeacherId
             });
             setModals(prev => ({ ...prev, conflict: false }));
             toast.success('Enseignant remplacé');
-            // Refresh matrix
         } catch (err) {
             toast.error('Erreur lors du remplacement');
         }
@@ -123,7 +117,6 @@ const AssignmentsPage: React.FC = () => {
     const handleExport = () => {
         if (!matrixData) return;
 
-        // Sheet 1: Matrix
         const matrixRows = matrixData.classes.map((cls: any) => {
             const row: any = { Classe: cls.name };
             matrixData.subjects.forEach((subj: any) => {
@@ -133,7 +126,6 @@ const AssignmentsPage: React.FC = () => {
             return row;
         });
 
-        // Sheet 2: List
         const listRows = matrixData.assignments.map((a: any) => ({
             Enseignant: a.teacherName,
             Classe: a.className,
@@ -149,52 +141,68 @@ const AssignmentsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white">
-            {/* HEADER AREA */}
-            <div className="bg-white border-b-2 border-slate-50 sticky top-0 z-[40]">
-                <div className="max-w-[1600px] mx-auto px-8 py-8">
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2">
-                                <span className="px-3 py-1 bg-blue-600 text-white rounded-full font-black text-[10px] uppercase tracking-widest">Module Enseignants</span>
-                                <span className="h-1 w-1 bg-slate-300 rounded-full"></span>
-                                <span className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">Affectations</span>
-                            </div>
-                            <h1 className="text-4xl font-black text-slate-900 tracking-tight uppercase">Matrice d'Affectation</h1>
-                        </div>
-
-                        <div className="flex items-center gap-4">
-                            <button
-                                onClick={handleExport}
-                                className="px-6 py-4 bg-white hover:bg-slate-50 text-slate-600 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all border-2 border-slate-50"
-                            >
-                                <Download size={18} /> Exporter
-                            </button>
-                            <button
-                                onClick={() => setModals(prev => ({ ...prev, bulk: true }))}
-                                className="px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-3 transition-all shadow-xl shadow-indigo-600/20"
-                            >
-                                <Settings2 size={18} /> Affectation Masse
-                            </button>
-                        </div>
+        <div className="space-y-4 pb-20">
+            {/* —— Header —— */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
+                        <Layers size={22} className="text-white" />
                     </div>
+                    <div>
+                        <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
+                            Matrice d'affectation
+                        </h1>
+                        <p className="text-sm text-neutral-500">
+                            Gestion des affectations enseignants — matières
+                        </p>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={handleExport}
+                        className="flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium 
+                                   border border-neutral-300 rounded-xl hover:bg-neutral-50 
+                                   hover:border-neutral-400 transition-all duration-200 
+                                   text-neutral-700 shadow-sm"
+                    >
+                        <Download size={15} />
+                        <span className="hidden sm:inline">Exporter</span>
+                    </button>
+                    <button
+                        onClick={() => setModals(prev => ({ ...prev, bulk: true }))}
+                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium 
+                                   bg-gradient-to-r from-primary to-primary-light text-white 
+                                   rounded-xl hover:shadow-lg hover:shadow-primary/25 
+                                   transition-all duration-200 hover:-translate-y-0.5 shadow-md"
+                    >
+                        <Settings2 size={15} />
+                        <span>Affectation en masse</span>
+                    </button>
                 </div>
             </div>
 
-            <div className="max-w-[1600px] mx-auto px-8 py-10">
-                <MatrixFilters
-                    currentFilters={filters}
-                    onFilterChange={setFilters}
-                    sections={sections}
-                    academicYears={academicYears}
-                />
+            {/* —— Filters —— */}
+            <MatrixFilters
+                currentFilters={filters}
+                onFilterChange={setFilters}
+                sections={sections}
+                academicYears={academicYears}
+            />
 
-                {isLoading ? (
-                    <div className="h-[60vh] flex flex-col items-center justify-center gap-4">
-                        <Loader2 size={48} className="text-blue-600 animate-spin" />
-                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Chargement de la matrice...</p>
+            {/* —— Loading —— */}
+            {isLoading && (
+                <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
+                    <div className="h-[50vh] flex flex-col items-center justify-center gap-4">
+                        <Loader2 size={32} className="text-primary animate-spin" />
+                        <p className="text-sm text-neutral-500">Chargement de la matrice...</p>
                     </div>
-                ) : matrixData ? (
+                </div>
+            )}
+
+            {/* —— Matrix —— */}
+            {!isLoading && matrixData && (
+                <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden shadow-sm">
                     <AssignmentMatrix
                         data={matrixData}
                         filters={filters}
@@ -210,14 +218,23 @@ const AssignmentsPage: React.FC = () => {
                         }}
                         onRemove={remove}
                     />
-                ) : (
-                    <div className="bg-slate-50 rounded-[40px] p-20 flex flex-col items-center justify-center text-center border-4 border-dashed border-slate-100">
-                        <Layers size={64} className="text-slate-200 mb-6" />
-                        <h3 className="text-2xl font-black text-slate-400 uppercase tracking-tight">Aucune donnée trouvée</h3>
-                        <p className="text-slate-400 mt-2 max-w-sm">Veuillez ajuster vos filtres ou sélectionner une année scolaire.</p>
+                </div>
+            )}
+
+            {/* —— Empty state —— */}
+            {!isLoading && !matrixData && (
+                <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
+                    <div className="py-20 flex flex-col items-center justify-center text-center">
+                        <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
+                            <Layers size={28} className="text-neutral-400" />
+                        </div>
+                        <h3 className="text-lg font-bold text-neutral-700">Aucune donnée trouvée</h3>
+                        <p className="text-sm text-neutral-500 mt-1 max-w-sm">
+                            Veuillez ajuster vos filtres ou sélectionner une année scolaire.
+                        </p>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
 
             {/* MODALS */}
             <QuickAssignModal

@@ -179,7 +179,7 @@ export default function Step2Academic() {
                                        ${errors.resultatTenasosp ? 'border-red-500' : 'border-neutral-300'}`}
                         />
                         <p className="text-xs text-neutral-500 mt-1">
-                            Pourcentage obtenu au TENASOSP (0 Ã  100)
+                            Pourcentage obtenu au TENASOSP (0 à 100)
                         </p>
                         {errors.resultatTenasosp && (
                             <p className="text-xs text-red-600 mt-1">

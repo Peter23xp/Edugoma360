@@ -260,7 +260,7 @@ export async function importStudentsFromExcel(
     // Le code du prompt fait: await prisma.$transaction(async (tx) => { ... loop ... })
     // Si on veut importer partiellement, on ne doit pas wrapper toute la boucle dans une transaction
     // ou on wrap chaque élève. wrapper toute la boucle est plus sûr pour la consistance mais frustrant pour l'utilisateur.
-    // Le code prompt met tout dans transaction mais catch les erreurs Ã  l'intérieur de la boucle ? 
+    // Le code prompt met tout dans transaction mais catch les erreurs à l'intérieur de la boucle ? 
     // Ah non, le catch est DANS la boucle. Donc si une erreur survient, on loggue l'erreur et on continue.
     // Donc la transaction n'échoue QUE si une erreur non catchée survient (e.g. DB connection lost).
 

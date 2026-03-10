@@ -140,7 +140,7 @@ export default function ApprovalWorkflow({
                                     className="flex-1 h-9 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-60"
                                 >
                                     <Shield size={14} />
-                                    {isApproving ? 'Approbationâ€¦' : 'Confirmer'}
+                                    {isApproving ? 'Approbation…' : 'Confirmer'}
                                 </button>
                             </div>
                         </div>

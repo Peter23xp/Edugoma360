@@ -2,6 +2,7 @@
 import { studentsService } from './students.service';
 import { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
 import prisma from '../../lib/prisma';
+import { getPublicUrl } from '../../lib/storage';
 
 export class StudentsController {
     async getStudents(req: Request, res: Response, next: NextFunction) {
@@ -26,6 +27,9 @@ export class StudentsController {
     async createStudent(req: Request, res: Response, next: NextFunction) {
         try {
             const data = CreateStudentDto.parse(req.body);
+            if (req.file) {
+                data.photoUrl = getPublicUrl(req.file.filename, req.file.fieldname);
+            }
             const student = await studentsService.createStudent(req.user!.schoolId, data);
             res.status(201).json({ data: student });
         } catch (error) {
@@ -36,6 +40,9 @@ export class StudentsController {
     async updateStudent(req: Request, res: Response, next: NextFunction) {
         try {
             const data = UpdateStudentDto.parse(req.body);
+            if (req.file) {
+                data.photoUrl = getPublicUrl(req.file.filename, req.file.fieldname);
+            }
             const student = await studentsService.updateStudent(req.params.id, req.user!.schoolId, data);
             res.json({ data: student });
         } catch (error) {
@@ -125,39 +132,97 @@ export class StudentsController {
 
     async generateStudentCard(req: Request, res: Response, next: NextFunction) {
         try {
-            const { format = 'pdf', side = 'both' } = req.query;
             const { id } = req.params;
 
-            // Import the PDF service
-            const { getOrGenerateCard } = await import('./students.pdf.service');
-
-            // Generate the card
-            const buffer = await getOrGenerateCard(
-                id,
-                format as 'pdf' | 'png',
-                side as 'front' | 'back' | 'both'
-            );
-
-            // Get student matricule for filename
-            const student = await prisma.student.findUnique({
-                where: { id },
-                select: { matricule: true },
+            const student = await prisma.student.findFirst({
+                where: { id, schoolId: req.user!.schoolId },
+                include: {
+                    school: true,
+                    enrollments: {
+                        include: { class: true, academicYear: true },
+                        where: { academicYear: { isActive: true } },
+                        take: 1,
+                    },
+                },
             });
 
-            const extension = format === 'pdf' ? 'pdf' : 'png';
-            const filename = `Carte_${student?.matricule || id}.${extension}`;
+            if (!student) {
+                res.status(404).json({ error: { message: 'Élève introuvable' } });
+                return;
+            }
 
-            // Set response headers
-            res.setHeader(
-                'Content-Type',
-                format === 'pdf' ? 'application/pdf' : 'image/png'
-            );
-            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            const { PDFDocument, rgb, StandardFonts } = await import('pdf-lib');
+
+            // ID Card size: 85.6mm × 54mm @ 72dpi → ~243 × 153 pt
+            const cardW = 243;
+            const cardH = 153;
+
+            const pdfDoc = await PDFDocument.create();
+            const page = pdfDoc.addPage([cardW, cardH]);
+
+            const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+            const fontReg = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+            const enrollment = student.enrollments[0];
+            const fullName = `${student.nom} ${student.postNom} ${student.prenom || ''}`.trim();
+            const schoolName = student.school?.name || 'EduGoma 360';
+
+            // Background
+            page.drawRectangle({ x: 0, y: 0, width: cardW, height: cardH, color: rgb(0.04, 0.22, 0.47) });
+            page.drawRectangle({ x: 0, y: 110, width: cardW, height: 43, color: rgb(0.02, 0.12, 0.30) });
+
+            // School name header
+            page.drawText(schoolName.toUpperCase(), {
+                x: 8, y: 128, size: 7, font: fontBold, color: rgb(1, 1, 1),
+                maxWidth: cardW - 16,
+            });
+            page.drawText('CARTE D\'ÉLÈVE', {
+                x: 8, y: 115, size: 9, font: fontBold, color: rgb(0.9, 0.8, 0.1),
+            });
+
+            // Photo placeholder area
+            page.drawRectangle({ x: 8, y: 35, width: 55, height: 70, color: rgb(1, 1, 1), opacity: 0.15 });
+            page.drawText('PHOTO', { x: 20, y: 67, size: 8, font: fontReg, color: rgb(1, 1, 1) });
+
+            // Student info
+            const infoX = 70;
+            let y = 97;
+            const gap = 14;
+
+            page.drawText(fullName.toUpperCase(), {
+                x: infoX, y, size: 8, font: fontBold, color: rgb(1, 1, 1), maxWidth: 165,
+            });
+            y -= gap;
+
+            const infoItems = [
+                { label: 'Matricule', value: student.matricule },
+                { label: 'Classe', value: enrollment?.class.name || 'N/A' },
+                { label: 'Année', value: enrollment?.academicYear.label || 'N/A' },
+                { label: 'Naissance', value: new Date(student.dateNaissance).toLocaleDateString('fr-FR') },
+            ];
+            for (const item of infoItems) {
+                page.drawText(`${item.label}: `, { x: infoX, y, size: 6.5, font: fontBold, color: rgb(0.7, 0.85, 1) });
+                page.drawText(item.value, { x: infoX + 40, y, size: 6.5, font: fontReg, color: rgb(1, 1, 1) });
+                y -= gap;
+            }
+
+            // Bottom strip
+            page.drawRectangle({ x: 0, y: 0, width: cardW, height: 22, color: rgb(0.9, 0.8, 0.1) });
+            page.drawText('EduGoma 360 — Goma, RDC', {
+                x: 8, y: 7, size: 6, font: fontReg, color: rgb(0.04, 0.22, 0.47),
+            });
+
+            const pdfBytes = await pdfDoc.save();
+            const buffer = Buffer.from(pdfBytes);
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename="Carte_${student.matricule}.pdf"`);
             res.send(buffer);
         } catch (error) {
             next(error);
         }
     }
+
     async getPaymentSummary(req: Request, res: Response, next: NextFunction) {
         try {
             const result = await studentsService.getPaymentSummary(req.params.id, req.user!.schoolId);

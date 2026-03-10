@@ -28,7 +28,7 @@ export default function BulletinPDFViewer({
                     <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin absolute inset-0" />
                 </div>
                 <div className="text-center">
-                    <p className="text-sm font-semibold text-neutral-800">Génération du PDF en coursâ€¦</p>
+                    <p className="text-sm font-semibold text-neutral-800">Génération du PDF en cours…</p>
                     <p className="text-xs text-neutral-500 mt-1">Puppeteer rend le bulletin</p>
                 </div>
             </div>

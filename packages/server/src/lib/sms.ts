@@ -73,7 +73,7 @@ export const SMS_TEMPLATES = {
     // French templates
     fr: {
         paymentConfirmation: (studentName: string, amount: string, receipt: string) =>
-            `EduGoma360: Paiement de ${amount} reçu pour ${studentName}. Reçu NÂ°${receipt}. Merci.`,
+            `EduGoma360: Paiement de ${amount} reçu pour ${studentName}. Reçu N°${receipt}. Merci.`,
 
         absenceNotice: (studentName: string, date: string, period: string) =>
             `EduGoma360: ${studentName} a été marqué(e) absent(e) le ${date} (${period}). Contactez l'école pour plus d'infos.`,
@@ -97,7 +97,7 @@ export const SMS_TEMPLATES = {
     // Swahili templates
     sw: {
         paymentConfirmation: (studentName: string, amount: string, receipt: string) =>
-            `EduGoma360: Malipo ya ${amount} yamepokewa kwa ${studentName}. Risiti NÂ°${receipt}. Asante.`,
+            `EduGoma360: Malipo ya ${amount} yamepokewa kwa ${studentName}. Risiti N°${receipt}. Asante.`,
 
         absenceNotice: (studentName: string, date: string, period: string) =>
             `EduGoma360: ${studentName} hakuwepo shuleni tarehe ${date} (${period}). Wasiliana na shule kwa habari zaidi.`,

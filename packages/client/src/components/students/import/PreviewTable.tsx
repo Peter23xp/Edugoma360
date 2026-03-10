@@ -117,7 +117,7 @@ export default function PreviewTable({ data }: PreviewTableProps) {
                         {filteredData.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="px-4 py-8 text-center text-neutral-500">
-                                    Aucune ligne Ã  afficher avec ce filtre
+                                    Aucune ligne à afficher avec ce filtre
                                 </td>
                             </tr>
                         ) : (

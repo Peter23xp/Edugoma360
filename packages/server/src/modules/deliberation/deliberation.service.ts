@@ -114,7 +114,7 @@ export class DeliberationService {
                 };
             });
 
-            // Calculate total points first (Î£(moyenne_matière Ã— coefficient))
+            // Calculate total points first (Î£(moyenne_matière à coefficient))
             const totalPoints = calculateTotalPoints(
                 subjectAverages.map((sa) => ({
                     average: sa.average,

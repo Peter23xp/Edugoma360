@@ -159,7 +159,7 @@ export default function DeliberationTable({
                         {isLoading ? (
                             <tr>
                                 <td colSpan={8} className="py-12 text-center text-neutral-500 text-sm">
-                                    Chargementâ€¦
+                                    Chargement…
                                 </td>
                             </tr>
                         ) : sorted.length === 0 ? (

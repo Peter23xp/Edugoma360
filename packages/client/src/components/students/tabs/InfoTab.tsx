@@ -59,14 +59,14 @@ export default function InfoTab({ student }: InfoTabProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Père */}
                     <ParentCard
-                        title="PÃˆRE"
+                        title="PÈRE"
                         name={student.nomPere}
                         phone={student.telPere}
                     />
 
                     {/* Mère */}
                     <ParentCard
-                        title="MÃˆRE"
+                        title="MÈRE"
                         name={student.nomMere}
                         phone={student.telMere}
                     />

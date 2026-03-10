@@ -12,7 +12,8 @@ export function errorHandler(
     res: Response,
     _next: NextFunction,
 ): void {
-    console.error('[ERROR]', err.message);
+    const errorStack = err.stack;
+    console.error(' [ERROR DEPTH] ', errorStack);
 
     // Zod validation errors
     if (err instanceof ZodError) {
@@ -47,7 +48,7 @@ export function errorHandler(
                 res.status(409).json({
                     error: {
                         code: 'DUPLICATE_ENTRY',
-                        message: 'Cette entrée existe déjÃ .',
+                        message: 'Cette entrée existe déjà.',
                         field: (err as any).meta?.target?.[0],
                     },
                 });
@@ -76,6 +77,7 @@ export function errorHandler(
                     error: {
                         code: 'DATABASE_ERROR',
                         message: env.isDev ? err.message : 'Erreur de base de données.',
+                        stack: env.isDev ? errorStack : undefined,
                     },
                 });
                 return;
@@ -98,6 +100,7 @@ export function errorHandler(
         error: {
             code: 'INTERNAL_ERROR',
             message: env.isDev ? err.message : 'Erreur interne du serveur.',
+            stack: env.isDev ? errorStack : undefined,
         },
     });
 }

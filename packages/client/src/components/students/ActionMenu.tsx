@@ -17,25 +17,57 @@ import {
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import ConfirmModal from '../shared/ConfirmModal';
+import api from '../../lib/api';
+import toast from 'react-hot-toast';
 
 interface ActionMenuProps {
     studentId: string;
 }
 
+async function downloadPdf(url: string, filename: string) {
+    const res = await api.get(url, { responseType: 'blob' });
+    const objectUrl = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(objectUrl);
+}
+
 export default function ActionMenu({ studentId }: ActionMenuProps) {
     const navigate = useNavigate();
     const [archiveModalOpen, setArchiveModalOpen] = useState(false);
+    const [loadingAttestation, setLoadingAttestation] = useState(false);
+    const [loadingCard, setLoadingCard] = useState(false);
 
     const handleEdit = () => {
         navigate(`/students/${studentId}/edit`);
     };
 
-    const handlePrintAttestation = () => {
-        window.open(`/api/students/${studentId}/attestation`, '_blank');
+    const handlePrintAttestation = async () => {
+        if (loadingAttestation) return;
+        setLoadingAttestation(true);
+        try {
+            await downloadPdf(`/students/${studentId}/certificate`, `Attestation_${studentId}.pdf`);
+        } catch {
+            toast.error('Erreur lors de la génération de l\'attestation');
+        } finally {
+            setLoadingAttestation(false);
+        }
     };
 
-    const handlePrintCard = () => {
-        window.open(`/api/students/${studentId}/card`, '_blank');
+    const handlePrintCard = async () => {
+        if (loadingCard) return;
+        setLoadingCard(true);
+        try {
+            await downloadPdf(`/students/${studentId}/card`, `Carte_${studentId}.pdf`);
+        } catch {
+            toast.error('Erreur lors de la génération de la carte');
+        } finally {
+            setLoadingCard(false);
+        }
     };
 
     const handleTransfer = () => {
@@ -44,7 +76,6 @@ export default function ActionMenu({ studentId }: ActionMenuProps) {
     };
 
     const handleSendSMS = () => {
-        // TODO: Open SMS modal with pre-filled student info
         navigate(`/sms?studentId=${studentId}`);
     };
 
@@ -53,9 +84,15 @@ export default function ActionMenu({ studentId }: ActionMenuProps) {
     };
 
     const handleArchiveConfirm = async () => {
-        // TODO: Call archive API
-        console.log('Archive student:', studentId);
-        setArchiveModalOpen(false);
+        try {
+            await api.delete(`/students/${studentId}`);
+            toast.success('Élève archivé avec succès');
+            navigate('/students');
+        } catch {
+            toast.error('Erreur lors de l\'archivage');
+        } finally {
+            setArchiveModalOpen(false);
+        }
     };
 
     return (
@@ -77,14 +114,20 @@ export default function ActionMenu({ studentId }: ActionMenuProps) {
 
                     <DropdownMenuSeparator />
 
-                    <DropdownMenuItem onClick={handlePrintAttestation}>
+                    <DropdownMenuItem
+                        onClick={handlePrintAttestation}
+                        className={loadingAttestation ? 'opacity-50 pointer-events-none' : ''}
+                    >
                         <Printer size={14} className="mr-2" />
-                        Imprimer attestation
+                        {loadingAttestation ? 'Génération...' : 'Imprimer attestation'}
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem onClick={handlePrintCard}>
+                    <DropdownMenuItem
+                        onClick={handlePrintCard}
+                        className={loadingCard ? 'opacity-50 pointer-events-none' : ''}
+                    >
                         <CreditCard size={14} className="mr-2" />
-                        Générer carte d'élève
+                        {loadingCard ? 'Génération...' : "Générer carte d'élève"}
                     </DropdownMenuItem>
 
                     <DropdownMenuSeparator />

@@ -42,7 +42,7 @@ export const step3Schema = z.object({
     typeContrat: z.enum(['PERMANENT', 'TEMPORAIRE', 'VACATION', 'STAGIAIRE']),
     fonction: z.enum(['AUCUNE', 'PREFET', 'DIRECTEUR', 'CHEF_TRAVAUX', 'SURVEILLANT']).optional(),
     affectations: z.array(z.object({
-        matiereId: z.string().uuid(),
+        matiereId: z.string(),
         classeId: z.string().uuid(),
         volumeHoraire: z.coerce.number().min(1).max(30)
     })).optional()

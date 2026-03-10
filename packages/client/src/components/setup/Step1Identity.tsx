@@ -181,7 +181,7 @@ export default function Step1Identity({ data, onChange, errors }: Step1IdentityP
                             Cliquez pour parcourir ou glissez-déposez
                         </p>
                         <p className="text-xs text-neutral-500">
-                            PNG, JPG ou SVG • Max 2MB • 512Ã—512px recommandé
+                            PNG, JPG ou SVG • Max 2MB • 512à512px recommandé
                         </p>
                     </div>
                 )}

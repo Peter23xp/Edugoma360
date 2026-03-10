@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { X, BookOpen, School, AlertTriangle, CheckCircle, Loader2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../../lib/api';
 import { toast } from 'react-hot-toast';
 
 interface AssignSubjectsModalProps {
@@ -27,7 +27,7 @@ const AssignSubjectsModal: React.FC<AssignSubjectsModalProps> = ({
     const { data: classes = [] } = useQuery({
         queryKey: ['all-classes'],
         queryFn: async () => {
-            const { data } = await axios.get('/api/classes');
+            const { data } = await api.get('/classes');
             return data.data || data;
         },
         enabled: isOpen,
@@ -36,7 +36,7 @@ const AssignSubjectsModal: React.FC<AssignSubjectsModalProps> = ({
     const { data: subjects = [] } = useQuery({
         queryKey: ['all-subjects'],
         queryFn: async () => {
-            const { data } = await axios.get('/api/settings/subjects');
+            const { data } = await api.get('/settings/subjects');
             return data.data || data;
         },
         enabled: isOpen,
@@ -44,7 +44,7 @@ const AssignSubjectsModal: React.FC<AssignSubjectsModalProps> = ({
 
     const assignMutation = useMutation({
         mutationFn: async () => {
-            const { data } = await axios.post(`/api/teachers/${teacherId}/assign`, {
+            const { data } = await api.post(`/teachers/${teacherId}/assign`, {
                 affectations: selectedClassSubjects
             });
             return data;
@@ -66,7 +66,6 @@ const AssignSubjectsModal: React.FC<AssignSubjectsModalProps> = ({
     const isOverLimit = totalClasses >= MAX_CLASSES;
 
     const toggleClassSubject = (classId: string, subjectId: string) => {
-        const key = `${classId}-${subjectId}`;
         const exists = selectedClassSubjects.some(cs => cs.classId === classId && cs.subjectId === subjectId);
 
         if (exists) {
@@ -145,8 +144,8 @@ const AssignSubjectsModal: React.FC<AssignSubjectsModalProps> = ({
                                                     id={`assign-${cls.id}-${sub.id}`}
                                                     onClick={() => toggleClassSubject(cls.id, sub.id)}
                                                     className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${isSelected
-                                                            ? 'bg-green-700 text-white shadow-md'
-                                                            : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-700'
+                                                        ? 'bg-green-700 text-white shadow-md'
+                                                        : 'bg-gray-100 text-gray-500 hover:bg-green-50 hover:text-green-700'
                                                         }`}
                                                 >
                                                     {isSelected && <CheckCircle size={12} />}

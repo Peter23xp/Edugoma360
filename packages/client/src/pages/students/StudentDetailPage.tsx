@@ -27,13 +27,34 @@ export default function StudentDetailPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<Tab>('info');
+    const [printingCard, setPrintingCard] = useState(false);
+
+    const handlePrintCard = async () => {
+        if (!id || printingCard) return;
+        setPrintingCard(true);
+        try {
+            const res = await api.get(`/students/${id}/card`, { responseType: 'blob' });
+            const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Carte_eleve_${id}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+        } catch {
+            import('react-hot-toast').then(({ default: toast }) => toast.error('Erreur lors de la génération de la carte'));
+        } finally {
+            setPrintingCard(false);
+        }
+    };
 
     // Fetch student data
     const { data, isLoading, error } = useQuery({
         queryKey: ['student', id],
         queryFn: async () => {
-            const res = await api.get<{ student: StudentWithDetails }>(`/students/${id}`);
-            return res.data.student;
+            const res = await api.get<{ data: StudentWithDetails; student?: StudentWithDetails }>(`/students/${id}`);
+            return res.data.data ?? res.data.student;
         },
         enabled: !!id,
     });
@@ -85,7 +106,7 @@ export default function StudentDetailPage() {
                                transition-colors"
                 >
                     <ArrowLeft size={14} />
-                    Retour Ã  la liste
+                    Retour à la liste
                 </button>
             </div>
         );
@@ -113,7 +134,7 @@ export default function StudentDetailPage() {
                                transition-colors"
                 >
                     <ArrowLeft size={16} />
-                    Retour Ã  la liste
+                    Retour à la liste
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -125,11 +146,13 @@ export default function StudentDetailPage() {
                         Modifier
                     </button>
                     <button
-                        onClick={() => window.open(`/api/students/${id}/card`, '_blank')}
+                        onClick={handlePrintCard}
+                        disabled={printingCard}
                         className="px-4 py-2 text-sm font-medium border border-neutral-300 
-                                   rounded-lg hover:bg-neutral-50 transition-colors hidden sm:flex"
+                                   rounded-lg hover:bg-neutral-50 transition-colors hidden sm:flex
+                                   items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                        Imprimer carte
+                        {printingCard ? 'Génération...' : 'Imprimer carte'}
                     </button>
                     <ActionMenu studentId={id!} />
                 </div>
@@ -157,11 +180,10 @@ export default function StudentDetailPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`px-6 py-3 text-sm font-medium whitespace-nowrap 
-                                           border-b-2 transition-colors ${
-                                               activeTab === tab.id
-                                                   ? 'border-primary text-primary'
-                                                   : 'border-transparent text-neutral-600 hover:text-neutral-900'
-                                           }`}
+                                           border-b-2 transition-colors ${activeTab === tab.id
+                                        ? 'border-primary text-primary'
+                                        : 'border-transparent text-neutral-600 hover:text-neutral-900'
+                                    }`}
                             >
                                 {tab.label}
                             </button>

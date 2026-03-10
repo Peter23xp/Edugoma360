@@ -6,7 +6,7 @@
  *  2. Envoie chaque item vers POST /api/grades (ou /api/grades/sync en batch)
  *  3. En cas de conflit (409), signale le conflit pour résolution manuelle
  *  4. En cas d'erreur réseau, conserve l'item dans la queue avec status "error"
- *  5. S'abonne Ã  l'événement "online" pour relancer automatiquement
+ *  5. S'abonne à l'événement "online" pour relancer automatiquement
  */
 
 import api from '../api';
@@ -197,7 +197,7 @@ export function startAutoSync(onSync?: (result: SyncResult) => void): void {
     window.addEventListener('online', handleOnline);
     onlineSyncUnsubscribe = () => window.removeEventListener('online', handleOnline);
 
-    // Lancer au démarrage si déjÃ  online et items en attente
+    // Lancer au démarrage si déjà online et items en attente
     if (navigator.onLine) {
         handleOnline();
     }

@@ -86,7 +86,7 @@ export class ReportsService {
           <h1>${school.name}</h1>
           <h2>BULLETIN SCOLAIRE</h2>
           <p>${school.province} — ${school.ville}${school.commune ? ' — ' + school.commune : ''}</p>
-          <p>NÂ° Agrément: ${school.agrement ?? 'N/A'} | Tél: ${school.telephone ?? 'N/A'}</p>
+          <p>N° Agrément: ${school.agrement ?? 'N/A'} | Tél: ${school.telephone ?? 'N/A'}</p>
         </div>
         
         <div class="info-grid">
@@ -180,7 +180,7 @@ export class ReportsService {
       th { background: #ddd; } .center { text-align: center; } .bold { font-weight: bold; }
     </style></head>
     <body>
-      <h1>${school?.name ?? ''} — PALMARÃˆS</h1>
+      <h1>${school?.name ?? ''} — PALMARÈS</h1>
       <h2>Classe: ${classInfo?.name ?? ''} | ${term?.label ?? ''} | ${term?.academicYear.label ?? ''}</h2>
       <table>
         <thead><tr><th>Rang</th><th>Nom de l'Élève</th><th>Total Pts</th><th>Moyenne</th><th>Décision</th></tr></thead>
@@ -215,8 +215,8 @@ export class ReportsService {
     </style></head>
     <body>
       <div class="receipt">
-        <h2>${payment.school.name}<br>REÃ‡U DE PAIEMENT</h2>
-        <div class="row"><span>NÂ° Reçu:</span><strong>${payment.receiptNumber}</strong></div>
+        <h2>${payment.school.name}<br>REÇU DE PAIEMENT</h2>
+        <div class="row"><span>N° Reçu:</span><strong>${payment.receiptNumber}</strong></div>
         <div class="row"><span>Date:</span><span>${new Date(payment.paidAt).toLocaleDateString('fr-CD')}</span></div>
         <div class="row"><span>Élève:</span><span>${payment.student.nom} ${payment.student.postNom}</span></div>
         <div class="row"><span>Matricule:</span><span>${payment.student.matricule}</span></div>

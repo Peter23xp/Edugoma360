@@ -21,7 +21,7 @@ export default function AppLayout() {
     useEffect(() => {
         if (!user) return;
         api.get('/settings/context').then((res) => {
-            const { school, academicYear, term } = res.data;
+            const { school, academicYear, term } = res.data.data ?? res.data;
             if (school) setActiveSchool(school.id, school.name);
             if (academicYear) setActiveAcademicYear(academicYear.id, academicYear.label);
             if (term) setActiveTerm(term.id, term.label);

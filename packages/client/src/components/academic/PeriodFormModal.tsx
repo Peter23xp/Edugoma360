@@ -71,14 +71,14 @@ const DAY_LABELS: Record<DayOfWeek, string> = {
 };
 
 const PERIOD_TIMES: Record<number, string> = {
-    1: '07:30 â€“ 08:30',
-    2: '08:30 â€“ 09:30',
-    3: '10:00 â€“ 11:00',
-    4: '11:00 â€“ 12:00',
-    5: '13:00 â€“ 14:00',
-    6: '14:00 â€“ 15:00',
-    7: '15:00 â€“ 16:00',
-    8: '16:00 â€“ 17:00',
+    1: '07:30 "“ 08:30',
+    2: '08:30 "“ 09:30',
+    3: '10:00 "“ 11:00',
+    4: '11:00 "“ 12:00',
+    5: '13:00 "“ 14:00',
+    6: '14:00 "“ 15:00',
+    7: '15:00 "“ 16:00',
+    8: '16:00 "“ 17:00',
 };
 
 // â”€â”€â”€ Composant â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -247,7 +247,7 @@ export default function PeriodFormModal({
                     {isFormValid && checkingConflicts && (
                         <div className="flex items-center gap-2 text-sm text-neutral-500">
                             <Loader2 size={14} className="animate-spin" />
-                            Vérification des conflitsâ€¦
+                            Vérification des conflits…
                         </div>
                     )}
 
@@ -320,7 +320,7 @@ export default function PeriodFormModal({
                         ) : (
                             <Save size={15} />
                         )}
-                        {isLoading ? 'Enregistrementâ€¦' : 'Enregistrer'}
+                        {isLoading ? 'Enregistrement…' : 'Enregistrer'}
                     </button>
                 </div>
             </div>

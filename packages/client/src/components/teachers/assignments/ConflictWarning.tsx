@@ -22,68 +22,84 @@ export const ConflictWarning: React.FC<ConflictWarningProps> = ({
     if (!isOpen || !conflictData) return null;
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-[40px] shadow-2xl w-full max-w-lg overflow-hidden border-2 border-red-50 animate-in zoom-in-95 duration-300">
-                <div className="p-8 border-b-2 border-red-50 flex justify-between items-center bg-red-50/50">
-                    <div className="flex items-center gap-4 text-red-600">
-                        <div className="p-3 bg-red-600 text-white rounded-2xl shadow-lg shadow-red-500/20"><AlertTriangle size={24} /></div>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-red-200">
+                {/* Header */}
+                <div className="px-6 py-4 border-b border-red-100 flex justify-between items-center bg-red-50">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-red-600 text-white rounded-lg shadow-md shadow-red-500/20">
+                            <AlertTriangle size={18} />
+                        </div>
                         <div>
-                            <h2 className="text-xl font-black text-red-900 uppercase tracking-tight leading-none mb-1">Conflit Détecté</h2>
-                            <p className="text-[10px] font-black text-red-400 uppercase tracking-widest leading-none mt-1">Donnée déjà présente dans cette cellule</p>
+                            <h2 className="text-base font-bold text-red-900">Conflit détecté</h2>
+                            <p className="text-xs text-red-500">Donnée déjà présente dans cette cellule</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-3 bg-white hover:bg-slate-100 text-slate-300 rounded-2xl transition-all border border-slate-100"><X size={20} /></button>
+                    <button onClick={onClose} className="p-2 hover:bg-red-100 text-red-400 rounded-lg transition-colors">
+                        <X size={18} />
+                    </button>
                 </div>
 
-                <div className="p-8 space-y-8">
-                    <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-50 space-y-4">
+                {/* Body */}
+                <div className="px-6 py-5 space-y-5">
+                    <div className="p-4 bg-neutral-50 rounded-xl border border-neutral-200 space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Classe :</span>
-                            <span className="text-sm font-black text-slate-800 uppercase tracking-tight leading-none">{conflictData.className}</span>
+                            <span className="text-xs text-neutral-500">Classe :</span>
+                            <span className="text-sm font-semibold text-neutral-800">{conflictData.className}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Matière :</span>
-                            <span className="text-sm font-black text-slate-800 uppercase tracking-tight leading-none">{conflictData.subjectName}</span>
+                            <span className="text-xs text-neutral-500">Matière :</span>
+                            <span className="text-sm font-semibold text-neutral-800">{conflictData.subjectName}</span>
                         </div>
                     </div>
 
-                    <div className="space-y-6">
-                        <div className="flex items-center gap-6 p-4 bg-white border-2 border-slate-50 rounded-2xl">
-                            <div className="p-3 bg-slate-100 text-slate-400 rounded-xl"><UserCheck size={20} /></div>
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-3 p-3 bg-white border border-neutral-200 rounded-xl">
+                            <div className="p-2 bg-neutral-100 text-neutral-400 rounded-lg">
+                                <UserCheck size={16} />
+                            </div>
                             <div className="flex-1">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Enseignant actuel :</p>
-                                <p className="text-sm font-black text-slate-800 uppercase tracking-tight leading-none">{conflictData.existingTeacherName}</p>
+                                <p className="text-xs text-neutral-500">Enseignant actuel :</p>
+                                <p className="text-sm font-semibold text-neutral-800">{conflictData.existingTeacherName}</p>
                             </div>
                         </div>
 
-                        <div className="flex justify-center -my-3 relative z-10">
-                            <div className="w-10 h-10 bg-red-600 text-white rounded-2xl flex items-center justify-center shadow-lg border-4 border-white rotate-45 transform">
-                                <RefreshCw size={18} className="-rotate-45" />
+                        <div className="flex justify-center -my-1 relative z-10">
+                            <div className="w-8 h-8 bg-red-600 text-white rounded-lg flex items-center justify-center shadow-md border-2 border-white">
+                                <RefreshCw size={14} />
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-6 p-4 bg-green-50 border-2 border-green-50 rounded-2xl">
-                            <div className="p-3 bg-green-600 text-white rounded-xl shadow-lg shadow-green-600/10"><UserCheck size={20} /></div>
+                        <div className="flex items-center gap-3 p-3 bg-emerald-50 border border-emerald-200 rounded-xl">
+                            <div className="p-2 bg-emerald-600 text-white rounded-lg shadow-sm">
+                                <UserCheck size={16} />
+                            </div>
                             <div className="flex-1">
-                                <p className="text-[10px] font-black text-green-600/60 uppercase tracking-widest mb-1">Nouvelle affectation :</p>
-                                <p className="text-sm font-black text-green-900 uppercase tracking-tight leading-none">{conflictData.newTeacherName}</p>
+                                <p className="text-xs text-emerald-600">Nouvelle affectation :</p>
+                                <p className="text-sm font-semibold text-emerald-900">{conflictData.newTeacherName}</p>
                             </div>
                         </div>
                     </div>
 
-                    <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase tracking-tight text-center px-8 italic">
-                        Une classe ne peut avoir qu'un seul enseignant par matière. <br />
+                    <p className="text-xs text-neutral-500 text-center leading-relaxed">
+                        Une classe ne peut avoir qu'un seul enseignant par matière.<br />
                         Voulez-vous remplacer l'affectation existante ?
                     </p>
                 </div>
 
-                <div className="px-8 pb-8 flex gap-4">
-                    <button onClick={onClose} className="flex-1 py-4 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
+                {/* Footer */}
+                <div className="px-6 py-4 border-t border-neutral-200 flex gap-3">
+                    <button
+                        onClick={onClose}
+                        className="flex-1 py-2.5 border border-neutral-300 text-neutral-700 rounded-xl 
+                                   text-sm font-medium hover:bg-neutral-50 transition-colors"
+                    >
                         Annuler
                     </button>
                     <button
                         onClick={onReplace}
-                        className="flex-[2] py-4 bg-red-600 hover:bg-red-700 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all shadow-xl shadow-red-900/20"
+                        className="flex-[2] py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl 
+                                   text-sm font-medium transition-all shadow-md"
                     >
                         Remplacer M. {conflictData.existingTeacherName.split(' ')[0]}
                     </button>

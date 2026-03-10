@@ -50,7 +50,7 @@ export default function ForgotPasswordPage() {
     showConfirmPassword: false,
   });
 
-  // Compte Ã  rebours OTP
+  // Compte à rebours OTP
   useEffect(() => {
     if (state.otpCountdown > 0) {
       const timer = setTimeout(() => {
@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
     }
   }, [state.otpCountdown]);
 
-  // Compte Ã  rebours renvoyer
+  // Compte à rebours renvoyer
   useEffect(() => {
     if (state.resendCountdown > 0) {
       const timer = setTimeout(() => {
@@ -356,7 +356,7 @@ export default function ForgotPasswordPage() {
               <div className="text-center">
                 <Link to="/login" className="text-sm text-[#1B5E20] hover:underline flex items-center justify-center gap-1">
                   <ArrowLeft className="h-4 w-4" />
-                  Retour Ã  la connexion
+                  Retour à la connexion
                 </Link>
               </div>
             </div>
@@ -372,7 +372,7 @@ export default function ForgotPasswordPage() {
                   </div>
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">Code envoyé au {state.maskedPhone}</h2>
-                <p className="text-gray-600">Entrez le code Ã  6 chiffres reçu par SMS</p>
+                <p className="text-gray-600">Entrez le code à 6 chiffres reçu par SMS</p>
               </div>
 
               <OtpInput
@@ -521,7 +521,7 @@ export default function ForgotPasswordPage() {
                 onClick={() => navigate('/login')}
                 className="w-full bg-[#1B5E20] hover:bg-[#2E7D32]"
               >
-                Aller Ã  la connexion
+                Aller à la connexion
               </Button>
             </div>
           )}

@@ -38,7 +38,7 @@ export default function ForgotPassword() {
                         className="flex items-center justify-center gap-2 mt-6 text-sm text-primary hover:text-primary-dark font-medium"
                     >
                         <ArrowLeft size={16} />
-                        Retour Ã  la connexion
+                        Retour à la connexion
                     </Link>
                 </div>
             </div>

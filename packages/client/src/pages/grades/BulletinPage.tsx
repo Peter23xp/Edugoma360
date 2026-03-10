@@ -53,7 +53,7 @@ function BatchProgressPanel({
                         <Loader2 size={20} className="animate-spin text-green-700" />
                     )}
                     <h3 className="font-semibold text-neutral-900">
-                        {isDone ? 'Génération terminée' : 'Génération en coursâ€¦'}
+                        {isDone ? 'Génération terminée' : 'Génération en cours…'}
                     </h3>
                 </div>
                 {!isDone && (
@@ -88,7 +88,7 @@ function BatchProgressPanel({
                 {job.status === 'pending' && (
                     <span className="inline-flex items-center gap-1 text-xs text-amber-700 bg-amber-50 
                                      border border-amber-200 px-2 py-1 rounded-full">
-                        <Clock size={11} /> En attenteâ€¦
+                        <Clock size={11} /> En attente…
                     </span>
                 )}
                 {job.status === 'processing' && (
@@ -353,7 +353,7 @@ export default function BulletinPage() {
                                     <p className="text-sm text-neutral-600 mt-1">
                                         Génère les bulletins officiels pour <strong>tous les élèves</strong> de
                                         la classe. La génération s'effectue en arrière-plan et les fichiers
-                                        seront disponibles au téléchargement Ã  la fin.
+                                        seront disponibles au téléchargement à la fin.
                                     </p>
                                     <div className="flex flex-wrap items-center gap-2 mt-3">
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50
@@ -364,7 +364,7 @@ export default function BulletinPage() {
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50
                                                           border border-blue-200 rounded-lg text-xs text-blue-700 font-medium">
                                             <Clock size={12} />
-                                            Environ 2â€“5 min selon l'effectif
+                                            Environ 2"“5 min selon l'effectif
                                         </span>
                                         <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50
                                                           border border-green-200 rounded-lg text-xs text-green-700 font-medium">
@@ -472,7 +472,7 @@ export default function BulletinPage() {
                                 <h3 className="font-semibold text-amber-900 mb-1">Paramètres manquants</h3>
                                 <p className="text-sm text-amber-700">
                                     L'identifiant de l'élève ou du trimestre est introuvable.
-                                    Accédez Ã  cette page depuis la fiche élève ou après délibération.
+                                    Accédez à cette page depuis la fiche élève ou après délibération.
                                 </p>
                             </div>
                         )}
@@ -492,7 +492,7 @@ export default function BulletinPage() {
                                         </div>
                                     </div>
                                     <div className="text-center">
-                                        <p className="font-semibold text-neutral-800">Génération du bulletinâ€¦</p>
+                                        <p className="font-semibold text-neutral-800">Génération du bulletin…</p>
                                         <p className="text-sm text-neutral-400 mt-1">
                                             Cela peut prendre quelques secondes
                                         </p>

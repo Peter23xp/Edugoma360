@@ -242,7 +242,7 @@ export default function DashboardPage() {
               <StatCard
                 title="Créances"
                 value={formatAmount((financeData?.data?.expected || 0) - (financeData?.data?.collected || 0))}
-                subtitle="Ã  recouvrer"
+                subtitle="à recouvrer"
                 icon={Receipt}
                 iconColor="bg-red-100 text-red-600"
                 isLoading={loadingFinance}

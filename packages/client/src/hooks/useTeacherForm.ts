@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../lib/api';
 
-const API_URL = '/api/teachers';
+const API_URL = '/teachers';
 
 /**
  * Transforms JSON data into FormData to support file uploads
@@ -11,25 +11,26 @@ function prepareFormData(data: any) {
 
     // Extract files separately
     const photoFile = data.photoFile;
-    const certificatFiles = data.certificatFiles || []; // Suppose multiple
+    const certificatFiles = data.certificatFiles || [];
 
     if (photoFile) formData.append('photo', photoFile);
 
     // Clean data for the body (remove raw file objects)
     const { photoFile: pf, photoPreview, certificatFiles: cf, ...rest } = data;
 
-    // If we have certificates files, we need a way to link them
-    // For now, any file in certificatFiles corresponds to its index in rest.certificats
+    // If we have certificates files
     if (certificatFiles.length > 0) {
         certificatFiles.forEach((file: File) => {
             formData.append('certificats', file);
         });
     }
 
-    // Multiply fields for standard handling
+    // Append fields
     Object.keys(rest).forEach(key => {
         const val = rest[key];
-        if (typeof val === 'object') {
+        if (val === null || val === undefined) return;
+
+        if (Array.isArray(val) || typeof val === 'object') {
             formData.append(key, JSON.stringify(val));
         } else {
             formData.append(key, val);
@@ -48,7 +49,7 @@ export function useTeacherForm() {
             const hasFiles = data.photoFile || (data.certificatFiles && data.certificatFiles.length > 0);
             const payload = hasFiles ? prepareFormData(data) : data;
 
-            const response = await axios.post(API_URL, payload, {
+            const response = await api.post(API_URL, payload, {
                 headers: hasFiles ? { 'Content-Type': 'multipart/form-data' } : {}
             });
             return response.data;
@@ -64,7 +65,7 @@ export function useTeacherForm() {
             const hasFiles = data.photoFile || (data.certificatFiles && data.certificatFiles.length > 0);
             const payload = hasFiles ? prepareFormData(data) : data;
 
-            const response = await axios.put(`${API_URL}/${id}`, payload, {
+            const response = await api.put(`${API_URL}/${id}`, payload, {
                 headers: hasFiles ? { 'Content-Type': 'multipart/form-data' } : {}
             });
             return response.data;

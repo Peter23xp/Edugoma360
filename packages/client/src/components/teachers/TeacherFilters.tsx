@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, Filter, ChevronDown } from 'lucide-react';
-import axios from 'axios';
+import api from '../../lib/api';
 
 const TEACHER_STATUS_MAP: Record<string, string> = {
     ACTIF: 'Actif',
@@ -36,7 +36,7 @@ export const TeacherFilters: React.FC<TeacherFiltersProps> = ({
     useEffect(() => {
         const fetchSubjects = async () => {
             try {
-                const { data } = await axios.get('/api/settings/subjects');
+                const { data } = await api.get('/settings/subjects');
                 setSubjects(data.data || []);
             } catch (error) {
                 console.error('Failed to fetch subjects', error);

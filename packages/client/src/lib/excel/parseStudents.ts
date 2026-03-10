@@ -171,7 +171,7 @@ const validateRow = (data: Partial<StudentImportData>, _rowNum: number): string[
         } else {
             const age = new Date().getFullYear() - date.getFullYear();
             if (age < 5 || age > 30) {
-                errors.push('Ã‚ge invalide (doit être entre 5 et 30 ans)');
+                errors.push('Âge invalide (doit être entre 5 et 30 ans)');
             }
         }
     }

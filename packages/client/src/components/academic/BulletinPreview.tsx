@@ -55,7 +55,7 @@ export default function BulletinPreview({ bulletin, onDownloadPDF, isGenerating 
                         className="h-9 px-4 text-sm font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-60"
                     >
                         <Download size={15} />
-                        {isGenerating ? 'Générationâ€¦' : 'Télécharger PDF'}
+                        {isGenerating ? 'Génération…' : 'Télécharger PDF'}
                     </button>
                 </div>
             </div>
