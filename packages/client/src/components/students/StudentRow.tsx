@@ -1,5 +1,4 @@
-﻿import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+﻿import { useNavigate } from 'react-router-dom';
 import {
     Eye,
     Edit,
@@ -9,6 +8,13 @@ import {
     MoreVertical,
     AlertTriangle,
 } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import { formatStudentName, getInitials } from '../../lib/utils';
 import type { StudentListItem } from '../../hooks/useStudents';
 
@@ -68,20 +74,6 @@ const STATUS_CONFIG: Record<string, { label: string; className: string; icon?: R
 
 export default function StudentRow({ student, isSelected, onSelect, onAction }: StudentRowProps) {
     const navigate = useNavigate();
-    const [menuOpen, setMenuOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
-
-    // Close dropdown on outside click
-    useEffect(() => {
-        if (!menuOpen) return;
-        const handler = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setMenuOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
-    }, [menuOpen]);
 
     const initials = getInitials(student.nom, student.postNom);
     const fullName = formatStudentName(student.nom, student.postNom, student.prenom);
@@ -196,103 +188,45 @@ export default function StudentRow({ student, isSelected, onSelect, onAction }: 
 
             {/* Actions menu */}
             <td className="w-12 px-2 py-3" data-no-navigate>
-                <div className="relative" ref={menuRef}>
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setMenuOpen(!menuOpen);
-                        }}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 
-                                   hover:bg-neutral-100 transition-colors opacity-0 group-hover:opacity-100
-                                   focus:opacity-100"
-                        aria-label="Actions"
-                    >
-                        <MoreVertical size={16} />
-                    </button>
-
-                    {menuOpen && (
-                        <div
-                            className="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl 
-                                       shadow-lg border border-neutral-200 py-1.5 z-50 animate-fade-in"
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button
+                            className="p-1.5 rounded-lg text-neutral-400 hover:text-neutral-700 
+                                       hover:bg-neutral-100 transition-colors opacity-0 group-hover:opacity-100
+                                       focus:opacity-100"
+                            aria-label="Actions"
                         >
-                            <MenuItem
-                                icon={<Eye size={14} />}
-                                label="Voir la fiche"
-                                onClick={() => {
-                                    onAction('view', student.id);
-                                    setMenuOpen(false);
-                                }}
-                            />
-                            <MenuItem
-                                icon={<Edit size={14} />}
-                                label="Modifier"
-                                onClick={() => {
-                                    onAction('edit', student.id);
-                                    setMenuOpen(false);
-                                }}
-                            />
-                            <MenuItem
-                                icon={<CreditCard size={14} />}
-                                label="Imprimer carte"
-                                onClick={() => {
-                                    onAction('card', student.id);
-                                    setMenuOpen(false);
-                                }}
-                            />
-                            <div className="my-1 border-t border-neutral-100" />
-                            <MenuItem
-                                icon={<ArrowUpRight size={14} />}
-                                label="Transférer"
-                                onClick={() => {
-                                    onAction('transfer', student.id);
-                                    setMenuOpen(false);
-                                }}
-                            />
-                            <MenuItem
-                                icon={<Archive size={14} />}
-                                label="Archiver"
-                                onClick={() => {
-                                    onAction('archive', student.id);
-                                    setMenuOpen(false);
-                                }}
-                                variant="danger"
-                            />
-                        </div>
-                    )}
-                </div>
+                            <MoreVertical size={16} />
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => onAction('view', student.id)}>
+                            <Eye size={14} className="mr-2" />
+                            Voir la fiche
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onAction('edit', student.id)}>
+                            <Edit size={14} className="mr-2" />
+                            Modifier
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => onAction('card', student.id)}>
+                            <CreditCard size={14} className="mr-2" />
+                            Imprimer carte
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => onAction('transfer', student.id)}>
+                            <ArrowUpRight size={14} className="mr-2" />
+                            Transférer
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                            onClick={() => onAction('archive', student.id)}
+                            className="text-danger hover:bg-danger-bg hover:text-danger focus:bg-danger-bg focus:text-danger"
+                        >
+                            <Archive size={14} className="mr-2" />
+                            Archiver
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </td>
         </tr>
-    );
-}
-
-// â”€â”€ Sub-component: Menu Item â”€â”€
-function MenuItem({
-    icon,
-    label,
-    onClick,
-    variant = 'default',
-}: {
-    icon: React.ReactNode;
-    label: string;
-    onClick: () => void;
-    variant?: 'default' | 'danger';
-}) {
-    return (
-        <button
-            onClick={(e) => {
-                e.stopPropagation();
-                onClick();
-            }}
-            className={`
-                w-full flex items-center gap-2.5 px-3 py-2 text-sm transition-colors
-                ${variant === 'danger'
-                    ? 'text-danger hover:bg-danger-bg'
-                    : 'text-neutral-700 hover:bg-neutral-50'
-                }
-            `}
-        >
-            {icon}
-            {label}
-        </button>
     );
 }

@@ -9,6 +9,7 @@ export interface AbsenceFilters {
     type?: string;
     startDate?: string;
     endDate?: string;
+    isTeacher?: boolean;
 }
 
 export function useAbsences(filters: AbsenceFilters = {}) {
@@ -39,6 +40,8 @@ export function useAbsences(filters: AbsenceFilters = {}) {
             const { data } = await api.get(`${BASE}/my-balance`);
             return data;
         },
+        enabled: filters.isTeacher === true,
+        retry: false,
     });
 
     // Create leave request

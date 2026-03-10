@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { UseFormReturn, useFieldArray } from 'react-hook-form';
-import { GraduationCap, BookOpen, Plus, Trash2, FileText, School, Calendar, Globe, Upload, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, GraduationCap, Upload, FileText } from 'lucide-react';
 import { SUBJECTS_LIST } from '@edugoma360/shared';
 
 interface Step2QualificationsProps {
@@ -29,139 +29,175 @@ export const Step2Qualifications: React.FC<Step2QualificationsProps> = ({ form }
     };
 
     return (
-        <div className="space-y-12 animate-in fade-in slide-in-from-right-4 duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+        <div className="max-w-3xl mx-auto space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {/* NIVEAU D'ÉTUDES */}
-                <div className="group">
-                    <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 ml-1 group-focus-within:text-green-700 transition-colors">Niveau d'études *</label>
-                    <div className="relative">
-                        <GraduationCap size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" />
-                        <select
-                            {...register('niveauEtudes')}
-                            className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 rounded-2xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-gray-900 appearance-none cursor-pointer ${errors.niveauEtudes ? 'border-red-100 bg-red-50/20' : 'border-gray-50 focus:border-green-600'}`}
-                        >
-                            <option value="">Sélectionnez le niveau</option>
-                            <option value="D6">D6 (Diplôme d'État)</option>
-                            <option value="GRADUAT">Graduat (Bac+3)</option>
-                            <option value="LICENCE">Licence (Bac+5)</option>
-                            <option value="MASTER">Master (Bac+7)</option>
-                            <option value="DOCTORAT">Doctorat (Bac+8)</option>
-                        </select>
-                    </div>
+                <div>
+                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        Niveau d'études <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                        {...register('niveauEtudes')}
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
+                                   focus:ring-primary/20 focus:border-primary transition-colors
+                                   bg-white ${errors.niveauEtudes ? 'border-red-500' : 'border-neutral-300'}`}
+                    >
+                        <option value="">Sélectionnez le niveau</option>
+                        <option value="D6">D6 (Diplôme d'État)</option>
+                        <option value="GRADUAT">Graduat (Bac+3)</option>
+                        <option value="LICENCE">Licence (Bac+5)</option>
+                        <option value="MASTER">Master (Bac+7)</option>
+                        <option value="DOCTORAT">Doctorat (Bac+8)</option>
+                    </select>
+                    {errors.niveauEtudes && (
+                        <p className="text-xs text-red-600 mt-1">{errors.niveauEtudes.message as string}</p>
+                    )}
                 </div>
 
                 {/* DOMAINE DE FORMATION */}
-                <div className="group">
-                    <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 ml-1 group-focus-within:text-green-700 transition-colors">Domaine de formation *</label>
-                    <div className="relative">
-                        <Globe size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" />
-                        <input
-                            {...register('domaineFormation')}
-                            placeholder="EX: Mathématiques et Physique"
-                            className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 rounded-2xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-gray-900 placeholder:text-gray-200 ${errors.domaineFormation ? 'border-red-100 bg-red-50/20' : 'border-gray-50 focus:border-green-600'}`}
-                        />
-                    </div>
+                <div>
+                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        Domaine de formation <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                        {...register('domaineFormation')}
+                        placeholder="EX: Mathématiques et Physique"
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
+                                   focus:ring-primary/20 focus:border-primary transition-colors
+                                   ${errors.domaineFormation ? 'border-red-500' : 'border-neutral-300'}`}
+                    />
+                    {errors.domaineFormation && (
+                        <p className="text-xs text-red-600 mt-1">{errors.domaineFormation.message as string}</p>
+                    )}
                 </div>
 
                 {/* UNIVERSITÉ */}
-                <div className="group">
-                    <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 ml-1 group-focus-within:text-green-700 transition-colors">Université / Institut *</label>
-                    <div className="relative">
-                        <School size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" />
-                        <input
-                            {...register('universite')}
-                            placeholder="EX: UNIKIN"
-                            className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 rounded-2xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-gray-900 placeholder:text-gray-200 ${errors.universite ? 'border-red-100 bg-red-50/20' : 'border-gray-50 focus:border-green-600'}`}
-                        />
-                    </div>
+                <div>
+                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        Université / Institut <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                        {...register('universite')}
+                        placeholder="EX: UNIKIN"
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
+                                   focus:ring-primary/20 focus:border-primary transition-colors
+                                   ${errors.universite ? 'border-red-500' : 'border-neutral-300'}`}
+                    />
+                    {errors.universite && (
+                        <p className="text-xs text-red-600 mt-1">{errors.universite.message as string}</p>
+                    )}
                 </div>
 
                 {/* ANNÉE OBTENTION */}
-                <div className="group">
-                    <label className="block text-xs font-black text-gray-500 uppercase tracking-widest mb-3 ml-1 group-focus-within:text-green-700 transition-colors">Année d'obtention *</label>
-                    <div className="relative">
-                        <Calendar size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-green-600 transition-colors" />
-                        <input
-                            type="number"
-                            {...register('anneeObtention')}
-                            min="1980"
-                            max={new Date().getFullYear()}
-                            placeholder="EX: 2008"
-                            className={`w-full pl-12 pr-4 py-3.5 bg-gray-50 border-2 rounded-2xl focus:bg-white focus:outline-none focus:ring-4 focus:ring-green-500/10 transition-all font-bold text-gray-900 placeholder:text-gray-200 ${errors.anneeObtention ? 'border-red-100 bg-red-50/20' : 'border-gray-50 focus:border-green-600'}`}
-                        />
-                    </div>
+                <div>
+                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        Année d'obtention <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                        type="number"
+                        {...register('anneeObtention')}
+                        min="1980"
+                        max={new Date().getFullYear()}
+                        placeholder="EX: 2008"
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 
+                                   focus:ring-primary/20 focus:border-primary transition-colors
+                                   ${errors.anneeObtention ? 'border-red-500' : 'border-neutral-300'}`}
+                    />
+                    {errors.anneeObtention && (
+                        <p className="text-xs text-red-600 mt-1">{errors.anneeObtention.message as string}</p>
+                    )}
                 </div>
             </div>
 
-            <div className="pt-8 border-t border-gray-50">
-                <div className="flex items-center gap-3 mb-6">
-                    <div className="p-2 bg-green-50 text-green-700 rounded-lg"><BookOpen size={20} /></div>
-                    <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Matières Enseignées *</h3>
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded-md">Min. 1 requis</span>
+            {/* MATIÈRES */}
+            <div className="pt-6 border-t border-neutral-200">
+                <div className="flex items-center gap-2 mb-4">
+                    <GraduationCap size={18} className="text-primary" />
+                    <h3 className="text-base font-semibold text-neutral-900">Matières Enseignées <span className="text-red-500">*</span></h3>
+                    <span className="text-xs text-neutral-500 bg-neutral-100 px-2 py-0.5 rounded ml-2">Min. 1 requis</span>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {SUBJECTS_LIST.map((subj) => (
-                        <label key={subj.id} className={`flex items-center gap-4 p-4 border-2 rounded-2xl cursor-pointer transition-all hover:border-green-200 ${selectedSubjects.includes(subj.id) ? 'bg-green-50 border-green-600 shadow-sm' : 'bg-white border-gray-50 hover:bg-gray-50'}`}>
-                            <div className={`w-5 h-5 rounded-md flex items-center justify-center transition-colors ${selectedSubjects.includes(subj.id) ? 'bg-green-700' : 'bg-gray-100 border-2 border-gray-200 group-hover:border-green-300'}`}>
-                                <input
-                                    type="checkbox"
-                                    value={subj.id}
-                                    {...register('matieres')}
-                                    className="hidden"
-                                />
-                                {selectedSubjects.includes(subj.id) && <Plus size={14} className="text-white rotate-45" />}
-                            </div>
-                            <div>
-                                <p className={`text-xs font-black uppercase tracking-tight ${selectedSubjects.includes(subj.id) ? 'text-green-900' : 'text-gray-700'}`}>{subj.name}</p>
-                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{subj.category.replace('_', ' ')}</p>
-                            </div>
-                        </label>
-                    ))}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {SUBJECTS_LIST.map((subj) => {
+                        const isSelected = selectedSubjects.includes(subj.id);
+                        return (
+                            <label key={subj.id} className={`flex items-start gap-3 p-3 border rounded-lg cursor-pointer transition-colors ${isSelected ? 'bg-primary/5 border-primary shadow-sm' : 'bg-white border-neutral-200 hover:border-neutral-300'}`}>
+                                <div className="mt-0.5">
+                                    <input
+                                        type="checkbox"
+                                        value={subj.id}
+                                        {...register('matieres')}
+                                        className="w-4 h-4 text-primary border-neutral-300 rounded focus:ring-primary"
+                                    />
+                                </div>
+                                <div>
+                                    <p className={`text-sm font-medium ${isSelected ? 'text-primary' : 'text-neutral-700'}`}>{subj.name}</p>
+                                    <p className="text-xs text-neutral-500 capitalize">{subj.category.replace('_', ' ')}</p>
+                                </div>
+                            </label>
+                        );
+                    })}
                 </div>
+                {errors.matieres && (
+                    <p className="text-xs text-red-600 mt-2">{errors.matieres.message as string}</p>
+                )}
             </div>
 
-            <div className="pt-8 border-t border-gray-50">
-                <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-50 text-blue-700 rounded-lg"><FileText size={20} /></div>
-                        <h3 className="text-sm font-black text-gray-900 uppercase tracking-tight">Certificats & Formations Additionnelles</h3>
+            {/* CERTIFICATS */}
+            <div className="pt-6 border-t border-neutral-200">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <FileText size={18} className="text-primary" />
+                        <h3 className="text-base font-semibold text-neutral-900">Certificats & Formations Additionnelles</h3>
                     </div>
                     <button
                         type="button"
                         onClick={() => append({ nom: '', organisme: '', annee: new Date().getFullYear() })}
-                        className="px-4 py-2 bg-green-50 text-green-700 rounded-xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-green-100 transition-colors border-2 border-green-100"
+                        className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary bg-primary/10 rounded-lg hover:bg-primary/20 transition-colors"
                     >
-                        <Plus size={16} /> Ajouter un certificat
+                        <Plus size={16} /> Ajouter
                     </button>
                 </div>
 
                 <div className="space-y-4">
                     {fields.map((field, index) => (
-                        <div key={field.id} className="grid grid-cols-1 md:grid-cols-4 gap-4 p-5 bg-gray-50/50 border-2 border-gray-50 rounded-2xl items-center relative group">
-                            <div className="md:col-span-1">
-                                <input
-                                    {...register(`certificats.${index}.nom` as const)}
-                                    placeholder="Nom du certificat"
-                                    className="w-full px-4 py-2.5 bg-white border-2 border-gray-100 rounded-xl font-bold text-xs uppercase tracking-tight focus:border-green-600 focus:outline-none"
-                                />
+                        <div key={field.id} className="relative p-4 bg-neutral-50 border border-neutral-200 rounded-lg">
+                            <button
+                                type="button"
+                                onClick={() => remove(index)}
+                                className="absolute top-4 right-4 text-neutral-400 hover:text-red-500 transition-colors"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pr-8">
+                                <div>
+                                    <label className="block text-xs font-medium text-neutral-600 mb-1">Nom du certificat</label>
+                                    <input
+                                        {...register(`certificats.${index}.nom` as const)}
+                                        placeholder="Ex: Pédagogie active"
+                                        className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-md focus:ring-1 focus:ring-primary"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-neutral-600 mb-1">Organisme</label>
+                                    <input
+                                        {...register(`certificats.${index}.organisme` as const)}
+                                        placeholder="Ex: UNICEF"
+                                        className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-md focus:ring-1 focus:ring-primary"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-neutral-600 mb-1">Année</label>
+                                    <input
+                                        type="number"
+                                        {...register(`certificats.${index}.annee` as const)}
+                                        className="w-full px-3 py-2 text-sm border border-neutral-300 rounded-md focus:ring-1 focus:ring-primary"
+                                    />
+                                </div>
                             </div>
-                            <div className="md:col-span-1">
-                                <input
-                                    {...register(`certificats.${index}.organisme` as const)}
-                                    placeholder="Organisme"
-                                    className="w-full px-4 py-2.5 bg-white border-2 border-gray-100 rounded-xl font-bold text-xs uppercase tracking-tight focus:border-green-600 focus:outline-none"
-                                />
-                            </div>
-                            <div className="md:col-span-1">
-                                <input
-                                    type="number"
-                                    {...register(`certificats.${index}.annee` as const)}
-                                    placeholder="Année"
-                                    className="w-full px-4 py-2.5 bg-white border-2 border-gray-100 rounded-xl font-bold text-xs uppercase tracking-tight focus:border-green-600 focus:outline-none"
-                                />
-                            </div>
-                            <div className="flex items-center justify-between gap-4">
+
+                            <div className="mt-4 flex items-center justify-between pt-3 border-t border-neutral-200">
                                 <input
                                     type="file"
                                     accept=".pdf,.jpg,.jpeg,.png"
@@ -169,38 +205,39 @@ export const Step2Qualifications: React.FC<Step2QualificationsProps> = ({ form }
                                     ref={el => fileInputRefs.current[index] = el}
                                     onChange={(e) => handleFileSelect(index, e)}
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() => fileInputRefs.current[index]?.click()}
-                                    className={`flex-1 py-2.5 border-2 rounded-xl font-bold text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${certificatFiles[index] ? 'bg-green-100 border-green-200 text-green-700' : 'bg-white border-gray-100 text-gray-400 hover:text-green-700'}`}
-                                >
-                                    {certificatFiles[index] ? <CheckCircle2 size={14} /> : <Upload size={14} />}
-                                    {certificatFiles[index] ? 'Fichier joint' : 'Joindre PDF'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => remove(index)}
-                                    className="p-2.5 text-red-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all shadow-sm"
-                                >
-                                    <Trash2 size={18} />
-                                </button>
-                            </div>
-                            {certificatFiles[index] && (
-                                <div className="md:col-span-4 mt-2 px-4 py-1.5 bg-white/50 rounded-lg flex items-center justify-between border border-green-50">
-                                    <span className="text-[10px] font-bold text-green-700 truncate max-w-[200px]">{certificatFiles[index].name}</span>
-                                    <button onClick={() => {
-                                        const newFiles = [...certificatFiles];
-                                        delete newFiles[index];
-                                        setValue('certificatFiles', newFiles);
-                                    }} className="text-[9px] font-black text-red-400 hover:text-red-600 uppercase">supprimer le fichier</button>
+                                <div className="flex items-center gap-3 w-full">
+                                    <button
+                                        type="button"
+                                        onClick={() => fileInputRefs.current[index]?.click()}
+                                        className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium bg-white border border-neutral-300 rounded hover:bg-neutral-50 transition-colors text-neutral-700"
+                                    >
+                                        <Upload size={14} />
+                                        {certificatFiles[index] ? 'Changer le fichier' : 'Joindre un scan (Optionnel)'}
+                                    </button>
+
+                                    {certificatFiles[index] && (
+                                        <div className="flex items-center justify-between flex-1 bg-white border border-neutral-200 px-3 py-1 rounded text-xs">
+                                            <span className="text-neutral-600 truncate max-w-[200px]">{certificatFiles[index].name}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const newFiles = [...certificatFiles];
+                                                    delete newFiles[index];
+                                                    setValue('certificatFiles', newFiles);
+                                                }}
+                                                className="text-red-500 hover:text-red-700"
+                                            >
+                                                Supprimer
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                            )}
+                            </div>
                         </div>
                     ))}
                     {fields.length === 0 && (
-                        <div className="py-12 border-2 border-dashed border-gray-100 rounded-2xl flex flex-col items-center justify-center opacity-40">
-                            <FileText size={32} className="text-gray-300 mb-2" />
-                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest italic">Aucun document additionnel</span>
+                        <div className="text-center py-8 bg-neutral-50 border border-neutral-200 border-dashed rounded-lg">
+                            <p className="text-sm text-neutral-500">Aucun certificat additionnel ajouté</p>
                         </div>
                     )}
                 </div>

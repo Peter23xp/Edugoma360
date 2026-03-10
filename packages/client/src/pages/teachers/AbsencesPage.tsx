@@ -20,7 +20,7 @@ export default function AbsencesPage() {
     const isTeacher = user?.role === 'ENSEIGNANT';
     const isPrefet = ['PREFET', 'DIRECTEUR', 'ADMIN'].includes(user?.role || '');
 
-    const { absencesQuery, statsQuery, balanceQuery } = useAbsences();
+    const { absencesQuery, statsQuery, balanceQuery } = useAbsences({ isTeacher });
     const requests = absencesQuery.data || [];
     const stats = statsQuery.data;
     const balance = balanceQuery.data;
@@ -60,8 +60,8 @@ export default function AbsencesPage() {
                             id="view-list"
                             onClick={() => setView('list')}
                             className={`p-2 rounded-lg transition-all duration-200 ${view === 'list'
-                                    ? 'bg-white text-primary shadow-sm'
-                                    : 'text-neutral-400 hover:text-neutral-600'
+                                ? 'bg-white text-primary shadow-sm'
+                                : 'text-neutral-400 hover:text-neutral-600'
                                 }`}
                         >
                             <List size={18} />
@@ -70,8 +70,8 @@ export default function AbsencesPage() {
                             id="view-calendar"
                             onClick={() => setView('calendar')}
                             className={`p-2 rounded-lg transition-all duration-200 ${view === 'calendar'
-                                    ? 'bg-white text-primary shadow-sm'
-                                    : 'text-neutral-400 hover:text-neutral-600'
+                                ? 'bg-white text-primary shadow-sm'
+                                : 'text-neutral-400 hover:text-neutral-600'
                                 }`}
                         >
                             <Calendar size={18} />

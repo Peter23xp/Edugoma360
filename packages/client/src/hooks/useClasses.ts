@@ -17,7 +17,7 @@ export function useClasses(filters?: { sectionId?: string; academicYearId?: stri
             if (filters?.academicYearId) params.academicYearId = filters.academicYearId;
             if (filters?.isActive !== undefined) params.isActive = String(filters.isActive);
             const res = await api.get('/classes', { params });
-            return res.data?.data ?? res.data ?? [];
+            return res.data?.classes ?? res.data?.data ?? res.data ?? [];
         },
         staleTime: 5 * 60 * 1000,
     });

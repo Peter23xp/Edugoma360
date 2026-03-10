@@ -8,89 +8,99 @@ const data = [
     { name: 'Trim. 3', '4ScA': 13.8, '5ScB': 12.5, '6ScA': 14.8, 'Moyenne École': 12.8 },
 ];
 
-export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher }) => {
+export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher: _teacher }) => {
     return (
-        <div className="space-y-8 animate-in fade-in duration-500">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-xl transition-all">
-                    <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl group-hover:scale-110 transition-transform"><TrendingUp size={32} /></div>
+        <div className="space-y-6">
+            {/* —— KPI Cards —— */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="border border-neutral-200 bg-white/50 rounded-lg p-4 flex items-center gap-4">
+                    <div className="p-3 bg-neutral-100 text-neutral-600 rounded-lg">
+                        <TrendingUp size={24} />
+                    </div>
                     <div>
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">Moyenne Classes</div>
-                        <div className="text-3xl font-black text-gray-900 tracking-tight">13.2 <span className="text-xs text-gray-300">/20</span></div>
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-green-600 mt-1 uppercase tracking-widest">
-                            <span className="p-0.5 bg-green-50 rounded-full">🟢</span> +0.5 pts
+                        <p className="text-xs font-semibold text-neutral-500 mb-1">Moyenne Classes</p>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-2xl font-bold text-neutral-900">13.2<span className="text-sm font-medium text-neutral-400">/20</span></span>
+                            <span className="text-xs font-medium text-success bg-success-bg px-2 py-0.5 rounded-full">+0.5 pts</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-xl transition-all">
-                    <div className="p-4 bg-green-50 text-green-600 rounded-2xl group-hover:scale-110 transition-transform"><Users size={32} /></div>
+                <div className="border border-neutral-200 bg-white/50 rounded-lg p-4 flex items-center gap-4">
+                    <div className="p-3 bg-neutral-100 text-neutral-600 rounded-lg">
+                        <Users size={24} />
+                    </div>
                     <div>
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">Taux Réussite</div>
-                        <div className="text-3xl font-black text-gray-900 tracking-tight">78%</div>
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-green-600 mt-1 uppercase tracking-widest">
-                            <span className="p-0.5 bg-green-50 rounded-full">🟢</span> +5% vs T1
+                        <p className="text-xs font-semibold text-neutral-500 mb-1">Taux Réussite</p>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-2xl font-bold text-neutral-900">78%</span>
+                            <span className="text-xs font-medium text-success bg-success-bg px-2 py-0.5 rounded-full">+5% vs T1</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5 group hover:shadow-xl transition-all">
-                    <div className="p-4 bg-orange-50 text-orange-600 rounded-2xl group-hover:scale-110 transition-transform"><CheckCircle size={32} /></div>
+                <div className="border border-neutral-200 bg-white/50 rounded-lg p-4 flex items-center gap-4">
+                    <div className="p-3 bg-neutral-100 text-neutral-600 rounded-lg">
+                        <CheckCircle size={24} />
+                    </div>
                     <div>
-                        <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-2">Assiduité Cours</div>
-                        <div className="text-3xl font-black text-gray-900 tracking-tight">95%</div>
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-green-600 mt-1 uppercase tracking-widest">
-                            <span className="px-2 py-0.5 bg-green-50 rounded-lg">Excellent</span>
+                        <p className="text-xs font-semibold text-neutral-500 mb-1">Assiduité Cours</p>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-2xl font-bold text-neutral-900">95%</span>
+                            <span className="text-xs font-medium text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded-full">Excellent</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className="p-2 bg-blue-50 text-blue-700 rounded-lg"><BarChart2 size={24} /></div>
+            {/* —— Chart —— */}
+            <div className="border border-neutral-200 rounded-lg p-6">
+                <div className="flex items-center gap-2 mb-6">
+                    <BarChart2 size={18} className="text-neutral-400" />
                     <div>
-                        <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Évolution des Moyennes</h3>
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Comparaison trimestrielle par classe</p>
+                        <h3 className="text-sm font-semibold text-neutral-900">Évolution des Moyennes</h3>
+                        <p className="text-xs text-neutral-500">Comparaison trimestrielle par classe</p>
                     </div>
                 </div>
 
-                <div className="h-80 w-full">
+                <div className="h-72 w-full">
                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={data} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#64748B' }} dy={10} />
-                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fontWeight: 700, fill: '#64748B' }} domain={[0, 20]} />
-                            <Tooltip contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)' }} />
-                            <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }} />
-                            <Line type="monotone" dataKey="4ScA" stroke="#3B82F6" strokeWidth={4} dot={{ r: 6, fill: '#3B82F6', strokeWidth: 0 }} activeDot={{ r: 8 }} />
-                            <Line type="monotone" dataKey="5ScB" stroke="#10B981" strokeWidth={4} dot={{ r: 6, fill: '#10B981', strokeWidth: 0 }} activeDot={{ r: 8 }} />
-                            <Line type="monotone" dataKey="6ScA" stroke="#EF4444" strokeWidth={4} dot={{ r: 6, fill: '#EF4444', strokeWidth: 0 }} activeDot={{ r: 8 }} />
-                            <Line type="monotone" dataKey="Moyenne École" stroke="#94A3B8" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                        <LineChart data={data} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E5E5" />
+                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#737373' }} dy={10} />
+                            <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#737373' }} domain={[0, 20]} />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #E5E5E5', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }} />
+                            <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px', fontSize: '12px' }} />
+                            <Line type="monotone" dataKey="4ScA" stroke="#3B82F6" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                            <Line type="monotone" dataKey="5ScB" stroke="#10B981" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                            <Line type="monotone" dataKey="6ScA" stroke="#F59E0B" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                            <Line type="monotone" dataKey="Moyenne École" stroke="#A3A3A3" strokeWidth={2} strokeDasharray="5 5" dot={false} />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-sm">
-                <div className="flex items-center justify-between mb-8">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-50 text-green-700 rounded-lg"><MessageSquare size={24} /></div>
-                        <h3 className="text-xl font-black text-gray-900 uppercase tracking-tight">Observations du Préfet</h3>
+            {/* —— Observations —— */}
+            <div className="border border-neutral-200 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-2">
+                        <MessageSquare size={18} className="text-neutral-400" />
+                        <h3 className="text-sm font-semibold text-neutral-900">Observations de la Direction</h3>
                     </div>
-                    <button className="p-3 bg-gray-50 text-gray-400 rounded-xl hover:bg-gray-100 hover:text-green-700 transition-all flex items-center gap-2 font-bold text-xs uppercase tracking-widest shadow-sm">
-                        <Edit3 size={18} /> Modifier
+                    <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-neutral-200 rounded-md hover:bg-neutral-50 transition-colors text-neutral-600">
+                        <Edit3 size={14} /> Modifier
                     </button>
                 </div>
-                <div className="p-6 bg-gray-50 border-2 border-dashed border-gray-100 rounded-2xl relative">
-                    <p className="text-gray-600 font-medium italic leading-relaxed text-lg text-center p-4">
-                        " Excellent travail ce trimestre. Les résultats sont en progression constante dans toutes les classes. L'assiduité est exemplaire. Continue sur cette lancée. "
+
+                <div className="bg-neutral-50 rounded-lg p-5 relative border border-neutral-100">
+                    <p className="text-sm text-neutral-700 italic leading-relaxed text-center py-2">
+                        "Excellent travail ce trimestre. Les résultats sont en progression constante dans toutes les classes. L'assiduité est exemplaire. Continue sur cette lancée."
                     </p>
-                    <div className="absolute -bottom-3 -right-3 flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-lg border border-gray-100">
-                        <div className="w-8 h-8 rounded-full bg-green-700 flex items-center justify-center font-bold text-white text-xs">P</div>
-                        <div>
-                            <div className="text-[10px] font-black text-gray-900 uppercase leading-none">MUKAMBA JEAN</div>
-                            <div className="text-[8px] font-bold text-gray-400 uppercase tracking-tighter">Préfet des Études</div>
+                    <div className="absolute -bottom-3 -right-2 flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-neutral-200">
+                        <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white">P</div>
+                        <div className="text-left">
+                            <div className="text-xs font-semibold text-neutral-900">MUKAMBA JEAN</div>
+                            <div className="text-[10px] text-neutral-500">Préfet des Études</div>
                         </div>
                     </div>
                 </div>
