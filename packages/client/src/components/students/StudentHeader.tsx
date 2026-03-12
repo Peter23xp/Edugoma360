@@ -1,4 +1,4 @@
-﻿import { Phone, AlertCircle } from 'lucide-react';
+import { Phone, AlertCircle } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import type { Student, Enrollment } from '@edugoma360/shared';
 import api from '../../lib/api';
@@ -69,7 +69,7 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
     const amountDue = paymentSummary?.data?.remaining || 0;
 
     return (
-        <div className="bg-white rounded-xl border border-neutral-300/50 p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-neutral-300/50 p-4 sm:p-6 shadow-sm">
             <div className="flex flex-col sm:flex-row items-start gap-4">
                 {/* â”€â”€ Photo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="relative group">
@@ -94,7 +94,7 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
                 {/* â”€â”€ Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <div className="flex-1 space-y-2">
                     <div>
-                        <h1 className="text-2xl font-bold text-neutral-900 tracking-tight">
+                        <h1 className="text-lg sm:text-2xl font-bold text-neutral-900 tracking-tight break-words">
                             {fullName}
                         </h1>
                         <p className="text-sm text-neutral-500 font-mono mt-0.5">

@@ -108,10 +108,10 @@ function StatCard({
     return (
         <div className="bg-white rounded-xl border border-neutral-300/50 p-4">
             <div className="flex items-center justify-between mb-2">
-                <p className="text-xs text-neutral-500">{label}</p>
+                <p className="text-[10px] sm:text-xs text-neutral-500 uppercase font-semibold">{label}</p>
                 {icon}
             </div>
-            <p className={`text-2xl font-bold ${accent}`}>{value}</p>
+            <p className={`text-lg sm:text-2xl font-bold truncate ${accent}`}>{value}</p>
             {subtext && (
                 <p className="text-xs text-neutral-500 mt-1">{subtext}</p>
             )}

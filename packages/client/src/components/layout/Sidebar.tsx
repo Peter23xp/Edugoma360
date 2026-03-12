@@ -43,9 +43,10 @@ const navItems = [
         roles: ['SUPER_ADMIN', 'ECONOME', 'PREFET'],
         children: [
             { label: 'Tableau de bord', icon: Wallet, path: '/finance' },
-            { label: 'Config. frais', icon: Cog, path: '/finance/fees' },
+            { label: 'Historique', icon: ClipboardList, path: '/finance/payments' },
             { label: 'Nouveau paiement', icon: Receipt, path: '/finance/payments/new' },
             { label: 'Impayés', icon: FileBarChart, path: '/finance/debts' },
+            { label: 'Config. frais', icon: Cog, path: '/finance/fees' },
         ],
     },
     { label: 'Présences', icon: CalendarCheck, path: '/attendance', roles: ['SUPER_ADMIN', 'PREFET', 'ENSEIGNANT'] },

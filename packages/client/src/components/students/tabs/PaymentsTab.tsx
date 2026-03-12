@@ -213,9 +213,9 @@ function SummaryCard({
     color: string;
 }) {
     return (
-        <div className="bg-white border border-neutral-200 rounded-lg p-4">
-            <p className="text-xs text-neutral-500 mb-1">{label}</p>
-            <p className={`text-2xl font-bold ${color}`}>{value}</p>
+        <div className="bg-white border border-neutral-200 rounded-lg p-3 sm:p-4">
+            <p className="text-[10px] sm:text-xs text-neutral-500 mb-0.5 sm:mb-1 uppercase font-semibold">{label}</p>
+            <p className={`text-lg sm:text-2xl font-bold truncate ${color}`}>{value}</p>
         </div>
     );
 }

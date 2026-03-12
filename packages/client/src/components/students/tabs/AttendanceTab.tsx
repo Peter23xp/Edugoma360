@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react';
 import api from '../../../lib/api';
@@ -163,7 +163,7 @@ export default function AttendanceTab({ studentId }: AttendanceTabProps) {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-1 sm:gap-2">
                     {/* Day headers */}
                     {['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'].map((day) => (
                         <div
@@ -299,7 +299,7 @@ function StatCard({
     return (
         <div className="bg-neutral-50 border border-neutral-200 rounded-lg p-4">
             <p className="text-xs text-neutral-500 mb-1">{label}</p>
-            <p className={`text-2xl font-bold ${color}`}>{value}</p>
+            <p className={`text-xl sm:text-2xl font-bold ${color}`}>{value}</p>
         </div>
     );
 }

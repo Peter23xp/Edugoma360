@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
@@ -126,7 +126,7 @@ export default function StudentDetailPage() {
     return (
         <div className="space-y-4 pb-8">
             {/* â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <button
                     onClick={handleBack}
                     className="flex items-center gap-2 px-3 py-2 text-sm font-medium 
@@ -137,11 +137,11 @@ export default function StudentDetailPage() {
                     Retour à la liste
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                         onClick={() => navigate(`/students/${id}/edit`)}
-                        className="px-4 py-2 text-sm font-medium border border-neutral-300 
-                                   rounded-lg hover:bg-neutral-50 transition-colors"
+                        className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-neutral-300 
+                                   rounded-lg hover:bg-neutral-50 transition-colors text-center"
                     >
                         Modifier
                     </button>
@@ -192,7 +192,7 @@ export default function StudentDetailPage() {
                 </div>
 
                 {/* â”€â”€ Tab Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     {activeTab === 'info' && <InfoTab student={student} />}
                     {activeTab === 'scolarite' && <ScolariteTab studentId={id!} />}
                     {activeTab === 'notes' && <GradesTab studentId={id!} />}

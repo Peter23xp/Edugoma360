@@ -42,6 +42,7 @@ import BulletinPage from './pages/grades/BulletinPage';
 // Finance
 import FinanceDashboard from './pages/finance/FinanceDashboard';
 import { PaymentEntryPage } from './pages/finance/PaymentEntryPage';
+import PaymentsHistoryPage from './pages/finance/PaymentsHistoryPage';
 import DebtsPage from './pages/finance/DebtsPage';
 import FeesConfigPage from './pages/finance/FeesConfigPage';
 
@@ -143,6 +144,7 @@ export default function AppRouter() {
                 {/* Finance */}
                 <Route path="finance" element={<FinanceDashboard />} />
                 <Route path="finance/fees" element={<FeesConfigPage />} />
+                <Route path="finance/payments" element={<PaymentsHistoryPage />} />
                 <Route path="finance/payments/new" element={<PaymentEntryPage />} />
                 <Route path="finance/debts" element={<DebtsPage />} />
 

@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, Filter, ChevronDown } from 'lucide-react';
 import { useClasses } from '../../hooks/useStudents';
 import { SCHOOL_SECTIONS } from '@edugoma360/shared';
@@ -108,9 +108,9 @@ export default function StudentFilters({
                 </div>
 
                 {/* Filters row */}
-                <div className="flex flex-wrap sm:flex-nowrap gap-2">
+                <div className="grid grid-cols-2 sm:flex sm:flex-nowrap gap-2">
                     {/* Class filter */}
-                    <div className="relative min-w-[160px]">
+                    <div className="relative sm:min-w-[160px]">
                         <select
                             id="student-class-filter"
                             value={classId}
@@ -134,7 +134,7 @@ export default function StudentFilters({
                     </div>
 
                     {/* Section filter */}
-                    <div className="relative min-w-[160px]">
+                    <div className="relative sm:min-w-[160px]">
                         <select
                             id="student-section-filter"
                             value={section}
@@ -157,7 +157,7 @@ export default function StudentFilters({
                     </div>
 
                     {/* Status filter */}
-                    <div className="relative min-w-[140px]">
+                    <div className="relative col-span-2 sm:min-w-[140px]">
                         <select
                             id="student-status-filter"
                             value={status}

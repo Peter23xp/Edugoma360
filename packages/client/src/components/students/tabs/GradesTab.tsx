@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen } from 'lucide-react';
 import api from '../../../lib/api';
@@ -225,16 +225,16 @@ export default function GradesTab({ studentId }: GradesTabProps) {
             {/* â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
             <div className="border-t border-neutral-200 pt-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 sm:gap-6">
                         <div>
-                            <p className="text-xs text-neutral-500">Moyenne générale</p>
-                            <p className="text-2xl font-bold text-neutral-900">
+                            <p className="text-[10px] sm:text-xs text-neutral-500 uppercase font-semibold">Moyenne</p>
+                            <p className="text-xl sm:text-2xl font-bold text-neutral-900">
                                 {data.average.toFixed(2)}/20
                             </p>
                         </div>
                         <div>
-                            <p className="text-xs text-neutral-500">Rang</p>
-                            <p className="text-2xl font-bold text-neutral-900">
+                            <p className="text-[10px] sm:text-xs text-neutral-500 uppercase font-semibold">Rang</p>
+                            <p className="text-xl sm:text-2xl font-bold text-neutral-900">
                                 {data.rank}
                                 <sup className="text-sm">ème</sup>
                             </p>
