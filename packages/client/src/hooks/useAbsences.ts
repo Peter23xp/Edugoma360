@@ -15,11 +15,14 @@ export interface AbsenceFilters {
 export function useAbsences(filters: AbsenceFilters = {}) {
     const queryClient = useQueryClient();
 
+    // Separate isTeacher (client-only flag) from actual API filters
+    const { isTeacher, ...apiFilters } = filters;
+
     // Get all leave requests
     const absencesQuery = useQuery({
-        queryKey: ['absences', filters],
+        queryKey: ['absences', apiFilters],
         queryFn: async () => {
-            const { data } = await api.get(BASE, { params: filters });
+            const { data } = await api.get(BASE, { params: apiFilters });
             return data;
         },
     });
@@ -40,7 +43,7 @@ export function useAbsences(filters: AbsenceFilters = {}) {
             const { data } = await api.get(`${BASE}/my-balance`);
             return data;
         },
-        enabled: filters.isTeacher === true,
+        enabled: isTeacher === true,
         retry: false,
     });
 

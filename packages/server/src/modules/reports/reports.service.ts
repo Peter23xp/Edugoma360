@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 import { generatePdf, loadTemplate } from '../../lib/pdf';
 import { gradesService } from '../grades/grades.service';
 import { formatFC } from '@edugoma360/shared';
@@ -196,7 +196,7 @@ export class ReportsService {
       where: { id: paymentId },
       include: {
         student: true,
-        feeType: true,
+        feePayments: { include: { fee: true } },
         school: true,
         academicYear: true,
       },
@@ -217,11 +217,11 @@ export class ReportsService {
       <div class="receipt">
         <h2>${payment.school.name}<br>REÇU DE PAIEMENT</h2>
         <div class="row"><span>N° Reçu:</span><strong>${payment.receiptNumber}</strong></div>
-        <div class="row"><span>Date:</span><span>${new Date(payment.paidAt).toLocaleDateString('fr-CD')}</span></div>
+        <div class="row"><span>Date:</span><span>${new Date(payment.paymentDate).toLocaleDateString('fr-CD')}</span></div>
         <div class="row"><span>Élève:</span><span>${payment.student.nom} ${payment.student.postNom}</span></div>
         <div class="row"><span>Matricule:</span><span>${payment.student.matricule}</span></div>
-        <div class="row"><span>Type de frais:</span><span>${payment.feeType.name}</span></div>
-        <div class="row"><span>Mode:</span><span>${payment.paymentMode}</span></div>
+        <div class="row"><span>Type de frais:</span><span>${payment.feePayments.map(fp => fp.fee.name).join(', ')}</span></div>
+        <div class="row"><span>Mode:</span><span>${payment.paymentMethod}</span></div>
         <div class="row total"><span>Montant Payé:</span><span>${formatFC(payment.amountPaid)}</span></div>
         <p style="text-align:center;margin-top:20px;font-size:9pt">Merci — ${payment.school.name}</p>
       </div>

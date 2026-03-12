@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Receipt, Search, Loader2, Printer } from 'lucide-react';
 import api from '../../lib/api';
@@ -23,10 +23,15 @@ export default function PaymentFormPage() {
         enabled: search.length >= 2,
     });
 
-    const { data: feeTypes } = useQuery({
+    const { data: feesData } = useQuery({
         queryKey: ['fee-types'],
-        queryFn: async () => (await api.get('/finance/fee-types')).data,
+        queryFn: async () => {
+            const { data } = await api.get('/fees');
+            return data.data?.fees || data?.fees || [];
+        },
     });
+
+    const feeTypes = feesData;
 
     const selectedFee = feeTypes?.find((f: { id: string }) => f.id === feeTypeId);
     const amountDue = selectedFee?.amount ?? 0;
@@ -35,7 +40,7 @@ export default function PaymentFormPage() {
 
     const payMutation = useMutation({
         mutationFn: async () => {
-            const res = await api.post('/finance/payments', {
+            const res = await api.post('/finance', {
                 studentId: selectedStudent?.id,
                 feeTypeId,
                 amountPaid: amountInFC,

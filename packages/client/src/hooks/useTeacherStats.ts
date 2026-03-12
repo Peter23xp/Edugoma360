@@ -1,9 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-
-const api = axios.create({
-    baseURL: '/api/reports/teachers'
-});
+import api from '../lib/api';
 
 export const useTeacherStats = (filters: {
     termId?: string;
@@ -18,10 +14,10 @@ export const useTeacherStats = (filters: {
     const useOverview = () => useQuery({
         queryKey: ['teacher-stats-overview', filters.termId, filters.sectionId],
         queryFn: async () => {
-            const { data } = await api.get('/overview', {
+            const { data } = await api.get('/reports/teachers/overview', {
                 params: { termId: filters.termId, sectionId: filters.sectionId }
             });
-            return data;
+            return data.data || data;
         },
         enabled: !!filters.termId
     });
@@ -30,14 +26,14 @@ export const useTeacherStats = (filters: {
     const useRanking = (sortBy: 'performance' | 'workload' | 'attendance' = 'performance') => useQuery({
         queryKey: ['teacher-ranking', filters.termId, sortBy, filters.sectionId],
         queryFn: async () => {
-            const { data } = await api.get('/ranking', {
+            const { data } = await api.get('/reports/teachers/ranking', {
                 params: {
                     termId: filters.termId,
                     sortBy,
                     sectionId: filters.sectionId
                 }
             });
-            return data;
+            return data.data || data;
         },
         enabled: !!filters.termId
     });
@@ -46,10 +42,10 @@ export const useTeacherStats = (filters: {
     const usePerformanceChart = () => useQuery({
         queryKey: ['teacher-performance-chart', filters.teacherIds],
         queryFn: async () => {
-            const { data } = await api.get('/performance-chart', {
+            const { data } = await api.get('/reports/teachers/performance-chart', {
                 params: { teacherIds: filters.teacherIds?.join(',') }
             });
-            return data;
+            return data.data || data;
         }
     });
 
@@ -57,8 +53,8 @@ export const useTeacherStats = (filters: {
     const useWorkload = () => useQuery({
         queryKey: ['teacher-workload'],
         queryFn: async () => {
-            const { data } = await api.get('/workload');
-            return data;
+            const { data } = await api.get('/reports/teachers/workload');
+            return data.data || data;
         }
     });
 
@@ -66,10 +62,10 @@ export const useTeacherStats = (filters: {
     const useAttendanceHeatmap = () => useQuery({
         queryKey: ['teacher-attendance-heatmap', filters.startDate, filters.endDate],
         queryFn: async () => {
-            const { data } = await api.get('/attendance-heatmap', {
+            const { data } = await api.get('/reports/teachers/attendance-heatmap', {
                 params: { startDate: filters.startDate, endDate: filters.endDate }
             });
-            return data;
+            return data.data || data;
         }
     });
 

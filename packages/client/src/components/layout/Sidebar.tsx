@@ -1,4 +1,4 @@
-﻿import { NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard, Users, GraduationCap, Wallet, CalendarCheck,
     MessageSquare, FileBarChart, Settings, X, BookOpen, TrendingUp,
@@ -40,10 +40,11 @@ const navItems = [
     {
         label: 'Finances',
         icon: Wallet,
-        roles: ['SUPER_ADMIN', 'ECONOME'],
+        roles: ['SUPER_ADMIN', 'ECONOME', 'PREFET'],
         children: [
             { label: 'Tableau de bord', icon: Wallet, path: '/finance' },
-            { label: 'Nouveau paiement', icon: Receipt, path: '/finance/payment' },
+            { label: 'Config. frais', icon: Cog, path: '/finance/fees' },
+            { label: 'Nouveau paiement', icon: Receipt, path: '/finance/payments/new' },
             { label: 'Impayés', icon: FileBarChart, path: '/finance/debts' },
         ],
     },

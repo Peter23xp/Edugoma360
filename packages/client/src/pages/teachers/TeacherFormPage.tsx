@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createTeacherSchema } from '../../../../server/src/modules/teachers/teachers.validation';
+import { createTeacherSchema, updateTeacherSchema } from '../../../../server/src/modules/teachers/teachers.validation';
 import { useTeacherForm } from '../../hooks/useTeacherForm';
 import { useTeachers } from '../../hooks/useTeachers';
 import { Step1Identity } from '../../components/teachers/form/Step1Identity';
@@ -35,31 +35,32 @@ export const TeacherFormPage: React.FC = () => {
     const { useTeacherById } = useTeachers();
     const { data: existingTeacher, isLoading: isFetching } = useTeacherById(id);
 
+    // Use partial schema for edit mode so that missing optional fields don't block submission
     const form = useForm({
-        resolver: zodResolver(createTeacherSchema),
+        resolver: zodResolver(isEdit ? updateTeacherSchema : createTeacherSchema),
         defaultValues: {
             nom: '',
             postNom: '',
             prenom: '',
-            sexe: 'M',
+            sexe: 'M' as const,
             dateNaissance: '',
             lieuNaissance: '',
             nationalite: 'Congolaise',
             telephone: '',
             email: '',
             adresse: '',
-            niveauEtudes: '',
+            niveauEtudes: '' as any,
             domaineFormation: '',
             universite: '',
             anneeObtention: new Date().getFullYear(),
             specialisations: '',
-            matieres: [],
-            certificats: [],
-            statut: 'ACTIF',
+            matieres: [] as string[],
+            certificats: [] as any[],
+            statut: 'ACTIF' as const,
             dateEmbauche: new Date().toISOString().split('T')[0],
-            typeContrat: '',
-            fonction: 'AUCUNE',
-            affectations: []
+            typeContrat: '' as any,
+            fonction: 'AUCUNE' as const,
+            affectations: [] as any[]
         },
         mode: 'onChange'
     });
@@ -68,17 +69,34 @@ export const TeacherFormPage: React.FC = () => {
 
     useEffect(() => {
         if (existingTeacher) {
-            // Map existing teacher to form structure
+            // Map ONLY the fields that the schema expects, ignoring extra server fields
             form.reset({
-                ...existingTeacher,
-                dateNaissance: existingTeacher.dateNaissance?.split('T')[0],
-                dateEmbauche: existingTeacher.dateEmbauche?.split('T')[0],
-                matieres: existingTeacher.subjects?.map((s: any) => s.id) || [],
+                nom: existingTeacher.nom || '',
+                postNom: existingTeacher.postNom || '',
+                prenom: existingTeacher.prenom || '',
+                sexe: existingTeacher.sexe || 'M',
+                dateNaissance: existingTeacher.dateNaissance?.split('T')[0] || '',
+                lieuNaissance: existingTeacher.lieuNaissance || '',
+                nationalite: existingTeacher.nationalite || 'Congolaise',
+                telephone: existingTeacher.telephone || '',
+                email: existingTeacher.email || '',
+                adresse: existingTeacher.adresse || '',
+                niveauEtudes: existingTeacher.niveauEtudes || '',
+                domaineFormation: existingTeacher.domaineFormation || '',
+                universite: existingTeacher.universite || '',
+                anneeObtention: existingTeacher.anneeObtention || new Date().getFullYear(),
+                specialisations: existingTeacher.specialisations || '',
+                matieres: existingTeacher.subjects?.map((s: any) => s.id) || existingTeacher.matieres || [],
+                certificats: existingTeacher.certificats || [],
+                statut: existingTeacher.statut || 'ACTIF',
+                dateEmbauche: existingTeacher.dateEmbauche?.split('T')[0] || new Date().toISOString().split('T')[0],
+                typeContrat: existingTeacher.typeContrat || '',
+                fonction: existingTeacher.fonction || 'AUCUNE',
                 affectations: existingTeacher.assignments?.map((a: any) => ({
                     matiereId: a.subjectId,
                     classeId: a.classId,
                     volumeHoraire: a.volumeHoraire
-                })) || []
+                })) || existingTeacher.affectations || []
             });
         }
     }, [existingTeacher, form]);
@@ -122,6 +140,7 @@ export const TeacherFormPage: React.FC = () => {
                 setCurrentStep(currentStep + 1);
             }
         } else {
+            console.warn('[TeacherForm] Step validation errors:', form.formState.errors);
             toast.error('Veuillez corriger les erreurs avant de continuer');
         }
     };
@@ -133,10 +152,19 @@ export const TeacherFormPage: React.FC = () => {
     };
 
     const handleSubmit = async () => {
+        // In edit mode, skip full Zod validation and just submit what we have
+        if (isEdit) {
+            const formValues = form.getValues();
+            console.log('[TeacherForm] Submitting edit with values:', formValues);
+            onSubmit(formValues);
+            return;
+        }
+
         const isValid = await form.trigger();
         if (isValid) {
             form.handleSubmit(onSubmit)();
         } else {
+            console.warn('[TeacherForm] Validation errors on submit:', form.formState.errors);
             toast.error('Veuillez corriger les erreurs avant de soumettre');
         }
     };

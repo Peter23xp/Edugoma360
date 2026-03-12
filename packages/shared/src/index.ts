@@ -3,10 +3,12 @@
 
 // Types
 export * from './types';
+export * from './types/payment';
 
 // Constants
 export * from './constants/sections';
 export * from './constants/feeTypes';
+export * from './constants/paymentMethods';
 export * from './constants/roles';
 export * from './constants/holidays';
 export * from './constants/provinces';

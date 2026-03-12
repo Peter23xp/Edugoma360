@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import api from '../../../lib/api';
 import { Search, Filter, Calendar, BookOpen, Layers } from 'lucide-react';
 
 interface ReportFiltersProps {
@@ -12,8 +12,8 @@ export default function ReportFilters({ filters, setFilters }: ReportFiltersProp
     const { data: terms = [] } = useQuery({
         queryKey: ['terms-all'],
         queryFn: async () => {
-            const { data } = await axios.get('/api/settings/terms');
-            return data;
+            const { data } = await api.get('/settings/terms');
+            return data.data || data;
         }
     });
 
@@ -21,8 +21,8 @@ export default function ReportFilters({ filters, setFilters }: ReportFiltersProp
     const { data: sections = [] } = useQuery({
         queryKey: ['sections-all'],
         queryFn: async () => {
-            const { data } = await axios.get('/api/settings/sections');
-            return data;
+            const { data } = await api.get('/settings/sections');
+            return data.data || data;
         }
     });
 
@@ -30,8 +30,8 @@ export default function ReportFilters({ filters, setFilters }: ReportFiltersProp
     const { data: subjects = [] } = useQuery({
         queryKey: ['subjects-all'],
         queryFn: async () => {
-            const { data } = await axios.get('/api/settings/subjects');
-            return data;
+            const { data } = await api.get('/settings/subjects');
+            return data.data || data;
         }
     });
 

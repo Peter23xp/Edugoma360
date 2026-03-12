@@ -1,4 +1,4 @@
-﻿import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/auth.store';
 
 // Layout
@@ -41,8 +41,9 @@ import BulletinPage from './pages/grades/BulletinPage';
 
 // Finance
 import FinanceDashboard from './pages/finance/FinanceDashboard';
-import PaymentFormPage from './pages/finance/PaymentFormPage';
+import { PaymentEntryPage } from './pages/finance/PaymentEntryPage';
 import DebtsPage from './pages/finance/DebtsPage';
+import FeesConfigPage from './pages/finance/FeesConfigPage';
 
 // Attendance
 import DailyAttendancePage from './pages/attendance/DailyAttendancePage';
@@ -141,7 +142,8 @@ export default function AppRouter() {
 
                 {/* Finance */}
                 <Route path="finance" element={<FinanceDashboard />} />
-                <Route path="finance/payment" element={<PaymentFormPage />} />
+                <Route path="finance/fees" element={<FeesConfigPage />} />
+                <Route path="finance/payments/new" element={<PaymentEntryPage />} />
                 <Route path="finance/debts" element={<DebtsPage />} />
 
                 {/* Attendance */}

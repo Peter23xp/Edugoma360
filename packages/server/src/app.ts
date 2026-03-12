@@ -1,4 +1,4 @@
-﻿import express from 'express';
+import express from 'express';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -26,6 +26,8 @@ import calendarRoutes from './modules/calendar/calendar.routes';
 import bulletinsRoutes from './modules/bulletins/bulletins.routes';
 import assignmentsRoutes from './modules/assignments/assignments.routes';
 import absencesRoutes from './modules/absences/absences.routes';
+import feesRoutes from './modules/fees/fees.routes';
+import paymentsRoutes from './modules/payments/payments.routes';
 
 const app = express();
 
@@ -70,6 +72,8 @@ app.use('/api/calendar', calendarRoutes);
 app.use('/api/bulletin', bulletinsRoutes);
 app.use('/api/assignments', assignmentsRoutes);
 app.use('/api/absences', absencesRoutes);
+app.use('/api/fees', feesRoutes);
+app.use('/api/payments', paymentsRoutes);
 
 // â”€â”€ 404 Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req, res) => {

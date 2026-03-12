@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 
 export class AlertsService {
   async getAlerts(schoolId: string, status?: string) {
@@ -20,7 +20,7 @@ export class AlertsService {
           payments: {
             none: {
               academicYearId: activeYear.id,
-              paidAt: { gte: thirtyDaysAgo },
+              paymentDate: { gte: thirtyDaysAgo },
             },
           },
         },

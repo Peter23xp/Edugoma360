@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 import { generateMatricule, getProvinceCode, getCityCode } from '@edugoma360/shared';
 import type { z } from 'zod';
 import type { CreateStudentDto, UpdateStudentDto, StudentQueryDto, BatchArchiveDto, ExportQueryDto } from './students.dto';
@@ -37,10 +37,10 @@ export class StudentsService {
 
         if (search) {
             where.OR = [
-                { nom: { contains: search, mode: 'insensitive' } },
-                { postNom: { contains: search, mode: 'insensitive' } },
-                { prenom: { contains: search, mode: 'insensitive' } },
-                { matricule: { contains: search, mode: 'insensitive' } },
+                { nom: { contains: search } },
+                { postNom: { contains: search } },
+                { prenom: { contains: search } },
+                { matricule: { contains: search } },
             ];
         }
 
@@ -135,7 +135,7 @@ export class StudentsService {
                     orderBy: { enrolledAt: 'desc' },
                 },
                 payments: {
-                    orderBy: { paidAt: 'desc' },
+                    orderBy: { paymentDate: 'desc' },
                     take: 10,
                 },
                 attendances: {
@@ -280,10 +280,10 @@ export class StudentsService {
         if (query.status) where.statut = query.status;
         if (query.q) {
             where.OR = [
-                { nom: { contains: query.q, mode: 'insensitive' } },
-                { postNom: { contains: query.q, mode: 'insensitive' } },
-                { prenom: { contains: query.q, mode: 'insensitive' } },
-                { matricule: { contains: query.q, mode: 'insensitive' } },
+                { nom: { contains: query.q } },
+                { postNom: { contains: query.q } },
+                { prenom: { contains: query.q } },
+                { matricule: { contains: query.q } },
             ];
         }
         if (query.classId) {
@@ -586,7 +586,7 @@ export class StudentsService {
             where: { studentId, schoolId }
         });
 
-        const expected = payments.reduce((sum, p) => sum + p.amountDue, 0);
+        const expected = payments.reduce((sum, p) => sum + p.totalDue, 0);
         const paid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
 
         return {

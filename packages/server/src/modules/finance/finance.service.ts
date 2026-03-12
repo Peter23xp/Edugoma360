@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 import { generateReceiptNumber } from '@edugoma360/shared';
 import type { z } from 'zod';
 import type { CreatePaymentDto, FinanceQueryDto } from './finance.dto';
@@ -28,15 +28,23 @@ export class FinanceService {
 
         return prisma.payment.create({
             data: {
-                receiptNumber, studentId: data.studentId, feeTypeId: data.feeTypeId, schoolId,
-                academicYearId: academicYear.id, amountDue: feeType.amount, amountPaid: amountPaidFC,
-                currency: data.currency, exchangeRate: data.exchangeRate, paymentMode: data.paymentMode,
-                reference: data.reference, paidAt: data.paidAt ? new Date(data.paidAt) : new Date(),
-                createdById: userId,
+                receiptNumber, studentId: data.studentId, schoolId,
+                academicYearId: academicYear.id, totalDue: feeType.amount, amountPaid: amountPaidFC,
+                remainingBalance: feeType.amount - amountPaidFC,
+                currency: data.currency, exchangeRate: data.exchangeRate, paymentMethod: data.paymentMode,
+                transactionRef: data.reference, paymentDate: data.paidAt ? new Date(data.paidAt) : new Date(),
+                cashierId: userId,
+                feePayments: {
+                    create: [{
+                        feeId: data.feeTypeId,
+                        amountDue: feeType.amount,
+                        amountPaid: amountPaidFC
+                    }]
+                }
             },
             include: {
                 student: { select: { nom: true, postNom: true, prenom: true, matricule: true } },
-                feeType: { select: { name: true, amount: true } },
+                feePayments: { include: { fee: { select: { name: true, amount: true } } } },
             },
         });
     }
@@ -46,19 +54,19 @@ export class FinanceService {
         const skip = (page - 1) * perPage;
         const where: any = { schoolId };
         if (studentId) where.studentId = studentId;
-        if (feeTypeId) where.feeTypeId = feeTypeId;
-        if (paymentMode) where.paymentMode = paymentMode;
+        if (feeTypeId) where.feePayments = { some: { feeId: feeTypeId } };
+        if (paymentMode) where.paymentMethod = paymentMode;
         if (from || to) {
-            where.paidAt = {};
-            if (from) where.paidAt.gte = new Date(from);
-            if (to) where.paidAt.lte = new Date(to);
+            where.paymentDate = {};
+            if (from) where.paymentDate.gte = new Date(from);
+            if (to) where.paymentDate.lte = new Date(to);
         }
 
         const [payments, total] = await Promise.all([
             prisma.payment.findMany({
                 where, skip, take: perPage,
-                include: { student: { select: { nom: true, postNom: true, matricule: true } }, feeType: { select: { name: true } } },
-                orderBy: { paidAt: 'desc' },
+                include: { student: { select: { nom: true, postNom: true, matricule: true } }, feePayments: { include: { fee: { select: { name: true } } } } },
+                orderBy: { paymentDate: 'desc' },
             }),
             prisma.payment.count({ where }),
         ]);
@@ -112,7 +120,7 @@ export class FinanceService {
         const expected = feeTypes.reduce((sum, ft) => sum + ft.amount, 0) * activeStudents;
 
         const payments = await prisma.payment.findMany({
-            where: { schoolId, academicYearId: academicYear.id, paidAt: { gte: firstDayOfMonth, lte: lastDayOfMonth } },
+            where: { schoolId, academicYearId: academicYear.id, paymentDate: { gte: firstDayOfMonth, lte: lastDayOfMonth } },
         });
 
         const collected = payments.reduce((sum, p) => sum + p.amountPaid, 0);
@@ -131,7 +139,7 @@ export class FinanceService {
             const label = new Intl.DateTimeFormat('fr-FR', { month: 'short' }).format(date);
 
             const payments = await prisma.payment.findMany({
-                where: { schoolId, paidAt: { gte: firstDay, lte: lastDay } },
+                where: { schoolId, paymentDate: { gte: firstDay, lte: lastDay } },
             });
 
             const collected = payments.reduce((sum, p) => sum + p.amountPaid, 0);
@@ -177,7 +185,7 @@ export class FinanceService {
             const label = new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric' }).format(date);
 
             const payments = await prisma.payment.findMany({
-                where: { schoolId, paidAt: { gte: firstDay, lte: lastDay } },
+                where: { schoolId, paymentDate: { gte: firstDay, lte: lastDay } },
             });
 
             const revenue = payments.reduce((sum, p) => sum + p.amountPaid, 0);

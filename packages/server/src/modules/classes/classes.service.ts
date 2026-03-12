@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 
 interface CreateClassDto {
     schoolId: string;
@@ -46,7 +46,6 @@ export class ClassesService {
         if (filters.search) {
             where.name = {
                 contains: filters.search,
-                mode: 'insensitive',
             };
         }
 
