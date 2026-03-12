@@ -135,7 +135,7 @@ export class StudentsService {
                     orderBy: { enrolledAt: 'desc' },
                 },
                 payments: {
-                    orderBy: { paymentDate: 'desc' },
+                    orderBy: { createdAt: 'desc' },
                     take: 10,
                 },
                 attendances: {

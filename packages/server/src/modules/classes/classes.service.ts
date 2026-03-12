@@ -247,6 +247,12 @@ export class ClassesService {
             throw new Error('CLASS_NOT_FOUND');
         }
 
+        const activeYear = await prisma.academicYear.findFirst({
+            where: { schoolId, isActive: true }
+        });
+
+        if (!activeYear) throw new Error('NO_ACTIVE_ACADEMIC_YEAR');
+
         // Delete existing assignments
         await prisma.teacherClassSubject.deleteMany({
             where: { classId },
@@ -260,6 +266,7 @@ export class ClassesService {
                         teacherId: assignment.teacherId,
                         classId,
                         subjectId: assignment.subjectId,
+                        academicYearId: activeYear.id,
                     },
                     include: {
                         teacher: {

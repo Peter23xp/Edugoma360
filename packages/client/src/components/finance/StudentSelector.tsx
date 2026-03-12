@@ -22,56 +22,62 @@ export function StudentSelector({ onSelect, selectedStudent }: StudentSelectorPr
   });
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-xl border border-neutral-300 p-6">
-        <h3 className="text-lg font-bold mb-4">Rechercher un élève</h3>
-        
+    <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
+      <div className="px-5 py-4 border-b border-neutral-100">
+        <h3 className="text-sm font-semibold text-neutral-900">Rechercher un élève</h3>
+      </div>
+
+      <div className="p-5">
         {!selectedStudent ? (
           <div className="space-y-3">
             <div className="relative">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
               <input
                 type="text"
                 autoFocus
                 placeholder="Matricule, nom, ou téléphone tuteur..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg text-sm focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all"
+                className="w-full h-10 pl-9 pr-3 bg-white border border-neutral-200 rounded-lg text-sm
+                           focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
               />
-              {isLoading && <Loader2 size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 animate-spin" />}
+              {isLoading && <Loader2 size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 animate-spin" />}
             </div>
 
             {searchResults?.data?.length > 0 && (
-              <div className="border border-neutral-200 rounded-lg overflow-hidden divide-y divide-neutral-100 shadow-sm mt-4">
+              <div className="border border-neutral-200 rounded-lg overflow-hidden divide-y divide-neutral-100">
                 {searchResults.data.map((s: any) => (
                   <button
                     key={s.id}
-                    className="w-full text-left p-4 hover:bg-primary-50 transition-colors flex items-center justify-between group"
+                    className="w-full text-left px-4 py-3 hover:bg-neutral-50 transition-colors flex items-center gap-3 group"
                     onClick={() => {
                       onSelect(s);
                       setSearch('');
                     }}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-neutral-200 rounded-full flex items-center justify-center overflow-hidden">
-                        {s.photoUrl ? <img src={s.photoUrl} alt="Photo" className="w-full h-full object-cover" /> : <UserIcon size={20} className="text-neutral-500" />}
+                    <div className="w-9 h-9 bg-neutral-100 rounded-full flex items-center justify-center overflow-hidden shrink-0">
+                      {s.photoUrl ? (
+                        <img src={s.photoUrl} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <UserIcon size={16} className="text-neutral-400" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-neutral-900 truncate">
+                        {s.nom} {s.postNom} {s.prenom}
                       </div>
-                      <div>
-                        <div className="font-semibold text-neutral-900 group-hover:text-primary transition-colors">
-                          {s.nom} {s.postNom} {s.prenom}
-                        </div>
-                        <div className="text-xs text-neutral-500 font-mono mt-0.5">
-                          {s.matricule} • {s.enrollments?.[0]?.class?.name || 'Sans classe'}
-                        </div>
+                      <div className="text-xs text-neutral-500 font-mono">
+                        {s.matricule} • {s.enrollments?.[0]?.class?.name || 'Sans classe'}
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-primary px-3 py-1 bg-white border border-primary-200 rounded-full group-hover:bg-primary group-hover:text-white transition-colors">
-                      Sélectionner
+                    <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                      Sélectionner →
                     </span>
                   </button>
                 ))}
               </div>
             )}
+
             {search.length >= 2 && searchResults?.data?.length === 0 && (
               <div className="text-center py-6 text-sm text-neutral-500 bg-neutral-50 rounded-lg border border-dashed border-neutral-200">
                 Aucun élève trouvé pour "{search}"
@@ -79,25 +85,28 @@ export function StudentSelector({ onSelect, selectedStudent }: StudentSelectorPr
             )}
           </div>
         ) : (
-          <div className="bg-primary-50 rounded-lg border border-primary-100 p-5 flex items-start justify-between">
-            <div className="flex items-center gap-4">
-               <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 border-primary-200 shadow-sm">
-                 {selectedStudent.photoUrl ? <img src={selectedStudent.photoUrl} alt="Photo" className="w-full h-full object-cover" /> : <UserIcon size={24} className="text-primary" />}
-               </div>
-               <div>
-                 <h4 className="font-bold text-lg text-neutral-900">{selectedStudent.nom} {selectedStudent.postNom} {selectedStudent.prenom}</h4>
-                 <div className="text-sm text-neutral-600 font-mono mt-1 space-x-3">
-                   <span>Matricule: <strong className="text-neutral-800">{selectedStudent.matricule}</strong></span>
-                   <span>Classe: <strong className="text-neutral-800">{selectedStudent.enrollments?.[0]?.class?.name || 'N/A'}</strong></span>
-                   {selectedStudent.telTuteur && <span>Tuteur: <strong className="text-neutral-800">{selectedStudent.telTuteur}</strong></span>}
-                 </div>
-               </div>
+          <div className="bg-neutral-50 rounded-lg border border-neutral-200 p-4 flex items-center gap-4">
+            <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-neutral-200 overflow-hidden shrink-0">
+              {selectedStudent.photoUrl ? (
+                <img src={selectedStudent.photoUrl} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <UserIcon size={18} className="text-neutral-400" />
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-bold text-neutral-900">
+                {selectedStudent.nom} {selectedStudent.postNom} {selectedStudent.prenom}
+              </div>
+              <div className="text-xs text-neutral-500 font-mono mt-0.5">
+                {selectedStudent.matricule} • {selectedStudent.enrollments?.[0]?.class?.name || 'N/A'}
+                {selectedStudent.telTuteur && ` • Tuteur: ${selectedStudent.telTuteur}`}
+              </div>
             </div>
             <button
               onClick={() => onSelect(null)}
-              className="px-4 py-2 text-sm font-medium text-primary hover:bg-white rounded-lg transition-colors border border-transparent hover:border-primary-100"
+              className="text-xs font-medium text-primary hover:text-primary-dark transition-colors shrink-0"
             >
-              Changer d'élève
+              Changer
             </button>
           </div>
         )}
