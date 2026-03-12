@@ -1,48 +1,75 @@
-﻿import { useQuery } from '@tanstack/react-query';
-import { Wallet, TrendingUp, AlertCircle } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { Wallet, TrendingUp, AlertCircle, Users, Receipt } from 'lucide-react';
 import api from '../../lib/api';
 import { formatFC } from '@edugoma360/shared';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 export default function FinanceDashboard() {
-    const { data: stats } = useQuery({
+    const { data: statsData } = useQuery({
         queryKey: ['finance-stats'],
-        queryFn: async () => (await api.get('/finance/stats')).data,
+        queryFn: async () => {
+            const res = await api.get('/finance/stats');
+            return res.data?.data ?? res.data;
+        },
     });
 
-    // Fetch monthly revenue data
-    const { data: monthlyData } = useQuery({
+    const { data: monthlyRaw } = useQuery({
         queryKey: ['finance-monthly'],
-        queryFn: async () => (await api.get('/finance/monthly-revenue')).data,
+        queryFn: async () => {
+            const res = await api.get('/finance/monthly-revenue');
+            // Backend returns { data: [...] } with { month, revenue }
+            return res.data?.data ?? res.data ?? [];
+        },
     });
 
-    const monthlyRevenue = monthlyData?.revenue || [];
+    const stats = statsData || {};
+    const monthlyRevenue = Array.isArray(monthlyRaw) ? monthlyRaw : [];
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-xl font-bold text-neutral-900 flex items-center gap-2"><Wallet size={22} /> Finances</h1>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="card-stat">
-                    <p className="text-xs text-neutral-500">Recettes totales</p>
-                    <p className="text-2xl font-bold text-primary mt-1">{stats?.totalRevenue ? formatFC(stats.totalRevenue) : '—'}</p>
-                    <div className="flex items-center gap-1 mt-2 text-xs text-success"><TrendingUp size={12} /> ce trimestre</div>
+        <div className="space-y-4 pb-20">
+            {/* ── Header ─────────────────────────────────────── */}
+            <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
+                    <Wallet size={22} className="text-white" />
                 </div>
-                <div className="card-stat">
-                    <p className="text-xs text-neutral-500">Paiements ce mois</p>
-                    <p className="text-2xl font-bold text-secondary mt-1">{stats?.monthlyPayments ?? '—'}</p>
-                </div>
-                <div className="card-stat">
-                    <p className="text-xs text-neutral-500">Élèves en règle</p>
-                    <p className="text-2xl font-bold text-success mt-1">{stats?.paidStudents ?? '—'}</p>
-                </div>
-                <div className="card-stat">
-                    <p className="text-xs text-neutral-500">Impayés totaux</p>
-                    <p className="text-2xl font-bold text-danger mt-1">{stats?.totalDebts ? formatFC(stats.totalDebts) : '—'}</p>
-                    <div className="flex items-center gap-1 mt-2 text-xs text-danger"><AlertCircle size={12} /> {stats?.debtStudents ?? 0} élèves</div>
+                <div>
+                    <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
+                        Tableau de bord Finance
+                    </h1>
+                    <p className="text-sm text-neutral-500">Vue d'ensemble des finances</p>
                 </div>
             </div>
 
+            {/* ── Stat Cards ─────────────────────────────────── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <StatCard
+                    label="Recettes totales"
+                    value={stats.totalRevenue ? formatFC(stats.totalRevenue) : '0 FC'}
+                    icon={<TrendingUp size={16} className="text-primary" />}
+                    accent="text-primary"
+                />
+                <StatCard
+                    label="Attendu (budgété)"
+                    value={stats.totalExpected ? formatFC(stats.totalExpected) : '0 FC'}
+                    icon={<Receipt size={16} className="text-blue-600" />}
+                    accent="text-blue-700"
+                />
+                <StatCard
+                    label="Paiements ce mois"
+                    value={stats.monthlyPayments != null ? String(stats.monthlyPayments) : '—'}
+                    icon={<Users size={16} className="text-green-600" />}
+                    accent="text-green-700"
+                />
+                <StatCard
+                    label="Impayés totaux"
+                    value={stats.totalDebt ? formatFC(stats.totalDebt) : '0 FC'}
+                    icon={<AlertCircle size={16} className="text-red-500" />}
+                    accent="text-red-700"
+                    subtext={stats.debtStudents != null ? `${stats.debtStudents} élèves` : undefined}
+                />
+            </div>
+
+            {/* ── Monthly Revenue Chart ──────────────────────── */}
             <div className="bg-white rounded-xl border border-neutral-300/50 p-5">
                 <h3 className="text-sm font-semibold text-neutral-900 mb-4">Recettes mensuelles (FC)</h3>
                 {monthlyRevenue.length > 0 ? (
@@ -52,7 +79,7 @@ export default function FinanceDashboard() {
                             <XAxis dataKey="month" tick={{ fontSize: 11 }} />
                             <YAxis tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} tick={{ fontSize: 11 }} />
                             <Tooltip formatter={(v: number) => formatFC(v)} />
-                            <Bar dataKey="montant" fill="#1B5E20" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="revenue" fill="#1B5E20" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
@@ -61,6 +88,33 @@ export default function FinanceDashboard() {
                     </div>
                 )}
             </div>
+        </div>
+    );
+}
+
+function StatCard({
+    label,
+    value,
+    icon,
+    accent,
+    subtext,
+}: {
+    label: string;
+    value: string;
+    icon: React.ReactNode;
+    accent: string;
+    subtext?: string;
+}) {
+    return (
+        <div className="bg-white rounded-xl border border-neutral-300/50 p-4">
+            <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-neutral-500">{label}</p>
+                {icon}
+            </div>
+            <p className={`text-2xl font-bold ${accent}`}>{value}</p>
+            {subtext && (
+                <p className="text-xs text-neutral-500 mt-1">{subtext}</p>
+            )}
         </div>
     );
 }

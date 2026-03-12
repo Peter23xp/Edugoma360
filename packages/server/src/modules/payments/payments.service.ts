@@ -74,6 +74,39 @@ export class PaymentsService {
     return { fees, totalDue, totalPaid, totalRemaining };
   }
 
+  async getPayments(schoolId: string, query: any) {
+    const where: any = { schoolId };
+    if (query.studentId) where.studentId = query.studentId;
+
+    const payments = await prisma.payment.findMany({
+      where,
+      include: {
+        student: { select: { nom: true, postNom: true, matricule: true } },
+        feePayments: { include: { fee: { select: { name: true, amount: true } } } },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 50,
+    });
+
+    // Build summary if studentId is provided
+    let summary = { due: 0, paid: 0, remaining: 0 };
+    if (query.studentId) {
+      const feeTypes = await prisma.feeType.findMany({
+        where: { schoolId, isActive: true },
+      });
+      const totalDue = feeTypes.reduce((sum, ft) => sum + ft.amount, 0);
+
+      const allPayments = await prisma.payment.findMany({
+        where: { studentId: query.studentId, schoolId },
+      });
+      const totalPaid = allPayments.reduce((sum, p) => sum + p.amountPaid, 0);
+
+      summary = { due: totalDue, paid: totalPaid, remaining: totalDue - totalPaid };
+    }
+
+    return { payments, summary };
+  }
+
   async createPayment(schoolId: string, cashierId: string, dto: any) {
     const academicYear = await prisma.academicYear.findFirst({
       where: { schoolId, isActive: true }

@@ -1,21 +1,13 @@
-﻿import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { DollarSign, Receipt } from 'lucide-react';
 import api from '../../../lib/api';
-import type { Payment } from '@edugoma360/shared';
+import { PAYMENT_METHODS } from '@edugoma360/shared';
 
 interface PaymentSummary {
     due: number;
     paid: number;
     remaining: number;
-}
-
-interface PaymentsResponse {
-    payments: (Payment & {
-        feeType: { name: string };
-        student: { nom: string; postNom: string };
-    })[];
-    summary: PaymentSummary;
 }
 
 interface PaymentsTabProps {
@@ -25,14 +17,11 @@ interface PaymentsTabProps {
 export default function PaymentsTab({ studentId }: PaymentsTabProps) {
     const navigate = useNavigate();
 
-    // TODO: Get current academic year from context
-    const academicYearId = 'current-year';
-
     const { data, isLoading } = useQuery({
-        queryKey: ['student-payments', studentId, academicYearId],
+        queryKey: ['student-payments', studentId],
         queryFn: async () => {
-            const res = await api.get<PaymentsResponse>('/payments', {
-                params: { studentId, academicYearId },
+            const res = await api.get('/payments', {
+                params: { studentId },
             });
             return res.data;
         },
@@ -64,24 +53,19 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
         );
     }
 
-    const { payments, summary } = data;
+    const { payments = [], summary = { due: 0, paid: 0, remaining: 0 } } = data as {
+        payments: any[];
+        summary: PaymentSummary;
+    };
     const paymentPercentage = summary.due > 0 ? (summary.paid / summary.due) * 100 : 0;
 
-    const paymentModeLabels: Record<string, string> = {
-        ESPECES: 'Espèces',
-        AIRTEL_MONEY: 'Airtel Money',
-        MPESA: 'M-Pesa',
-        ORANGE_MONEY: 'Orange Money',
-        VIREMENT: 'Virement',
-    };
-
     const handleRecordPayment = () => {
-        navigate(`/finance/payment?studentId=${studentId}`);
+        navigate(`/finance/payments/new?studentId=${studentId}`);
     };
 
     return (
         <div className="space-y-6">
-            {/* â”€â”€ Summary Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Summary Cards ──────────────────────────────────── */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <SummaryCard
                     label="Total dû"
@@ -100,7 +84,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                 />
             </div>
 
-            {/* â”€â”€ Progress Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Progress Bar ───────────────────────────────────── */}
             <div>
                 <div className="flex items-center justify-between mb-2">
                     <p className="text-xs font-medium text-neutral-600">
@@ -119,7 +103,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                 </div>
             </div>
 
-            {/* â”€â”€ Payments Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Payments Table ──────────────────────────────────── */}
             {payments.length > 0 ? (
                 <div>
                     <h3 className="text-sm font-semibold text-neutral-900 mb-3">
@@ -147,7 +131,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-neutral-100">
-                                {payments.map((payment) => (
+                                {payments.map((payment: any) => (
                                     <tr key={payment.id} className="hover:bg-neutral-50">
                                         <td className="px-4 py-3">
                                             <button
@@ -164,17 +148,19 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                                             </button>
                                         </td>
                                         <td className="px-4 py-3 text-sm text-neutral-900">
-                                            {payment.feeType.name}
+                                            {payment.feePayments
+                                                ?.map((fp: any) => fp.fee?.name)
+                                                .filter(Boolean)
+                                                .join(', ') || '—'}
                                         </td>
                                         <td className="px-4 py-3 text-sm text-right font-medium text-neutral-900">
-                                            {payment.amountPaid.toLocaleString()} FC
+                                            {payment.amountPaid?.toLocaleString()} FC
                                         </td>
                                         <td className="px-4 py-3 text-sm text-neutral-700">
-                                            {new Date(payment.paidAt).toLocaleDateString('fr-FR')}
+                                            {new Date(payment.paymentDate || payment.createdAt).toLocaleDateString('fr-FR')}
                                         </td>
                                         <td className="px-4 py-3 text-sm text-neutral-700">
-                                            {paymentModeLabels[payment.paymentMode] ||
-                                                payment.paymentMode}
+                                            {(PAYMENT_METHODS as any)[payment.paymentMethod] || payment.paymentMethod}
                                         </td>
                                     </tr>
                                 ))}
@@ -189,7 +175,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                 </div>
             )}
 
-            {/* â”€â”€ Outstanding Fees â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Outstanding Fees ────────────────────────────────── */}
             {summary.remaining > 0 && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                     <div className="flex items-start justify-between gap-4">
@@ -208,7 +194,7 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                                        bg-red-600 text-white rounded-lg hover:bg-red-700 
                                        transition-colors whitespace-nowrap"
                         >
-                            Enregistrer paiement â†’
+                            Enregistrer paiement →
                         </button>
                     </div>
                 </div>

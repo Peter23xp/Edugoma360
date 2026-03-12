@@ -14,13 +14,20 @@ export class PaymentsController {
     }
   }
 
+  async getPayments(req: Request, res: Response, next: NextFunction) {
+    try {
+      const schoolId = req.user?.schoolId;
+      if (!schoolId) return res.status(401).json({ error: 'Non autorisé' });
+      const data = await paymentsService.getPayments(schoolId, req.query as any);
+      res.json(data);
+    } catch (e) {
+      next(e);
+    }
+  }
+
   async getReceipt(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      // const pdfBuffer = await reportsService.generateReceipt(id);
-      // res.setHeader('Content-Type', 'application/pdf');
-      // res.setHeader('Content-Disposition', `inline; filename="recu-${id}.pdf"`);
-      // res.send(pdfBuffer);
       res.status(200).json({ success: true });
     } catch (e) {
       next(e);

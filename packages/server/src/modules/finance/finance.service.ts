@@ -157,7 +157,7 @@ export class FinanceService {
 
     async getStats(schoolId: string) {
         const academicYear = await prisma.academicYear.findFirst({ where: { schoolId, isActive: true } });
-        if (!academicYear) return { totalRevenue: 0, totalExpected: 0, totalDebt: 0, currency: 'FC' };
+        if (!academicYear) return { totalRevenue: 0, totalExpected: 0, totalDebt: 0, monthlyPayments: 0, debtStudents: 0, currency: 'FC' };
 
         const feeTypes = await prisma.feeType.findMany({ where: { schoolId, isActive: true } });
         const activeStudents = await prisma.student.count({ where: { schoolId, isActive: true } });
@@ -170,7 +170,25 @@ export class FinanceService {
         const totalRevenue = payments.reduce((sum, p) => sum + p.amountPaid, 0);
         const totalDebt = totalExpected - totalRevenue;
 
-        return { totalRevenue, totalExpected, totalDebt, currency: 'FC' };
+        // Monthly payments count
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const monthlyPayments = await prisma.payment.count({
+            where: { schoolId, createdAt: { gte: firstDayOfMonth } },
+        });
+
+        // Count students with outstanding debts
+        const totalDuePerStudent = feeTypes.reduce((sum, ft) => sum + ft.amount, 0);
+        const students = await prisma.student.findMany({
+            where: { schoolId, isActive: true },
+            include: { payments: { where: { academicYearId: academicYear.id } } },
+        });
+        const debtStudents = students.filter(s => {
+            const paid = s.payments.reduce((sum, p) => sum + p.amountPaid, 0);
+            return paid < totalDuePerStudent;
+        }).length;
+
+        return { totalRevenue, totalExpected, totalDebt, monthlyPayments, debtStudents, currency: 'FC' };
     }
 
     async getMonthlyRevenue(schoolId: string) {
