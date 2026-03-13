@@ -87,7 +87,6 @@ export function PaymentFilters({ filters, onFiltersChange }: PaymentFiltersProps
     enabled: studentSearch.length >= 2,
   });
 
-  // Receipt number debounce
   useEffect(() => {
     const timer = setTimeout(() => {
       onFiltersChange({ ...filters, receiptNumber: receiptSearch || undefined, page: 1 });
@@ -95,6 +94,18 @@ export function PaymentFilters({ filters, onFiltersChange }: PaymentFiltersProps
     return () => clearTimeout(timer);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [receiptSearch]);
+
+  // Student name search debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only apply text search if a specific student hasn't been selected from dropdown
+      if (!selectedStudentLabel && (studentSearch.length >= 2 || studentSearch.length === 0)) {
+        onFiltersChange({ ...filters, search: studentSearch || undefined, page: 1 });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [studentSearch, selectedStudentLabel]);
 
   // Period preset change
   const handlePeriodChange = useCallback(
@@ -124,12 +135,13 @@ export function PaymentFilters({ filters, onFiltersChange }: PaymentFiltersProps
     setSelectedStudentLabel(`${student.nom} ${student.postNom}`);
     setStudentSearch('');
     setShowStudentDropdown(false);
-    onFiltersChange({ ...filters, studentId: student.id, page: 1 });
+    onFiltersChange({ ...filters, studentId: student.id, search: undefined, page: 1 });
   };
 
   const clearStudentFilter = () => {
     setSelectedStudentLabel('');
-    onFiltersChange({ ...filters, studentId: undefined, page: 1 });
+    setStudentSearch('');
+    onFiltersChange({ ...filters, studentId: undefined, search: undefined, page: 1 });
   };
 
   const clearAllFilters = () => {
@@ -149,7 +161,8 @@ export function PaymentFilters({ filters, onFiltersChange }: PaymentFiltersProps
     filters.classId ||
     filters.paymentMethod ||
     filters.cashierId ||
-    filters.receiptNumber;
+    filters.receiptNumber ||
+    filters.search;
 
   const periodPresets: { id: PeriodPreset; label: string }[] = [
     { id: 'all', label: 'Tout' },

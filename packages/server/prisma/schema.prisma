@@ -28,6 +28,7 @@ model School {
   classes            Class[]
   feeTypes           FeeType[]
   payments           Payment[]
+  paymentPlans       PaymentPlan[]
   sections           Section[]
   settings           Setting[]
   smsLogs            SmsLog[]
@@ -37,6 +38,7 @@ model School {
   teacherLeaves      TeacherLeave[]
   teachers           Teacher[]
   users              User[]
+  cashSessions       CashSession[]
 
   @@map("schools")
 }
@@ -60,6 +62,7 @@ model User {
   paymentsCreated        Payment[]
   teacherAttendanceTaken TeacherAttendance[]
   leaveProcessing        TeacherLeave[]      @relation("LeaveProcessor")
+  cashSessions           CashSession[]       @relation("CashSessions")
   teacher                Teacher?
   school                 School              @relation(fields: [schoolId], references: [id])
 
@@ -205,6 +208,7 @@ model Student {
   enrollments       Enrollment[]
   grades            Grade[]
   payments          Payment[]
+  paymentPlans      PaymentPlan[]
   school            School             @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, matricule])
@@ -511,6 +515,39 @@ model Payment {
   @@map("payments")
 }
 
+model PaymentPlan {
+  id              String        @id @default(uuid())
+  studentId       String
+  schoolId        String
+  totalAmount     Int
+  installments    Int
+  startDate       DateTime
+  status          String        @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  student         Student       @relation(fields: [studentId], references: [id])
+  school          School        @relation(fields: [schoolId], references: [id])
+  schedule        Installment[]
+
+  @@map("payment_plans")
+}
+
+model Installment {
+  id              String      @id @default(uuid())
+  planId          String
+  dueDate         DateTime
+  amount          Int
+  amountPaid      Int         @default(0)
+  status          String      @default("PENDING") // PENDING, PAID, OVERDUE
+  paidAt          DateTime?
+  
+  plan            PaymentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("installments")
+}
+
+
 model FeePayment {
   id          String   @id @default(uuid())
   paymentId   String
@@ -553,3 +590,57 @@ model Setting {
   @@unique([schoolId, key])
   @@map("settings")
 }
+
+model CashSession {
+  id                 String   @id @default(uuid())
+  schoolId           String
+  school             School   @relation(fields: [schoolId], references: [id])
+  
+  date               DateTime
+  cashierId          String
+  cashier            User     @relation("CashSessions", fields: [cashierId], references: [id])
+  
+  openingBalance     Int      // Solde ouverture
+  closingBalance     Int?     // Solde fermeture (après comptage)
+  
+  totalReceived      Int      // Total encaissements
+  totalSpent         Int      // Total dépenses
+  
+  theoreticalBalance Int      // Calculé : opening + received - spent
+  actualBalance      Int?     // Compté physiquement
+  
+  discrepancy        Int?     // Écart : actual - theoretical
+  
+  status             String   @default("OPEN") // OPEN, CLOSED, VALIDATED
+  
+  openedAt           DateTime @default(now())
+  closedAt           DateTime?
+  
+  movements          CashMovement[]
+
+  @@unique([schoolId, date, cashierId])
+  @@map("cash_sessions")
+}
+
+model CashMovement {
+  id                 String   @id @default(uuid())
+  sessionId          String
+  session            CashSession @relation(fields: [sessionId], references: [id])
+  
+  type               String   // IN | OUT
+  category           String   // PAYMENT | EXPENSE | OPENING | CLOSING
+  
+  amount             Int
+  balance            Int      // Solde après mouvement
+  
+  reference          String?  // N° reçu ou N° dépense
+  description        String?
+  
+  receiptUrl         String?  // Justificatif uploadé
+  
+  createdAt          DateTime @default(now())
+  
+  @@index([sessionId, createdAt])
+  @@map("cash_movements")
+}
+

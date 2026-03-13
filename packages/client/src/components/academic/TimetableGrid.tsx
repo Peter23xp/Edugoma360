@@ -1,4 +1,4 @@
-﻿import type { TimetablePeriod } from '@edugoma360/shared/types/academic';
+﻿import type { TimetablePeriod } from '@edugoma360/shared';
 import TimetableCell from './TimetableCell';
 
 interface TimetableGridProps {

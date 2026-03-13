@@ -1,6 +1,6 @@
-import React from 'react';
+import { FC } from 'react';
 import { AssignmentCell } from './AssignmentCell';
-import { Layers, BookOpen, Clock, AlertTriangle, UserCheck } from 'lucide-react';
+import { Layers, Clock, AlertTriangle, UserCheck } from 'lucide-react';
 
 interface AssignmentMatrixProps {
     data: {
@@ -15,7 +15,7 @@ interface AssignmentMatrixProps {
     filters: any;
 }
 
-export const AssignmentMatrix: React.FC<AssignmentMatrixProps> = ({
+export const AssignmentMatrix: FC<AssignmentMatrixProps> = ({
     data,
     onAssign,
     onEdit,

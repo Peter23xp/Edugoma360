@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react';
 import { Download, Printer, ExternalLink, AlertCircle } from 'lucide-react';
-import type { BulletinData } from '@edugoma360/shared/types/academic';
+import type { BulletinData } from '@edugoma360/shared';
 import DecisionBadge from './DecisionBadge';
 
 interface BulletinPreviewProps {

@@ -11,6 +11,7 @@ export interface PaymentHistoryFilters {
   paymentMethod?: string;
   cashierId?: string;
   receiptNumber?: string;
+  search?: string;
   page?: number;
   limit?: number;
 }
@@ -97,28 +98,30 @@ export function usePaymentHistory() {
         if (filters.paymentMethod) params.paymentMethod = filters.paymentMethod;
         if (filters.cashierId) params.cashierId = filters.cashierId;
         if (filters.receiptNumber) params.receiptNumber = filters.receiptNumber;
+        if (filters.search) params.search = filters.search;
         if (filters.page) params.page = filters.page;
         params.limit = filters.limit || 50;
 
         const res = await api.get('/payments', { params });
-        const raw = res.data?.data ?? res.data;
+        const payload = res.data;
+        console.log('[usePaymentHistory] payload:', payload);
 
-        // If backend returns { payments: [...] }, map it to the expected interface
+        // Extract list regardless of structure (data, payments, or direct array)
         let paymentsList: PaymentHistoryItem[] = [];
-        if (Array.isArray(raw)) {
-          paymentsList = raw;
-        } else if (raw.payments && Array.isArray(raw.payments)) {
-          paymentsList = raw.payments;
-        } else if (raw.data && Array.isArray(raw.data)) {
-          paymentsList = raw.data;
+        if (Array.isArray(payload)) {
+          paymentsList = payload;
+        } else if (Array.isArray(payload.data)) {
+          paymentsList = payload.data;
+        } else if (Array.isArray(payload.payments)) {
+          paymentsList = payload.payments;
         }
 
         return {
           data: paymentsList,
-          total: raw.total ?? paymentsList.length,
-          page: raw.page ?? 1,
-          pages: raw.pages ?? 1,
-          stats: raw.stats ?? { todayTotal: 0, weekTotal: 0, monthTotal: 0 },
+          total: payload.total ?? paymentsList.length,
+          page: payload.page ?? 1,
+          pages: payload.pages ?? 1,
+          stats: payload.stats ?? { todayTotal: 0, weekTotal: 0, monthTotal: 0 },
         };
       },
       staleTime: 30_000,

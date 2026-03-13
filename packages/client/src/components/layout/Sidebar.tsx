@@ -43,9 +43,11 @@ const navItems = [
         roles: ['SUPER_ADMIN', 'ECONOME', 'PREFET'],
         children: [
             { label: 'Tableau de bord', icon: Wallet, path: '/finance' },
+            { label: 'Gestion de Caisse', icon: Wallet, path: '/finance/cashier' },
             { label: 'Historique', icon: ClipboardList, path: '/finance/payments' },
             { label: 'Nouveau paiement', icon: Receipt, path: '/finance/payments/new' },
             { label: 'Impayés', icon: FileBarChart, path: '/finance/debts' },
+            { label: 'Rapports Avancés', icon: TrendingUp, path: '/finance/reports' },
             { label: 'Config. frais', icon: Cog, path: '/finance/fees' },
         ],
     },

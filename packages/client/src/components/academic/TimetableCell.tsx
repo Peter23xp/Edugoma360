@@ -1,6 +1,6 @@
 ﻿import { MoreVertical } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import type { TimetablePeriod } from '@edugoma360/shared/types/academic';
+import type { TimetablePeriod } from '@edugoma360/shared';
 
 interface TimetableCellProps {
     period: TimetablePeriod | null;

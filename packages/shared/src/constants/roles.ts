@@ -22,6 +22,7 @@ export type Permission =
     | 'finance:delete'
     | 'finance:reports'
     | 'finance:export'
+    | 'finance:manage'
     // Attendance
     | 'attendance:read'
     | 'attendance:create'
@@ -76,7 +77,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
         // All permissions
         'students:read', 'students:create', 'students:update', 'students:delete', 'students:export',
         'grades:read', 'grades:create', 'grades:update', 'grades:lock', 'grades:export',
-        'finance:read', 'finance:create', 'finance:update', 'finance:delete', 'finance:reports', 'finance:export',
+        'finance:read', 'finance:create', 'finance:update', 'finance:delete', 'finance:reports', 'finance:export', 'finance:manage',
         'attendance:read', 'attendance:create', 'attendance:update', 'attendance:reports',
         'teachers:read', 'teachers:create', 'teachers:update', 'teachers:delete',
         'sms:send', 'sms:read', 'sms:templates',
@@ -98,13 +99,14 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
         'reports:bulletins', 'reports:palmares', 'reports:pv', 'reports:statistics',
         'settings:read', 'settings:academic_year',
         'deliberation:read', 'deliberation:create', 'deliberation:validate',
+        'finance:manage',
         'classes:read', 'classes:create', 'classes:update', 'classes:delete',
         'timetable:read', 'timetable:create', 'timetable:delete',
     ],
 
     ECONOME: [
         'students:read',
-        'finance:read', 'finance:create', 'finance:update', 'finance:reports', 'finance:export',
+        'finance:read', 'finance:create', 'finance:update', 'finance:reports', 'finance:export', 'finance:manage',
         'sms:send', 'sms:read',
         'reports:statistics',
         'settings:read',

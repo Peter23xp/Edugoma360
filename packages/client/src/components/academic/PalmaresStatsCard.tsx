@@ -1,5 +1,5 @@
 ﻿import { TrendingUp, TrendingDown, Award, BarChart2, Percent } from 'lucide-react';
-import type { PalmaresData } from '@edugoma360/shared/types/academic';
+import type { PalmaresData } from '@edugoma360/shared';
 
 interface PalmaresStatsCardProps {
     data: PalmaresData;

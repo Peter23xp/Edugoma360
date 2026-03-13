@@ -1,8 +1,10 @@
-﻿import app from './app';
+import app from './app';
 import { env } from './config/env';
 import { initTeacherCron } from './modules/teachers/teachers.cron';
+import { initPaymentsCron } from './modules/payments/payments.cron';
 
 initTeacherCron();
+initPaymentsCron();
 
 const PORT = env.PORT;
 

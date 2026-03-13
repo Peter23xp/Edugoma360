@@ -1,6 +1,13 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { env } from '../config/env';
+
+export class ApiError extends Error {
+  constructor(public message: string, public statusCode: number = 500) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
 
 /**
  * Global error handler middleware
@@ -13,7 +20,20 @@ export function errorHandler(
     _next: NextFunction,
 ): void {
     const errorStack = err.stack;
-    console.error(' [ERROR DEPTH] ', errorStack);
+    if (!(err instanceof ApiError && err.statusCode === 404)) {
+      console.error(' [ERROR DEPTH] ', errorStack);
+    }
+
+    // API errors (Custom)
+    if (err instanceof ApiError) {
+        res.status(err.statusCode).json({
+            error: {
+                code: err.statusCode === 404 ? 'NOT_FOUND' : err.statusCode === 400 ? 'BAD_REQUEST' : err.statusCode === 403 ? 'FORBIDDEN' : 'API_ERROR',
+                message: err.message,
+            },
+        });
+        return;
+    }
 
     // Zod validation errors
     if (err instanceof ZodError) {

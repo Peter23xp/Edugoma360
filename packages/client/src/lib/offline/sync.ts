@@ -1,4 +1,4 @@
-﻿import db, { type SyncQueueItem } from './db';
+import db, { type SyncQueueItem } from './db';
 import api from '../api';
 import { useOfflineStore } from '../../stores/offline.store';
 
@@ -18,6 +18,7 @@ export async function enqueueSync(
         entityId,
         action,
         payload: JSON.stringify(payload),
+      syncStatus: 'pending',
         attempts: 0,
         createdAt: Date.now(),
     });

@@ -6,7 +6,7 @@ import { useAuthStore } from '../../stores/auth.store';
 import api from '../../lib/api';
 import TimetableGrid from '../../components/academic/TimetableGrid';
 import PeriodFormModal from '../../components/academic/PeriodFormModal';
-import type { TimetablePeriod, DayOfWeek } from '@edugoma360/shared/types/academic';
+import type { TimetablePeriod, DayOfWeek } from '@edugoma360/shared';
 
 type ViewMode = 'teacher' | 'class';
 

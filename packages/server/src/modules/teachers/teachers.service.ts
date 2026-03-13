@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 import { generateTeacherMatricule, extractTeacherSequence, getProvinceCode, SUBJECTS_LIST } from '@edugoma360/shared';
 import { CreateTeacherDto, UpdateTeacherDto, TeacherFilters } from './teachers.dto';
 import { sendSms, SMS_TEMPLATES } from '../../lib/sms';
@@ -261,7 +261,7 @@ export class TeachersService {
         const userEmail = data.email || `${matricule.toLowerCase()}@temp.edugoma360.cd`;
 
         try {
-            const result = await prisma.$transaction(async (tx) => {
+            const teacherRecord = await prisma.$transaction(async (tx) => {
                 // 1. Resolve Subjects (Step 2 selection)
                 const { matieres, affectations, certificats, ...rest } = data;
                 const resolvedSubjectIds: string[] = [];
@@ -386,12 +386,12 @@ export class TeachersService {
             });
 
             // Send SMS Welcome (outside transaction)
-            if (teacher.telephone) {
-                const message = SMS_TEMPLATES.fr.teacherWelcome(`${teacher.prenom || ''} ${teacher.nom}`, teacher.matricule);
-                sendSms(teacher.telephone, message).catch(err => console.error('SMS Error:', err));
+            if (teacherRecord.telephone) {
+                const message = SMS_TEMPLATES.fr.teacherWelcome(`${teacherRecord.prenom || ''} ${teacherRecord.nom}`, teacherRecord.matricule);
+                sendSms(teacherRecord.telephone, message).catch(err => console.error('SMS Error:', err));
             }
 
-            return teacher;
+            return teacherRecord;
         } catch (error) {
             console.error('[TeachersService.createTeacher] FATAL ERROR:', error);
             throw error;

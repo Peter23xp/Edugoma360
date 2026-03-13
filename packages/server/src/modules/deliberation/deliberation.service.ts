@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 import { suggestDelibDecision } from '@edugoma360/shared/utils/gradeCalc';
 import { deliberationPdfService } from './deliberation.pdf.service';
 import { deliberationBulletinService } from './deliberation.bulletin.service';
@@ -220,6 +220,44 @@ export class DeliberationService {
         const deliberationData = await this.getDeliberationData(classId, termId, schoolId);
         const students = deliberationData.students;
 
+        // ── SCR-024: Debt-based deliberation exclusion (>90 days) ───────
+        const feeTypes = await prisma.feeType.findMany({ where: { schoolId, isActive: true } });
+        const academicYear = await prisma.academicYear.findFirst({ where: { schoolId, isActive: true } });
+        
+        const excludedStudentIds = new Set<string>();
+        
+        if (academicYear) {
+            for (const studentEntry of students) {
+                const enrollment = await prisma.enrollment.findFirst({
+                    where: { studentId: studentEntry.studentId, academicYearId: academicYear.id },
+                });
+                const payments = await prisma.payment.findMany({
+                    where: { studentId: studentEntry.studentId, schoolId, academicYearId: academicYear.id },
+                    select: { amountPaid: true, paymentDate: true },
+                });
+                
+                const totalDue = feeTypes.reduce((sum, ft) => {
+                    if (ft.scope === 'CLASS' && enrollment && !ft.classIds.includes(enrollment.classId)) return sum;
+                    return sum + ft.amount;
+                }, 0);
+                const totalPaid = payments.reduce((sum, p) => sum + p.amountPaid, 0);
+                const debt = totalDue - totalPaid;
+                
+                if (debt > 0) {
+                    const lastPaymentDate = payments.length > 0
+                        ? Math.max(...payments.map(p => p.paymentDate.getTime()))
+                        : academicYear.startDate.getTime();
+                    const daysPastDue = Math.floor((Date.now() - lastPaymentDate) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysPastDue > 90) {
+                        excludedStudentIds.add(studentEntry.studentId);
+                        console.log(`[DELIB] Élève ${studentEntry.studentName} exclu de la délibération — solde impayé de ${debt} FC (${daysPastDue} jours)`);
+                    }
+                }
+            }
+        }
+        // ── End debt exclusion check ─────────────────────────────────────
+
         // Create or update deliberation
         if (!deliberation) {
             deliberation = await prisma.deliberation.create({
@@ -236,6 +274,13 @@ export class DeliberationService {
             const student = students.find((s: any) => s.studentId === decision.studentId);
             if (!student) continue;
 
+            // SCR-024: Override decision for debt-excluded students
+            const isExcludedForDebt = excludedStudentIds.has(decision.studentId);
+            const finalDecision = isExcludedForDebt ? 'EXCLUDED_DEBT' : decision.decision;
+            const finalJustification = isExcludedForDebt
+                ? 'Exclusion délibération : créance non régularisée (> 90 jours)'
+                : decision.justification;
+
             // Check if result already exists
             const existing = await prisma.delibResult.findFirst({
                 where: {
@@ -248,8 +293,8 @@ export class DeliberationService {
                 generalAverage: student.generalAverage,
                 totalPoints: student.totalPoints,
                 rank: students.findIndex((s: any) => s.studentId === decision.studentId) + 1,
-                decision: decision.decision,
-                justification: decision.justification,
+                decision: finalDecision,
+                justification: finalJustification,
             };
 
             if (existing) {

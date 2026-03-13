@@ -1,4 +1,4 @@
-﻿﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { financeService } from './finance.service';
 import { CreatePaymentDto, FinanceQueryDto } from './finance.dto';
 
@@ -62,6 +62,23 @@ export class FinanceController {
             const schoolId = req.user!.schoolId;
             const revenue = await financeService.getMonthlyRevenue(schoolId);
             res.json({ data: revenue });
+        } catch (error) { next(error); }
+    }
+
+    async getDashboard(req: Request, res: Response, next: NextFunction) {
+        try {
+            const schoolId = req.user!.schoolId;
+            const startDate = req.query.startDate ? new Date(req.query.startDate as string) : new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+            const endDate = req.query.endDate ? new Date(req.query.endDate as string) : new Date();
+            const result = await financeService.getFinanceDashboard(schoolId, startDate, endDate);
+            res.json(result);
+        } catch (error) { next(error); }
+    }
+
+    async generateReport(req: Request, res: Response, next: NextFunction) {
+        try {
+            // Placeholder: In a real app, this would use puppeteer or a PDF lib
+            res.json({ reportUrl: 'https://example.com/report.pdf', filename: 'finance-report.pdf' });
         } catch (error) { next(error); }
     }
 }

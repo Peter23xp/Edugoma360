@@ -1,4 +1,4 @@
-﻿import { DELIB_DECISIONS, DelibDecision, getDecisionColor } from '@edugoma360/shared/constants/decisions';
+﻿import { DELIB_DECISIONS, DelibDecision, getDecisionColor } from '@edugoma360/shared';
 
 interface DecisionSelectorProps {
     studentId: string;

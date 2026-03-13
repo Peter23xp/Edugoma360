@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { financeController } from './finance.controller';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
@@ -14,5 +14,7 @@ router.get('/monthly-summary', (req, res, next) => financeController.getMonthlyS
 router.get('/recovery-chart', (req, res, next) => financeController.getRecoveryChart(req, res, next));
 router.get('/stats', requirePermission('finance:read'), (req, res, next) => financeController.getStats(req, res, next));
 router.get('/monthly-revenue', requirePermission('finance:read'), (req, res, next) => financeController.getMonthlyRevenue(req, res, next));
+router.get('/dashboard', requirePermission('finance:reports'), (req, res, next) => financeController.getDashboard(req, res, next));
+router.post('/reports/generate', requirePermission('finance:reports'), (req, res, next) => financeController.generateReport(req, res, next));
 
 export default router;

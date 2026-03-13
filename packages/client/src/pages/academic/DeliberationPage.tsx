@@ -7,8 +7,8 @@ import api from '../../lib/api';
 import DeliberationWizard from '../../components/academic/DeliberationWizard';
 import DecisionSelector from '../../components/academic/DecisionSelector';
 import DeliberationSummary from '../../components/academic/DeliberationSummary';
-import { DelibDecision } from '@edugoma360/shared/constants/decisions';
-import { suggestDelibDecision } from '@edugoma360/shared/utils/gradeCalc';
+import { DelibDecision } from '@edugoma360/shared';
+import { suggestDelibDecision } from '@edugoma360/shared';
 
 export default function DeliberationPage() {
     const [searchParams] = useSearchParams();

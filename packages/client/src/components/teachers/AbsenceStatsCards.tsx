@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Clock, CheckCircle2, AlertCircle, Calendar, CalendarCheck, CalendarX } from 'lucide-react';
 
 interface AbsenceStatsCardsProps {

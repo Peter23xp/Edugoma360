@@ -1,6 +1,6 @@
 ﻿import { Search, Filter, X } from 'lucide-react';
-import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/constants/evalTypes';
-import type { GradeFiltersState } from '@edugoma360/shared/types/academic';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared';
+import type { GradeFiltersState } from '@edugoma360/shared';
 
 interface SubjectOption { id: string; name: string }
 interface ClassOption { id: string; name: string }
@@ -100,7 +100,7 @@ export default function GradeFilters({
                     aria-label="Filtrer par type d'évaluation"
                 >
                     <option value="">Tous types</option>
-                    {EVAL_TYPE_OPTIONS.map((et) => (
+                    {EVAL_TYPE_OPTIONS.map((et: any) => (
                         <option key={et.code} value={et.code}>{et.label}</option>
                     ))}
                 </select>

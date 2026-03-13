@@ -1,7 +1,7 @@
 ﻿import { X, Save } from 'lucide-react';
 import { useState } from 'react';
-import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/constants/decisions';
-import type { DeliberationStudent } from '@edugoma360/shared/types/academic';
+import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared';
+import type { DeliberationStudent } from '@edugoma360/shared';
 import DecisionBadge from './DecisionBadge';
 
 interface DecisionModalProps {

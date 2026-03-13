@@ -14,6 +14,8 @@ export * from './constants/holidays';
 export * from './constants/provinces';
 export * from './constants/subjects';
 export * from './constants/teacherStatus';
+export { DELIB_DECISIONS, type DelibDecision, getDecisionColor, getDecisionBadgeColor } from './constants/decisions';
+export { EVAL_TYPES, type EvalType, EVAL_TYPE_OPTIONS } from './constants/evalTypes';
 
 // Utilities
 export * from './utils/matricule';

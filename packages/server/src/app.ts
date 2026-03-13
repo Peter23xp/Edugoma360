@@ -28,6 +28,8 @@ import assignmentsRoutes from './modules/assignments/assignments.routes';
 import absencesRoutes from './modules/absences/absences.routes';
 import feesRoutes from './modules/fees/fees.routes';
 import paymentsRoutes from './modules/payments/payments.routes';
+import debtsRoutes from './modules/payments/debts.routes';
+import cashSessionsRoutes from './modules/cash-sessions/cash-sessions.routes';
 
 const app = express();
 
@@ -74,6 +76,8 @@ app.use('/api/assignments', assignmentsRoutes);
 app.use('/api/absences', absencesRoutes);
 app.use('/api/fees', feesRoutes);
 app.use('/api/payments', paymentsRoutes);
+app.use('/api/debts', debtsRoutes);
+app.use('/api/cash-sessions', cashSessionsRoutes);
 
 // â”€â”€ 404 Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req, res) => {

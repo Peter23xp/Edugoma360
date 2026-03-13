@@ -106,7 +106,7 @@ export class TeachersReportsService {
                 where: {
                     termId,
                     ...(assignmentsList.length > 0 ? {
-                        OR: assignmentsList.map(a => ({
+                        OR: assignmentsList.map((a: any) => ({
                             subjectId: a.subjectId,
                             student: { enrollments: { some: { classId: a.classId } } }
                         }))

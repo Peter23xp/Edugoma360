@@ -1,1 +1,1 @@
-export * from './finance/PaymentEntryPage';
+export { default as PaymentHistoryPage } from './PaymentsHistoryPage';

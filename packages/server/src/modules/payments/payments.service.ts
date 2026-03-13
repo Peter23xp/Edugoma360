@@ -100,14 +100,29 @@ export class PaymentsService {
       where.receiptNumber = { contains: query.receiptNumber };
     }
 
+    // Generic search (Student Name or Matricule)
+    if (query.search) {
+      where.student = {
+        OR: [
+          { nom: { contains: query.search } },
+          { postNom: { contains: query.search } },
+          { prenom: { contains: query.search } },
+          { matricule: { contains: query.search } },
+        ]
+      };
+    }
+
     // Class Filter (deep relation: payment -> student -> enrollments -> classId)
     if (query.classId) {
       where.student = {
+        ...(where.student || {}),
         enrollments: {
           some: { classId: query.classId, academicYear: { isActive: true } }
         }
       };
     }
+
+    console.log('[getPayments] Final where:', JSON.stringify(where, null, 2));
 
     // Pagination setup
     const page = Math.max(1, parseInt(query.page || '1', 10));
@@ -187,6 +202,8 @@ export class PaymentsService {
       weekTotal: weekAgg._sum.amountPaid || 0,
       monthTotal: monthAgg._sum.amountPaid || 0,
     };
+
+    console.log('[getPayments] Stats computed:', stats);
 
     // Calculate generic stats for dashboard items
     return { 

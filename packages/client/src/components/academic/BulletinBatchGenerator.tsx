@@ -2,7 +2,7 @@
 import { X, FileDown, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import api from '../../lib/api';
-import type { BulletinGenerationJob } from '@edugoma360/shared/types/academic';
+import type { BulletinGenerationJob } from '@edugoma360/shared';
 
 interface ClassOption { id: string; name: string }
 interface TermOption { id: string; name: string }

@@ -1,4 +1,4 @@
-﻿import { DELIB_DECISIONS, getDecisionColor, type DelibDecision } from '@edugoma360/shared/constants/decisions';
+﻿import { DELIB_DECISIONS, getDecisionColor, type DelibDecision } from '@edugoma360/shared';
 
 interface DecisionBadgeProps {
     decision: DelibDecision | null | undefined;

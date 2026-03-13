@@ -1,6 +1,6 @@
 ﻿import { useState } from 'react';
 import { CheckCircle, Clock, Lock, Shield, AlertCircle } from 'lucide-react';
-import type { DeliberationStatus } from '@edugoma360/shared/types/academic';
+import type { DeliberationStatus } from '@edugoma360/shared';
 
 interface ApprovalWorkflowProps {
     status: DeliberationStatus;

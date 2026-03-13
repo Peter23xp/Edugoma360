@@ -45,6 +45,8 @@ import { PaymentEntryPage } from './pages/finance/PaymentEntryPage';
 import PaymentsHistoryPage from './pages/finance/PaymentsHistoryPage';
 import DebtsPage from './pages/finance/DebtsPage';
 import FeesConfigPage from './pages/finance/FeesConfigPage';
+import FinanceReportsPage from './pages/finance/ReportsPage';
+import CashierPage from './pages/finance/CashierPage';
 
 // Attendance
 import DailyAttendancePage from './pages/attendance/DailyAttendancePage';
@@ -147,6 +149,8 @@ export default function AppRouter() {
                 <Route path="finance/payments" element={<PaymentsHistoryPage />} />
                 <Route path="finance/payments/new" element={<PaymentEntryPage />} />
                 <Route path="finance/debts" element={<DebtsPage />} />
+                <Route path="finance/reports" element={<FinanceReportsPage />} />
+                <Route path="finance/cashier" element={<CashierPage />} />
 
                 {/* Attendance */}
                 <Route path="attendance" element={<DailyAttendancePage />} />

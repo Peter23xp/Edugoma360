@@ -1,6 +1,6 @@
 ﻿import { useMemo } from 'react';
 import { Medal, Star } from 'lucide-react';
-import type { StudentAverage } from '@edugoma360/shared/types/academic';
+import type { StudentAverage } from '@edugoma360/shared';
 
 interface ClassRankingTableProps {
     students: StudentAverage[];

@@ -26,27 +26,64 @@ export class FinanceService {
             amountPaidFC = Math.round(data.amountPaid * data.exchangeRate);
         }
 
-        return prisma.payment.create({
-            data: {
-                receiptNumber, studentId: data.studentId, schoolId,
-                academicYearId: academicYear.id, totalDue: feeType.amount, amountPaid: amountPaidFC,
-                remainingBalance: feeType.amount - amountPaidFC,
-                currency: data.currency, exchangeRate: data.exchangeRate, paymentMethod: data.paymentMode,
-                transactionRef: data.reference, paymentDate: data.paidAt ? new Date(data.paidAt) : new Date(),
-                cashierId: userId,
-                feePayments: {
-                    create: [{
-                        feeId: data.feeTypeId,
-                        amountDue: feeType.amount,
-                        amountPaid: amountPaidFC
-                    }]
+        const result = await prisma.$transaction(async (tx) => {
+            const payment = await tx.payment.create({
+                data: {
+                    receiptNumber, studentId: data.studentId, schoolId,
+                    academicYearId: academicYear.id, totalDue: feeType.amount, amountPaid: amountPaidFC,
+                    remainingBalance: feeType.amount - amountPaidFC,
+                    currency: data.currency, exchangeRate: data.exchangeRate, paymentMethod: data.paymentMode,
+                    transactionRef: data.reference, paymentDate: data.paidAt ? new Date(data.paidAt) : new Date(),
+                    cashierId: userId,
+                    feePayments: {
+                        create: [{
+                            feeId: data.feeTypeId,
+                            amountDue: feeType.amount,
+                            amountPaid: amountPaidFC
+                        }]
+                    }
+                },
+                include: {
+                    student: { select: { nom: true, postNom: true, prenom: true, matricule: true } },
+                    feePayments: { include: { fee: { select: { name: true, amount: true } } } },
+                },
+            });
+
+            if (data.paymentMode === 'ESPECES') {
+                const session = await tx.cashSession.findFirst({
+                    where: { schoolId, cashierId: userId, status: 'OPEN' }
+                });
+
+                if (session) {
+                    const newTheoretical = session.theoreticalBalance + amountPaidFC;
+                    const newTotalReceived = session.totalReceived + amountPaidFC;
+
+                    await tx.cashSession.update({
+                        where: { id: session.id },
+                        data: {
+                            theoreticalBalance: newTheoretical,
+                            totalReceived: newTotalReceived
+                        }
+                    });
+
+                    await tx.cashMovement.create({
+                        data: {
+                            sessionId: session.id,
+                            type: 'IN',
+                            category: 'PAYMENT',
+                            amount: amountPaidFC,
+                            balance: newTheoretical,
+                            reference: receiptNumber,
+                            description: `Paiement ${feeType.name} - ${payment.student.nom} ${payment.student.postNom}`
+                        }
+                    });
                 }
-            },
-            include: {
-                student: { select: { nom: true, postNom: true, prenom: true, matricule: true } },
-                feePayments: { include: { fee: { select: { name: true, amount: true } } } },
-            },
+            }
+            
+            return payment;
         });
+
+        return result;
     }
 
     async getPayments(schoolId: string, query: z.infer<typeof FinanceQueryDto>) {
@@ -155,40 +192,92 @@ export class FinanceService {
         return { months };
     }
 
-    async getStats(schoolId: string) {
+    async getFinanceDashboard(schoolId: string, startDate: Date, endDate: Date) {
         const academicYear = await prisma.academicYear.findFirst({ where: { schoolId, isActive: true } });
-        if (!academicYear) return { totalRevenue: 0, totalExpected: 0, totalDebt: 0, monthlyPayments: 0, debtStudents: 0, currency: 'FC' };
+        if (!academicYear) throw new Error('Aucune année académique active');
 
-        const feeTypes = await prisma.feeType.findMany({ where: { schoolId, isActive: true } });
-        const activeStudents = await prisma.student.count({ where: { schoolId, isActive: true } });
-        const totalExpected = feeTypes.reduce((sum, ft) => sum + ft.amount, 0) * activeStudents;
+        const where: any = { 
+            schoolId, 
+            paymentDate: { gte: startDate, lte: endDate } 
+        };
 
-        const payments = await prisma.payment.findMany({
-            where: { schoolId, academicYearId: academicYear.id },
-        });
+        const [payments, feeTypes, studentsCount] = await Promise.all([
+            prisma.payment.findMany({ 
+                where, 
+                include: { feePayments: { include: { fee: true } }, student: { include: { enrollments: { include: { class: true } } } } } 
+            }),
+            prisma.feeType.findMany({ where: { schoolId, isActive: true } }),
+            prisma.student.count({ where: { schoolId, isActive: true } }),
+        ]);
 
         const totalRevenue = payments.reduce((sum, p) => sum + p.amountPaid, 0);
-        const totalDebt = totalExpected - totalRevenue;
+        const totalPayments = payments.length;
+        
+        // Calculate recovery rate
+        const totalExpected = feeTypes.reduce((sum, ft) => sum + ft.amount, 0) * studentsCount;
+        const totalDebts = totalExpected - totalRevenue;
+        const recoveryRate = totalExpected > 0 ? (totalRevenue / totalExpected) * 100 : 0;
 
-        // Monthly payments count
+        // Revenue Evolution (by month)
+        const evolutionMap = new Map<string, number>();
+        payments.forEach(p => {
+            const key = p.paymentDate.toISOString().substring(0, 7); // YYYY-MM
+            evolutionMap.set(key, (evolutionMap.get(key) || 0) + p.amountPaid);
+        });
+        const revenueEvolution = Array.from(evolutionMap.entries())
+            .map(([month, amount]) => ({ month, amount }))
+            .sort((a, b) => a.month.localeCompare(b.month));
+
+        // Revenue by Fee Type
+        const feeTypeMap = new Map<string, number>();
+        payments.forEach(p => {
+            p.feePayments.forEach(fp => {
+                const name = fp.fee.name;
+                feeTypeMap.set(name, (feeTypeMap.get(name) || 0) + fp.amountPaid);
+            });
+        });
+        const revenueByFeeType = Array.from(feeTypeMap.entries()).map(([type, amount]) => ({ type, amount }));
+
+        // Revenue by Class
+        const classMap = new Map<string, number>();
+        payments.forEach(p => {
+            const className = p.student?.enrollments?.[0]?.class?.name || 'Inconnu';
+            classMap.set(className, (classMap.get(className) || 0) + p.amountPaid);
+        });
+        const revenueByClass = Array.from(classMap.entries())
+            .map(([className, amount]) => ({ className, amount }))
+            .sort((a, b) => b.amount - a.amount);
+
+        // Payment Methods
+        const methodMap = new Map<string, { count: number, amount: number }>();
+        payments.forEach(p => {
+            const method = p.paymentMethod || 'CASH';
+            const current = methodMap.get(method) || { count: 0, amount: 0 };
+            methodMap.set(method, { count: current.count + 1, amount: current.amount + p.amountPaid });
+        });
+        const paymentMethods = Array.from(methodMap.entries()).map(([method, data]) => ({ method, ...data }));
+
+        return {
+            kpis: {
+                totalRevenue,
+                totalDebts,
+                recoveryRate: Math.round(recoveryRate),
+                avgRevenuePerStudent: studentsCount > 0 ? Math.round(totalRevenue / studentsCount) : 0,
+                paymentsCount: totalPayments,
+                avgPaymentAmount: totalPayments > 0 ? Math.round(totalRevenue / totalPayments) : 0
+            },
+            revenueEvolution,
+            revenueByFeeType,
+            revenueByClass,
+            paymentMethods
+        };
+    }
+
+    async getStats(schoolId: string) {
+        // Redirection to getFinanceDashboard or use current implementation simplified
         const now = new Date();
-        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const monthlyPayments = await prisma.payment.count({
-            where: { schoolId, createdAt: { gte: firstDayOfMonth } },
-        });
-
-        // Count students with outstanding debts
-        const totalDuePerStudent = feeTypes.reduce((sum, ft) => sum + ft.amount, 0);
-        const students = await prisma.student.findMany({
-            where: { schoolId, isActive: true },
-            include: { payments: { where: { academicYearId: academicYear.id } } },
-        });
-        const debtStudents = students.filter(s => {
-            const paid = s.payments.reduce((sum, p) => sum + p.amountPaid, 0);
-            return paid < totalDuePerStudent;
-        }).length;
-
-        return { totalRevenue, totalExpected, totalDebt, monthlyPayments, debtStudents, currency: 'FC' };
+        const startOfYear = new Date(now.getFullYear(), 0, 1);
+        return this.getFinanceDashboard(schoolId, startOfYear, now);
     }
 
     async getMonthlyRevenue(schoolId: string) {

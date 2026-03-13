@@ -1,4 +1,4 @@
-﻿import fs from 'fs/promises';
+import fs from 'fs/promises';
 import path from 'path';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -139,6 +139,9 @@ export class BulletinsService {
                     },
                     take: 1,
                 },
+                payments: {
+                    select: { amountPaid: true, paymentDate: true },
+                },
             },
         });
         if (!student) throw new Error('Élève non trouvé');
@@ -154,6 +157,31 @@ export class BulletinsService {
 
         const enrollment = student.enrollments[0];
         if (!enrollment) throw new Error('Inscription non trouvée');
+
+        // ── Debt blocking check (SCR-024) ─────────────────────────────────
+        const feeTypes = await prisma.feeType.findMany({
+            where: { schoolId, isActive: true },
+        });
+        const totalDue = feeTypes.reduce((sum, ft) => {
+            if (ft.scope === 'CLASS' && !ft.classIds.includes(enrollment.classId)) return sum;
+            return sum + ft.amount;
+        }, 0);
+        const totalPaid = student.payments.reduce((sum, p) => sum + p.amountPaid, 0);
+        const debt = totalDue - totalPaid;
+
+        if (debt > 0) {
+            const lastPaymentDate = student.payments.length > 0
+                ? Math.max(...student.payments.map(p => p.paymentDate.getTime()))
+                : enrollment.academicYear.startDate.getTime();
+            const daysPastDue = Math.floor((Date.now() - lastPaymentDate) / (1000 * 60 * 60 * 24));
+
+            if (daysPastDue > 60) {
+                throw new Error(
+                    `Bulletin bloqué : solde impayé de ${debt.toLocaleString('fr-FR')} FC (retard de ${daysPastDue} jours). Régularisez le paiement pour débloquer.`
+                );
+            }
+        }
+        // ── End debt blocking check ──────────────────────────────────────
 
         // 2. Load grades
         const grades = await prisma.grade.findMany({

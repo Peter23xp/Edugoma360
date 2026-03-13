@@ -1,7 +1,7 @@
 ﻿import { useState, useMemo } from 'react';
 import { ChevronUp, ChevronDown, Edit2 } from 'lucide-react';
-import type { DeliberationStudent, DeliberationStatus } from '@edugoma360/shared/types/academic';
-import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared/constants/decisions';
+import type { DeliberationStudent, DeliberationStatus } from '@edugoma360/shared';
+import { DELIB_DECISIONS, type DelibDecision } from '@edugoma360/shared';
 import DecisionBadge from './DecisionBadge';
 
 // â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€

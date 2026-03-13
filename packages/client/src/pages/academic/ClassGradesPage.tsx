@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Printer, Send, Loader2, FileSpreadsheet, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../lib/api';
-import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared/constants/evalTypes';
+import { EVAL_TYPE_OPTIONS } from '@edugoma360/shared';
 
 interface Student {
     id: string;
@@ -264,7 +264,7 @@ export default function ClassGradesPage() {
                                            text-sm focus:ring-2 focus:ring-primary/20 
                                            focus:border-primary bg-white"
                             >
-                                {EVAL_TYPE_OPTIONS.map((evalType) => (
+                                {EVAL_TYPE_OPTIONS.map((evalType: any) => (
                                     <option key={evalType.code} value={evalType.code}>
                                         {evalType.label}
                                     </option>
