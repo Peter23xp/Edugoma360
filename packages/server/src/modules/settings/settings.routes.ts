@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
 import { settingsController } from './settings.controller';
@@ -12,6 +12,7 @@ router.put('/:key', requirePermission('settings:update'), (req, res, next) => se
 // Academic Year management
 router.get('/academic-years', requirePermission('settings:read'), (req, res, next) => settingsController.getAcademicYears(req, res, next));
 router.post('/academic-years', requirePermission('settings:academic_year'), (req, res, next) => settingsController.createAcademicYear(req, res, next));
+router.patch('/academic-years/:id/activate', requirePermission('settings:academic_year'), (req, res, next) => settingsController.activateAcademicYear(req, res, next));
 
 // Classes management
 router.get('/classes', requirePermission('settings:read'), (req, res, next) => settingsController.getClasses(req, res, next));

@@ -1,5 +1,6 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { settingsService } from './settings.service';
+import { ApiError } from '../../middleware/errorHandler.middleware';
 
 export class SettingsController {
     async getAll(req: Request, res: Response, next: NextFunction) {
@@ -24,9 +25,22 @@ export class SettingsController {
 
     async getAcademicYears(req: Request, res: Response, next: NextFunction) {
         try {
-            const years = await settingsService.getAcademicYears(req.user!.schoolId);
-            res.json({ data: years });
-        } catch (error) {
+            if (!req.user || !req.user.schoolId) {
+                console.error('[SETTINGS] No schoolId found in request user context');
+                throw new ApiError('Contexte école manquant', 400);
+            }
+            
+            console.log(`[SETTINGS] Requesting academic years for school: ${req.user.schoolId}`);
+            const years = await settingsService.getAcademicYears(req.user.schoolId);
+            
+            // Returns the array directly or wrapped?
+            // Existing client code seems to expect the array in (await api.get(...)).data
+            // If the controller returns { data: years }, then (resp).data is { data: years }.
+            // So the frontend useQuery 'data' becomes { data: years }.
+            // To fix this without breaking other things, let's keep the envelope but be aware.
+            res.json({ data: years, success: true });
+        } catch (error: any) {
+            console.error('[SETTINGS] Controller error:', error?.message || error);
             next(error);
         }
     }
@@ -35,6 +49,17 @@ export class SettingsController {
         try {
             const year = await settingsService.createAcademicYear(req.user!.schoolId, req.body);
             res.status(201).json({ data: year });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async activateAcademicYear(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            if (!id) throw new ApiError('ID de l\'année académique manquant', 400);
+            const year = await settingsService.activateAcademicYear(req.user!.schoolId, id);
+            res.json({ data: year });
         } catch (error) {
             next(error);
         }

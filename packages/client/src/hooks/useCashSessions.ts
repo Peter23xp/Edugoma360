@@ -93,10 +93,19 @@ export function useCashSessions() {
     },
   });
 
+  const useSessionHistory = () => useQuery({
+    queryKey: ['cash-sessions', 'history'],
+    queryFn: async () => {
+      const { data } = await api.get('/cash-sessions/history');
+      return data.history as (CashSession & { cashier: { nom: string; prenom: string | null } })[];
+    },
+  });
+
   return {
     getCurrentSession,
     openSession,
     recordExpense,
     closeSession,
+    useSessionHistory,
   };
 }

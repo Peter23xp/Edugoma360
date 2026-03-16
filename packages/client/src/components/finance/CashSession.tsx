@@ -131,14 +131,14 @@ export function CashSession({ session }: CashSessionProps) {
 
       {showClosingModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-           <div className="bg-white rounded-xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col border border-neutral-200">
-              <div className="flex justify-between items-center p-5 border-b border-neutral-100 bg-neutral-50/50">
+           <div className="bg-white rounded-xl w-full max-w-md shadow-2xl flex flex-col border border-neutral-200 max-h-[95vh]">
+              <div className="flex-none flex justify-between items-center p-5 border-b border-neutral-100 bg-neutral-50/50">
                 <h3 className="text-lg font-bold text-neutral-900">Fermeture de caisse</h3>
                 <button onClick={() => setShowClosingModal(false)} className="p-1 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors">
                   <X size={18} />
                 </button>
               </div>
-              <div className="p-6 space-y-6 bg-white overflow-y-auto max-h-[80vh]">
+              <div className="flex-1 min-h-0 p-4 sm:p-6 space-y-4 sm:space-y-6 bg-white overflow-y-auto">
                  <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-xl space-y-2 text-sm shadow-sm">
                     <p className="font-semibold text-neutral-800 border-b border-neutral-200 pb-2 mb-2">Solde Théorique</p>
                     <div className="flex justify-between text-neutral-600"><span>Ouverture :</span> <span>{formatFC(session.openingBalance)}</span></div>

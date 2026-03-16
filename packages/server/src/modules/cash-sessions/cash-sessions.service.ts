@@ -175,6 +175,20 @@ export class CashSessionsService {
 
     return result;
   }
+
+  async getHistory(schoolId: string, cashierId?: string) {
+    return prisma.cashSession.findMany({
+      where: {
+        schoolId,
+        ...(cashierId ? { cashierId } : {}),
+      },
+      include: {
+        cashier: { select: { nom: true, prenom: true } },
+      },
+      orderBy: { openedAt: 'desc' },
+      take: 50,
+    });
+  }
 }
 
 export const cashSessionsService = new CashSessionsService();

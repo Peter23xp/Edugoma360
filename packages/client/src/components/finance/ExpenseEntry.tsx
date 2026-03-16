@@ -43,15 +43,15 @@ export function ExpenseEntry({ sessionId, onClose }: ExpenseEntryProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh] border border-neutral-200">
-        <div className="flex justify-between items-center p-6 border-b border-neutral-100 bg-neutral-50/50">
+      <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh] border border-neutral-200">
+        <div className="flex-none flex justify-between items-center p-4 sm:p-6 border-b border-neutral-100 bg-neutral-50/50">
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Enregistrer une dépense</h2>
           <button onClick={onClose} className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="flex-1 min-h-0 overflow-y-auto p-4 sm:p-6 space-y-4 sm:space-y-6">
           <div className="space-y-3">
             <label className="block text-sm font-bold text-neutral-700">Type de dépense *</label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -124,18 +124,19 @@ export function ExpenseEntry({ sessionId, onClose }: ExpenseEntryProps) {
           </div>
         </form>
 
-        <div className="p-5 border-t border-neutral-100 bg-neutral-50/80 flex items-center justify-end gap-3">
+        <div className="flex-none p-4 sm:p-5 border-t border-neutral-100 bg-white flex items-center justify-end gap-3 w-full">
           <button 
             type="button" 
             onClick={onClose}
-            className="px-5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-200 bg-neutral-100 rounded-xl transition-colors"
+            className="px-5 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-200 bg-neutral-100 border border-neutral-200 rounded-xl transition-colors flex-1 sm:flex-none"
           >
             Annuler
           </button>
           <button 
+            type="submit"
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-xl transition-all shadow-sm shadow-primary/20 disabled:opacity-50 flex items-center gap-2"
+            className="px-5 py-2.5 text-sm font-medium text-white bg-primary hover:bg-primary-dark rounded-xl transition-all shadow-sm shadow-primary/20 disabled:opacity-50 flex items-center justify-center gap-2 flex-1 sm:flex-none"
           >
             {isSubmitting ? 'Enregistrement...' : <>Enregistrer <Plus size={16}/></>}
           </button>

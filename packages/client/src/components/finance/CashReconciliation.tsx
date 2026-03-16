@@ -59,16 +59,17 @@ export function CashReconciliation({ session, countedData, onClose, onRetry }: C
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col border border-neutral-200">
-        <div className="flex justify-between items-center p-6 border-b border-neutral-100 bg-neutral-50/50 text-neutral-900">
+      <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] shadow-2xl flex flex-col border border-neutral-200">
+        <div className="flex-none flex justify-between items-center p-5 md:p-6 border-b border-neutral-100 bg-neutral-50/50 text-neutral-900">
           <h2 className="text-lg font-bold tracking-tight">Rapprochement de Caisse</h2>
-          <button onClick={onClose} className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors">
+          <button type="button" onClick={onClose} className="p-1.5 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors">
             <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div className="space-y-3 bg-neutral-50 border border-neutral-200 p-5 rounded-xl shadow-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 overflow-hidden">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
+          <div className="space-y-3 bg-neutral-50 border border-neutral-200 p-4 sm:p-5 rounded-xl shadow-sm">
             <div className="flex items-center justify-between text-neutral-600 font-medium">
               <span>Solde théorique :</span>
               <span className="font-bold text-neutral-800 text-lg">{formatFC(session.theoreticalBalance)}</span>
@@ -100,7 +101,7 @@ export function CashReconciliation({ session, countedData, onClose, onRetry }: C
             <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <h3 className="font-bold text-sm text-neutral-900 uppercase tracking-widest border-b border-neutral-100 pb-2">Justification obligataire de l'écart</h3>
               
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   { id: 'ERREUR_CAISSE', label: 'Erreur de caisse' },
                   { id: 'ERREUR_SAISIE', label: 'Erreur de saisie' },
@@ -142,12 +143,14 @@ export function CashReconciliation({ session, countedData, onClose, onRetry }: C
             </div>
           )}
 
-          <div className="flex gap-3 pt-4 border-t border-neutral-100">
+          </div>
+
+          <div className="flex-none p-4 sm:p-6 border-t border-neutral-100 bg-white flex flex-col sm:flex-row gap-3">
             <button 
               type="button" 
               onClick={onRetry}
               disabled={isSubmitting}
-              className="px-5 py-2.5 font-medium text-neutral-600 bg-neutral-100 border border-neutral-200 hover:bg-neutral-200 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2 text-sm shadow-sm"
+              className="px-5 py-2.5 font-medium text-neutral-600 bg-neutral-100 border border-neutral-200 hover:bg-neutral-200 rounded-xl transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm shadow-sm"
             >
               ← Recompter
             </button>
@@ -157,7 +160,7 @@ export function CashReconciliation({ session, countedData, onClose, onRetry }: C
               className={`flex-1 px-5 py-2.5 text-white font-medium rounded-xl transition-all shadow-sm shadow-black/10 disabled:opacity-50 flex items-center justify-center gap-2 hover:-translate-y-0.5
                 ${requiresExplanation ? (isLoss ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' : 'bg-yellow-600 hover:bg-yellow-700 shadow-yellow-500/20') : 'bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25'}`}
             >
-              {isSubmitting ? 'Validation...' : (requiresExplanation ? `Valider avec écart ${isLoss ? 'manquant' : 'excédentaire'} ` : 'Valider la fermeture de caisse')}
+              {isSubmitting ? 'Validation...' : (requiresExplanation ? `Valider écart ${isLoss ? 'manquant' : 'excédentaire'} ` : 'Fermer la caisse')}
               {!isSubmitting && <ChevronRight size={18} />}
             </button>
           </div>

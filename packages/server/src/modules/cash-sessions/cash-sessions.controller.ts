@@ -75,6 +75,20 @@ export class CashSessionsController {
       next(error);
     }
   }
+
+  async getSessions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const schoolId = req.user!.schoolId;
+      const role = req.user!.role;
+      // Allow admins to see all cash sessions, cashiers see only theirs
+      const cashierId = ['ECONOME', 'SUPER_ADMIN', 'PREFET'].includes(role) ? undefined : req.user!.userId;
+      
+      const history = await cashSessionsService.getHistory(schoolId, cashierId);
+      res.json({ history });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const cashSessionsController = new CashSessionsController();

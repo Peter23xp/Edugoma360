@@ -1,4 +1,4 @@
-﻿import prisma from '../../lib/prisma';
+import prisma from '../../lib/prisma';
 
 export class SettingsService {
     async getAll(schoolId: string) {
@@ -30,17 +30,24 @@ export class SettingsService {
     }
 
     async getAcademicYears(schoolId: string) {
-        return prisma.academicYear.findMany({
-            where: { schoolId },
-            include: { terms: true },
-            orderBy: { startDate: 'desc' },
-        });
+        console.log(`[SETTINGS] Fetching academic years for school: ${schoolId}`);
+        try {
+            return await prisma.academicYear.findMany({
+                where: { schoolId },
+                include: { terms: true },
+                orderBy: { startDate: 'desc' },
+            });
+        } catch (error) {
+            console.error('[SETTINGS] Error in getAcademicYears:', error);
+            throw error;
+        }
     }
 
     async createAcademicYear(schoolId: string, data: {
         label: string; startDate: string; endDate: string;
-        terms: Array<{ number: number; label: string; startDate: string; endDate: string }>;
+        terms?: Array<{ number: number; label: string; startDate: string; endDate: string }>;
     }) {
+        console.log(`[SETTINGS] Creating academic year for school: ${schoolId}`, data);
         return prisma.$transaction(async (tx) => {
             const year = await tx.academicYear.create({
                 data: {
@@ -52,19 +59,37 @@ export class SettingsService {
                 },
             });
 
-            for (const term of data.terms) {
-                await tx.term.create({
-                    data: {
-                        academicYearId: year.id,
-                        number: term.number,
-                        label: term.label,
-                        startDate: new Date(term.startDate),
-                        endDate: new Date(term.endDate),
-                    },
-                });
+            if (data.terms && Array.isArray(data.terms)) {
+                for (const term of data.terms) {
+                    await tx.term.create({
+                        data: {
+                            academicYearId: year.id,
+                            number: term.number,
+                            label: term.label,
+                            startDate: new Date(term.startDate),
+                            endDate: new Date(term.endDate),
+                        },
+                    });
+                }
             }
 
             return year;
+        });
+    }
+
+    async activateAcademicYear(schoolId: string, yearId: string) {
+        return prisma.$transaction(async (tx) => {
+            // Deactivate all academic years for this school
+            await tx.academicYear.updateMany({
+                where: { schoolId },
+                data: { isActive: false },
+            });
+            // Activate the target year
+            return tx.academicYear.update({
+                where: { id: yearId },
+                data: { isActive: true },
+                include: { terms: true },
+            });
         });
     }
 

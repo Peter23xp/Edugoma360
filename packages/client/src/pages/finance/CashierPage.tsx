@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useCashSessions } from '../../hooks/useCashSessions';
 import { useAuthStore } from '../../stores/auth.store';
 import { CashSession } from '../../components/finance/CashSession';
-import { RefreshCw, Wallet } from 'lucide-react';
+import { CashHistory } from '../../components/finance/CashHistory';
+import { RefreshCw, Wallet, History } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 
@@ -14,6 +15,7 @@ export default function CashierPage() {
   const [isOpening, setIsOpening] = useState(false);
   const [openingBalance, setOpeningBalance] = useState('');
   const [observations, setObservations] = useState('');
+  const [showHistory, setShowHistory] = useState(false);
 
   if (isLoading) {
     return (
@@ -55,7 +57,18 @@ export default function CashierPage() {
               <p className="text-sm text-neutral-500">Suivi quotidien et rapprochement</p>
             </div>
         </div>
+        {/* Bouton Historique */}
+        <button
+          type="button"
+          onClick={() => setShowHistory(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 text-neutral-700 rounded-xl hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm text-sm font-semibold"
+        >
+          <History size={16} className="text-primary" />
+          Historique de Caisse
+        </button>
       </div>
+
+      {showHistory && <CashHistory onClose={() => setShowHistory(false)} />}
 
       {!currentSession ? (
         <div className="bg-white p-6 rounded-xl border border-neutral-300/50 overflow-hidden max-w-md mx-auto mt-10">

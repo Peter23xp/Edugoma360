@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard, Users, GraduationCap, Wallet, CalendarCheck,
     MessageSquare, FileBarChart, Settings, X, BookOpen, TrendingUp,
-    Receipt, ClipboardList, Send, UserCheck, Cog, Briefcase
+    Receipt, ClipboardList, Send, UserCheck, Cog, Briefcase, Target
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import logo from '../../assets/logo.svg';
@@ -49,6 +49,7 @@ const navItems = [
             { label: 'Impayés', icon: FileBarChart, path: '/finance/debts' },
             { label: 'Rapports Avancés', icon: TrendingUp, path: '/finance/reports' },
             { label: 'Config. frais', icon: Cog, path: '/finance/fees' },
+            { label: 'Budgets & Prévisions', icon: Target, path: '/finance/budgets' },
         ],
     },
     { label: 'Présences', icon: CalendarCheck, path: '/attendance', roles: ['SUPER_ADMIN', 'PREFET', 'ENSEIGNANT'] },
