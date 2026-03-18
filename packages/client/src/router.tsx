@@ -50,8 +50,10 @@ import CashierPage from './pages/finance/CashierPage';
 import BudgetsPage from './pages/finance/BudgetsPage';
 
 // Attendance
-import DailyAttendancePage from './pages/attendance/DailyAttendancePage';
 import AttendanceReportPage from './pages/attendance/AttendanceReportPage';
+import DailyRollCallPage from './pages/attendance/DailyRollCallPage';
+import AbsenceHistoryPage from './pages/attendance/AbsenceHistoryPage';
+import JustificationsPage from './pages/attendance/JustificationsPage';
 
 // Communication
 import SendSMSPage from './pages/communication/SendSMSPage';
@@ -155,8 +157,10 @@ export default function AppRouter() {
                 <Route path="finance/budgets" element={<BudgetsPage />} />
 
                 {/* Attendance */}
-                <Route path="attendance" element={<DailyAttendancePage />} />
-                <Route path="attendance/daily" element={<DailyAttendancePage />} />
+                <Route path="attendance" element={<DailyRollCallPage />} />
+                <Route path="attendance/roll-call" element={<DailyRollCallPage />} />
+                <Route path="attendance/history" element={<AbsenceHistoryPage />} />
+                <Route path="attendance/justifications" element={<JustificationsPage />} />
                 <Route path="attendance/report" element={<AttendanceReportPage />} />
 
                 {/* Communication */}

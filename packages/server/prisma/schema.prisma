@@ -40,6 +40,7 @@ model School {
   users              User[]
   cashSessions       CashSession[]
   budgets            Budget[]
+  justifications     Justification[]
 
   @@map("schools")
 }
@@ -64,6 +65,8 @@ model User {
   teacherAttendanceTaken TeacherAttendance[]
   leaveProcessing        TeacherLeave[]      @relation("LeaveProcessor")
   cashSessions           CashSession[]       @relation("CashSessions")
+  justificationsSubmitted Justification[]    @relation("JustificationSubmitter")
+  justificationsReviewed  Justification[]    @relation("JustificationReviewer")
   teacher                Teacher?
   school                 School              @relation(fields: [schoolId], references: [id])
 
@@ -211,6 +214,7 @@ model Student {
   grades            Grade[]
   payments          Payment[]
   paymentPlans      PaymentPlan[]
+  justifications    Justification[]
   school            School             @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, matricule])
@@ -410,9 +414,10 @@ model Attendance {
   recordedById  String
   createdAt     DateTime @default(now())
   recordedBy    User     @relation(fields: [recordedById], references: [id])
-  term          Term     @relation(fields: [termId], references: [id])
-  class         Class    @relation(fields: [classId], references: [id])
-  student       Student  @relation(fields: [studentId], references: [id])
+  term          Term             @relation(fields: [termId], references: [id])
+  class         Class            @relation(fields: [classId], references: [id])
+  student       Student          @relation(fields: [studentId], references: [id])
+  justifications Justification[]
 
   @@unique([studentId, date, period])
   @@map("attendances")
@@ -682,4 +687,41 @@ model BudgetMonth {
 
   @@unique([budgetId, month])
   @@map("budget_months")
+}
+
+model Justification {
+  id                  String   @id @default(uuid())
+  schoolId            String
+  school              School   @relation(fields: [schoolId], references: [id])
+  
+  attendanceRecordId  String
+  attendanceRecord    Attendance       @relation(fields: [attendanceRecordId], references: [id])
+  
+  studentId           String
+  student             Student  @relation(fields: [studentId], references: [id])
+  
+  reason              String
+  reasonDetails       String
+  
+  documentUrl         String
+  documentName        String
+  documentSize        Int      // Bytes
+  
+  status              String   @default("PENDING") // PENDING, APPROVED, REJECTED, EXPIRED
+  
+  submittedById       String
+  submittedBy         User     @relation("JustificationSubmitter", fields: [submittedById], references: [id])
+  
+  reviewedById        String?
+  reviewedBy          User?    @relation("JustificationReviewer", fields: [reviewedById], references: [id])
+  reviewedAt          DateTime?
+  reviewComment       String?
+  rejectionReason     String?
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  
+  @@index([status, createdAt])
+  @@index([studentId])
+  @@map("justifications")
 }

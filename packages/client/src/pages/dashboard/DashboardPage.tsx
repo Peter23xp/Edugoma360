@@ -1,4 +1,4 @@
-﻿import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '../../stores/auth.store';
 import StatCard from '../../components/dashboard/StatCard';
 import AlertsPanel from '../../components/dashboard/AlertsPanel';

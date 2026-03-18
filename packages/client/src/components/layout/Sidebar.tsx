@@ -52,7 +52,17 @@ const navItems = [
             { label: 'Budgets & Prévisions', icon: Target, path: '/finance/budgets' },
         ],
     },
-    { label: 'Présences', icon: CalendarCheck, path: '/attendance', roles: ['SUPER_ADMIN', 'PREFET', 'ENSEIGNANT'] },
+    {
+        label: 'Présences',
+        icon: CalendarCheck,
+        roles: ['SUPER_ADMIN', 'PREFET', 'ENSEIGNANT'],
+        children: [
+            { label: 'Appel Quotidien', icon: UserCheck, path: '/attendance/roll-call' },
+            { label: 'Historique', icon: ClipboardList, path: '/attendance/history' },
+            { label: 'Justificatifs', icon: FileBarChart, path: '/attendance/justifications' },
+            { label: 'Rapports', icon: FileBarChart, path: '/attendance/report' },
+        ],
+    },
     {
         label: 'SMS',
         icon: MessageSquare,
