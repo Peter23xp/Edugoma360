@@ -66,9 +66,10 @@ import ParentHomePage from './pages/parent-portal/ParentHomePage';
 import ReportsPage from './pages/reports/ReportsPage';
 
 // Settings
-import SchoolSetupPage from './pages/settings/SchoolSetupPage';
+import SchoolInfoPage from './pages/settings/SchoolInfoPage';
 import AcademicYearPage from './pages/settings/AcademicYearPage';
 import SubjectsPage from './pages/settings/SubjectsPage';
+import SectionsPage from './pages/settings/SectionsPage';
 import SyncPage from './pages/settings/SyncPage';
 
 // Setup Wizard
@@ -175,8 +176,10 @@ export default function AppRouter() {
                 <Route path="reports" element={<ReportsPage />} />
 
                 {/* Settings */}
-                <Route path="settings" element={<SchoolSetupPage />} />
+                <Route path="settings" element={<Navigate to="school" replace />} />
+                <Route path="settings/school" element={<SchoolInfoPage />} />
                 <Route path="settings/academic-year" element={<AcademicYearPage />} />
+                <Route path="settings/sections" element={<SectionsPage />} />
                 <Route path="settings/subjects" element={<SubjectsPage />} />
                 <Route path="settings/sync" element={<SyncPage />} />
             </Route>

@@ -8,22 +8,39 @@ datasource db {
 }
 
 model School {
-  id                 String              @id @default(uuid())
-  name               String
-  logoUrl            String?
-  type               String
-  convention         String?
-  agrement           String?
-  province           String              @default("Nord-Kivu")
-  ville              String              @default("Goma")
-  commune            String?
-  adresse            String?
-  telephone          String?
-  email              String?
-  isActive           Boolean             @default(true)
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  code               String?
+  id                  String    @id @default(uuid())
+  name                String
+  logoUrl             String?
+  type                String
+  convention          String?
+  agrement            String?
+  province            String    @default("Nord-Kivu")
+  ville               String    @default("Goma")
+  commune             String?
+  adresse             String?
+  telephone           String?
+  email               String?
+  isActive            Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  logoThumbnailUrl    String?
+  logoIconUrl         String?
+  avenue              String?
+  numero              String?
+  reference           String?
+  telephonePrincipal  String?
+  telephoneSecondaire String?
+  siteWeb             String?
+  numeroAgrement      String?
+  dateAgrement        DateTime?
+  devise              String?
+  langueEnseignement  String? // FRANCAIS, ANGLAIS, BILINGUE
+  systemeEvaluation   String? // NOTE_20, NOTE_10, MIXTE
+  nombrePeriodes      String? // TRIMESTRES, SEMESTRES
+  nomOfficiel         String?
+  nomCourt            String?
+  code                String?   @unique
+
   academicYears      AcademicYear[]
   classes            Class[]
   feeTypes           FeeType[]
@@ -46,29 +63,29 @@ model School {
 }
 
 model User {
-  id                     String              @id @default(uuid())
-  schoolId               String
-  nom                    String
-  postNom                String
-  prenom                 String?
-  email                  String?
-  phone                  String
-  passwordHash           String
-  role                   String
-  isActive               Boolean             @default(true)
-  lastLoginAt            DateTime?
-  createdAt              DateTime            @default(now())
-  updatedAt              DateTime            @updatedAt
-  attendanceTaken        Attendance[]
-  gradesCreated          Grade[]
-  paymentsCreated        Payment[]
-  teacherAttendanceTaken TeacherAttendance[]
-  leaveProcessing        TeacherLeave[]      @relation("LeaveProcessor")
-  cashSessions           CashSession[]       @relation("CashSessions")
-  justificationsSubmitted Justification[]    @relation("JustificationSubmitter")
-  justificationsReviewed  Justification[]    @relation("JustificationReviewer")
-  teacher                Teacher?
-  school                 School              @relation(fields: [schoolId], references: [id])
+  id                      String              @id @default(uuid())
+  schoolId                String
+  nom                     String
+  postNom                 String
+  prenom                  String?
+  email                   String?
+  phone                   String
+  passwordHash            String
+  role                    String
+  isActive                Boolean             @default(true)
+  lastLoginAt             DateTime?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  attendanceTaken         Attendance[]
+  gradesCreated           Grade[]
+  paymentsCreated         Payment[]
+  teacherAttendanceTaken  TeacherAttendance[]
+  leaveProcessing         TeacherLeave[]      @relation("LeaveProcessor")
+  cashSessions            CashSession[]       @relation("CashSessions")
+  justificationsSubmitted Justification[]     @relation("JustificationSubmitter")
+  justificationsReviewed  Justification[]     @relation("JustificationReviewer")
+  teacher                 Teacher?
+  school                  School              @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, phone])
   @@unique([schoolId, email])
@@ -90,9 +107,14 @@ model AcademicYear {
   id          String       @id @default(uuid())
   schoolId    String
   label       String
+  name        String? // Pour compatibilité API SCR-033
   startDate   DateTime
   endDate     DateTime
+  type        String? // TRIMESTRES | SEMESTRES
   isActive    Boolean      @default(false)
+  isClosed    Boolean      @default(false)
+  closedAt    DateTime?
+  closedById  String?
   createdAt   DateTime     @default(now())
   school      School       @relation(fields: [schoolId], references: [id])
   enrollments Enrollment[]
@@ -402,21 +424,21 @@ model DelibResult {
 }
 
 model Attendance {
-  id            String   @id @default(uuid())
-  studentId     String
-  classId       String
-  termId        String
-  date          DateTime
-  period        String
-  status        String
-  justification String?
-  syncStatus    String   @default("SYNCED")
-  recordedById  String
-  createdAt     DateTime @default(now())
-  recordedBy    User     @relation(fields: [recordedById], references: [id])
-  term          Term             @relation(fields: [termId], references: [id])
-  class         Class            @relation(fields: [classId], references: [id])
-  student       Student          @relation(fields: [studentId], references: [id])
+  id             String          @id @default(uuid())
+  studentId      String
+  classId        String
+  termId         String
+  date           DateTime
+  period         String
+  status         String
+  justification  String?
+  syncStatus     String          @default("SYNCED")
+  recordedById   String
+  createdAt      DateTime        @default(now())
+  recordedBy     User            @relation(fields: [recordedById], references: [id])
+  term           Term            @relation(fields: [termId], references: [id])
+  class          Class           @relation(fields: [classId], references: [id])
+  student        Student         @relation(fields: [studentId], references: [id])
   justifications Justification[]
 
   @@unique([studentId, date, period])
@@ -483,38 +505,38 @@ model FeeType {
 }
 
 model Payment {
-  id               String       @id @default(uuid())
-  schoolId         String
-  academicYearId   String
-  receiptNumber    String       @unique
-  studentId        String
+  id             String @id @default(uuid())
+  schoolId       String
+  academicYearId String
+  receiptNumber  String @unique
+  studentId      String
 
   // Montants
   totalDue         Int
   amountPaid       Int
-  remainingBalance Int          @default(0)
-  currency         String       @default("FC")
+  remainingBalance Int    @default(0)
+  currency         String @default("FC")
   exchangeRate     Float?
 
   // Méthode de paiement
-  paymentMethod    String
-  transactionRef   String?
-  paymentDate      DateTime     @default(now())
+  paymentMethod  String
+  transactionRef String?
+  paymentDate    DateTime @default(now())
 
   // Métadonnées
-  cashierId        String
-  observations     String?
-  receiptUrl       String?
+  cashierId    String
+  observations String?
+  receiptUrl   String?
 
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   // Relations
-  academicYear     AcademicYear @relation(fields: [academicYearId], references: [id])
-  school           School       @relation(fields: [schoolId], references: [id])
-  student          Student      @relation(fields: [studentId], references: [id])
-  cashier          User         @relation(fields: [cashierId], references: [id])
-  feePayments      FeePayment[]
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+  school       School       @relation(fields: [schoolId], references: [id])
+  student      Student      @relation(fields: [studentId], references: [id])
+  cashier      User         @relation(fields: [cashierId], references: [id])
+  feePayments  FeePayment[]
 
   @@index([schoolId, studentId])
   @@index([receiptNumber])
@@ -523,48 +545,47 @@ model Payment {
 }
 
 model PaymentPlan {
-  id              String        @id @default(uuid())
-  studentId       String
-  schoolId        String
-  totalAmount     Int
-  installments    Int
-  startDate       DateTime
-  status          String        @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  id           String   @id @default(uuid())
+  studentId    String
+  schoolId     String
+  totalAmount  Int
+  installments Int
+  startDate    DateTime
+  status       String   @default("ACTIVE") // ACTIVE, COMPLETED, CANCELLED
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  student         Student       @relation(fields: [studentId], references: [id])
-  school          School        @relation(fields: [schoolId], references: [id])
-  schedule        Installment[]
+  student  Student       @relation(fields: [studentId], references: [id])
+  school   School        @relation(fields: [schoolId], references: [id])
+  schedule Installment[]
 
   @@map("payment_plans")
 }
 
 model Installment {
-  id              String      @id @default(uuid())
-  planId          String
-  dueDate         DateTime
-  amount          Int
-  amountPaid      Int         @default(0)
-  status          String      @default("PENDING") // PENDING, PAID, OVERDUE
-  paidAt          DateTime?
-  
-  plan            PaymentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  id         String    @id @default(uuid())
+  planId     String
+  dueDate    DateTime
+  amount     Int
+  amountPaid Int       @default(0)
+  status     String    @default("PENDING") // PENDING, PAID, OVERDUE
+  paidAt     DateTime?
+
+  plan PaymentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
 
   @@map("installments")
 }
 
-
 model FeePayment {
-  id          String   @id @default(uuid())
-  paymentId   String
-  feeId       String
-  amountDue   Int
-  amountPaid  Int
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  paymentId  String
+  feeId      String
+  amountDue  Int
+  amountPaid Int
+  createdAt  DateTime @default(now())
 
-  payment     Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
-  fee         FeeType  @relation(fields: [feeId], references: [id])
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  fee     FeeType @relation(fields: [feeId], references: [id])
 
   @@unique([paymentId, feeId])
   @@map("fee_payments")
@@ -599,128 +620,128 @@ model Setting {
 }
 
 model CashSession {
-  id                 String   @id @default(uuid())
-  schoolId           String
-  school             School   @relation(fields: [schoolId], references: [id])
-  
-  date               DateTime
-  cashierId          String
-  cashier            User     @relation("CashSessions", fields: [cashierId], references: [id])
-  
-  openingBalance     Int      // Solde ouverture
-  closingBalance     Int?     // Solde fermeture (après comptage)
-  
-  totalReceived      Int      // Total encaissements
-  totalSpent         Int      // Total dépenses
-  
-  theoreticalBalance Int      // Calculé : opening + received - spent
-  actualBalance      Int?     // Compté physiquement
-  
-  discrepancy        Int?     // Écart : actual - theoretical
-  
-  status             String   @default("OPEN") // OPEN, CLOSED, VALIDATED
-  
-  openedAt           DateTime @default(now())
-  closedAt           DateTime?
-  
-  movements          CashMovement[]
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  date      DateTime
+  cashierId String
+  cashier   User     @relation("CashSessions", fields: [cashierId], references: [id])
+
+  openingBalance Int // Solde ouverture
+  closingBalance Int? // Solde fermeture (après comptage)
+
+  totalReceived Int // Total encaissements
+  totalSpent    Int // Total dépenses
+
+  theoreticalBalance Int // Calculé : opening + received - spent
+  actualBalance      Int? // Compté physiquement
+
+  discrepancy Int? // Écart : actual - theoretical
+
+  status String @default("OPEN") // OPEN, CLOSED, VALIDATED
+
+  openedAt DateTime  @default(now())
+  closedAt DateTime?
+
+  movements CashMovement[]
 
   @@unique([schoolId, date, cashierId])
   @@map("cash_sessions")
 }
 
 model CashMovement {
-  id                 String   @id @default(uuid())
-  sessionId          String
-  session            CashSession @relation(fields: [sessionId], references: [id])
-  
-  type               String   // IN | OUT
-  category           String   // PAYMENT | EXPENSE | OPENING | CLOSING
-  
-  amount             Int
-  balance            Int      // Solde après mouvement
-  
-  reference          String?  // N° reçu ou N° dépense
-  description        String?
-  
-  receiptUrl         String?  // Justificatif uploadé
-  
-  createdAt          DateTime @default(now())
-  
+  id        String      @id @default(uuid())
+  sessionId String
+  session   CashSession @relation(fields: [sessionId], references: [id])
+
+  type     String // IN | OUT
+  category String // PAYMENT | EXPENSE | OPENING | CLOSING
+
+  amount  Int
+  balance Int // Solde après mouvement
+
+  reference   String? // N° reçu ou N° dépense
+  description String?
+
+  receiptUrl String? // Justificatif uploadé
+
+  createdAt DateTime @default(now())
+
   @@index([sessionId, createdAt])
   @@map("cash_movements")
 }
 
 model Budget {
-  id                  String           @id @default(uuid())
+  id                  String   @id @default(uuid())
   schoolId            String
   academicYearId      String
-  monthlyDistribution String           @default("UNIFORM") // UNIFORM | CUSTOM
-  createdAt           DateTime         @default(now())
-  updatedAt           DateTime         @updatedAt
+  monthlyDistribution String   @default("UNIFORM") // UNIFORM | CUSTOM
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  school              School           @relation(fields: [schoolId], references: [id])
-  academicYear        AcademicYear     @relation(fields: [academicYearId], references: [id])
-  categories          BudgetCategory[]
-  months              BudgetMonth[]
+  school       School           @relation(fields: [schoolId], references: [id])
+  academicYear AcademicYear     @relation(fields: [academicYearId], references: [id])
+  categories   BudgetCategory[]
+  months       BudgetMonth[]
 
   @@unique([schoolId, academicYearId])
   @@map("budgets")
 }
 
 model BudgetCategory {
-  id        String  @id @default(uuid())
-  budgetId  String
-  name      String
-  amount    Int     // Montant budgétisé
-  budget    Budget  @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid())
+  budgetId String
+  name     String
+  amount   Int // Montant budgétisé
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
   @@map("budget_categories")
 }
 
 model BudgetMonth {
-  id        String  @id @default(uuid())
-  budgetId  String
-  month     Int     // 1-12
-  amount    Int     // Montant prévu pour ce mois
-  budget    Budget  @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  id       String @id @default(uuid())
+  budgetId String
+  month    Int // 1-12
+  amount   Int // Montant prévu pour ce mois
+  budget   Budget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
 
   @@unique([budgetId, month])
   @@map("budget_months")
 }
 
 model Justification {
-  id                  String   @id @default(uuid())
-  schoolId            String
-  school              School   @relation(fields: [schoolId], references: [id])
-  
-  attendanceRecordId  String
-  attendanceRecord    Attendance       @relation(fields: [attendanceRecordId], references: [id])
-  
-  studentId           String
-  student             Student  @relation(fields: [studentId], references: [id])
-  
-  reason              String
-  reasonDetails       String
-  
-  documentUrl         String
-  documentName        String
-  documentSize        Int      // Bytes
-  
-  status              String   @default("PENDING") // PENDING, APPROVED, REJECTED, EXPIRED
-  
-  submittedById       String
-  submittedBy         User     @relation("JustificationSubmitter", fields: [submittedById], references: [id])
-  
-  reviewedById        String?
-  reviewedBy          User?    @relation("JustificationReviewer", fields: [reviewedById], references: [id])
-  reviewedAt          DateTime?
-  reviewComment       String?
-  rejectionReason     String?
-  
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  attendanceRecordId String
+  attendanceRecord   Attendance @relation(fields: [attendanceRecordId], references: [id])
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  reason        String
+  reasonDetails String
+
+  documentUrl  String
+  documentName String
+  documentSize Int // Bytes
+
+  status String @default("PENDING") // PENDING, APPROVED, REJECTED, EXPIRED
+
+  submittedById String
+  submittedBy   User   @relation("JustificationSubmitter", fields: [submittedById], references: [id])
+
+  reviewedById    String?
+  reviewedBy      User?     @relation("JustificationReviewer", fields: [reviewedById], references: [id])
+  reviewedAt      DateTime?
+  reviewComment   String?
+  rejectionReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([status, createdAt])
   @@index([studentId])
   @@map("justifications")

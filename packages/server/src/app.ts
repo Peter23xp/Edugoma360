@@ -20,6 +20,8 @@ import smsRoutes from './modules/sms/sms.routes';
 import reportsRoutes from './modules/reports/reports.routes';
 import syncRoutes from './modules/sync/sync.routes';
 import settingsRoutes from './modules/settings/settings.routes';
+import academicYearRoutes from './modules/academic-year/academic-year.routes';
+import sectionsRoutes from './modules/sections/sections.routes';
 import statsRoutes from './modules/stats/stats.routes';
 import alertsRoutes from './modules/alerts/alerts.routes';
 import calendarRoutes from './modules/calendar/calendar.routes';
@@ -69,6 +71,7 @@ app.use('/api/sms', smsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/academic-years', academicYearRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/alerts', alertsRoutes);
 app.use('/api/calendar', calendarRoutes);
@@ -80,6 +83,7 @@ app.use('/api/payments', paymentsRoutes);
 app.use('/api/debts', debtsRoutes);
 app.use('/api/cash-sessions', cashSessionsRoutes);
 app.use('/api/budgets', budgetsRoutes);
+app.use('/api/sections', sectionsRoutes);
 
 // â”€â”€ 404 Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req, res) => {

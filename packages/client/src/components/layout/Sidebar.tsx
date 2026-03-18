@@ -78,9 +78,9 @@ const navItems = [
         icon: Settings,
         roles: ['SUPER_ADMIN', 'PREFET'],
         children: [
-            { label: 'École', icon: Cog, path: '/settings' },
+            { label: 'Infos École', icon: Cog, path: '/settings/school' },
             { label: 'Année académique', icon: CalendarCheck, path: '/settings/academic-year' },
-            { label: 'Matières', icon: BookOpen, path: '/settings/subjects' },
+            { label: 'Sections & Matières', icon: BookOpen, path: '/settings/sections' },
             { label: 'Synchronisation', icon: TrendingUp, path: '/settings/sync' },
         ],
     },
