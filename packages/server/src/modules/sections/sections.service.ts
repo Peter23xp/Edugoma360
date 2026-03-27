@@ -59,6 +59,7 @@ export const getSections = async (schoolId: string) => {
                 name: s.name,
                 code: s.code,
                 years: [],
+                yearIds: {} as Record<number, string>, // year -> DB section id
                 classCount: 0,
                 studentCount: 0,
                 // We'll collect unique subjects across all years of this Section group
@@ -68,6 +69,7 @@ export const getSections = async (schoolId: string) => {
 
         const group = groups[s.code];
         group.years.push(s.year);
+        group.yearIds[s.year] = s.id; // Map year → real DB id
         group.classCount += s._count.classes;
         
         // Add subjects to map
@@ -80,9 +82,9 @@ export const getSections = async (schoolId: string) => {
                     maxScore: ss.subject.maxScore,
                     isEliminatory: ss.subject.isEliminatory,
                     elimThreshold: ss.subject.elimThreshold,
-                    coefficient: ss.coefficient,    // UI simplification: assuming same coeff across years
+                    coefficient: ss.coefficient,
                     displayOrder: ss.subject.displayOrder,
-                    type: 'PRINCIPALE' // mock value matching mockup if needed or add to prisma
+                    type: 'PRINCIPALE'
                 });
             }
         });
@@ -94,6 +96,7 @@ export const getSections = async (schoolId: string) => {
         name: g.name,
         code: g.code,
         years: g.years.sort(),
+        yearIds: g.yearIds,
         classCount: g.classCount,
         studentCount: g.studentCount,
         subjects: Array.from(g.subjectsMap.values()).sort((a: any, b: any) => a.displayOrder - b.displayOrder)

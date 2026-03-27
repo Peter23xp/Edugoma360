@@ -5,11 +5,15 @@ interface CreateClassDto {
     sectionId: string;
     name: string;
     maxStudents: number;
+    room?: string;
+    titulaireId?: string;
 }
 
 interface UpdateClassDto {
     maxStudents?: number;
     isActive?: boolean;
+    room?: string;
+    titulaireId?: string | null;
 }
 
 interface ClassFilters {
@@ -52,17 +56,31 @@ export class ClassesService {
         const classes = await prisma.class.findMany({
             where,
             include: {
-                section: true,
+                titulaire: true,
+                section: {
+                    include: {
+                        subjects: true,
+                    },
+                },
                 _count: {
                     select: {
                         enrollments: true,
+                        teacherAssignments: true,
                     },
                 },
             },
             orderBy: [{ name: 'asc' }],
         });
 
-        return { classes };
+        // Enrich with computed fields
+        const enriched = classes.map(c => ({
+            ...c,
+            currentStudents: c._count.enrollments,
+            subjectsAssigned: c._count.teacherAssignments,
+            totalSubjects: (c.section as any)?.subjects?.length ?? 0,
+        }));
+
+        return { classes: enriched };
     }
 
     /**
@@ -125,6 +143,8 @@ export class ClassesService {
                 schoolId: data.schoolId,
                 sectionId: data.sectionId,
                 name: data.name,
+                room: data.room,
+                titulaireId: data.titulaireId,
                 maxStudents: data.maxStudents,
                 isActive: true,
             },
@@ -175,6 +195,8 @@ export class ClassesService {
             data: {
                 maxStudents: data.maxStudents,
                 isActive: data.isActive,
+                room: data.room,
+                titulaireId: data.titulaireId,
             },
             include: {
                 section: true,
@@ -234,7 +256,7 @@ export class ClassesService {
     /**
      * Assign teachers to subjects for a class
      */
-    async assignTeachers(classId: string, schoolId: string, assignments: TeacherAssignment[]) {
+    async assignTeachers(classId: string, schoolId: string, assignments: TeacherAssignment[], titulaireId?: string) {
         // Verify class exists
         const classData = await prisma.class.findFirst({
             where: {
@@ -256,6 +278,12 @@ export class ClassesService {
         // Delete existing assignments
         await prisma.teacherClassSubject.deleteMany({
             where: { classId },
+        });
+
+        // Update titulaireId on the class
+        await prisma.class.update({
+            where: { id: classId },
+            data: { titulaireId },
         });
 
         // Create new assignments
@@ -325,7 +353,34 @@ export class ClassesService {
             },
         });
 
-        return { assignments };
+        return { assignments, titulaireId: classData.titulaireId };
+    }
+
+    /**
+     * Generate Timetable for a class
+     */
+    async generateTimetable(classId: string, schoolId: string, preferences?: any) {
+        // Find active academic year for the school
+        const activeYear = await prisma.academicYear.findFirst({
+            where: { schoolId, isActive: true },
+        });
+
+        if (!activeYear) {
+            throw new Error('NO_ACTIVE_ACADEMIC_YEAR');
+        }
+
+        // Import the generator
+        const { generateTimetable } = require('../../lib/timetable/timetableGenerator');
+
+        const result = await generateTimetable({
+            schoolId,
+            academicYearId: activeYear.id,
+            classId,
+            days: ['LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI'],
+            periodsPerDay: 8,
+        });
+
+        return result;
     }
 }
 

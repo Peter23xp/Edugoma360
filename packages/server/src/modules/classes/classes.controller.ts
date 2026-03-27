@@ -1,4 +1,4 @@
-﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { classesService } from './classes.service';
 
 export class ClassesController {
@@ -33,13 +33,15 @@ export class ClassesController {
 
     async createClass(req: Request, res: Response, next: NextFunction) {
         try {
-            const { sectionId, name, maxStudents } = req.body;
+            const { sectionId, name, maxStudents, room, titulaireId } = req.body;
 
             const result = await classesService.createClass({
                 schoolId: req.user!.schoolId,
                 sectionId,
                 name,
                 maxStudents,
+                room,
+                titulaireId,
             });
 
             res.status(201).json(result);
@@ -51,11 +53,13 @@ export class ClassesController {
     async updateClass(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            const { maxStudents, isActive } = req.body;
+            const { maxStudents, isActive, room, titulaireId } = req.body;
 
             const result = await classesService.updateClass(id, req.user!.schoolId, {
                 maxStudents,
                 isActive,
+                room,
+                titulaireId,
             });
 
             res.json(result);
@@ -79,12 +83,13 @@ export class ClassesController {
     async assignTeachers(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            const { assignments } = req.body;
+            const { assignments, titulaireId } = req.body;
 
             const result = await classesService.assignTeachers(
                 id,
                 req.user!.schoolId,
-                assignments
+                assignments,
+                titulaireId
             );
 
             res.json(result);
@@ -98,6 +103,19 @@ export class ClassesController {
             const { id } = req.params;
 
             const result = await classesService.getClassAssignments(id, req.user!.schoolId);
+
+            res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async generateTimetable(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const { preferences } = req.body;
+
+            const result = await classesService.generateTimetable(id, req.user!.schoolId, preferences);
 
             res.json(result);
         } catch (error) {

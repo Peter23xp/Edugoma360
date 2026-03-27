@@ -49,7 +49,7 @@ export default function SectionCard({
             {/* Header / Summary */}
             <div className="p-6 flex items-start justify-between">
                 <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center font-bold text-xl shadow-inner border border-blue-100">
+                    <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center font-bold text-xl shadow-inner border border-primary/20">
                         {section.code}
                     </div>
                     <div>
@@ -73,7 +73,7 @@ export default function SectionCard({
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <button onClick={() => onEditStr(section)} className="p-2 text-neutral-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent" title="Modifier la section">
+                    <button onClick={() => onEditStr(section)} className="p-2 text-neutral-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors border border-transparent" title="Modifier la section">
                         <Edit2 size={16} />
                     </button>
                     <button 
@@ -134,7 +134,7 @@ export default function SectionCard({
                                     <div className="font-semibold text-neutral-800 flex items-center gap-2">
                                         {sub.name} <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded border border-neutral-200 font-mono">{sub.abbreviation}</span>
                                     </div>
-                                    <div className="text-center font-bold text-blue-600 bg-blue-50 py-0.5 rounded border border-blue-100 mx-auto w-10">
+                                    <div className="text-center font-bold text-primary bg-primary/10 py-0.5 rounded border border-primary/20 mx-auto w-10">
                                         {sub.coefficient}
                                     </div>
                                     <div className="text-center text-neutral-600 font-mono text-xs">

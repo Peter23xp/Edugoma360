@@ -75,8 +75,8 @@ export default function SectionsPage() {
             {/* ── Page Header ──────────────────────────────────────────────── */}
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white border border-neutral-200 rounded-2xl px-6 py-5 shadow-sm">
                 <div className="flex items-center gap-4">
-                    <div className="p-3 bg-blue-50 rounded-xl">
-                        <BookOpen size={24} className="text-blue-600" />
+                    <div className="p-3 bg-primary/10 rounded-xl">
+                        <BookOpen size={24} className="text-primary" />
                     </div>
                     <div>
                         <h1 className="text-xl font-bold text-neutral-900 uppercase tracking-tight">Sections de l'école</h1>

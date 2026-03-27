@@ -86,8 +86,8 @@ export default function AcademicYearPage() {
                         value: String(totalPast),
                         sub: totalPast > 0 ? `Depuis ${data!.past[data!.past.length - 1]?.name?.slice(0, 4) ?? '—'}` : 'Aucune',
                         icon: BookOpen,
-                        color: 'text-blue-600',
-                        bg: 'bg-blue-50',
+                        color: 'text-accent',
+                        bg: 'bg-accent-light',
                     },
                     {
                         label: 'Élèves (année active)',

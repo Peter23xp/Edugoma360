@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { classesController } from './classes.controller';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
@@ -54,6 +54,13 @@ router.get(
     '/:id/assignments',
     requirePermission('classes:read'),
     (req, res, next) => classesController.getClassAssignments(req, res, next)
+);
+
+// Generate Timetable
+router.post(
+    '/:id/generate-timetable',
+    requirePermission('classes:update'),
+    (req, res, next) => classesController.generateTimetable(req, res, next)
 );
 
 export default router;
