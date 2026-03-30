@@ -82,6 +82,34 @@ export function useAcademicYears() {
         }
     });
 
+    const activateYearMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const res = await api.post(`/academic-years/${id}/activate`);
+            return res.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['academic-years'] });
+            toast.success("Année académique activée");
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.error || "Erreur lors de l'activation");
+        }
+    });
+
+    const activateTermMutation = useMutation({
+        mutationFn: async (termId: string) => {
+            const res = await api.post(`/academic-years/terms/${termId}/activate`);
+            return res.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['academic-years'] });
+            toast.success("Période activée avec succès");
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.error || "Erreur lors de l'activation");
+        }
+    });
+
     return {
         data: query.data,
         isLoading: query.isLoading,
@@ -91,6 +119,10 @@ export function useAcademicYears() {
         updateYear: updateMutation.mutateAsync,
         isUpdating: updateMutation.isPending,
         closeYear: closeMutation.mutateAsync,
-        isClosing: closeMutation.isPending
+        isClosing: closeMutation.isPending,
+        activateYear: activateYearMutation.mutateAsync,
+        isActivatingYear: activateYearMutation.isPending,
+        activateTerm: activateTermMutation.mutateAsync,
+        isActivatingTerm: activateTermMutation.isPending
     };
 }

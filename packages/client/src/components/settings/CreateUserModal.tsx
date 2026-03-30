@@ -196,7 +196,11 @@ export default function CreateUserModal({
               <label className={LABEL_CLS}>Rôle *</label>
               <select
                 value={role}
-                onChange={(e) => setRole(e.target.value)}
+                onChange={(e) => {
+                  setRole(e.target.value);
+                  setTeacherId("");
+                  setParentStudentIds([]);
+                }}
                 className={INPUT_CLS}
                 required
               >
@@ -207,6 +211,68 @@ export default function CreateUserModal({
                 ))}
               </select>
             </div>
+
+            {role === "ENSEIGNANT" && (
+              <div className="bg-primary/5 p-4 rounded-lg border border-primary/20 mb-4 animate-in fade-in slide-in-from-top-2">
+                <label className={LABEL_CLS}>Lier au profil enseignant (Auto-complétion)</label>
+                <select
+                  value={teacherId}
+                  onChange={(e) => {
+                    const id = e.target.value;
+                    setTeacherId(id);
+                    if (id && teachers) {
+                      const tc = teachers.find((t: any) => t.id === id);
+                      if (tc) {
+                        if (tc.nom) setNom(tc.nom);
+                        if (tc.postNom) setPostNom(tc.postNom);
+                        if (tc.prenom) setPrenom(tc.prenom);
+                        if (tc.telephone) setPhone(tc.telephone);
+                        if (tc.email) setEmail(tc.email);
+                      }
+                    } else if (id === "") {
+                      setNom("");
+                      setPostNom("");
+                      setPrenom("");
+                      setPhone("");
+                      setEmail("");
+                    }
+                  }}
+                  className={INPUT_CLS}
+                >
+                  <option value="">-- Sélectionner un enseignant existant --</option>
+                  {teachers?.map((t: any) => (
+                    <option key={t.id} value={t.id}>
+                      {t.nom} {t.postNom} {t.prenom || ""}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-primary font-medium mt-1.5">
+                  Sélectionnez un profil pour remplir automatiquement les champs.
+                </p>
+              </div>
+            )}
+
+            {role === "PARENT" && (
+              <div className="bg-primary/5 p-4 rounded-lg border border-primary/20 mb-4 animate-in fade-in slide-in-from-top-2">
+                <label className={LABEL_CLS}>Élèves rattachés (Tuteur)</label>
+                <select
+                  multiple
+                  value={parentStudentIds}
+                  onChange={(e) => {
+                    const options = Array.from(e.target.selectedOptions, (o) => o.value);
+                    setParentStudentIds(options);
+                  }}
+                  className={`${INPUT_CLS} h-32`}
+                >
+                  {students.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.nom} {s.postNom} {s.prenom || ""}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-primary font-medium mt-1.5">Maintenez CTRL/CMD pour sélectionner plusieurs élèves.</p>
+              </div>
+            )}
 
             {/* Names */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -325,51 +391,7 @@ export default function CreateUserModal({
               </div>
             </div>
 
-            {role === "ENSEIGNANT" && (
-              <>
-                <hr className="border-neutral-100" />
-                <div>
-                  <label className={LABEL_CLS}>Lier au profil enseignant</label>
-                  <select
-                    value={teacherId}
-                    onChange={(e) => setTeacherId(e.target.value)}
-                    className={INPUT_CLS}
-                  >
-                    <option value="">-- Sélectionner un enseignant --</option>
-                    {teachers?.map((t: any) => (
-                      <option key={t.id} value={t.id}>
-                        {t.nom} {t.postNom} {t.prenom || ""}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </>
-            )}
 
-            {role === "PARENT" && (
-              <>
-                <hr className="border-neutral-100" />
-                <div>
-                  <label className={LABEL_CLS}>Élèves rattachés (Tuteur)</label>
-                  <select
-                    multiple
-                    value={parentStudentIds}
-                    onChange={(e) => {
-                      const options = Array.from(e.target.selectedOptions, (o) => o.value);
-                      setParentStudentIds(options);
-                    }}
-                    className={`${INPUT_CLS} h-32`}
-                  >
-                    {students.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.nom} {s.postNom} {s.prenom || ""}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-neutral-500 mt-1">Maintenez CTRL/CMD pour sélectionner plusieurs élèves.</p>
-                </div>
-              </>
-            )}
 
             <hr className="border-neutral-100" />
 

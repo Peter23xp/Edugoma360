@@ -93,7 +93,44 @@ export class SettingsService {
         });
     }
 
-    async getClasses(schoolId: string) {
+    async getClasses(schoolId: string, role?: string, userId?: string) {
+        // If the user is a teacher, only return classes they are assigned to
+        if (role === 'ENSEIGNANT' && userId) {
+            const teacher = await prisma.teacher.findFirst({
+                where: { schoolId, userId },
+                select: { id: true },
+            });
+
+            if (!teacher) {
+                // Teacher profile not yet linked — return empty list
+                return [];
+            }
+
+            // Find all classes where this teacher has at least one assignment
+            const assignments = await prisma.teacherClassSubject.findMany({
+                where: { teacherId: teacher.id },
+                select: { classId: true },
+                distinct: ['classId'],
+            });
+
+            const classIds = assignments.map(a => a.classId);
+
+            // Fetch classes where the teacher is assigned OR is the titulaire
+            return prisma.class.findMany({
+                where: {
+                    schoolId,
+                    isActive: true,
+                    OR: [
+                        { id: { in: classIds } },
+                        { titulaireId: teacher.id },
+                    ],
+                },
+                include: { section: true, _count: { select: { enrollments: true } } },
+                orderBy: { name: 'asc' },
+            });
+        }
+
+        // Admin/Prefet/others — return all active classes
         return prisma.class.findMany({
             where: { schoolId, isActive: true },
             include: { section: true, _count: { select: { enrollments: true } } },

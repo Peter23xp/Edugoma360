@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Lock, Wifi, WifiOff, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -220,10 +220,10 @@ export default function GradeEntryPage() {
             {/* Header */}
             <div className="bg-white border-b border-neutral-200">
                 <div className="max-w-7xl mx-auto px-6 py-6">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                         <div>
-                            <h1 className="text-2xl font-bold text-neutral-900">Saisie des Notes</h1>
-                            <p className="text-sm text-neutral-600 mt-1">
+                            <h1 className="text-xl sm:text-2xl font-bold text-neutral-900">Saisie des Notes</h1>
+                            <p className="text-xs sm:text-sm text-neutral-600 mt-1">
                                 Enregistrez les notes de vos élèves
                             </p>
                         </div>
@@ -232,14 +232,14 @@ export default function GradeEntryPage() {
                         <div className="flex items-center gap-2">
                             {isOnline ? (
                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-green-100 
-                                                text-green-700 rounded-lg text-sm">
-                                    <Wifi size={16} />
+                                                text-green-700 rounded-lg text-xs sm:text-sm">
+                                    <Wifi size={14} className="sm:w-4 sm:h-4" />
                                     <span>Connecté</span>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 
-                                                text-orange-700 rounded-lg text-sm">
-                                    <WifiOff size={16} />
+                                                text-orange-700 rounded-lg text-xs sm:text-sm">
+                                    <WifiOff size={14} className="sm:w-4 sm:h-4" />
                                     <span>Hors ligne: {queueCount} en attente</span>
                                 </div>
                             )}
@@ -247,7 +247,7 @@ export default function GradeEntryPage() {
                     </div>
 
                     {/* Filters */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                         {/* Class */}
                         <div>
                             <label className="block text-sm font-medium text-neutral-700 mb-1.5">
@@ -340,7 +340,7 @@ export default function GradeEntryPage() {
             </div>
 
             {/* Content */}
-            <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
                 {!selectedClassId || !selectedSubjectId || !selectedTermId ? (
                     <div className="text-center py-12">
                         <p className="text-neutral-600">
@@ -390,33 +390,33 @@ export default function GradeEntryPage() {
                         />
 
                         {/* Actions */}
-                        <div className="flex items-center justify-end gap-3 mt-6">
+                        <div className="flex flex-col sm:flex-row items-center justify-end gap-3 mt-6 pb-20 sm:pb-0">
                             <button
                                 onClick={handleSave}
                                 disabled={saveMutation.isPending || isLocked}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-primary 
+                                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-primary 
                                            text-white rounded-lg hover:bg-primary-dark 
                                            font-medium text-sm transition-colors
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                             >
                                 {saveMutation.isPending ? (
                                     <Loader2 size={16} className="animate-spin" />
                                 ) : (
                                     <Save size={16} />
                                 )}
-                                Enregistrer
+                                Enregistrer les notes
                             </button>
 
                             <button
                                 onClick={handleLock}
                                 disabled={isLocked || gradedCount === 0}
-                                className="flex items-center gap-2 px-6 py-2.5 bg-orange-600 
+                                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-orange-600 
                                            text-white rounded-lg hover:bg-orange-700 
                                            font-medium text-sm transition-colors
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                             >
                                 <Lock size={16} />
-                                Verrouiller notes
+                                Verrouiller & Clôturer
                             </button>
                         </div>
                     </>

@@ -30,5 +30,6 @@ export function useClassesList(sectionId?: string) {
             return classes;
         },
         staleTime: 5 * 60 * 1000, // 5 minutes
+        refetchOnWindowFocus: false, // Avoid closing dropdowns on refocus
     });
 }

@@ -1,6 +1,4 @@
-/**
- * ClassSelector — Dropdown for selecting a class with student count
- */
+import { memo } from 'react';
 import { School } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
@@ -20,7 +18,7 @@ interface ClassSelectorProps {
     className?: string;
 }
 
-export default function ClassSelector({
+function ClassSelector({
     classes,
     value,
     onChange,
@@ -29,22 +27,25 @@ export default function ClassSelector({
 }: ClassSelectorProps) {
     return (
         <div className={cn('flex flex-col gap-1', className)}>
-            <label className="input-label flex items-center gap-1">
+            <label className="input-label flex items-center gap-1" htmlFor="classSelector">
                 <School size={13} className="text-neutral-500" />
                 Classe
             </label>
             <div className="relative">
                 <select
                     id="classSelector"
+                    name="classId"
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onTouchStart={(e) => e.stopPropagation()}
                     disabled={disabled}
                     className={cn(
-                        'w-full appearance-none border border-neutral-300 rounded-lg px-3 py-2.5',
+                        'w-full border border-neutral-300 rounded-lg px-3 py-2.5',
                         'text-sm bg-white text-neutral-800 font-medium',
                         'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary',
-                        'disabled:opacity-50 disabled:cursor-not-allowed',
-                        'pr-8 transition-colors'
+                        'disabled:opacity-50 disabled:cursor-not-allowed transition-colors',
+                        'appearance-none sm:appearance-none pr-8' // Custom appearance on desktop, maybe more standard on mobile if needed
                     )}
                 >
                     <option value="">Sélectionner une classe…</option>
@@ -52,14 +53,14 @@ export default function ClassSelector({
                         const count = c.studentCount ?? c.currentStudents ?? 0;
                         return (
                             <option key={c.id} value={c.id}>
-                                🏫 {c.name}
+                                {c.name}
                                 {count > 0 ? ` (${count} élèves)` : ''}
                             </option>
                         );
                     })}
                 </select>
-                {/* Custom chevron */}
-                <div className="pointer-events-none absolute inset-y-0 right-2.5 flex items-center">
+                {/* Custom chevron — hidden on very small screens to avoid touch interference */}
+                <div className="hidden sm:flex pointer-events-none absolute inset-y-0 right-2.5 items-center">
                     <svg className="w-4 h-4 text-neutral-400" viewBox="0 0 20 20" fill="currentColor">
                         <path
                             fillRule="evenodd"
@@ -72,3 +73,5 @@ export default function ClassSelector({
         </div>
     );
 }
+
+export default memo(ClassSelector);

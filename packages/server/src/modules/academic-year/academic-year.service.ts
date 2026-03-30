@@ -31,13 +31,16 @@ export const getAcademicYears = async (schoolId: string) => {
             number: t.number,
             startDate: t.startDate,
             endDate: t.endDate,
-            status: new Date() < t.startDate ? 'UPCOMING' : (new Date() > t.endDate ? 'COMPLETED' : 'CURRENT')
+            isActive: t.isActive,
+            status: t.isActive ? 'CURRENT' : (new Date() < t.startDate ? 'UPCOMING' : (new Date() > t.endDate ? 'COMPLETED' : 'CURRENT'))
         }))
     } : null;
 
     const formatPast = past.map((p: any) => ({
         id: p.id,
         name: p.name || p.label,
+        startDate: p.startDate,
+        endDate: p.endDate,
         closedAt: p.closedAt,
         studentCount: p._count.enrollments,
         termCount: p._count.terms
@@ -85,6 +88,7 @@ export const closeAcademicYear = async (schoolId: string, id: string, userId: st
     const year = await prisma.academicYear.findFirst({
         where: { id, schoolId },
         include: {
+            terms: { select: { id: true, number: true } },
             _count: {
                 select: { enrollments: true }
             }
@@ -94,8 +98,25 @@ export const closeAcademicYear = async (schoolId: string, id: string, userId: st
     if (!year) throw new Error("Année non trouvée");
     if (year.isClosed) throw new Error("Année déjà clôturée");
 
-    // L'implémentation de la vérification (délibération approuvée, bulletins, créances...) 
-    // serait ici. Pour simplifier, on suppose que les checks sont OK ou forcés par ignoreUnpaidDebts.
+    // 2. Fetch real stats from deliberations of terms in this year
+    // We count students based on the decision in DelibResult
+    // Usually, the final decision is in the last term's deliberation
+    const termIds = year.terms.map(t => t.id);
+    const results = await prisma.delibResult.findMany({
+        where: { deliberation: { termId: { in: termIds } } },
+        select: { decision: true, studentId: true, deliberation: { select: { term: { select: { number: true } } } } }
+    });
+
+    // Strategy: take the latest available decision for each student
+    const studentDecisions = new Map<string, string>();
+    for (const r of results) {
+        // Simple logic: if multiple terms have deliberations, the one with highest number wins (final)
+        studentDecisions.set(r.studentId, r.decision);
+    }
+
+    const decisions = Array.from(studentDecisions.values());
+    const admitted = decisions.filter(d => ['REUSSITE', 'PRODUIT', 'PASSE_SANS_ECHEC', 'EXEMPT'].includes(d.toUpperCase())).length;
+    const failed = decisions.filter(d => ['ECHEC', 'AJOURNE', 'NON_PRODUIT', 'REDOUBLE'].includes(d.toUpperCase())).length;
 
     const updated = await prisma.academicYear.update({
         where: { id },
@@ -107,13 +128,13 @@ export const closeAcademicYear = async (schoolId: string, id: string, userId: st
         }
     });
 
-    // Mock stats pour le retour de clôture
     return {
         academicYear: updated,
         statistics: {
             totalStudents: year._count.enrollments,
-            admitted: Math.floor(year._count.enrollments * 0.8),
-            failed: Math.floor(year._count.enrollments * 0.2)
+            admitted: admitted || 0,
+            failed: failed || 0,
+            undecided: Math.max(0, year._count.enrollments - (admitted + failed))
         }
     };
 };
@@ -151,6 +172,64 @@ export const updateAcademicYear = async (schoolId: string, id: string, data: any
                 }
             },
             include: { terms: { orderBy: { number: 'asc' } } }
+        });
+
+        return updated;
+    });
+};
+
+export const activateAcademicYear = async (schoolId: string, id: string) => {
+    return prisma.$transaction(async (tx) => {
+        // 1. Deactivate all years for this school
+        await tx.academicYear.updateMany({
+            where: { schoolId },
+            data: { isActive: false }
+        });
+
+        // 2. Activate target year
+        const updated = await tx.academicYear.update({
+            where: { id, schoolId },
+            data: { isActive: true }
+        });
+
+        return updated;
+    });
+};
+
+export const activateTerm = async (schoolId: string, termId: string) => {
+    return prisma.$transaction(async (tx) => {
+        // 1. Find term to get its academicYearId
+        const term = await tx.term.findUnique({
+            where: { id: termId },
+            include: { academicYear: true }
+        });
+
+        if (!term || term.academicYear.schoolId !== schoolId) {
+            throw new Error("Période non trouvée");
+        }
+
+        // 2. Deactivate all terms in this academic year
+        await tx.term.updateMany({
+            where: { academicYearId: term.academicYearId },
+            data: { isActive: false }
+        });
+
+        // 3. Activate target term
+        const updated = await tx.term.update({
+            where: { id: termId },
+            data: { isActive: true }
+        });
+
+        // 4. Ensure academic year is also active
+        await tx.academicYear.update({
+            where: { id: term.academicYearId },
+            data: { isActive: true }
+        });
+
+        // 5. Deactivate other years for school (safety)
+        await tx.academicYear.updateMany({
+            where: { schoolId, NOT: { id: term.academicYearId } },
+            data: { isActive: false }
         });
 
         return updated;

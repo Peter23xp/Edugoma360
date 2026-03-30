@@ -50,3 +50,27 @@ export const updateAcademicYear = async (req: Request, res: Response) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+export const activateAcademicYear = async (req: Request, res: Response) => {
+    try {
+        const schoolId = req.user?.schoolId;
+        if (!schoolId) return res.status(403).json({ error: 'UNAUTHORIZED' });
+
+        const data = await service.activateAcademicYear(schoolId, req.params.id);
+        res.json({ success: true, academicYear: data });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+export const activateTerm = async (req: Request, res: Response) => {
+    try {
+        const schoolId = req.user?.schoolId;
+        if (!schoolId) return res.status(403).json({ error: 'UNAUTHORIZED' });
+
+        const data = await service.activateTerm(schoolId, req.params.termId);
+        res.json({ success: true, term: data });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+};

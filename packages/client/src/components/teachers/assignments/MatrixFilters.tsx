@@ -48,8 +48,8 @@ export const MatrixFilters: React.FC<MatrixFiltersProps> = ({
                                        appearance-none cursor-pointer"
                         >
                             <option value="">Toutes les sections</option>
-                            {sections.map(s => (
-                                <option key={s.id} value={s.id}>{s.name}</option>
+                            {Array.isArray(sections) && sections.map(s => (
+                                <option key={s.id} value={s.id}>{s.name || s.label}</option>
                             ))}
                         </select>
                     </div>
@@ -67,7 +67,7 @@ export const MatrixFilters: React.FC<MatrixFiltersProps> = ({
                                        focus:ring-primary/10 transition-all text-sm text-neutral-900 
                                        appearance-none cursor-pointer"
                         >
-                            {academicYears.map(y => (
+                            {Array.isArray(academicYears) && academicYears.map(y => (
                                 <option key={y.id} value={y.id}>{y.label} {y.isActive ? '(Actuelle)' : ''}</option>
                             ))}
                         </select>

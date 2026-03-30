@@ -46,6 +46,7 @@ export default defineConfig({
     },
     server: {
         port: 5173,
+        host: true, // Allow external access on local network
         proxy: {
             '/api': {
                 target: 'http://localhost:3000',

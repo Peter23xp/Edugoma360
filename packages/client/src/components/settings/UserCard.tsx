@@ -1,6 +1,5 @@
 import {
   MoreVertical,
-  Edit2,
   Shield,
   KeyRound,
   Power,
@@ -188,6 +187,20 @@ export default function UserCard({
           className={`text-xs font-bold transition-colors ${user.isActive ? "text-amber-600 hover:text-amber-800" : "text-emerald-600 hover:text-emerald-800"}`}
         >
           {user.isActive ? "Désactiver" : "Activer"}
+        </button>
+        <button
+          onClick={() => {
+            if (
+              window.confirm(
+                `Supprimer définitivement ${user.nom} ${user.postNom} ?`,
+              )
+            ) {
+              onDelete(user.id);
+            }
+          }}
+          className="text-xs font-bold text-red-600 hover:text-red-800 transition-colors ml-auto"
+        >
+          Supprimer
         </button>
       </div>
     </div>

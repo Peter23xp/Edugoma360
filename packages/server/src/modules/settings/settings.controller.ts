@@ -67,7 +67,11 @@ export class SettingsController {
 
     async getClasses(req: Request, res: Response, next: NextFunction) {
         try {
-            const classes = await settingsService.getClasses(req.user!.schoolId);
+            const classes = await settingsService.getClasses(
+                req.user!.schoolId,
+                req.user!.role,
+                req.user!.userId,
+            );
             res.json({ data: classes });
         } catch (error) {
             next(error);

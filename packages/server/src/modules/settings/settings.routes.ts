@@ -15,16 +15,16 @@ router.post('/academic-years', requirePermission('settings:academic_year'), (req
 router.patch('/academic-years/:id/activate', requirePermission('settings:academic_year'), (req, res, next) => settingsController.activateAcademicYear(req, res, next));
 
 // Classes management
-router.get('/classes', requirePermission('settings:read'), (req, res, next) => settingsController.getClasses(req, res, next));
+router.get('/classes', (req, res, next) => settingsController.getClasses(req, res, next));
 
 // Subjects management
-router.get('/subjects', requirePermission('settings:read'), (req, res, next) => settingsController.getSubjects(req, res, next));
+router.get('/subjects', (req, res, next) => settingsController.getSubjects(req, res, next));
 
 // Context (school info + current academic year)
-router.get('/context', requirePermission('settings:read'), (req, res, next) => settingsController.getContext(req, res, next));
+router.get('/context', (req, res, next) => settingsController.getContext(req, res, next));
 
 // Terms (periods)
-router.get('/terms', requirePermission('settings:read'), (req, res, next) => settingsController.getTerms(req, res, next));
+router.get('/terms', (req, res, next) => settingsController.getTerms(req, res, next));
 
 // Sections
 router.get('/sections', requirePermission('settings:read'), (req, res, next) => settingsController.getSections(req, res, next));

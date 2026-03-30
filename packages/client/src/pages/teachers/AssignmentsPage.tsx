@@ -36,9 +36,12 @@ const AssignmentsPage: React.FC = () => {
         queryKey: ['academic-years'],
         queryFn: async () => {
             const res = await api.get('/settings/academic-years');
-            const years = res.data.data.map((y: any) => ({
+            const rawData = res.data.data || [];
+            if (!Array.isArray(rawData)) return [];
+            
+            const years = rawData.map((y: any) => ({
                 id: y.id,
-                label: y.name,
+                label: y.name || y.label,
                 isActive: y.isActive
             }));
             const active = years.find((y: any) => y.isActive);
@@ -53,7 +56,7 @@ const AssignmentsPage: React.FC = () => {
         queryKey: ['sections'],
         queryFn: async () => {
             const res = await api.get('/settings/sections');
-            return res.data.data;
+            return res.data.data || [];
         }
     });
 

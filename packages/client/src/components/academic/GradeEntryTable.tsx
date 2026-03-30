@@ -1,4 +1,4 @@
-﻿import { CheckCircle, Clock, AlertTriangle, XCircle } from 'lucide-react';
+import { CheckCircle, Clock, AlertTriangle, XCircle } from 'lucide-react';
 import GradeInput from './GradeInput';
 
 interface Student {
@@ -38,8 +38,8 @@ export default function GradeEntryTable({
         if (score === null) {
             return (
                 <div className="flex items-center gap-1.5 text-neutral-500">
-                    <Clock size={14} />
-                    <span className="text-xs">Attente</span>
+                    <Clock size={14} className="flex-shrink-0" />
+                    <span className="text-[10px] sm:text-xs">Attente</span>
                 </div>
             );
         }
@@ -47,40 +47,40 @@ export default function GradeEntryTable({
         if (score < passingThreshold) {
             return (
                 <div className="flex items-center gap-1.5 text-orange-600">
-                    <AlertTriangle size={14} />
-                    <span className="text-xs">Note basse</span>
+                    <AlertTriangle size={14} className="flex-shrink-0" />
+                    <span className="text-[10px] sm:text-xs">Faible</span>
                 </div>
             );
         }
 
         return (
             <div className="flex items-center gap-1.5 text-green-600">
-                <CheckCircle size={14} />
-                <span className="text-xs">Saisi</span>
+                <CheckCircle size={14} className="flex-shrink-0" />
+                <span className="text-[10px] sm:text-xs">Saisi</span>
             </div>
         );
     };
 
     return (
-        <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden">
+        <div className="bg-white rounded-lg border border-neutral-200 overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[500px]">
                     <thead className="bg-neutral-50 border-b border-neutral-200">
                         <tr>
-                            <th className="px-4 py-3 text-left text-xs font-semibold 
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold 
                                            text-neutral-700 uppercase tracking-wider">
                                 Élève
                             </th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold 
-                                           text-neutral-700 uppercase tracking-wider">
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold 
+                                           text-neutral-700 uppercase tracking-wider w-32 sm:w-40">
                                 Note /{maxScore}
                             </th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold 
-                                           text-neutral-700 uppercase tracking-wider">
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold 
+                                           text-neutral-700 uppercase tracking-wider hidden sm:table-cell">
                                 Observation
                             </th>
-                            <th className="px-4 py-3 text-left text-xs font-semibold 
-                                           text-neutral-700 uppercase tracking-wider">
+                            <th className="px-3 sm:px-4 py-3 text-left text-xs font-semibold 
+                                           text-neutral-700 uppercase tracking-wider w-24">
                                 Statut
                             </th>
                         </tr>
@@ -97,19 +97,19 @@ export default function GradeEntryTable({
                                     key={student.id}
                                     className="hover:bg-neutral-50 transition-colors"
                                 >
-                                    <td className="px-4 py-3">
-                                        <div>
-                                            <p className="text-sm font-medium text-neutral-900">
+                                    <td className="px-3 sm:px-4 py-3">
+                                        <div className="min-w-0">
+                                            <p className="text-xs sm:text-sm font-medium text-neutral-900 truncate">
                                                 {student.nom} {student.postNom}
                                             </p>
                                             {student.prenom && (
-                                                <p className="text-xs text-neutral-500">
+                                                <p className="text-[10px] sm:text-xs text-neutral-500 truncate">
                                                     {student.prenom}
                                                 </p>
                                             )}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-3 sm:px-4 py-3">
                                         <GradeInput
                                             currentValue={gradeData.score}
                                             maxScore={maxScore}
@@ -118,7 +118,7 @@ export default function GradeEntryTable({
                                             passingThreshold={passingThreshold}
                                         />
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-3 sm:px-4 py-3 hidden sm:table-cell">
                                         <input
                                             type="text"
                                             value={gradeData.observation}
@@ -127,7 +127,7 @@ export default function GradeEntryTable({
                                             }
                                             disabled={isLocked}
                                             placeholder="Optionnel"
-                                            className="w-full px-2 py-1.5 text-sm border 
+                                            className="w-full px-2 py-1.5 text-xs sm:text-sm border 
                                                        border-neutral-300 rounded 
                                                        focus:ring-2 focus:ring-primary/20 
                                                        focus:border-primary focus:outline-none
@@ -135,7 +135,7 @@ export default function GradeEntryTable({
                                                        disabled:cursor-not-allowed"
                                         />
                                     </td>
-                                    <td className="px-4 py-3">{getStatusBadge(gradeData.score)}</td>
+                                    <td className="px-3 sm:px-4 py-3">{getStatusBadge(gradeData.score)}</td>
                                 </tr>
                             );
                         })}

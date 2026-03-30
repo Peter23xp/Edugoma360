@@ -7,15 +7,17 @@ initTeacherCron();
 initPaymentsCron();
 
 const PORT = env.PORT;
+const HOST = '0.0.0.0';
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
     console.log('');
     console.log('============================================');
     console.log('       EduGoma 360 API Server');
     console.log('============================================');
-    console.log(`  URL:   http://localhost:${PORT}/api`);
-    console.log(`  Env:   ${env.NODE_ENV}`);
-    console.log(`  Ville: ${env.DEFAULT_VILLE}`);
+    console.log(`  Local:   http://localhost:${PORT}/api`);
+    console.log(`  Network: http://192.168.1.106:${PORT}/api`);
+    console.log(`  Env:     ${env.NODE_ENV}`);
+    console.log(`  Ville:   ${env.DEFAULT_VILLE}`);
     console.log('============================================');
     console.log('');
 });

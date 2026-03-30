@@ -7,7 +7,13 @@ import EditYearModal from '../../components/settings/EditYearModal';
 import CloseYearModal from '../../components/settings/CloseYearModal';
 
 export default function AcademicYearPage() {
-    const { data, isLoading, isError, createYear, isCreating, updateYear, isUpdating, closeYear, isClosing } = useAcademicYears();
+    const { 
+        data, isLoading, isError, 
+        createYear, isCreating, 
+        updateYear, isUpdating, 
+        closeYear, isClosing,
+        activateYear, activateTerm
+    } = useAcademicYears();
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [yearToClose, setYearToClose] = useState<{ id: string; name: string } | null>(null);
@@ -22,6 +28,16 @@ export default function AcademicYearPage() {
 
     const handleClose = async (id: string, ignoreDebts: boolean) => {
         await closeYear({ id, ignoreUnpaidDebts: ignoreDebts });
+    };
+
+    const handleActivateYear = async (id: string) => {
+        if (window.confirm("Voulez-vous vraiment activer cette année scolaire ? Cela désactivera l'année actuelle.")) {
+            await activateYear(id);
+        }
+    };
+
+    const handleActivateTerm = async (id: string) => {
+        await activateTerm(id);
     };
 
     // ── Loading state ─────────────────────────────────────────────────────────
@@ -123,6 +139,7 @@ export default function AcademicYearPage() {
                         isPast={false}
                         onEditClick={() => setShowEditModal(true)}
                         onCloseClick={() => setYearToClose({ id: data.current!.id, name: data.current!.name })}
+                        onActivateTerm={handleActivateTerm}
                     />
                 ) : (
                     <div className="bg-orange-50 border border-orange-200 rounded-2xl p-8 text-center">
@@ -155,7 +172,12 @@ export default function AcademicYearPage() {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {data!.past.map(year => (
-                            <AcademicYearCard key={year.id} year={year} isPast={true} />
+                            <AcademicYearCard 
+                                key={year.id} 
+                                year={year} 
+                                isPast={true} 
+                                onActivateYear={handleActivateYear}
+                            />
                         ))}
                     </div>
                 </section>

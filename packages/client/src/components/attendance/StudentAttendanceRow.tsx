@@ -1,5 +1,6 @@
 /**
  * StudentAttendanceRow — Single row in the roll call grid
+ * Responsive: compact layout on mobile devices
  */
 import { MessageSquarePlus } from 'lucide-react';
 import { cn } from '../../lib/utils';
@@ -71,38 +72,38 @@ export default function StudentAttendanceRow({
             )}
         >
             {/* N° */}
-            <td className="px-3 py-2.5 text-xs text-neutral-400 font-mono w-10 text-center">
+            <td className="px-2 sm:px-3 py-2 sm:py-2.5 text-xs text-neutral-400 font-mono w-8 sm:w-10 text-center">
                 {index}
             </td>
 
-            {/* Photo / Avatar */}
-            <td className="px-2 py-2 w-10">
+            {/* Photo / Avatar — hidden on small screens */}
+            <td className="px-1.5 sm:px-2 py-1.5 sm:py-2 w-8 sm:w-10 hidden sm:table-cell">
                 {student.photoUrl ? (
                     <img
                         src={student.photoUrl}
                         alt={fullName}
-                        className="w-8 h-8 rounded-full object-cover border border-neutral-200"
+                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-neutral-200"
                     />
                 ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs select-none">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] sm:text-xs select-none">
                         {initials}
                     </div>
                 )}
             </td>
 
-            {/* Matricule — hidden on small screens */}
-            <td className="px-3 py-2.5 text-xs text-neutral-500 font-mono hidden sm:table-cell">
+            {/* Matricule — hidden on mobile and tablet */}
+            <td className="px-2 sm:px-3 py-2 sm:py-2.5 text-xs text-neutral-500 font-mono hidden md:table-cell">
                 {student.matricule}
             </td>
 
             {/* Nom */}
-            <td className="px-3 py-2.5 text-sm font-medium text-neutral-800 min-w-0">
+            <td className="px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-neutral-800 min-w-0 max-w-[120px] sm:max-w-none">
                 <span className="block truncate">{fullName}</span>
             </td>
 
             {/* Statut */}
-            <td className="px-3 py-2.5">
-                <div className="flex items-center gap-1.5">
+            <td className="px-2 sm:px-3 py-2 sm:py-2.5">
+                <div className="flex items-center gap-1 sm:gap-1.5">
                     {(Object.keys(STATUS_CONFIG) as AttendanceStatus[]).map((status) => {
                         const cfg = STATUS_CONFIG[status];
                         const isActive = currentStatus === status;
@@ -116,7 +117,7 @@ export default function StudentAttendanceRow({
                                 disabled={isLocked}
                                 onClick={() => onStatusChange(student.id, status)}
                                 className={cn(
-                                    'w-9 h-9 rounded-lg text-sm font-bold transition-all duration-200',
+                                    'w-7 h-7 sm:w-9 sm:h-9 rounded-md sm:rounded-lg text-xs sm:text-sm font-bold transition-all duration-200',
                                     'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                                     'disabled:opacity-50 disabled:cursor-not-allowed',
                                     isActive ? cfg.active : cfg.inactive
@@ -135,13 +136,14 @@ export default function StudentAttendanceRow({
                             aria-label="Ajouter une remarque"
                             onClick={() => onAddRemark(student.id)}
                             className={cn(
-                                'w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200',
+                                'w-7 h-7 sm:w-9 sm:h-9 rounded-md sm:rounded-lg flex items-center justify-center transition-all duration-200',
                                 hasRemark
                                     ? 'bg-primary text-white shadow-sm'
                                     : 'bg-neutral-100 text-neutral-500 hover:bg-primary/10 hover:text-primary'
                             )}
                         >
-                            <MessageSquarePlus size={14} />
+                            <MessageSquarePlus size={12} className="sm:hidden" />
+                            <MessageSquarePlus size={14} className="hidden sm:block" />
                         </button>
                     )}
                 </div>
@@ -149,3 +151,4 @@ export default function StudentAttendanceRow({
         </tr>
     );
 }
+

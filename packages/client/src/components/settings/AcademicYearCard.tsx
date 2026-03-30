@@ -9,6 +9,8 @@ interface AcademicYearCardProps {
     isPast?: boolean;
     onEditClick?: () => void;
     onCloseClick?: () => void;
+    onActivateYear?: (id: string) => void;
+    onActivateTerm?: (id: string) => void;
 }
 
 const formatDate = (dateStr?: string) => {
@@ -29,7 +31,7 @@ const termStatusConfig = {
     UPCOMING: { label: 'À venir', badge: 'bg-neutral-100 text-neutral-500 border-neutral-200', bar: 'bg-neutral-200', icon: '⏳', left: 'border-neutral-300' },
 };
 
-function TermProgress({ term }: { term: Term }) {
+function TermProgress({ term, onActivate }: { term: Term; onActivate?: (id: string) => void }) {
     const now = new Date();
     const start = parseISO(term.startDate);
     const end = parseISO(term.endDate);
@@ -41,18 +43,28 @@ function TermProgress({ term }: { term: Term }) {
     const currentWeek = term.status === 'CURRENT' ? Math.min(totalWeeks, differenceInWeeks(now, start) + 1) : 0;
 
     return (
-        <div className={cn("pl-4 border-l-2 py-2", cfg.left)}>
-            <div className="flex justify-between items-start mb-2">
+        <div className={cn("pl-4 border-l-2 py-2 group/term", cfg.left)}>
+            <div className="flex justify-between items-start mb-1">
                 <div className="flex items-center gap-2">
                     <Navigation size={12} className="text-neutral-400 shrink-0" />
                     <span className="text-xs font-bold text-neutral-700 uppercase tracking-wide">
                         {term.number === 1 ? (totalWeeks > 18 ? 'Semestre' : 'Trimestre') : (totalWeeks > 18 ? 'Semestre' : 'Trimestre')} {term.number}
                     </span>
                 </div>
-                <span className={cn("text-xs px-2 py-0.5 rounded-full border font-medium", cfg.badge)}>
-                    {cfg.icon} {cfg.label}
-                    {term.status === 'CURRENT' && totalWeeks > 0 && ` (S${currentWeek}/${totalWeeks})`}
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className={cn("text-[10px] sm:text-xs px-2 py-0.5 rounded-full border font-medium", cfg.badge)}>
+                        {cfg.icon} {cfg.label}
+                        {term.status === 'CURRENT' && totalWeeks > 0 && ` (S${currentWeek}/${totalWeeks})`}
+                    </span>
+                    {term.status !== 'CURRENT' && onActivate && (
+                        <button
+                            onClick={() => onActivate(term.id)}
+                            className="hidden group-hover/term:block text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded shadow-sm hover:bg-blue-700 transition-all"
+                        >
+                            Activer
+                        </button>
+                    )}
+                </div>
             </div>
             <p className="text-xs text-neutral-500 mb-2">
                 {formatDate(term.startDate)} → {formatDate(term.endDate)} ({totalWeeks} semaines)
@@ -68,7 +80,7 @@ function TermProgress({ term }: { term: Term }) {
 }
 
 // ── Past Year Card ────────────────────────────────────────────────────────────
-function PastYearCard({ year }: { year: AcademicYear }) {
+function PastYearCard({ year, onActivate }: { year: AcademicYear; onActivate?: (id: string) => void }) {
     return (
         <div className="bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
             <div className="flex justify-between items-center px-5 py-4 border-b border-neutral-100 bg-neutral-50/60">
@@ -99,28 +111,37 @@ function PastYearCard({ year }: { year: AcademicYear }) {
                         <BookOpen size={13} className="text-neutral-400" />
                         {year.termCount ?? 0} périodes
                     </span>
-                    {year.type && (
-                        <>
-                            <span className="text-neutral-300">•</span>
-                            <span className="capitalize text-neutral-400">{year.type.toLowerCase()}</span>
-                        </>
-                    )}
                 </div>
             </div>
-            <div className="px-5 py-3 bg-neutral-50 border-t border-neutral-100 flex gap-4">
-                <button className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5 transition-colors">
-                    📄 Voir détails
-                </button>
-                <button className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5 transition-colors">
-                    <BarChart2 size={12} /> Rapports
-                </button>
+            <div className="px-5 py-3 bg-neutral-50 border-t border-neutral-100 flex items-center justify-between">
+                <div className="flex gap-4">
+                    <button className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5 transition-colors">
+                        📄 Voir détails
+                    </button>
+                    <button className="text-xs font-semibold text-primary hover:underline flex items-center gap-1.5 transition-colors">
+                        <BarChart2 size={12} /> Rapports
+                    </button>
+                </div>
+                {onActivate && (
+                    <button 
+                        onClick={() => onActivate(year.id)}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-3 py-1 rounded-md border border-blue-100"
+                    >
+                        Réactiver
+                    </button>
+                )}
             </div>
         </div>
     );
 }
 
 // ── Active Year Card ──────────────────────────────────────────────────────────
-function ActiveYearCard({ year, onEditClick, onCloseClick }: { year: AcademicYear; onEditClick?: () => void; onCloseClick?: () => void }) {
+function ActiveYearCard({ year, onEditClick, onCloseClick, onActivateTerm }: { 
+    year: AcademicYear; 
+    onEditClick?: () => void; 
+    onCloseClick?: () => void;
+    onActivateTerm?: (id: string) => void;
+}) {
     const totalWeeks = getWeeks(year.startDate, year.endDate);
     const now = new Date();
     const start = year.startDate ? parseISO(year.startDate) : null;
@@ -169,7 +190,7 @@ function ActiveYearCard({ year, onEditClick, onCloseClick }: { year: AcademicYea
                 {year.terms && year.terms.length > 0 && (
                     <div className="space-y-3">
                         {year.terms.map(term => (
-                            <TermProgress key={term.id} term={term} />
+                            <TermProgress key={term.id} term={term} onActivate={onActivateTerm} />
                         ))}
                     </div>
                 )}
@@ -196,7 +217,14 @@ function ActiveYearCard({ year, onEditClick, onCloseClick }: { year: AcademicYea
 }
 
 // ── Main Export ───────────────────────────────────────────────────────────────
-export default function AcademicYearCard({ year, isPast = false, onEditClick, onCloseClick }: AcademicYearCardProps) {
-    if (isPast) return <PastYearCard year={year} />;
-    return <ActiveYearCard year={year} onEditClick={onEditClick} onCloseClick={onCloseClick} />;
+export default function AcademicYearCard({ 
+    year, 
+    isPast = false, 
+    onEditClick, 
+    onCloseClick,
+    onActivateYear,
+    onActivateTerm
+}: AcademicYearCardProps) {
+    if (isPast) return <PastYearCard year={year} onActivate={onActivateYear} />;
+    return <ActiveYearCard year={year} onEditClick={onEditClick} onCloseClick={onCloseClick} onActivateTerm={onActivateTerm} />;
 }

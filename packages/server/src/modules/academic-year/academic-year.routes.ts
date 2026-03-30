@@ -12,5 +12,7 @@ router.get('/', controller.getAcademicYears);
 router.post('/', requireRole(['PREFET', 'SUPER_ADMIN']), controller.createAcademicYear);
 router.put('/:id', requireRole(['PREFET', 'SUPER_ADMIN']), controller.updateAcademicYear);
 router.post('/:id/close', requireRole(['PREFET', 'SUPER_ADMIN']), controller.closeAcademicYear);
+router.post('/:id/activate', requireRole(['PREFET', 'SUPER_ADMIN']), controller.activateAcademicYear);
+router.post('/terms/:termId/activate', requireRole(['PREFET', 'SUPER_ADMIN']), controller.activateTerm);
 
 export default router;

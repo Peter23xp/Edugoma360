@@ -185,8 +185,8 @@ export default function UsersManagementPage() {
                     user={user}
                     onEditPermissions={(u) => setPermissionsTarget(u)}
                     onResetPassword={(u) => setResetPasswordTarget(u)}
-                    onToggleStatus={(id) => toggleStatus(id)}
-                    onDelete={(id) => deleteUser(id)}
+                    onToggleStatus={(id) => toggleStatus(id).catch(() => {})}
+                    onDelete={(id) => deleteUser(id).catch(() => {})}
                   />
                 ))}
               </div>

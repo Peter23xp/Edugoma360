@@ -178,10 +178,19 @@ export class AttendanceService {
                 select: { id: true },
             });
             resolvedTermId = activeTerm?.id;
+
+            // Fallback: if no active term is marked, take the most recent one covering the date (or just the latest)
+            if (!resolvedTermId) {
+                const fallbackTerm = await prisma.term.findFirst({
+                    orderBy: { startDate: 'desc' },
+                    select: { id: true },
+                });
+                resolvedTermId = fallbackTerm?.id;
+            }
         }
 
         if (!resolvedTermId) {
-            throw new Error('Aucune période scolaire active trouvée');
+            throw new Error('Aucune période scolaire (trimestre) trouvée dans le système. Veuillez en créer une dans les paramètres.');
         }
 
         // Upsert each record

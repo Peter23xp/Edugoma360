@@ -2,7 +2,7 @@
  * DailyRollCallPage — Route: /attendance/roll-call
  * Écran d'appel quotidien — EduGoma 360
  */
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     CalendarCheck,
@@ -237,7 +237,9 @@ export default function DailyRollCallPage() {
     const [pendingRollCallCount, setPendingRollCallCount] = useState(0);
 
     // ── Data
-    const { data: classes = [] } = useClassesList();
+    const { data: rawClasses = [] } = useClassesList();
+    const classes = useMemo(() => rawClasses, [rawClasses]);
+    
     const { data: attendanceData, isLoading, isFetching } = useDailyAttendance(classId, date, period);
     const saveMutation = useSaveAttendance();
 
@@ -320,29 +322,38 @@ export default function DailyRollCallPage() {
             status: r.status ?? 'ABSENT',
         }));
 
-        await saveMutation.mutateAsync({
-            classId,
-            date,
-            period,
-            records: finalRows.map((r) => ({
-                studentId: r.studentId,
-                status: r.status as any,
-                remark: r.remark || undefined,
-                arrivalTime: r.arrivalTime || undefined,
-                isJustified: r.isJustified,
-            })),
-        });
+        try {
+            if (finalRows.length === 0) {
+                toast.error("Aucun élève dans cette classe. Appel impossible.");
+                return;
+            }
 
-        // Alert if high absence rate
-        const absPct = finalRows.filter((r) => r.status === 'ABSENT').length / (finalRows.length || 1);
-        if (absPct >= 0.2) {
-            toast(
-                `⚠ Taux d'absence élevé (${Math.round(absPct * 100)}%). Le Préfet sera notifié.`,
-                { icon: '⚠️', style: { background: '#fff3cd', color: '#856404' }, duration: 6000 }
-            );
+            await saveMutation.mutateAsync({
+                classId,
+                date,
+                period,
+                records: finalRows.map((r) => ({
+                    studentId: r.studentId,
+                    status: r.status as any,
+                    remark: r.remark || undefined,
+                    arrivalTime: r.arrivalTime || undefined,
+                    isJustified: r.isJustified,
+                })),
+            });
+
+            // Alert if high absence rate
+            const absPct = finalRows.filter((r) => r.status === 'ABSENT').length / (finalRows.length || 1);
+            if (absPct >= 0.2) {
+                toast(
+                    `⚠ Taux d'absence élevé (${Math.round(absPct * 100)}%). Le Préfet sera notifié.`,
+                    { icon: '⚠️', style: { background: '#fff3cd', color: '#856404' }, duration: 6000 }
+                );
+            }
+
+            if (andClose) navigate('/attendance');
+        } catch (error) {
+            console.error("Erreur lors de l'enregistrement", error);
         }
-
-        if (andClose) navigate('/attendance');
     }, [rows, classId, date, period, saveMutation, navigate]);
 
     const handleSave = useCallback(async (andClose: boolean) => {
@@ -427,15 +438,15 @@ export default function DailyRollCallPage() {
 
     // ── Render ────────────────────────────────────────────────────────────────
     return (
-        <div className="space-y-5 pb-10" ref={tableRef}>
+        <div className="space-y-3 sm:space-y-5 pb-24 sm:pb-10" ref={tableRef}>
             {/* ── Page Header */}
-            <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-3">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
                         <CalendarCheck size={20} className="text-primary" />
                     </div>
                     <div>
-                        <h1 className="text-lg font-bold text-neutral-900 leading-tight">
+                        <h1 className="text-base sm:text-lg font-bold text-neutral-900 leading-tight">
                             Appel Quotidien
                         </h1>
                         <p className="text-xs text-neutral-500">
@@ -471,7 +482,7 @@ export default function DailyRollCallPage() {
             )}
 
             {/* ── Filters bar */}
-            <div className="bg-white rounded-xl border border-neutral-200 p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-sm">
+            <div className="bg-white rounded-xl border border-neutral-200 p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 shadow-sm">
                 {/* Class selector */}
                 <ClassSelector
                     classes={classes as any}
@@ -578,7 +589,7 @@ export default function DailyRollCallPage() {
 
             {/* ── Bottom action bar */}
             {rows.length > 0 && !isLocked && (
-                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-neutral-200 shadow-lg px-4 py-3 flex flex-wrap items-center gap-3 sm:static sm:rounded-xl sm:border sm:shadow-sm sm:z-auto">
+                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-neutral-200 shadow-lg px-3 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center gap-2 sm:gap-3 sm:static sm:rounded-xl sm:border sm:shadow-sm sm:z-auto">
                     {/* Nav arrows */}
                     <button
                         type="button"
@@ -608,7 +619,7 @@ export default function DailyRollCallPage() {
                         onClick={() => handleSave(false)}
                         disabled={!hasChanges || saveMutation.isPending}
                         className={cn(
-                            'flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all',
+                            'flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all',
                             hasChanges && !saveMutation.isPending
                                 ? 'bg-primary text-white hover:bg-primary/90 shadow-sm'
                                 : 'bg-neutral-100 text-neutral-400 cursor-not-allowed'
@@ -629,13 +640,14 @@ export default function DailyRollCallPage() {
                         onClick={() => handleSave(true)}
                         disabled={!hasChanges || saveMutation.isPending}
                         className={cn(
-                            'flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm transition-all border',
+                            'flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm transition-all border',
                             hasChanges && !saveMutation.isPending
                                 ? 'bg-white border-primary text-primary hover:bg-primary/5'
                                 : 'bg-neutral-50 border-neutral-200 text-neutral-400 cursor-not-allowed'
                         )}
                     >
-                        Enregistrer & Fermer
+                        <span className="hidden sm:inline">Enregistrer & Fermer</span>
+                        <span className="sm:hidden">Sauver & Fermer</span>
                     </button>
                 </div>
             )}

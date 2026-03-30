@@ -214,7 +214,7 @@ export function useSectionsForFilter() {
 
 // ── Teachers dropdown ────────────────────────────────────────────────────────
 export function useTeachersForDropdown() {
-    return useQuery<{ id: string; nom: string; postNom: string; prenom?: string }[]>({
+    return useQuery<{ id: string; nom: string; postNom: string; prenom?: string; telephone?: string; email?: string }[]>({
         queryKey: ['teachers-dropdown'],
         queryFn: async () => {
             const res = await api.get('/teachers?limit=500');
@@ -224,6 +224,8 @@ export function useTeachersForDropdown() {
                 nom: t.nom,
                 postNom: t.postNom,
                 prenom: t.prenom,
+                telephone: t.telephone,
+                email: t.email,
             }));
         },
     });

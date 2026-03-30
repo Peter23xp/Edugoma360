@@ -89,13 +89,17 @@ export function useSaveAttendance() {
 
             if (isOnline) {
                 // Online — POST directly to API
-                const res = await api.post('/attendance/daily', {
+                const queryPayload: any = {
                     classId: payload.classId,
                     date: payload.date,
                     period: payload.period,
-                    termId: activeTermId,
                     records: payload.records,
-                });
+                };
+                if (activeTermId) {
+                    queryPayload.termId = activeTermId;
+                }
+
+                const res = await api.post('/attendance/daily', queryPayload);
                 return res.data?.data ?? res.data;
             } else {
                 // Offline — save to Dexie queue
