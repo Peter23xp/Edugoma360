@@ -484,7 +484,7 @@ export default function DeliberationPage() {
                             onClick={handleValidate}
                             className="flex items-center gap-2 px-6 py-2 bg-orange-600 
                                        text-white rounded-lg hover:bg-orange-700 
-                                       font-medium text-sm transition-colors"
+                                       font-medium text-sm transition-colors w-full sm:w-auto"
                         >
                             <FileText size={16} />
                             Valider la délibération
@@ -542,7 +542,7 @@ export default function DeliberationPage() {
                                 className="flex items-center gap-2 px-6 py-2 bg-orange-600 
                                            text-white rounded-lg hover:bg-orange-700 
                                            font-medium text-sm transition-colors
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 {validateMutation.isPending && (
                                     <Loader2 size={16} className="animate-spin" />

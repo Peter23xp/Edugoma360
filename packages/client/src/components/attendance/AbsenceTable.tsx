@@ -69,8 +69,8 @@ export default function AbsenceTable({
     return (
         <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
             
-            {/* Table */}
-            <div className="overflow-x-auto flex-1">
+            {/* Table (Desktop) */}
+            <div className="hidden md:block overflow-x-auto flex-1">
                 <table className="w-full text-left min-w-[700px]">
                     <thead className="bg-neutral-50/80 border-b border-neutral-200">
                         <tr>
@@ -180,6 +180,84 @@ export default function AbsenceTable({
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Cards (Mobile) */}
+            <div className="md:hidden flex-1 bg-neutral-50/50 p-4">
+                {isLoading ? (
+                    <div className="py-8 text-center text-neutral-500 flex flex-col items-center gap-2">
+                        <div className="w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                        <span className="text-sm">Chargement...</span>
+                    </div>
+                ) : data.length === 0 ? (
+                    <div className="py-12 text-center text-neutral-500 bg-white rounded-xl border border-neutral-200">
+                        <CalendarDays size={36} className="mx-auto text-neutral-300 mb-2" />
+                        <p className="font-semibold text-neutral-700 text-sm">Aucune absence</p>
+                    </div>
+                ) : (
+                    <div className="space-y-3">
+                        {data.map((item) => (
+                            <div key={item.id} className="bg-white p-4 rounded-xl border border-neutral-200 shadow-sm flex flex-col gap-3">
+                                {/* Header: Élève et Actions */}
+                                <div className="flex justify-between items-start gap-2">
+                                    <div className="min-w-0">
+                                        <p className="text-sm font-bold text-neutral-900 truncate">
+                                            {item.student.nom} {item.student.postNom}
+                                        </p>
+                                        <p className="text-xs text-neutral-500 font-mono mt-0.5">
+                                            {item.student.matricule}
+                                        </p>
+                                    </div>
+                                    <div className="flex shrink-0 gap-1">
+                                        <button onClick={() => onViewClick(item)} className="p-1.5 text-neutral-500 hover:bg-neutral-100 rounded-lg">
+                                            <Eye size={16} />
+                                        </button>
+                                        {canEdit && (
+                                            <button onClick={() => onEditClick(item)} className="p-1.5 text-neutral-500 hover:bg-neutral-100 rounded-lg">
+                                                <Edit3 size={16} />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Divider */}
+                                <div className="h-px bg-neutral-100 w-full" />
+
+                                {/* Infos: Date, Classe, Statuts */}
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-700 bg-neutral-100 px-2 py-1 rounded-md">
+                                        {item.status === 'RETARD' || item.status === 'LATE' ? (
+                                            <Clock size={12} className="text-orange-500" />
+                                        ) : (
+                                            <CalendarDays size={12} className="text-neutral-400" />
+                                        )}
+                                        {formatDate(item.date, item.period)}
+                                    </div>
+                                    <span className="text-xs font-medium text-neutral-600 bg-neutral-100 px-2.5 py-1 rounded-md">
+                                        {item.class.name}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between mt-1">
+                                    <StatusBadge status={item.status} />
+                                    <div className="flex items-center gap-1.5 text-xs font-medium">
+                                        {item.isJustified ? (
+                                            <>
+                                              <CheckCircle2 size={14} className="text-green-500" />
+                                              <span className="text-green-700">Justifié</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                              <XCircle size={14} className="text-red-400" />
+                                              <span className="text-neutral-500">Non justifié</span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
             {/* Pagination footer */}

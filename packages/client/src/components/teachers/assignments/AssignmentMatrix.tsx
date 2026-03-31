@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { AssignmentCell } from './AssignmentCell';
-import { Layers, Clock, AlertTriangle, UserCheck } from 'lucide-react';
+import { Layers, Clock, AlertTriangle, UserCheck, Plus, Edit2, Trash2 } from 'lucide-react';
 
 interface AssignmentMatrixProps {
     data: {
@@ -58,8 +58,8 @@ export const AssignmentMatrix: FC<AssignmentMatrixProps> = ({
                 ))}
             </div>
 
-            {/* MATRICE SCROLLABLE */}
-            <div className="overflow-hidden bg-white rounded-xl border border-neutral-300/50 shadow-sm">
+            {/* MATRICE DESKTOP (VUE TABLEAU) */}
+            <div className="hidden lg:block overflow-hidden bg-white rounded-xl border border-neutral-300/50 shadow-sm">
                 <div className="overflow-x-auto overflow-y-auto max-h-[70vh]">
                     <table className="min-w-full border-collapse table-fixed">
                         <thead className="sticky top-0 z-20 bg-white">
@@ -112,6 +112,75 @@ export const AssignmentMatrix: FC<AssignmentMatrixProps> = ({
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            {/* VUE CARTE MOBILE */}
+            <div className="lg:hidden space-y-4">
+                {classes.map(cls => (
+                    <div key={cls.id} className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden shadow-sm">
+                        <div className="bg-neutral-50 p-4 border-b border-neutral-200 flex justify-between items-center">
+                            <div>
+                                <h3 className="font-bold text-neutral-900 text-base">{cls.name}</h3>
+                                <span className="text-xs font-medium text-neutral-500">{cls.section.name}</span>
+                            </div>
+                        </div>
+                        <div className="p-0 divide-y divide-neutral-100">
+                            {subjects.filter(s => s.sections.includes(cls.sectionId)).map(subj => {
+                                const assignment = assignmentMap.get(`${cls.id}-${subj.id}`);
+                                const isHighlighted = isTeacherMatched(assignment);
+                                const isOverloaded = assignment && (assignment.volumeHoraire || 0) > 20;
+
+                                return (
+                                    <div key={subj.id} className={`p-4 flex justify-between items-center transition-colors ${isHighlighted ? 'bg-blue-50/30' : 'hover:bg-neutral-50/50'}`}>
+                                        <div className="flex-1 min-w-0 pr-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-semibold text-sm text-neutral-800">{subj.abbreviation}</span>
+                                                <span className="text-xs text-neutral-500 truncate">{subj.name}</span>
+                                            </div>
+                                            {assignment ? (
+                                                <div className="mt-1.5 flex flex-col gap-0.5">
+                                                    <p className={`text-sm font-semibold ${isOverloaded ? 'text-amber-700' : 'text-emerald-700'}`}>
+                                                        {assignment.teacherName}
+                                                        {isOverloaded && <AlertTriangle size={12} className="inline ml-1 mb-0.5 text-amber-500" />}
+                                                    </p>
+                                                    <span className="text-xs font-medium text-neutral-500">{assignment.volumeHoraire} h/semaine</span>
+                                                </div>
+                                            ) : (
+                                                <p className="mt-1.5 text-xs text-neutral-400 italic">Non assigné</p>
+                                            )}
+                                        </div>
+                                        <div className="flex-shrink-0 flex items-center">
+                                            {assignment ? (
+                                                <div className="flex items-center gap-1.5">
+                                                    <button 
+                                                        onClick={() => onEdit(assignment)}
+                                                        className="p-2 text-neutral-500 hover:text-primary bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+                                                    >
+                                                        <Edit2 size={16} />
+                                                    </button>
+                                                    <button 
+                                                        onClick={() => onRemove(assignment.id)}
+                                                        className="p-2 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <button 
+                                                    onClick={() => onAssign(cls.id, subj.id)}
+                                                    className="flex items-center gap-1.5 bg-neutral-100 hover:bg-primary hover:text-white text-neutral-700 hover:text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm"
+                                                >
+                                                    <Plus size={16} />
+                                                    Assigner
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* LÉGENDE */}

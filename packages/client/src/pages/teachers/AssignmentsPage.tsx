@@ -71,7 +71,8 @@ const AssignmentsPage: React.FC = () => {
 
     const { teachersQuery } = useTeachers({ limit: 1000 });
     const allTeachers = teachersQuery.data?.data || [];
-    const { classes: allClasses } = useClasses({ isActive: true });
+    const { data: classesData } = useClasses();
+    const allClasses = classesData?.classes || [];
 
     // 4. HANDLERS
     const handleOpenAssign = (classId: string, subjectId: string) => {
@@ -144,9 +145,10 @@ const AssignmentsPage: React.FC = () => {
     };
 
     return (
-        <div className="space-y-4 pb-20">
+        <div className="w-full max-w-full overflow-hidden space-y-4 lg:space-y-6 pb-24">
             {/* —— Header —— */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="bg-background/95 backdrop-blur border-b border-neutral-200 shadow-sm py-4 mb-6 -mx-3 px-3 sm:-mx-4 sm:px-4">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
                         <Layers size={22} className="text-white" />
@@ -161,27 +163,28 @@ const AssignmentsPage: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                     <button
                         onClick={handleExport}
-                        className="flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium 
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm font-medium 
                                    border border-neutral-300 rounded-xl hover:bg-neutral-50 
                                    hover:border-neutral-400 transition-all duration-200 
                                    text-neutral-700 shadow-sm"
                     >
                         <Download size={15} />
-                        <span className="hidden sm:inline">Exporter</span>
+                        <span>Exporter</span>
                     </button>
                     <button
                         onClick={() => setModals(prev => ({ ...prev, bulk: true }))}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium 
+                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium 
                                    bg-gradient-to-r from-primary to-primary-light text-white 
                                    rounded-xl hover:shadow-lg hover:shadow-primary/25 
-                                   transition-all duration-200 hover:-translate-y-0.5 shadow-md"
+                                   transition-all duration-200 hover:-translate-y-0.5 shadow-md w-full sm:w-auto"
                     >
                         <Settings2 size={15} />
                         <span>Affectation en masse</span>
                     </button>
+                </div>
                 </div>
             </div>
 

@@ -201,7 +201,7 @@ export default function ClassGradesPage() {
                                 className="flex items-center gap-2 px-4 py-2 border border-neutral-300 
                                            text-neutral-700 rounded-lg hover:bg-neutral-50 
                                            transition-colors text-sm font-medium
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 <FileSpreadsheet size={16} />
                                 Excel
@@ -212,7 +212,7 @@ export default function ClassGradesPage() {
                                 className="flex items-center gap-2 px-4 py-2 border border-neutral-300 
                                            text-neutral-700 rounded-lg hover:bg-neutral-50 
                                            transition-colors text-sm font-medium
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 <Printer size={16} />
                                 Imprimer
@@ -223,7 +223,7 @@ export default function ClassGradesPage() {
                                 className="flex items-center gap-2 px-4 py-2 bg-primary 
                                            text-white rounded-lg hover:bg-primary-dark 
                                            transition-colors text-sm font-medium
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 <Send size={16} />
                                 Envoyer bulletins

@@ -1,4 +1,4 @@
-﻿import { Router } from 'express';
+import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
 import { teachersController } from './teachers.controller';
@@ -14,6 +14,16 @@ router.get(
     '/stats',
     requirePermission('teachers:read'),
     (req, res, next) => teachersController.getGlobalStats(req, res, next)
+);
+
+router.get(
+    '/me/classes',
+    (req, res, next) => teachersController.getMyClasses(req, res, next)
+);
+
+router.get(
+    '/me/subjects',
+    (req, res, next) => teachersController.getMySubjects(req, res, next)
 );
 
 router.get(

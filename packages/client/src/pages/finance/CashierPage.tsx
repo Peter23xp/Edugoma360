@@ -61,7 +61,7 @@ export default function CashierPage() {
         <button
           type="button"
           onClick={() => setShowHistory(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 text-neutral-700 rounded-xl hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm text-sm font-semibold"
+          className="flex items-center gap-2 px-4 py-2 bg-white border border-neutral-200 text-neutral-700 rounded-xl hover:bg-neutral-50 hover:border-neutral-300 transition-all shadow-sm text-sm font-semibold w-full sm:w-auto"
         >
           <History size={16} className="text-primary" />
           Historique de Caisse

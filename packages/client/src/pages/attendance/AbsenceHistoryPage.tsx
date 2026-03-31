@@ -82,7 +82,7 @@ export default function AbsenceHistoryPage() {
                 <div className="relative">
                     <button 
                         onClick={() => setIsExportOpen(!isExportOpen)}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-xl shadow-md transition-all active:scale-95"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-xl shadow-md transition-all active:scale-95 w-full sm:w-auto"
                     >
                         <Download size={18} />
                         Export

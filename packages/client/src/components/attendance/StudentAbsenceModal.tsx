@@ -209,7 +209,7 @@ export default function StudentAbsenceModal({
                                 {isStatsLoading ? (
                                     <div className="h-20 bg-neutral-50 rounded-xl animate-pulse" />
                                 ) : statsData ? (
-                                    <div className="grid grid-cols-4 gap-2">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                         <div className="bg-red-50 p-3 rounded-xl border border-red-100 flex flex-col items-center justify-center text-center">
                                             <span className="text-2xl font-black text-red-600 leading-none">{statsData.stats.notJustifiedAbsences}</span>
                                             <span className="text-[10px] uppercase tracking-wider font-bold text-red-700/70 mt-1">Abs. NJ</span>
@@ -312,31 +312,31 @@ export default function StudentAbsenceModal({
                 </div>
 
                 {/* Footer Actions */}
-                <footer className="px-6 py-4 border-t border-neutral-100 bg-neutral-50/50 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <footer className="px-6 py-4 border-t border-neutral-100 bg-neutral-50/50 flex flex-col-reverse sm:flex-row items-center justify-between gap-3 sm:gap-4">
                     {tab === 'details' ? (
                         <>
-                            <div className="flex items-center gap-2 w-full sm:w-auto">
-                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors">
+                            <div className="flex items-center justify-center gap-2 w-full sm:w-auto">
+                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors w-full sm:w-auto shadow-sm">
                                     <Phone size={16} /> Contacter
                                 </button>
-                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors">
+                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors w-full sm:w-auto shadow-sm">
                                     <Mail size={16} /> Email
                                 </button>
                             </div>
                             {canEdit && (
                                 <button 
                                     onClick={() => setTab('edit')}
-                                    className="w-full sm:w-auto px-6 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl shadow-md transition-all active:scale-95"
+                                    className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl shadow-md transition-all active:scale-95"
                                 >
                                     Modifier
                                 </button>
                             )}
                         </>
                     ) : (
-                        <>
+                        <div className="w-full sm:w-auto flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 sm:ml-auto">
                             <button 
                                 onClick={() => setTab('details')}
-                                className="w-full sm:w-auto px-6 py-2 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors"
+                                className="w-full sm:w-auto px-6 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors shadow-sm"
                             >
                                 Annuler
                             </button>
@@ -344,13 +344,13 @@ export default function StudentAbsenceModal({
                             <button 
                                 onClick={handleSave}
                                 disabled={updateJustification.isPending}
-                                className="w-full sm:w-auto px-8 py-2 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full sm:w-auto px-8 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {updateJustification.isPending ? (
                                     <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
                                 ) : 'Enregistrer'}
                             </button>
-                        </>
+                        </div>
                     )}
                 </footer>
 

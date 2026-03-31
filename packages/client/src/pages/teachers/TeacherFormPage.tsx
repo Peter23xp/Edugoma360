@@ -222,7 +222,7 @@ export const TeacherFormPage: React.FC = () => {
                         disabled={currentStep === 1}
                         className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
                                    text-neutral-700 hover:text-neutral-900 disabled:opacity-40 
-                                   disabled:cursor-not-allowed transition-colors"
+                                   disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
                     >
                         <ArrowLeft size={16} />
                         Précédent
@@ -238,7 +238,7 @@ export const TeacherFormPage: React.FC = () => {
                             onClick={handleNext}
                             className="flex items-center gap-2 px-6 py-2.5 bg-primary 
                                        text-white rounded-lg hover:bg-primary-dark font-medium 
-                                       text-sm transition-colors"
+                                       text-sm transition-colors w-full sm:w-auto"
                         >
                             Suivant
                             <ArrowRight size={16} />
@@ -251,7 +251,7 @@ export const TeacherFormPage: React.FC = () => {
                             className="flex items-center gap-2 px-6 py-2.5 bg-green-600 
                                        text-white rounded-lg hover:bg-green-700 font-medium 
                                        text-sm transition-colors disabled:opacity-60 
-                                       disabled:cursor-not-allowed"
+                                       disabled:cursor-not-allowed w-full sm:w-auto"
                         >
                             {isSubmitting ? (
                                 <>

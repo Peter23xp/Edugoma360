@@ -1,4 +1,4 @@
-﻿import { z } from 'zod';
+import { z } from 'zod';
 
 export const CreateStudentDto = z.object({
     nom: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
@@ -22,10 +22,7 @@ export const CreateStudentDto = z.object({
     photoUrl: z.string().optional(),
 });
 
-export const UpdateStudentDto = CreateStudentDto.partial().omit({
-    classId: true,
-    academicYearId: true,
-});
+export const UpdateStudentDto = CreateStudentDto.partial();
 
 export const StudentQueryDto = z.object({
     page: z.coerce.number().optional().default(1),

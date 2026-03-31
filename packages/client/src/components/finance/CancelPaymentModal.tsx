@@ -160,7 +160,7 @@ export function CancelPaymentModal({ payment, onClose, onCancelled }: CancelPaym
             disabled={!isValid || cancelPayment.isPending}
             className="flex items-center gap-2 px-8 py-2.5 text-sm font-bold text-white bg-red-600 
                          hover:bg-red-700 rounded-xl shadow-lg shadow-red-500/20 transition-all
-                       disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                       disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 w-full sm:w-auto"
           >
             {cancelPayment.isPending ? (
               <Loader2 size={16} className="animate-spin" />

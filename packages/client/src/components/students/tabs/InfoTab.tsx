@@ -1,4 +1,4 @@
-﻿import { Phone, MessageSquare } from 'lucide-react';
+import { Phone, MessageSquare } from 'lucide-react';
 import type { Student } from '@edugoma360/shared';
 
 interface InfoTabProps {
@@ -34,11 +34,11 @@ export default function InfoTab({ student }: InfoTabProps) {
     };
 
     return (
-        <div className="space-y-6">
-            {/* â”€â”€ Identité â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="space-y-6 lg:space-y-8">
+            {/* ── Identité ──────────────────────────────────────────────────────── */}
             <div>
-                <h3 className="text-sm font-semibold text-neutral-900 mb-3">Identité</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="text-sm lg:text-base font-semibold text-neutral-900 mb-3 lg:mb-4">Identité</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                     <InfoField
                         label="Date de naissance"
                         value={`${formatDate(student.dateNaissance)} (${age} ans)`}
@@ -53,10 +53,10 @@ export default function InfoTab({ student }: InfoTabProps) {
                 </div>
             </div>
 
-            {/* â”€â”€ Contacts Famille â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Contacts Famille ──────────────────────────────────────────────── */}
             <div>
-                <h3 className="text-sm font-semibold text-neutral-900 mb-3">Contacts Famille</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 className="text-sm lg:text-base font-semibold text-neutral-900 mb-3 lg:mb-4">Contacts Famille</h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                     {/* Père */}
                     <ParentCard
                         title="PÈRE"
@@ -74,21 +74,24 @@ export default function InfoTab({ student }: InfoTabProps) {
 
                 {/* Tuteur (if different) */}
                 {student.nomTuteur && (
-                    <div className="mt-4">
+                    <div className="mt-4 lg:mt-6">
                         <p className="text-xs font-medium text-neutral-500 mb-2">
                             Tuteur légal
                         </p>
-                        <ParentCard
-                            title="TUTEUR"
-                            name={student.nomTuteur}
-                            phone={student.telTuteur}
-                        />
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+                            <ParentCard
+                                title="TUTEUR"
+                                name={student.nomTuteur}
+                                phone={student.telTuteur}
+                            />
+                        </div>
                     </div>
                 )}
             </div>
         </div>
     );
 }
+
 
 function InfoField({ label, value }: { label: string; value: string }) {
     return (
@@ -110,7 +113,7 @@ function ParentCard({
 }) {
     if (!name && !phone) {
         return (
-            <div className="border border-neutral-200 rounded-lg p-4">
+            <div className="border border-neutral-200 rounded-lg p-4 lg:p-5">
                 <p className="text-xs font-semibold text-neutral-400 mb-2">{title}</p>
                 <p className="text-sm text-neutral-400 italic">Non renseigné</p>
             </div>
@@ -118,14 +121,14 @@ function ParentCard({
     }
 
     return (
-        <div className="border border-neutral-200 rounded-lg p-4">
+        <div className="border border-neutral-200 rounded-lg p-4 lg:p-5">
             <p className="text-xs font-semibold text-neutral-500 mb-2">{title}</p>
-            <p className="text-sm font-medium text-neutral-900 mb-2">{name || '—'}</p>
+            <p className="text-sm font-medium text-neutral-900 mb-3 break-words">{name || '—'}</p>
             {phone && (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <a
                         href={`tel:${phone}`}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium 
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium 
                                    bg-primary/10 text-primary rounded-lg hover:bg-primary/20 
                                    transition-colors"
                     >
@@ -134,7 +137,7 @@ function ParentCard({
                     </a>
                     <a
                         href={`sms:${phone}`}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium 
+                        className="flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium 
                                    bg-neutral-100 text-neutral-700 rounded-lg hover:bg-neutral-200 
                                    transition-colors"
                     >

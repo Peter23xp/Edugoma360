@@ -1,10 +1,10 @@
-﻿import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import api from "../../lib/api";
-import { useStudentForm } from "../../hooks/useStudentForm";
+import { useStudentForm, useStudentData } from "../../hooks/useStudentForm";
 import ProgressBar from "../../components/setup/ProgressBar";
 import Step1Identity from "../../components/students/form/Step1Identity";
 import Step2Academic from "../../components/students/form/Step2Academic";
@@ -26,10 +26,26 @@ export default function StudentFormPage() {
   const isEdit = !!id;
 
   const [currentStep, setCurrentStep] = useState(1);
-  const { formData, validateStep, resetForm } = useStudentForm();
+  const { formData, validateStep, loadStudentData, resetForm } = useStudentForm();
   const activeAcademicYearId = useSchoolStore(
     (state) => state.activeAcademicYearId,
   );
+
+  // Fetch student data if editing
+  const { data: student, isLoading: isLoadingStudent } = useStudentData(id);
+
+  useEffect(() => {
+    if (isEdit && student) {
+      loadStudentData(student);
+    }
+  }, [isEdit, student, loadStudentData]);
+
+  // Clean form on unmount OR if switching from edit to new
+  useEffect(() => {
+    return () => resetForm();
+  }, [resetForm]);
+
+
 
   // Submit mutation
   const submitMutation = useMutation({
@@ -124,6 +140,15 @@ export default function StudentFormPage() {
     }
   };
 
+  if (isEdit && isLoadingStudent) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-neutral-50 text-neutral-500 font-medium">
+        <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
+        Chargement des données de l'élève...
+      </div>
+    );
+  }
+
   const CurrentStepComponent = STEPS[currentStep - 1].component;
 
   return (
@@ -163,52 +188,49 @@ export default function StudentFormPage() {
         className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 
                             shadow-lg z-10"
       >
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <button
             onClick={handlePrevious}
             disabled={currentStep === 1}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
+            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 text-sm font-medium 
                                    text-neutral-700 hover:text-neutral-900 disabled:opacity-40 
-                                   disabled:cursor-not-allowed transition-colors"
+                                   disabled:cursor-not-allowed transition-colors w-full sm:w-auto"
           >
             <ArrowLeft size={16} />
-            Précédent
+            <span className="hidden sm:inline">Précédent</span>
           </button>
 
-          <div className="text-sm text-neutral-600">
-            Étape {currentStep} sur {STEPS.length}
+          <div className="text-xs sm:text-sm text-neutral-600 font-medium">
+            Étape {currentStep}/{STEPS.length}
           </div>
 
           {currentStep < STEPS.length ? (
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-6 py-2.5 bg-primary 
+              className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 bg-primary 
                                        text-white rounded-lg hover:bg-primary-dark font-medium 
-                                       text-sm transition-colors"
+                                       text-sm transition-colors w-full sm:w-auto"
             >
-              Suivant
+              <span className="hidden sm:inline">Suivant</span>
+              <span className="sm:hidden">Suit.</span>
               <ArrowRight size={16} />
             </button>
           ) : (
             <button
               onClick={handleSubmit}
               disabled={submitMutation.isPending}
-              className="flex items-center gap-2 px-6 py-2.5 bg-green-600 
+              className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 bg-green-600 
                                        text-white rounded-lg hover:bg-green-700 font-medium 
                                        text-sm transition-colors disabled:opacity-60 
-                                       disabled:cursor-not-allowed"
+                                       disabled:cursor-not-allowed w-full sm:w-auto"
             >
               {submitMutation.isPending ? (
-                <>
-                  <Loader2 size={16} className="animate-spin" />
-                  Enregistrement...
-                </>
+                <Loader2 size={16} className="animate-spin" />
               ) : (
-                <>
-                  <Check size={16} />
-                  {isEdit ? "Enregistrer" : "Inscrire l'élève"}
-                </>
+                <Check size={16} />
               )}
+              <span className="hidden sm:inline">{isEdit ? "Enregistrer" : "Inscrire l'élève"}</span>
+              <span className="sm:hidden">{isEdit ? "Enreg." : "Terminer"}</span>
             </button>
           )}
         </div>

@@ -58,9 +58,10 @@ export default function UsersManagementPage() {
   const roleOrder = ROLE_LIST.filter((r) => groupedUsers[r]?.length);
 
   return (
-    <div className="space-y-6 pb-10">
+    <div className="w-full max-w-full overflow-hidden space-y-4 lg:space-y-6 pb-24">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="bg-background/95 backdrop-blur border-b border-neutral-200 shadow-sm py-4 mb-6 -mx-3 px-3 sm:-mx-4 sm:px-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
             <UserCog size={22} className="text-white" />
@@ -76,18 +77,19 @@ export default function UsersManagementPage() {
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-primary to-primary-light text-white rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-200 hover:-translate-y-0.5 shadow-md"
+          className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-primary to-primary-light text-white rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-200 hover:-translate-y-0.5 shadow-md w-full sm:w-auto"
         >
           <Plus size={15} />
           Créer utilisateur
         </button>
       </div>
+    </div>
 
-      {/* Stats */}
+    {/* Stats */}
       <UserStatsCards stats={stats} />
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1 min-w-[180px]">
           <Search
             size={14}
@@ -98,13 +100,13 @@ export default function UsersManagementPage() {
             placeholder="Rechercher un utilisateur..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 border border-neutral-300/50 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white"
+            className="w-full pl-9 pr-3 py-2.5 border border-neutral-300/50 rounded-lg text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors bg-white shadow-sm"
           />
         </div>
         <select
           value={filterRole}
           onChange={(e) => setFilterRole(e.target.value)}
-          className="px-3 py-2.5 border border-neutral-300/50 rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+          className="w-full sm:w-48 px-3 py-2.5 border border-neutral-300/50 rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm"
         >
           <option value="">Tous les rôles</option>
           {ROLE_LIST.map((r) => (
@@ -116,11 +118,12 @@ export default function UsersManagementPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-3 py-2.5 border border-neutral-300/50 rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors"
+          className="w-full sm:w-40 px-3 py-2.5 border border-neutral-300/50 rounded-lg text-sm bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors shadow-sm"
         >
           <option value="">Tous les statuts</option>
           <option value="ACTIVE">Actifs</option>
           <option value="INACTIVE">Inactifs</option>
+          <option value="PENDING">En attente</option>
         </select>
       </div>
 
@@ -157,7 +160,7 @@ export default function UsersManagementPage() {
           {!searchTerm && !filterRole && !filterStatus && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark text-sm font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark text-sm font-medium transition-colors w-full sm:w-auto"
             >
               <Plus size={14} />
               Créer un utilisateur

@@ -221,7 +221,7 @@ export default function EditPermissionsModal({
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50 transition-all shadow-sm"
+              className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50 transition-all shadow-sm w-full sm:w-auto"
             >
               {isSubmitting ? (
                 <Loader2 size={16} className="animate-spin" />

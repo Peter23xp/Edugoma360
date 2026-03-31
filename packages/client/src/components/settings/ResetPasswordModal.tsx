@@ -219,7 +219,7 @@ export default function ResetPasswordModal({
         </div>
 
         {/* Footer */}
-        <div className="bg-neutral-50 border-t border-neutral-300/50 px-6 py-4 flex justify-end gap-3 rounded-b-lg">
+        <div className="bg-neutral-50 border-t border-neutral-300/50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 rounded-b-lg">
           <button
             onClick={onClose}
             className="px-6 py-2.5 text-sm font-medium text-neutral-700 bg-white border border-neutral-300/50 rounded-md hover:bg-neutral-50 transition-colors"
@@ -231,7 +231,7 @@ export default function ResetPasswordModal({
             disabled={
               isSubmitting || (mode === "manual" && manualPassword.length < 8)
             }
-            className="flex items-center gap-2 px-6 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-md hover:bg-amber-700 disabled:opacity-50 transition-all shadow-sm"
+            className="flex items-center gap-2 px-6 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-md hover:bg-amber-700 disabled:opacity-50 transition-all shadow-sm w-full sm:w-auto"
           >
             {isSubmitting ? (
               <Loader2 size={16} className="animate-spin" />

@@ -69,8 +69,8 @@ export default function ClassesManagementPage() {
     };
 
     const handleViewDetails = (id: string) => {
-        // Navigate to students list filtered by class
-        navigate(`/students?class=${id}`);
+        // Navigate to class detail page
+        navigate(`/settings/classes/${id}`);
     };
 
     const handleDelete = async (id: string) => {
@@ -112,7 +112,7 @@ export default function ClassesManagementPage() {
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover transition-all shadow-sm shrink-0"
+                    className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover transition-all shadow-sm shrink-0 w-full sm:w-auto"
                 >
                     <Plus size={16} />
                     Créer classe
@@ -127,7 +127,7 @@ export default function ClassesManagementPage() {
                 <select
                     value={filterSection}
                     onChange={e => setFilterSection(e.target.value)}
-                    className="border border-neutral-300/50 rounded-md px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors sm:w-56"
+                    className="border border-neutral-300/50 rounded-md px-4 py-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors sm:w-56 w-full sm:w-auto"
                 >
                     <option value="">Toutes les sections</option>
                     {uniqueSections.map(s => (
@@ -168,7 +168,7 @@ export default function ClassesManagementPage() {
                     </p>
                     <button
                         onClick={() => setShowCreateModal(true)}
-                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover transition-colors shadow-sm"
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover transition-colors shadow-sm w-full sm:w-auto"
                     >
                         <Plus size={16} /> Créer une classe
                     </button>

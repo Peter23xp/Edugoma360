@@ -1,4 +1,4 @@
-﻿import { Menu, Bell, RefreshCw, LogOut, User } from 'lucide-react';
+import { Menu, Bell, RefreshCw, LogOut, User } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useOffline } from '../../hooks/useOffline';
 import { useSync } from '../../hooks/useSync';
@@ -16,7 +16,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
     const { schoolName, academicYearLabel, termLabel } = useSchoolStore();
 
     return (
-        <header className="bg-white border-b border-neutral-300/50 px-4 py-3 flex items-center justify-between no-print">
+        <header className="sticky top-0 z-50 bg-white border-b border-neutral-300/50 px-4 py-3 flex items-center justify-between no-print">
             {/* Left */}
             <div className="flex items-center gap-3">
                 <button

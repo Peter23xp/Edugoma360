@@ -81,10 +81,12 @@ export function CashSession({ session }: CashSessionProps) {
         </div>
 
         <h3 className="text-sm font-bold text-neutral-900 mb-4 tracking-tight">Mouvements du jour</h3>
-        <div className="overflow-x-auto border border-neutral-200/60 rounded-lg">
+        
+        {/* MODE TABLEAU (DESKTOP) */}
+        <div className="hidden md:block overflow-x-auto border border-neutral-200/60 rounded-xl shadow-sm">
           <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="table-header">
+            <thead className="bg-neutral-50/80">
+              <tr className="table-header border-b border-neutral-200">
                 <th className="px-4 py-3 font-semibold text-neutral-600">Heure</th>
                 <th className="px-4 py-3 font-semibold text-neutral-600">Type</th>
                 <th className="px-4 py-3 font-semibold text-neutral-600">Reçu/Réf</th>
@@ -92,12 +94,12 @@ export function CashSession({ session }: CashSessionProps) {
                 <th className="px-4 py-3 font-semibold text-right text-neutral-600">Solde</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-100">
+            <tbody className="divide-y divide-neutral-100 bg-white">
               {session.movements?.map((m) => (
                 <tr key={m.id} className="hover:bg-neutral-50/50 transition-colors">
-                  <td className="px-4 py-3 text-neutral-500">{format(new Date(m.createdAt), 'HH:mm')}</td>
+                  <td className="px-4 py-3 text-neutral-500 font-medium">{format(new Date(m.createdAt), 'HH:mm')}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold tracking-wide ${
                       m.category === 'OPENING' ? 'bg-neutral-100 text-neutral-700' :
                       m.category === 'PAYMENT' ? 'bg-green-100 text-green-700' : 
                       'bg-red-100 text-red-700'
@@ -105,20 +107,63 @@ export function CashSession({ session }: CashSessionProps) {
                       {m.category === 'OPENING' ? 'Ouverture' : m.category === 'PAYMENT' ? 'Paiement' : 'Dépense'}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-neutral-600 text-xs">{m.reference || '—'}</td>
-                  <td className={`px-4 py-3 text-right font-medium ${m.type === 'IN' ? 'text-green-600' : 'text-red-600'}`}>
+                  <td className="px-4 py-3 text-neutral-600 text-xs font-mono">{m.reference || '—'}</td>
+                  <td className={`px-4 py-3 text-right font-bold ${m.type === 'IN' ? 'text-green-600' : 'text-red-600'}`}>
                     {m.type === 'IN' ? '+' : '-'}{formatFC(m.amount)}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-neutral-900">{formatFC(m.balance)}</td>
+                  <td className="px-4 py-3 text-right font-bold text-neutral-900">{formatFC(m.balance)}</td>
                 </tr>
               ))}
               {(!session.movements || session.movements.length === 0) && (
                 <tr>
-                   <td colSpan={5} className="px-4 py-8 text-center text-neutral-400">Aucun mouvement.</td>
+                   <td colSpan={5} className="px-4 py-10 text-center text-neutral-400 bg-neutral-50/30">
+                     <p className="font-medium text-sm">Aucun mouvement pour le moment.</p>
+                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* MODE CARTE (MOBILE) */}
+        <div className="md:hidden space-y-3">
+          {session.movements?.map((m) => (
+            <div key={m.id} className="bg-white p-4 rounded-xl border border-neutral-200 shadow-sm flex flex-col gap-3 relative overflow-hidden">
+               {/* Ligne gauche indicateur */}
+               <div className={`absolute left-0 top-0 bottom-0 w-1 ${m.type === 'IN' ? 'bg-green-500' : 'bg-red-500'}`} />
+               
+               <div className="flex justify-between items-start">
+                  <div className="flex items-center gap-2">
+                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                        m.category === 'OPENING' ? 'bg-neutral-100 text-neutral-600' :
+                        m.category === 'PAYMENT' ? 'bg-green-100 text-green-700' : 
+                        'bg-red-100 text-red-700'
+                     }`}>
+                        {m.category === 'OPENING' ? 'Ouverture' : m.category === 'PAYMENT' ? 'Paiement' : 'Dépense'}
+                     </span>
+                     <span className="text-xs text-neutral-400 font-medium">{format(new Date(m.createdAt), 'HH:mm')}</span>
+                  </div>
+                  <span className={`font-bold text-base ${m.type === 'IN' ? 'text-green-600' : 'text-red-600'}`}>
+                     {m.type === 'IN' ? '+' : '-'}{formatFC(m.amount)}
+                  </span>
+               </div>
+               
+               <div className="flex justify-between items-end mt-1">
+                  <div>
+                    <p className="text-xs text-neutral-500">Réf : <span className="font-mono font-medium text-neutral-700">{m.reference || 'N/A'}</span></p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[10px] text-neutral-400 uppercase tracking-widest font-semibold mb-0.5">Solde</p>
+                    <p className="text-sm font-bold text-neutral-900">{formatFC(m.balance)}</p>
+                  </div>
+               </div>
+            </div>
+          ))}
+          {(!session.movements || session.movements.length === 0) && (
+            <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-6 text-center">
+               <p className="text-sm text-neutral-500 font-medium">Aucun mouvement aujourd'hui.</p>
+            </div>
+          )}
         </div>
       </div>
 

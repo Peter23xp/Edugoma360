@@ -106,7 +106,7 @@ export default function BudgetsPage() {
             }
             setShowForm(true);
           }}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary to-primary-light text-white rounded-xl text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 transition-all whitespace-nowrap shrink-0"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary to-primary-light text-white rounded-xl text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 transition-all whitespace-nowrap shrink-0 w-full sm:w-auto"
         >
           <Edit3 size={14} />
           <span>{budget ? 'Modifier le budget' : 'Configurer le budget'}</span>

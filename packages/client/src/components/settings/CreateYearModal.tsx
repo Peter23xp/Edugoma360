@@ -238,17 +238,17 @@ export default function CreateYearModal({ isOpen, onClose, onSubmit, isSubmittin
                                                     onClick={() => setExpandedTerm(isExpanded ? null : idx)}
                                                     className="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-neutral-50 transition-colors"
                                                 >
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                                                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                                                        <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
                                                             {t.number}
                                                         </span>
-                                                        <span className="font-semibold text-neutral-800">{termLabel(t.number)}</span>
-                                                        <span className="text-xs text-neutral-400">
+                                                        <span className="font-semibold text-neutral-800 text-xs sm:text-sm">{termLabel(t.number)}</span>
+                                                        <span className="text-[10px] sm:text-xs text-neutral-400">
                                                             {t.startDate ? format(parseISO(t.startDate), 'dd/MM') : '—'} → {t.endDate ? format(parseISO(t.endDate), 'dd/MM') : '—'}
                                                         </span>
                                                     </div>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", w >= 8 ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700")}>
+                                                    <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+                                                        <span className={cn("text-[10px] font-medium px-2 py-0.5 rounded-full", w >= 8 ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700")}>
                                                             {w} sem.
                                                         </span>
                                                         {isExpanded ? <ChevronUp size={14} className="text-neutral-400" /> : <ChevronDown size={14} className="text-neutral-400" />}
@@ -308,14 +308,14 @@ export default function CreateYearModal({ isOpen, onClose, onSubmit, isSubmittin
                     </div>
 
                     {/* Footer */}
-                    <div className="sticky bottom-0 bg-white border-t border-neutral-100 px-6 py-4 flex justify-end gap-3">
+                    <div className="sticky bottom-0 bg-white border-t border-neutral-100 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4">
                         <button type="button" onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-xl hover:bg-neutral-50 transition-colors">
                             Annuler
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting || !startDate || !endDate || terms.length === 0}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-sm"
+                            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-sm w-full sm:w-auto"
                         >
                             {isSubmitting && <Loader2 size={15} className="animate-spin" />}
                             Créer l'année

@@ -167,7 +167,7 @@ export default function AssignTeachersModal({
                                     {rows.map(row => (
                                         <div
                                             key={row.subjectId}
-                                            className="grid grid-cols-[2fr_0.7fr_2.5fr_0.5fr] items-center px-4 py-3 text-sm hover:bg-neutral-50 transition-colors"
+                                            className="grid grid-cols-[2fr_0.7fr_2.5fr_0.5fr] items-center px-4 py-3 text-sm hover:bg-neutral-50 transition-colors w-full sm:w-auto"
                                         >
                                             <div className="font-medium text-neutral-800">{row.subjectName}</div>
                                             <div className="text-center font-bold text-primary">{row.coefficient}</div>
@@ -226,7 +226,7 @@ export default function AssignTeachersModal({
                                 <button
                                     onClick={handleSubmit}
                                     disabled={isSubmitting}
-                                    className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50 transition-all shadow-sm"
+                                    className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50 transition-all shadow-sm w-full sm:w-auto"
                                 >
                                     {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                                     Enregistrer

@@ -44,22 +44,22 @@ function TermProgress({ term, onActivate }: { term: Term; onActivate?: (id: stri
 
     return (
         <div className={cn("pl-4 border-l-2 py-2 group/term", cfg.left)}>
-            <div className="flex justify-between items-start mb-1">
+            <div className="flex flex-wrap justify-between items-start gap-2 mb-1">
                 <div className="flex items-center gap-2">
                     <Navigation size={12} className="text-neutral-400 shrink-0" />
-                    <span className="text-xs font-bold text-neutral-700 uppercase tracking-wide">
+                    <span className="text-[10px] sm:text-xs font-bold text-neutral-700 uppercase tracking-wide">
                         {term.number === 1 ? (totalWeeks > 18 ? 'Semestre' : 'Trimestre') : (totalWeeks > 18 ? 'Semestre' : 'Trimestre')} {term.number}
                     </span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <span className={cn("text-[10px] sm:text-xs px-2 py-0.5 rounded-full border font-medium", cfg.badge)}>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                    <span className={cn("text-[10px] px-2 py-0.5 rounded-full border font-medium whitespace-nowrap", cfg.badge)}>
                         {cfg.icon} {cfg.label}
                         {term.status === 'CURRENT' && totalWeeks > 0 && ` (S${currentWeek}/${totalWeeks})`}
                     </span>
                     {term.status !== 'CURRENT' && onActivate && (
                         <button
                             onClick={() => onActivate(term.id)}
-                            className="hidden group-hover/term:block text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded shadow-sm hover:bg-blue-700 transition-all"
+                            className="text-[10px] font-bold text-white bg-blue-600 px-2 py-0.5 rounded shadow-sm hover:bg-blue-700 transition-all sm:hidden group-hover/term:block"
                         >
                             Activer
                         </button>

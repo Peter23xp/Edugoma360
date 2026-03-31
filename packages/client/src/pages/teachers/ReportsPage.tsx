@@ -68,26 +68,29 @@ export default function TeacherReportsPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="w-full max-w-full overflow-hidden space-y-4 lg:space-y-6 pb-24">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <div className="flex items-center gap-2 text-neutral-500 text-sm mb-1">
-                        <span>Enseignants</span>
-                        <ChevronRight size={14} />
-                        <span className="text-primary font-medium">Rapports & Statistiques</span>
+            <div className="bg-background/95 backdrop-blur border-b border-neutral-200 shadow-sm py-4 mb-6 -mx-3 px-3 sm:-mx-4 sm:px-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div className="flex items-center gap-2 text-neutral-500 text-xs sm:text-sm mb-1">
+                            <span>Enseignants</span>
+                            <ChevronRight size={14} />
+                            <span className="text-primary font-medium">Rapports & Statistiques</span>
+                        </div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-neutral-900 flex items-center gap-2">
+                            <BarChart3 className="text-primary" /> Rapports & Performances
+                        </h1>
                     </div>
-                    <h1 className="text-2xl font-bold text-neutral-900 flex items-center gap-2">
-                        <BarChart3 className="text-primary" /> Rapports & Performances
-                    </h1>
+                    <button
+                        id="export-report"
+                        onClick={() => setIsExportModalOpen(true)}
+                        className="flex items-center justify-center gap-2 px-4 h-11 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all w-full md:w-auto"
+                    >
+                        <FileDown size={18} />
+                        Exporter le rapport
+                    </button>
                 </div>
-                <button
-                    onClick={() => setIsExportModalOpen(true)}
-                    className="flex items-center justify-center gap-2 px-4 h-11 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:bg-primary-dark transition-all"
-                >
-                    <FileDown size={18} />
-                    Exporter le rapport
-                </button>
             </div>
 
             {/* Filters */}

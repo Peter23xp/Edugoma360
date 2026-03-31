@@ -1,4 +1,4 @@
-﻿import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { GraduationCap } from 'lucide-react';
 import api from '../../../lib/api';
 
@@ -66,68 +66,106 @@ export default function ScolariteTab({ studentId }: ScolariteTabProps) {
                     Historique Scolaire
                 </h3>
 
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="border-b border-neutral-200">
-                                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                    Année
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                    Classe
-                                </th>
-                                <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                    Résultat
-                                </th>
-                                <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-600">
-                                    Moyenne générale
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-neutral-100">
-                            {data.map((record, idx) => (
-                                <tr
-                                    key={idx}
-                                    className={`hover:bg-neutral-50 transition-colors ${
-                                        record.decision === 'En cours' ? 'cursor-pointer' : ''
-                                    }`}
-                                >
-                                    <td className="px-4 py-3 text-sm text-neutral-900">
-                                        {record.year}
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-neutral-900">
-                                        {record.class}
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <span
-                                            className={`inline-flex items-center px-2.5 py-1 rounded-full 
-                                                       text-xs font-medium ${
-                                                           decisionColors[record.decision] ||
-                                                           'text-neutral-700 bg-neutral-100'
-                                                       }`}
-                                        >
-                                            {record.decision}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3 text-sm text-right text-neutral-900">
-                                        {record.average !== null ? (
-                                            <>
-                                                {record.average.toFixed(1)}/20
-                                                {record.isTenasosp && (
-                                                    <span className="ml-2 text-xs text-neutral-500">
-                                                        (TENASOSP)
-                                                    </span>
-                                                )}
-                                            </>
-                                        ) : (
-                                            <span className="text-neutral-400">—</span>
-                                        )}
-                                    </td>
+                <>
+                    {/* Desktop View */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="border-b border-neutral-200">
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                        Année
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                        Classe
+                                    </th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                        Résultat
+                                    </th>
+                                    <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-600">
+                                        Moyenne générale
+                                    </th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-100">
+                                {data.map((record, idx) => (
+                                    <tr
+                                        key={idx}
+                                        className={`hover:bg-neutral-50 transition-colors ${
+                                            record.decision === 'En cours' ? 'cursor-pointer' : ''
+                                        }`}
+                                    >
+                                        <td className="px-4 py-3 text-sm text-neutral-900">
+                                            {record.year}
+                                        </td>
+                                        <td className="px-4 py-3 text-sm text-neutral-900">
+                                            {record.class}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span
+                                                className={`inline-flex items-center px-2.5 py-1 rounded-full 
+                                                           text-xs font-medium ${
+                                                               decisionColors[record.decision] ||
+                                                               'text-neutral-700 bg-neutral-100'
+                                                           }`}
+                                            >
+                                                {record.decision}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-3 text-sm text-right text-neutral-900">
+                                            {record.average !== null ? (
+                                                <>
+                                                    {record.average.toFixed(1)}/20
+                                                    {record.isTenasosp && (
+                                                        <span className="ml-2 text-xs text-neutral-500">
+                                                            (TENASOSP)
+                                                        </span>
+                                                    )}
+                                                </>
+                                            ) : (
+                                                <span className="text-neutral-400">—</span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Mobile View */}
+                    <div className="md:hidden space-y-3 mt-4">
+                        {data.map((record, idx) => (
+                            <div key={idx} className="bg-white border border-neutral-200 rounded-xl p-4 shadow-sm">
+                                <div className="flex justify-between items-start mb-2">
+                                    <p className="font-bold text-neutral-900">{record.class}</p>
+                                    <span
+                                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                                            decisionColors[record.decision] || 'text-neutral-700 bg-neutral-100'
+                                        }`}
+                                    >
+                                        {record.decision}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-end mt-4">
+                                    <div>
+                                        <p className="text-xs text-neutral-500">Année scolaire</p>
+                                        <p className="text-sm font-semibold text-neutral-800">{record.year}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-xs text-neutral-500">Moyenne</p>
+                                        <p className="text-sm font-bold text-neutral-900">
+                                            {record.average !== null ? (
+                                                <>{record.average.toFixed(1)}/20</>
+                                            ) : (
+                                                <span className="text-neutral-400">—</span>
+                                            )}
+                                        </p>
+                                        {record.isTenasosp && <p className="text-[10px] text-neutral-500 mt-0.5">TENASOSP</p>}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             </div>
 
             {/* École d'origine (if applicable) */}

@@ -64,7 +64,7 @@ export default function ApprovalModal({ isOpen, onClose, justification, onApprov
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-3 mt-4">
+                    <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 mt-4">
                         <button
                             type="button"
                             onClick={onClose}

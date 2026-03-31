@@ -380,7 +380,7 @@ export default function ImportTeachersModal({ isOpen, onClose }: ImportTeachersM
                                     disabled={isUploading}
                                     className="flex items-center gap-2 px-5 py-2 text-sm font-medium 
                                                text-white bg-primary hover:bg-primary-dark rounded-lg 
-                                               transition-colors disabled:opacity-50"
+                                               transition-colors disabled:opacity-50 w-full sm:w-auto"
                                 >
                                     {isUploading && (
                                         <Loader2 size={14} className="animate-spin" />

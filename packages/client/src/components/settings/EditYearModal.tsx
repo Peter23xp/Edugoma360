@@ -273,14 +273,14 @@ export default function EditYearModal({ isOpen, onClose, onSubmit, isSubmitting,
                     </div>
 
                     {/* Footer */}
-                    <div className="sticky bottom-0 bg-white border-t border-neutral-100 px-6 py-4 flex justify-end gap-3">
+                    <div className="sticky bottom-0 bg-white border-t border-neutral-100 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4">
                         <button type="button" onClick={onClose} className="px-4 py-2.5 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-xl hover:bg-neutral-50 transition-colors">
                             Annuler
                         </button>
                         <button
                             type="submit"
                             disabled={isSubmitting || !startDate || !endDate || terms.length === 0}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-sm"
+                            className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 disabled:opacity-50 transition-all shadow-sm w-full sm:w-auto"
                         >
                             {isSubmitting && <Loader2 size={15} className="animate-spin" />}
                             Sauvegarder

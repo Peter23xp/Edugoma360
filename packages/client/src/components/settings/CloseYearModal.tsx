@@ -158,7 +158,7 @@ export default function CloseYearModal({ isOpen, yearId, yearName, onClose, onSu
                     )}
 
                     {/* Footer */}
-                    <div className="flex justify-end gap-3 pt-2 border-t border-neutral-100">
+                    <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 pt-2 border-t border-neutral-100">
                         <button
                             type="button"
                             onClick={handleClose}
@@ -169,7 +169,7 @@ export default function CloseYearModal({ isOpen, yearId, yearName, onClose, onSu
                         <button
                             type="submit"
                             disabled={isSubmitting || !canClose || !confirmed}
-                            className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 disabled:opacity-40 transition-all shadow-sm"
+                            className="flex items-center gap-2 px-6 py-2.5 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 disabled:opacity-40 transition-all shadow-sm w-full sm:w-auto"
                         >
                             {isSubmitting ? <Loader2 size={15} className="animate-spin" /> : <Lock size={15} />}
                             Clôturer définitivement

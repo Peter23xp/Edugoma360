@@ -147,7 +147,7 @@ export default function FeesConfigPage() {
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => setIsTemplateOpen(true)}
-              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium text-sm hover:bg-emerald-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium text-sm hover:bg-emerald-700 transition-colors w-full sm:w-auto"
             >
               <FileSpreadsheet size={16} />
               Utiliser un modèle
@@ -157,7 +157,7 @@ export default function FeesConfigPage() {
                 setEditingFee(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg font-medium text-sm hover:bg-primary-dark transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg font-medium text-sm hover:bg-primary-dark transition-colors w-full sm:w-auto"
             >
               <Plus size={16} />
               Créer manuellement

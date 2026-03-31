@@ -92,14 +92,14 @@ export default function JustificationsPage() {
             {/* Main Content */}
             <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
                 {/* Tabs & Filters */}
-                <div className="border-b border-neutral-100 flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 gap-4 bg-neutral-50/50">
-                    <div className="flex bg-neutral-100/80 p-1 rounded-lg">
+                <div className="border-b border-neutral-100 flex flex-col xl:flex-row justify-between items-start xl:items-center p-4 gap-4 bg-neutral-50/50">
+                    <div className="flex overflow-x-auto w-full xl:w-auto bg-neutral-100/80 p-1 rounded-lg scrollbar-hide">
                         {TABS.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => { setActiveTab(tab.id); setPage(1); }}
                                 className={cn(
-                                    "px-4 py-1.5 text-sm font-medium rounded-md transition-all",
+                                    "px-4 py-2 sm:py-1.5 text-sm font-medium rounded-md transition-all whitespace-nowrap shrink-0",
                                     activeTab === tab.id
                                         ? "bg-white text-primary shadow-sm ring-1 ring-neutral-200"
                                         : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-200/50"

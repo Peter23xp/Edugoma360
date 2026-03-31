@@ -58,14 +58,14 @@ export default function AccessDeniedPage() {
                 <div className="flex items-center justify-center gap-3 pt-2">
                     <button
                         onClick={() => navigate(-1)}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50 transition-colors shadow-sm w-full sm:w-auto"
                     >
                         <ArrowLeft size={16} />
                         Retour
                     </button>
                     <button
                         onClick={() => navigate('/dashboard')}
-                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-primary rounded-lg hover:bg-primary-hover transition-colors shadow-sm w-full sm:w-auto"
                     >
                         <Home size={16} />
                         Tableau de bord

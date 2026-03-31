@@ -125,7 +125,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
             </div>
 
             {/* â”€â”€ Grades Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-            <div className="overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
                     <thead>
                         <tr className="border-b border-neutral-200">
@@ -172,7 +172,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
                             return (
                                 <tr
                                     key={item.subject.name}
-                                    className={isIncomplete ? 'opacity-50' : ''}
+                                    className={isIncomplete ? 'opacity-50 hover:bg-neutral-50' : 'hover:bg-neutral-50'}
                                 >
                                     <td className="px-4 py-3 text-sm text-neutral-900">
                                         {item.subject.name}
@@ -203,11 +203,11 @@ export default function GradesTab({ studentId }: GradesTabProps) {
                                     </td>
                                     <td className="px-4 py-3 text-sm text-center">
                                         {average !== null ? (
-                                            <span className={`px-2 py-1 rounded ${getAverageColor(average)}`}>
+                                            <span className={`px-2 py-1 rounded font-semibold ${getAverageColor(average)}`}>
                                                 {average.toFixed(1)}
                                             </span>
                                         ) : (
-                                            <span className="text-neutral-400 italic">
+                                            <span className="text-neutral-400 italic text-xs">
                                                 Incomplet
                                             </span>
                                         )}
@@ -220,6 +220,60 @@ export default function GradesTab({ studentId }: GradesTabProps) {
                         })}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile View */}
+            <div className="md:hidden space-y-3 mt-4">
+                {Object.values(gradesBySubject).map((item) => {
+                    const inter = item.grades.find((g) => g.evalType === 'INTERROGATION');
+                    const tp = item.grades.find((g) => g.evalType === 'TP');
+                    const exam = item.grades.find((g) => g.evalType === 'EXAMEN_TRIMESTRIEL');
+
+                    const scores = [inter?.score, tp?.score, exam?.score].filter(
+                        (s) => s !== undefined
+                    ) as number[];
+                    const average =
+                        scores.length > 0
+                            ? scores.reduce((a, b) => a + b, 0) / scores.length
+                            : null;
+
+                    const isIncomplete = !inter && !tp && !exam;
+
+                    return (
+                        <div key={item.subject.name} className={`bg-white border border-neutral-200 rounded-xl p-4 shadow-sm ${isIncomplete ? 'opacity-60' : ''}`}>
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <p className="font-bold text-neutral-900 line-clamp-1">{item.subject.name}</p>
+                                    <p className="text-xs text-neutral-500">Coef {item.subject.coefficient}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[10px] text-neutral-500 uppercase font-semibold">Moyenne</p>
+                                    {average !== null ? (
+                                        <p className={`text-base font-bold ${getAverageColor(average)}`}>
+                                            {average.toFixed(1)}/20
+                                        </p>
+                                    ) : (
+                                        <p className="text-xs text-neutral-400 italic">Incomplet</p>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-neutral-100">
+                                <div className="text-center bg-neutral-50 p-1.5 rounded-lg">
+                                    <p className="text-[10px] text-neutral-500 uppercase">Inter</p>
+                                    <p className="text-sm font-semibold text-neutral-800">{inter ? inter.score : '—'}</p>
+                                </div>
+                                <div className="text-center bg-neutral-50 p-1.5 rounded-lg">
+                                    <p className="text-[10px] text-neutral-500 uppercase">TP</p>
+                                    <p className="text-sm font-semibold text-neutral-800">{tp ? tp.score : '—'}</p>
+                                </div>
+                                <div className="text-center bg-primary/5 p-1.5 rounded-lg">
+                                    <p className="text-[10px] text-primary uppercase">Examen</p>
+                                    <p className="text-sm font-bold text-primary-dark">{exam ? exam.score : '—'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
 
             {/* â”€â”€ Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}

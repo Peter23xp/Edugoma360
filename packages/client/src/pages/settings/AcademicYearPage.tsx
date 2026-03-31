@@ -79,7 +79,7 @@ export default function AcademicYearPage() {
                 </div>
                 <button
                     onClick={() => setShowCreateModal(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm shrink-0"
+                    className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:bg-primary/90 transition-all shadow-sm shrink-0 w-full sm:w-auto"
                 >
                     <Plus size={16} />
                     Nouvelle année
@@ -150,7 +150,7 @@ export default function AcademicYearPage() {
                         </p>
                         <button
                             onClick={() => setShowCreateModal(true)}
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 text-white text-sm font-semibold rounded-xl hover:bg-orange-700 transition-colors"
+                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 text-white text-sm font-semibold rounded-xl hover:bg-orange-700 transition-colors w-full sm:w-auto"
                         >
                             <Plus size={16} /> Créer une année
                         </button>

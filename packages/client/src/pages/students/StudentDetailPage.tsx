@@ -70,13 +70,13 @@ export default function StudentDetailPage() {
     // Loading state
     if (isLoading) {
         return (
-            <div className="space-y-4">
+            <div className="w-full max-w-full overflow-hidden py-4 sm:py-6 lg:py-8 space-y-4">
                 <div className="flex items-center gap-3">
                     <div className="w-20 h-8 bg-neutral-200 rounded-lg animate-pulse" />
                 </div>
-                <div className="bg-white rounded-xl border border-neutral-300/50 p-6">
+                <div className="bg-white rounded-xl border border-neutral-300/50 p-4 lg:p-6">
                     <div className="flex items-start gap-4">
-                        <div className="w-20 h-20 bg-neutral-200 rounded-full animate-pulse" />
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-neutral-200 rounded-full animate-pulse" />
                         <div className="flex-1 space-y-3">
                             <div className="w-64 h-6 bg-neutral-200 rounded animate-pulse" />
                             <div className="w-48 h-4 bg-neutral-200 rounded animate-pulse" />
@@ -91,23 +91,25 @@ export default function StudentDetailPage() {
     // Error state - 404
     if (error || !data) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
-                <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
-                    <span className="text-3xl">😕</span>
+            <div className="w-full max-w-full overflow-hidden py-4 sm:py-6 lg:py-8">
+                <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
+                        <span className="text-3xl">😕</span>
+                    </div>
+                    <h2 className="text-xl font-bold text-neutral-900">Élève introuvable</h2>
+                    <p className="text-sm text-neutral-500 text-center max-w-md">
+                        L'élève que vous recherchez n'existe pas ou a été supprimé.
+                    </p>
+                    <button
+                        onClick={() => navigate('/students')}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
+                                   bg-primary text-white rounded-lg hover:bg-primary-dark 
+                                   transition-colors w-full sm:w-auto"
+                    >
+                        <ArrowLeft size={14} />
+                        Retour à la liste
+                    </button>
                 </div>
-                <h2 className="text-xl font-bold text-neutral-900">Élève introuvable</h2>
-                <p className="text-sm text-neutral-500 text-center max-w-md">
-                    L'élève que vous recherchez n'existe pas ou a été supprimé.
-                </p>
-                <button
-                    onClick={() => navigate('/students')}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
-                               bg-primary text-white rounded-lg hover:bg-primary-dark 
-                               transition-colors"
-                >
-                    <ArrowLeft size={14} />
-                    Retour à la liste
-                </button>
             </div>
         );
     }
@@ -124,24 +126,25 @@ export default function StudentDetailPage() {
     ];
 
     return (
-        <div className="space-y-4 pb-8">
-            {/* â”€â”€ Top Bar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+        <div className="w-full max-w-full overflow-hidden space-y-4 lg:space-y-6">
+            {/* ── Top Bar ──────────────────────────────────────────────────────── */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <button
                     onClick={handleBack}
                     className="flex items-center gap-2 px-3 py-2 text-sm font-medium 
                                text-neutral-700 hover:bg-neutral-100 rounded-lg 
-                               transition-colors"
+                               transition-colors w-full sm:w-auto"
                 >
                     <ArrowLeft size={16} />
-                    Retour à la liste
+                    <span className="hidden sm:inline">Retour à la liste</span>
+                    <span className="sm:hidden">Retour</span>
                 </button>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                         onClick={() => navigate(`/students/${id}/edit`)}
                         className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-neutral-300 
-                                   rounded-lg hover:bg-neutral-50 transition-colors text-center"
+                                   rounded-lg hover:bg-neutral-50 transition-colors text-center w-full sm:w-auto"
                     >
                         Modifier
                     </button>
@@ -149,7 +152,7 @@ export default function StudentDetailPage() {
                         onClick={handlePrintCard}
                         disabled={printingCard}
                         className="px-4 py-2 text-sm font-medium border border-neutral-300 
-                                   rounded-lg hover:bg-neutral-50 transition-colors hidden sm:flex
+                                   rounded-lg hover:bg-neutral-50 transition-colors hidden lg:flex
                                    items-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {printingCard ? 'Génération...' : 'Imprimer carte'}
@@ -158,28 +161,28 @@ export default function StudentDetailPage() {
                 </div>
             </div>
 
-            {/* â”€â”€ Archived Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Archived Banner ──────────────────────────────────────────────── */}
             {isArchived && (
                 <div className="bg-neutral-100 border border-neutral-300 rounded-lg px-4 py-3">
-                    <p className="text-sm text-neutral-700">
+                    <p className="text-xs sm:text-sm text-neutral-700">
                         <span className="font-semibold">Cet élève est archivé.</span> Les données
                         sont en lecture seule.
                     </p>
                 </div>
             )}
 
-            {/* â”€â”€ Student Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ── Student Header ───────────────────────────────────────────────── */}
             <StudentHeader student={student} />
 
-            {/* â”€â”€ Tabs Navigation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-            <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
-                <div className="border-b border-neutral-200">
-                    <div className="flex overflow-x-auto scrollbar-hide">
+            {/* ── Tabs Navigation ──────────────────────────────────────────────── */}
+            <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden w-full">
+                <div className="bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-sm w-full overflow-x-auto scrollbar-hide">
+                    <div className="flex w-max min-w-full">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`px-6 py-3 text-sm font-medium whitespace-nowrap 
+                                className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-medium whitespace-nowrap 
                                            border-b-2 transition-colors ${activeTab === tab.id
                                         ? 'border-primary text-primary'
                                         : 'border-transparent text-neutral-600 hover:text-neutral-900'
@@ -191,8 +194,8 @@ export default function StudentDetailPage() {
                     </div>
                 </div>
 
-                {/* â”€â”€ Tab Content â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="p-4 sm:p-6">
+                {/* ── Tab Content ──────────────────────────────────────────────── */}
+                <div className="p-4 lg:p-6">
                     {activeTab === 'info' && <InfoTab student={student} />}
                     {activeTab === 'scolarite' && <ScolariteTab studentId={id!} />}
                     {activeTab === 'notes' && <GradesTab studentId={id!} />}

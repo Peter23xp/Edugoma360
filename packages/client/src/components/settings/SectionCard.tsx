@@ -57,12 +57,12 @@ export default function SectionCard({
                             {section.name} <span className="text-sm font-medium text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full">({section.code})</span>
                         </h3>
                         <p className="text-sm text-neutral-500 mt-1">
-                            Années : {section.years.map(y => y === 1 ? '1ère' : `${y}ème`).join(', ')}
+                            Années : {Array.isArray(section.years) ? section.years.map(y => y === 1 ? '1ère' : `${y}ème`).join(', ') : 'N/A'}
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs font-semibold text-neutral-600">
                             <span className="flex items-center gap-1.5 px-2.5 py-1 bg-neutral-100 rounded border border-neutral-200">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
-                                {section.subjects.length} matières configurées
+                                {(section.subjects || []).length} matières configurées
                             </span>
                             <span className="flex items-center gap-1.5 px-2.5 py-1 bg-neutral-100 rounded border border-neutral-200">
                                 <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
@@ -116,7 +116,7 @@ export default function SectionCard({
                         </li>
                         
                         {/* TBODY */}
-                        {section.subjects.length === 0 ? (
+                        {(section.subjects || []).length === 0 ? (
                             <li className="px-6 py-8 text-center bg-orange-50/30">
                                 <AlertTriangle size={24} className="mx-auto text-orange-300 mb-2" />
                                 <p className="text-sm font-medium text-orange-800">Aucune matière configurée</p>
@@ -129,7 +129,7 @@ export default function SectionCard({
                                 </button>
                             </li>
                         ) : (
-                            section.subjects.map(sub => (
+                            (section.subjects || []).map(sub => (
                                 <li key={sub.id} className="grid grid-cols-[3fr_1fr_1.5fr_1.5fr_1fr] items-center px-6 py-3 text-sm hover:bg-neutral-50 transition-colors group">
                                     <div className="font-semibold text-neutral-800 flex items-center gap-2">
                                         {sub.name} <span className="text-[10px] bg-neutral-100 text-neutral-500 px-1.5 py-0.5 rounded border border-neutral-200 font-mono">{sub.abbreviation}</span>
@@ -174,7 +174,7 @@ export default function SectionCard({
                         )}
                         
                         {/* FOOTER ACTION */}
-                        {section.subjects.length > 0 && (
+                        {(section.subjects || []).length > 0 && (
                             <li className="px-6 py-3 bg-neutral-50/50 flex justify-end">
                                 <button 
                                     onClick={handleOpenAddSubject}

@@ -160,7 +160,7 @@ export default function AveragesPage() {
                                                border-neutral-300 text-neutral-700 rounded-lg 
                                                hover:bg-neutral-50 transition-colors text-sm 
                                                font-medium disabled:opacity-50 
-                                               disabled:cursor-not-allowed"
+                                               disabled:cursor-not-allowed w-full sm:w-auto"
                                 >
                                     {calculateMutation.isPending ? (
                                         <Loader2 size={16} className="animate-spin" />
@@ -177,7 +177,7 @@ export default function AveragesPage() {
                                                border-neutral-300 text-neutral-700 rounded-lg 
                                                hover:bg-neutral-50 transition-colors text-sm 
                                                font-medium disabled:opacity-50 
-                                               disabled:cursor-not-allowed"
+                                               disabled:cursor-not-allowed w-full sm:w-auto"
                                 >
                                     <FileSpreadsheet size={16} />
                                     Export Excel
@@ -189,7 +189,7 @@ export default function AveragesPage() {
                                     className="flex items-center gap-2 px-4 py-2 bg-orange-600 
                                                text-white rounded-lg hover:bg-orange-700 
                                                transition-colors text-sm font-medium
-                                               disabled:opacity-50 disabled:cursor-not-allowed"
+                                               disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                                 >
                                     <Lock size={16} />
                                     {isValidated ? 'Validé' : 'Valider les moyennes'}
@@ -406,7 +406,7 @@ export default function AveragesPage() {
                                 className="flex items-center gap-2 px-6 py-2 bg-orange-600 
                                            text-white rounded-lg hover:bg-orange-700 
                                            font-medium text-sm transition-colors
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 {validateMutation.isPending && (
                                     <Loader2 size={16} className="animate-spin" />

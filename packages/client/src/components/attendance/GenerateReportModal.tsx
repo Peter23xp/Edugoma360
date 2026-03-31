@@ -147,7 +147,7 @@ export default function GenerateReportModal({ isOpen, onClose, startDate, endDat
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-neutral-100 flex justify-end gap-3 sticky bottom-0 bg-white">
+                <div className="p-4 border-t border-neutral-100 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 sticky bottom-0 bg-white">
                     <button onClick={onClose} className="px-4 py-2 text-sm font-medium text-neutral-700 bg-white border border-neutral-300 rounded-lg hover:bg-neutral-50">
                         Annuler
                     </button>

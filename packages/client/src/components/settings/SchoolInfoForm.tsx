@@ -88,27 +88,27 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
     return (
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-8 pb-12">
             {/* EN-TÊTE ACTIONS */}
-            <div className="flex items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm p-4 z-40 border-b border-neutral-200">
-                <div className="flex gap-3">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between sticky top-0 bg-background/95 backdrop-blur-sm p-4 z-40 border-b border-neutral-200 gap-3">
+                <div className="w-full sm:w-auto">
                     <button 
                         type="button" 
                         onClick={handleReset}
-                        className="flex items-center gap-2 px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-md text-sm font-medium border border-neutral-300 transition-colors"
+                        className="w-full sm:w-auto flex justify-center items-center gap-2 px-4 py-2.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-lg text-sm font-medium border border-neutral-300 transition-colors shadow-sm"
                     >
                         <RefreshCw size={16} /> Réinitialiser
                     </button>
                 </div>
-                <div className="flex gap-3">
-                    <button type="button" className="px-6 py-2 text-primary font-medium border border-primary hover:bg-primary-lighter rounded-md text-sm transition-colors">
+                <div className="w-full sm:w-auto flex flex-col-reverse sm:flex-row gap-3">
+                    <button type="button" className="w-full sm:w-auto px-6 py-2.5 text-primary font-bold border border-primary hover:bg-primary-lighter rounded-lg text-sm transition-colors text-center shadow-sm">
                         Annuler
                     </button>
                     <button 
                         type="submit" 
                         disabled={isSubmitting}
-                        className="flex items-center gap-2 px-6 py-2 bg-primary hover:bg-primary-hover text-white rounded-md text-sm font-semibold transition-colors disabled:opacity-50"
+                        className="w-full sm:w-auto flex justify-center items-center gap-2 px-8 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-bold shadow-md transition-colors disabled:opacity-50 active:scale-95"
                     >
                         {isSubmitting ? <RefreshCw className="animate-spin" size={16} /> : <Save size={16} />}
-                        Enregistrer les modifications
+                        Enregistrer
                     </button>
                 </div>
             </div>
@@ -285,7 +285,7 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
                         <div className="p-6 space-y-6">
                             <div>
                                 <label className={labelClass}>Type d'école <span className="text-red-500">*</span></label>
-                                <div className="flex gap-4">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                     {[
                                         {v: 'OFFICIELLE', l: 'Publique/Officielle'}, 
                                         {v: 'PRIVEE', l: 'Privée'}, 
@@ -333,7 +333,7 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
                         <div className="p-6 space-y-6">
                             <div>
                                 <label className={labelClass}>Langue d'enseignement principale <span className="text-red-500">*</span></label>
-                                <div className="flex gap-4">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                     {[
                                         {v: 'FRANCAIS', l: 'Français'}, 
                                         {v: 'ANGLAIS', l: 'Anglais'}, 
@@ -350,7 +350,7 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
 
                             <div>
                                 <label className={labelClass}>Système d'évaluation <span className="text-red-500">*</span></label>
-                                <div className="flex gap-4">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                     {[
                                         {v: 'NOTE_20', l: 'Notes sur 20'}, 
                                         {v: 'NOTE_10', l: 'Notes sur 10'}, 
@@ -367,7 +367,7 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
 
                             <div>
                                 <label className={labelClass}>Nombre de périodes <span className="text-red-500">*</span></label>
-                                <div className="flex gap-4">
+                                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                                     {[
                                         {v: 'TRIMESTRES', l: '3 trimestres'}, 
                                         {v: 'SEMESTRES', l: '2 semestres'}

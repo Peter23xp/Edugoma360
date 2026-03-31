@@ -101,7 +101,7 @@ export default function ClassesPage() {
                             onClick={handleCreateNew}
                             className="flex items-center gap-2 px-4 py-2.5 bg-primary 
                                        text-white rounded-lg hover:bg-primary-dark font-medium 
-                                       text-sm transition-colors"
+                                       text-sm transition-colors w-full sm:w-auto"
                         >
                             <Plus size={16} />
                             Créer une classe

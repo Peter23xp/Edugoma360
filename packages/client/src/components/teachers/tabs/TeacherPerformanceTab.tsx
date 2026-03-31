@@ -10,7 +10,7 @@ const data = [
 
 export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher: _teacher }) => {
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6 w-full overflow-hidden">
             {/* —— KPI Cards —— */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="border border-neutral-200 bg-white/50 rounded-lg p-4 flex items-center gap-4">
@@ -54,7 +54,7 @@ export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher: _te
             </div>
 
             {/* —— Chart —— */}
-            <div className="border border-neutral-200 rounded-lg p-6">
+            <div className="border border-neutral-200 rounded-lg p-3 sm:p-6 w-full overflow-hidden">
                 <div className="flex items-center gap-2 mb-6">
                     <BarChart2 size={18} className="text-neutral-400" />
                     <div>
@@ -63,7 +63,7 @@ export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher: _te
                     </div>
                 </div>
 
-                <div className="h-72 w-full">
+                <div className="h-52 sm:h-72 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={data} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E5E5" />
@@ -81,7 +81,7 @@ export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher: _te
             </div>
 
             {/* —— Observations —— */}
-            <div className="border border-neutral-200 rounded-lg p-6">
+            <div className="border border-neutral-200 rounded-lg p-4 sm:p-6 w-full overflow-hidden">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
                         <MessageSquare size={18} className="text-neutral-400" />
@@ -96,7 +96,7 @@ export const TeacherPerformanceTab: React.FC<{ teacher: any }> = ({ teacher: _te
                     <p className="text-sm text-neutral-700 italic leading-relaxed text-center py-2">
                         "Excellent travail ce trimestre. Les résultats sont en progression constante dans toutes les classes. L'assiduité est exemplaire. Continue sur cette lancée."
                     </p>
-                    <div className="absolute -bottom-3 -right-2 flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-neutral-200">
+                    <div className="absolute -bottom-3 right-0 sm:-right-2 flex items-center gap-2 bg-white px-2 sm:px-3 py-1.5 rounded-lg shadow-sm border border-neutral-200">
                         <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white">P</div>
                         <div className="text-left">
                             <div className="text-xs font-semibold text-neutral-900">MUKAMBA JEAN</div>

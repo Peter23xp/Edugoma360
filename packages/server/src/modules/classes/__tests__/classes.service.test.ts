@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ClassesService } from './classes.service';
-import prisma from '../../lib/prisma';
+import { ClassesService } from '../classes.service';
+import prisma from '../../../lib/prisma';
 
 // Mock prisma
-vi.mock('../../lib/prisma', () => ({
+vi.mock('../../../lib/prisma', () => ({
     default: {
         class: {
             findFirst: vi.fn(),

@@ -161,7 +161,7 @@ export default function StudentsImportPage() {
                                 onClick={handleDownloadTemplate}
                                 className="flex items-center gap-2 px-4 py-2 border border-neutral-300 
                                            rounded-lg hover:bg-neutral-50 transition-colors text-sm 
-                                           font-medium text-neutral-700"
+                                           font-medium text-neutral-700 w-full sm:w-auto"
                             >
                                 <Download size={16} />
                                 Télécharger le modèle
@@ -263,7 +263,7 @@ export default function StudentsImportPage() {
                                 className="flex items-center gap-2 px-6 py-2.5 bg-primary 
                                            text-white rounded-lg hover:bg-primary-dark font-medium 
                                            text-sm transition-colors disabled:opacity-50 
-                                           disabled:cursor-not-allowed"
+                                           disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 <Upload size={16} />
                                 Lancer l'import ({validCount} élèves)

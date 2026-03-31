@@ -238,7 +238,7 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
                             className="flex items-center gap-2 px-6 py-2 bg-primary text-white 
                                        rounded-lg hover:bg-primary-dark font-medium text-sm 
                                        transition-colors disabled:opacity-50 
-                                       disabled:cursor-not-allowed"
+                                       disabled:cursor-not-allowed w-full sm:w-auto"
                         >
                             {mutation.isPending && <Loader2 size={16} className="animate-spin" />}
                             {isEdit ? 'Enregistrer' : 'Créer la classe'}

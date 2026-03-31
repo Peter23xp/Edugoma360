@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
     Plus,
@@ -6,9 +6,8 @@ import {
     Users,
     ChevronLeft,
     ChevronRight,
-    ChevronsLeft,
-    ChevronsRight,
     GraduationCap,
+    Edit,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { useStudents, type StudentListItem } from '../../hooks/useStudents';
@@ -28,7 +27,7 @@ export default function StudentsListPage() {
     // â”€â”€ Filter state, synced with URL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const classId = searchParams.get('class') ?? '';
     const section = searchParams.get('section') ?? '';
-    const status = searchParams.get('status') ?? 'NOUVEAU';
+    const status = searchParams.get('status') ?? (classId ? '' : 'NOUVEAU');
     const search = searchParams.get('q') ?? '';
     const page = parseInt(searchParams.get('page') ?? '1', 10);
 
@@ -75,7 +74,6 @@ export default function StudentsListPage() {
         total,
         totalPages,
         isLoading,
-        isFetching,
         batchArchiveMutation,
         archiveMutation,
     } = useStudents(filters);
@@ -213,9 +211,9 @@ export default function StudentsListPage() {
     const hasFiltersActive = !!(classId || section || (status && status !== 'NOUVEAU') || search);
 
     return (
-        <div className="space-y-4 pb-20">
-            {/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="pb-20">
+            <div className="bg-background/95 backdrop-blur border-b border-neutral-300/50 shadow-sm -mx-4 px-4 py-4 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 mb-6">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-3">
                     <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
                         <GraduationCap size={22} className="text-white" />
@@ -238,29 +236,30 @@ export default function StudentsListPage() {
                 </div>
 
                 {hasRole('SUPER_ADMIN', 'PREFET', 'SECRETAIRE') && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 w-full md:w-auto">
                         <button
                             onClick={() => setImportModalOpen(true)}
-                            className="flex items-center gap-2 px-3.5 py-2.5 text-sm font-medium 
+                            className="flex items-center justify-center gap-2 px-3.5 py-2.5 text-sm font-medium 
                                        border border-neutral-300 rounded-xl hover:bg-neutral-50 
                                        hover:border-neutral-400 transition-all duration-200 
-                                       text-neutral-700 shadow-sm"
+                                       text-neutral-700 shadow-sm flex-1 sm:flex-none"
                         >
                             <Upload size={15} />
-                            <span className="hidden sm:inline">Importer</span>
+                            <span>Importer</span>
                         </button>
                         <button
                             onClick={() => navigate('/students/new')}
-                            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium 
+                            className="flex flex-1 sm:flex-none justify-center items-center gap-2 px-4 py-2.5 text-sm font-medium 
                                        bg-gradient-to-r from-primary to-primary-light text-white 
                                        rounded-xl hover:shadow-lg hover:shadow-primary/25 
-                                       transition-all duration-200 hover:-translate-y-0.5 shadow-md"
+                                       transition-all duration-200 hover:-translate-y-0.5 shadow-md w-full sm:w-auto"
                         >
                             <Plus size={15} />
                             <span>Inscrire</span>
                         </button>
                     </div>
                 )}
+                </div>
             </div>
 
             {/* â”€â”€ Filters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
@@ -294,7 +293,7 @@ export default function StudentsListPage() {
                 </div>
             )}
 
-            {/* â”€â”€ Empty state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ——— Empty state ————————————————————————————————————————————————————————————————————————————— */}
             {!isLoading && students.length === 0 && (
                 <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden">
                     <EmptyState
@@ -312,7 +311,7 @@ export default function StudentsListPage() {
                                     onClick={() => navigate('/students/new')}
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
                                                bg-primary text-white rounded-lg hover:bg-primary-dark 
-                                               transition-colors"
+                                               transition-colors w-full sm:w-auto"
                                 >
                                     <Plus size={14} />
                                     Inscrire le premier élève
@@ -323,122 +322,113 @@ export default function StudentsListPage() {
                 </div>
             )}
 
-            {/* â”€â”€ Data table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+            {/* ——— Data table / Card View —————————————————————————————————————————————————————————————————— */}
             {!isLoading && students.length > 0 && (
-                <div
-                    className={`bg-white rounded-xl border border-neutral-300/50 overflow-hidden shadow-sm transition-opacity duration-200 ${isFetching ? 'opacity-70' : 'opacity-100'
-                        }`}
-                >
-                    <div className="overflow-x-auto">
-                        <table className="w-full" id="students-table">
-                            <thead>
-                                <tr className="table-header">
-                                    {/* Select all */}
-                                    <th className="w-12 px-3 py-3">
-                                        <div className="flex items-center justify-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={allOnPageSelected}
-                                                ref={(el) => {
-                                                    if (el) {
-                                                        el.indeterminate = someOnPageSelected && !allOnPageSelected;
-                                                    }
-                                                }}
-                                                onChange={toggleSelectAll}
-                                                className="w-4 h-4 rounded border-neutral-300 text-primary 
-                                                           focus:ring-primary/20 cursor-pointer"
-                                            />
-                                        </div>
-                                    </th>
-                                    <th className="w-14 px-2 py-3 text-left">Photo</th>
-                                    <th className="px-3 py-3 text-left">Matricule</th>
-                                    <th className="px-3 py-3 text-left">Nom Complet</th>
-                                    <th className="px-3 py-3 text-left hidden md:table-cell">Classe</th>
-                                    <th className="px-3 py-3 text-left hidden sm:table-cell">Statut</th>
-                                    <th className="w-12 px-2 py-3" />
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-neutral-100">
-                                {students.map((student: StudentListItem) => (
-                                    <StudentRow
-                                        key={student.id}
-                                        student={student}
-                                        isSelected={selectedIds.has(student.id)}
-                                        onSelect={handleSelect}
-                                        onAction={handleRowAction}
-                                    />
-                                ))}
-                            </tbody>
-                        </table>
+                <div className="space-y-4">
+                    {/* Desktop Table View */}
+                    <div className="hidden lg:block bg-white rounded-xl border border-neutral-300/50 overflow-hidden shadow-sm transition-opacity duration-200">
+                        <div className="overflow-x-auto">
+                            <table className="w-full" id="students-table">
+                                <thead>
+                                    <tr className="table-header">
+                                        <th className="w-12 px-3 py-3">
+                                            <div className="flex items-center justify-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={allOnPageSelected}
+                                                    ref={(el) => {
+                                                        if (el) el.indeterminate = someOnPageSelected && !allOnPageSelected;
+                                                    }}
+                                                    onChange={toggleSelectAll}
+                                                    className="w-4 h-4 rounded border-neutral-300 text-primary focus:ring-primary/20 cursor-pointer"
+                                                />
+                                            </div>
+                                        </th>
+                                        <th className="w-14 px-2 py-3 text-left">Photo</th>
+                                        <th className="px-3 py-3 text-left">Matricule</th>
+                                        <th className="px-3 py-3 text-left">Nom Complet</th>
+                                        <th className="px-3 py-3 text-left">Classe</th>
+                                        <th className="px-3 py-3 text-left">Statut</th>
+                                        <th className="w-12 px-2 py-3" />
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-100">
+                                    {students.map((student: StudentListItem) => (
+                                        <StudentRow
+                                            key={student.id}
+                                            student={student}
+                                            isSelected={selectedIds.has(student.id)}
+                                            onSelect={handleSelect}
+                                            onAction={handleRowAction}
+                                        />
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    {/* â”€â”€ Pagination â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                    <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-100">
+                    {/* Mobile Card View */}
+                    <div className="lg:hidden grid grid-cols-1 gap-4">
+                        {students.map((student: StudentListItem) => (
+                            <div
+                                key={student.id}
+                                onClick={() => navigate(`/students/${student.id}`)}
+                                className={`bg-white rounded-2xl border ${selectedIds.has(student.id) ? 'border-primary ring-2 ring-primary/10' : 'border-neutral-300/50'} p-4 shadow-sm active:scale-[0.98] transition-all`}
+                            >
+                                <div className="flex items-start gap-4">
+                                    <div onClick={(e) => e.stopPropagation()} className="pt-1">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedIds.has(student.id)}
+                                            onChange={(e) => handleSelect(student.id, e.target.checked)}
+                                            className="w-5 h-5 rounded border-neutral-300 text-primary"
+                                        />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="font-mono text-[10px] text-primary bg-primary/5 px-1.5 py-0.5 rounded">
+                                                {student.matricule}
+                                            </span>
+                                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${student.statut === 'ARCHIVE' ? 'bg-neutral-100 text-neutral-500' : 'bg-success/10 text-success'}`}>
+                                                {student.className || 'Sans Classe'}
+                                            </span>
+                                        </div>
+                                        <h3 className="font-bold text-neutral-900 truncate uppercase">
+                                            {student.nom} {student.postNom} <span className="font-normal capitalize">{student.prenom}</span>
+                                        </h3>
+                                        <div className="mt-4 flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`w-2 h-2 rounded-full ${student.statut === 'ARCHIVE' ? 'bg-neutral-300' : 'bg-success'}`} />
+                                                <span className="text-xs text-neutral-500 capitalize">{student.statut.toLowerCase()}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); navigate(`/students/${student.id}/edit`); }}
+                                                    className="p-2 rounded-lg bg-neutral-100 text-neutral-600"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); navigate(`/students/${student.id}`); }}
+                                                    className="px-3 py-1.5 rounded-lg bg-primary text-white font-bold text-[10px]"
+                                                >
+                                                    VOIR
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Pagination for both */}
+                    <div className="bg-white rounded-xl border border-neutral-300/50 flex items-center justify-between px-4 py-3 shadow-sm">
                         <p className="text-xs text-neutral-500">
-                            Total :{' '}
-                            <span className="font-semibold text-neutral-700">{total}</span> élèves
-                            <span className="text-neutral-300 mx-1.5">|</span>
-                            Affichage : {limit}/page
+                            Total : <span className="font-semibold text-neutral-700">{total}</span> élèves
                         </p>
 
-                        {/* Desktop pagination */}
-                        <div className="hidden sm:flex items-center gap-1">
-                            <button
-                                onClick={() => setPage(1)}
-                                disabled={page <= 1}
-                                className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 
-                                           disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronsLeft size={14} />
-                            </button>
-                            <button
-                                onClick={() => setPage(page - 1)}
-                                disabled={page <= 1}
-                                className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 
-                                           disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronLeft size={14} />
-                            </button>
-
-                            {pageNumbers.map((p, idx) =>
-                                p === '...' ? (
-                                    <span key={`dots-${idx}`} className="px-1 text-neutral-400 text-xs">
-                                        ...
-                                    </span>
-                                ) : (
-                                    <button
-                                        key={p}
-                                        onClick={() => setPage(p as number)}
-                                        className={`min-w-[32px] h-8 rounded-lg text-xs font-medium transition-all duration-150 ${p === page
-                                                ? 'bg-primary text-white shadow-sm'
-                                                : 'text-neutral-600 hover:bg-neutral-100'
-                                            }`}
-                                    >
-                                        {p}
-                                    </button>
-                                ),
-                            )}
-
-                            <button
-                                onClick={() => setPage(page + 1)}
-                                disabled={page >= totalPages}
-                                className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 
-                                           disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronRight size={14} />
-                            </button>
-                            <button
-                                onClick={() => setPage(totalPages)}
-                                disabled={page >= totalPages}
-                                className="p-1.5 rounded-lg hover:bg-neutral-100 disabled:opacity-30 
-                                           disabled:cursor-not-allowed transition-colors"
-                            >
-                                <ChevronsRight size={14} />
-                            </button>
-                        </div>
-
-                        {/* Mobile pagination */}
-                        <div className="flex sm:hidden items-center gap-2">
+                        <div className="flex items-center gap-2">
                             <button
                                 onClick={() => setPage(page - 1)}
                                 disabled={page <= 1}
@@ -447,7 +437,7 @@ export default function StudentsListPage() {
                                 <ChevronLeft size={14} />
                             </button>
                             <span className="text-xs text-neutral-600 font-medium">
-                                Page {page}/{totalPages}
+                                {page} / {totalPages}
                             </span>
                             <button
                                 onClick={() => setPage(page + 1)}

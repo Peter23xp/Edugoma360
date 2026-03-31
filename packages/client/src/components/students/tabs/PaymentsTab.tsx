@@ -109,64 +109,104 @@ export default function PaymentsTab({ studentId }: PaymentsTabProps) {
                     <h3 className="text-sm font-semibold text-neutral-900 mb-3">
                         Historique des paiements
                     </h3>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-neutral-200">
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Reçu N°
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Type de frais
-                                    </th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-600">
-                                        Montant
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Date
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Mode
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-neutral-100">
-                                {payments.map((payment: any) => (
-                                    <tr key={payment.id} className="hover:bg-neutral-50">
-                                        <td className="px-4 py-3">
-                                            <button
-                                                onClick={() =>
-                                                    window.open(
-                                                        `/api/payments/${payment.id}/receipt`,
-                                                        '_blank'
-                                                    )
-                                                }
-                                                className="text-sm font-mono text-primary 
-                                                           hover:underline"
-                                            >
-                                                {payment.receiptNumber}
-                                            </button>
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-neutral-900">
-                                            {payment.feePayments
-                                                ?.map((fp: any) => fp.fee?.name)
-                                                .filter(Boolean)
-                                                .join(', ') || '—'}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-right font-medium text-neutral-900">
-                                            {payment.amountPaid?.toLocaleString()} FC
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-neutral-700">
-                                            {new Date(payment.paymentDate || payment.createdAt).toLocaleDateString('fr-FR')}
-                                        </td>
-                                        <td className="px-4 py-3 text-sm text-neutral-700">
-                                            {(PAYMENT_METHODS as any)[payment.paymentMethod] || payment.paymentMethod}
-                                        </td>
+                    <>
+                        {/* Desktop View */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-neutral-200">
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Reçu N°
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Type de frais
+                                        </th>
+                                        <th className="px-4 py-3 text-right text-xs font-semibold text-neutral-600">
+                                            Montant
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Date
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Mode
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-100">
+                                    {payments.map((payment: any) => (
+                                        <tr key={payment.id} className="hover:bg-neutral-50">
+                                            <td className="px-4 py-3">
+                                                <button
+                                                    onClick={() =>
+                                                        window.open(
+                                                            `/api/payments/${payment.id}/receipt`,
+                                                            '_blank'
+                                                        )
+                                                    }
+                                                    className="text-sm font-mono text-primary 
+                                                               hover:underline"
+                                                >
+                                                    {payment.receiptNumber}
+                                                </button>
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-neutral-900">
+                                                {payment.feePayments
+                                                    ?.map((fp: any) => fp.fee?.name)
+                                                    .filter(Boolean)
+                                                    .join(', ') || '—'}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-right font-medium text-neutral-900">
+                                                {payment.amountPaid?.toLocaleString()} FC
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-neutral-700">
+                                                {new Date(payment.paymentDate || payment.createdAt).toLocaleDateString('fr-FR')}
+                                            </td>
+                                            <td className="px-4 py-3 text-sm text-neutral-700">
+                                                {(PAYMENT_METHODS as any)[payment.paymentMethod] || payment.paymentMethod}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="md:hidden space-y-3 mt-4">
+                            {payments.map((payment: any) => (
+                                <div key={payment.id} className="bg-white border border-neutral-200 rounded-xl p-4 shadow-sm">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <p className="font-bold text-neutral-900">
+                                                {payment.amountPaid?.toLocaleString()} FC
+                                            </p>
+                                            <p className="text-xs text-neutral-500 mt-0.5">
+                                                {new Date(payment.paymentDate || payment.createdAt).toLocaleDateString('fr-FR')}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={() => window.open(`/api/payments/${payment.id}/receipt`, '_blank')}
+                                            className="px-2.5 py-1 text-[10px] font-bold bg-primary/10 text-primary rounded-lg"
+                                        >
+                                            REÇU {payment.receiptNumber}
+                                        </button>
+                                    </div>
+                                    <div className="flex justify-between items-end mt-3">
+                                        <div>
+                                            <p className="text-xs text-neutral-500">Motifs</p>
+                                            <p className="text-sm font-medium text-neutral-800 line-clamp-1">
+                                                {payment.feePayments?.map((fp: any) => fp.fee?.name).filter(Boolean).join(', ') || '—'}
+                                            </p>
+                                        </div>
+                                        <div className="text-right whitespace-nowrap ml-4">
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-neutral-100 text-neutral-600">
+                                                {(PAYMENT_METHODS as any)[payment.paymentMethod] || payment.paymentMethod}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </>
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">

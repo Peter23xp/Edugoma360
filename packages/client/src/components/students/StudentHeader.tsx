@@ -69,35 +69,35 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
     const amountDue = paymentSummary?.data?.remaining || 0;
 
     return (
-        <div className="bg-white rounded-xl border border-neutral-300/50 p-4 sm:p-6 shadow-sm">
+        <div className="bg-white rounded-xl border border-neutral-200 p-4 lg:p-6 shadow-sm w-full overflow-hidden">
             <div className="flex flex-col sm:flex-row items-start gap-4">
-                {/* â”€â”€ Photo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+                {/* ── Photo ──────────────────────────────────────────────────────── */}
                 <div className="relative group">
                     {student.photoUrl ? (
                         <img
                             src={student.photoUrl}
                             alt={fullName}
-                            className="w-20 h-20 rounded-full border-2 border-primary object-cover"
+                            className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full border-2 border-primary object-cover"
                         />
                     ) : (
                         <div
-                            className="w-20 h-20 rounded-full border-2 border-primary 
+                            className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full border-2 border-primary 
                                        bg-gradient-to-br from-primary to-primary-light 
                                        flex items-center justify-center"
                         >
-                            <span className="text-2xl font-bold text-white">{initials}</span>
+                            <span className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">{initials}</span>
                         </div>
                     )}
                     {/* TODO: Add photo upload on click for SECRETAIRE+ */}
                 </div>
 
-                {/* â”€â”€ Info â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <div className="flex-1 space-y-2">
+                {/* ── Info ───────────────────────────────────────────────────────── */}
+                <div className="flex-1 min-w-0 space-y-2">
                     <div>
-                        <h1 className="text-lg sm:text-2xl font-bold text-neutral-900 tracking-tight break-words">
+                        <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-neutral-900 tracking-tight break-words">
                             {fullName}
                         </h1>
-                        <p className="text-sm text-neutral-500 font-mono mt-0.5">
+                        <p className="text-xs sm:text-sm text-neutral-500 font-mono mt-0.5">
                             Matricule : {student.matricule}
                         </p>
                     </div>
@@ -126,7 +126,8 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
                                            text-xs font-medium bg-red-100 text-red-700"
                             >
                                 <AlertCircle size={12} />
-                                Solde dû : {amountDue.toLocaleString()} FC
+                                <span className="hidden sm:inline">Solde dû : </span>
+                                {amountDue.toLocaleString()} FC
                             </span>
                         )}
                     </div>
@@ -135,11 +136,11 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
                     {primaryPhone && (
                         <a
                             href={`tel:${primaryPhone}`}
-                            className="inline-flex items-center gap-1.5 text-sm text-neutral-600 
+                            className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-neutral-600 
                                        hover:text-primary transition-colors"
                         >
                             <Phone size={14} />
-                            <span>
+                            <span className="truncate">
                                 {primaryPhone} {phoneLabel && `(${phoneLabel})`}
                             </span>
                         </a>

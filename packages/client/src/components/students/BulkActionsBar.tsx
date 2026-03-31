@@ -1,4 +1,4 @@
-﻿import { Download, Printer, Archive, X } from 'lucide-react';
+import { Download, Printer, Archive, X } from 'lucide-react';
 
 interface BulkActionsBarProps {
     count: number;
@@ -22,7 +22,7 @@ export default function BulkActionsBar({
     return (
         <div
             className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-between 
-                        bg-neutral-900 text-white px-6 py-3.5 
+                        bg-neutral-900 text-white px-4 sm:px-6 py-3.5 
                         shadow-[0_-4px_20px_rgba(0,0,0,0.15)]
                         animate-slide-up"
             style={{

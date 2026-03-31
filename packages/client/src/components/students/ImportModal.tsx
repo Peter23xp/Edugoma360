@@ -1,4 +1,4 @@
-﻿import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { X, Upload, Download, FileSpreadsheet, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import api from '../../lib/api';
 
@@ -167,7 +167,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
             <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={handleClose} />
 
             {/* Modal */}
-            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-fade-in">
+            <div className="relative bg-white rounded-2xl shadow-2xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden animate-fade-in mx-2 sm:mx-0">
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-neutral-100">
                     <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
                 </div>
 
                 {/* Content */}
-                <div className="p-5">
+                <div className="p-4 sm:p-5 overflow-y-auto flex-1">
                     {/* â”€â”€ Step 1: Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                     {step === 'upload' && (
                         <div className="space-y-4">
@@ -379,7 +379,7 @@ export default function ImportModal({ isOpen, onClose, onSuccess }: ImportModalP
                                     disabled={isUploading}
                                     className="flex items-center gap-2 px-5 py-2 text-sm font-medium 
                                                text-white bg-primary hover:bg-primary-dark rounded-lg 
-                                               transition-colors disabled:opacity-50"
+                                               transition-colors disabled:opacity-50 w-full sm:w-auto"
                                 >
                                     {isUploading && (
                                         <Loader2 size={14} className="animate-spin" />

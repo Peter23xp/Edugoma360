@@ -595,7 +595,7 @@ export default function DailyRollCallPage() {
                         type="button"
                         onClick={() => setSelectedIdx((p) => Math.max(p - 1, 0))}
                         disabled={selectedIdx === 0}
-                        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 transition-colors"
+                        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 transition-colors w-full sm:w-auto"
                     >
                         <ChevronLeft size={16} />
                         <span className="hidden sm:inline">Précédent</span>
@@ -604,7 +604,7 @@ export default function DailyRollCallPage() {
                         type="button"
                         onClick={() => setSelectedIdx((p) => Math.min(p + 1, rows.length - 1))}
                         disabled={selectedIdx >= rows.length - 1}
-                        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 transition-colors"
+                        className="flex items-center gap-1 px-3 py-2 rounded-lg border border-neutral-300 text-sm text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 transition-colors w-full sm:w-auto"
                     >
                         <span className="hidden sm:inline">Suivant</span>
                         <ChevronRight size={16} />

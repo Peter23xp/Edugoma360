@@ -223,16 +223,54 @@ export class StudentsService {
     async updateStudent(id: string, schoolId: string, data: z.infer<typeof UpdateStudentDto>) {
         const existing = await prisma.student.findFirst({
             where: { id, schoolId },
+            include: {
+                enrollments: {
+                    where: { academicYear: { isActive: true } },
+                    take: 1
+                }
+            }
         });
 
         if (!existing) throw new Error('Élève non trouvé');
 
-        return prisma.student.update({
-            where: { id },
-            data: {
-                ...data,
-                dateNaissance: data.dateNaissance ? new Date(data.dateNaissance) : undefined,
-            },
+        const { ecoleOrigine, resultatTenasosp, classId, academicYearId, ...studentData } = data;
+
+        return prisma.$transaction(async (tx) => {
+            // 1. Update Student record
+            const student = await tx.student.update({
+                where: { id },
+                data: {
+                    ...studentData,
+                    dateNaissance: data.dateNaissance ? new Date(data.dateNaissance) : undefined,
+                },
+            });
+
+            // 2. Update Enrollment record if necessary
+            if (ecoleOrigine !== undefined || resultatTenasosp !== undefined || classId !== undefined) {
+                const currentEnrollment = existing.enrollments[0];
+                if (currentEnrollment) {
+                    await tx.enrollment.update({
+                        where: { id: currentEnrollment.id },
+                        data: {
+                            ...(ecoleOrigine !== undefined ? { ecoleOrigine } : {}),
+                            ...(resultatTenasosp !== undefined ? { resultatTenasosp } : {}),
+                            ...(classId !== undefined ? { classId } : {}),
+                        }
+                    });
+                } else if (classId && academicYearId) {
+                    await tx.enrollment.create({
+                        data: {
+                            studentId: student.id,
+                            classId,
+                            academicYearId,
+                            ecoleOrigine,
+                            resultatTenasosp
+                        }
+                    });
+                }
+            }
+
+            return student;
         });
     }
 

@@ -60,7 +60,7 @@ function BatchProgressPanel({
                     <button
                         onClick={onRefresh}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-neutral-600
-                                   hover:bg-neutral-100 border border-neutral-200 rounded-lg transition-colors"
+                                   hover:bg-neutral-100 border border-neutral-200 rounded-lg transition-colors w-full sm:w-auto"
                     >
                         <RefreshCw size={12} />
                         Actualiser
@@ -277,7 +277,7 @@ export default function BulletinPage() {
                                     onClick={() => window.open(pdfBlobUrl, '_blank')}
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium
                                                text-neutral-700 border border-neutral-300 rounded-lg
-                                               hover:bg-neutral-100 transition-colors"
+                                               hover:bg-neutral-100 transition-colors w-full sm:w-auto"
                                 >
                                     <Eye size={15} />
                                     Aperçu plein écran
@@ -287,7 +287,7 @@ export default function BulletinPage() {
                                     onClick={handlePrint}
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium
                                                text-neutral-700 border border-neutral-300 rounded-lg
-                                               hover:bg-neutral-100 transition-colors"
+                                               hover:bg-neutral-100 transition-colors w-full sm:w-auto"
                                 >
                                     <Printer size={15} />
                                     Imprimer
@@ -298,7 +298,7 @@ export default function BulletinPage() {
                                     disabled={isGenerating}
                                     className="flex items-center gap-2 px-4 py-2 text-sm font-semibold
                                                bg-green-700 text-white rounded-lg hover:bg-green-800
-                                               transition-colors disabled:opacity-50 shadow-sm"
+                                               transition-colors disabled:opacity-50 shadow-sm w-full sm:w-auto"
                                 >
                                     {isGenerating
                                         ? <Loader2 size={15} className="animate-spin" />
@@ -317,7 +317,7 @@ export default function BulletinPage() {
                                 disabled={isGenerating}
                                 className="flex items-center gap-2 px-5 py-2 text-sm font-semibold
                                            bg-green-700 text-white rounded-lg hover:bg-green-800
-                                           transition-colors disabled:opacity-50 shadow-sm"
+                                           transition-colors disabled:opacity-50 shadow-sm w-full sm:w-auto"
                             >
                                 {isGenerating
                                     ? <Loader2 size={15} className="animate-spin" />
@@ -383,7 +383,7 @@ export default function BulletinPage() {
                                         disabled={isGenerating}
                                         className="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold
                                                    bg-green-700 text-white rounded-lg hover:bg-green-800
-                                                   transition-colors disabled:opacity-50 shadow-sm"
+                                                   transition-colors disabled:opacity-50 shadow-sm w-full sm:w-auto"
                                     >
                                         {isGenerating
                                             ? <Loader2 size={16} className="animate-spin" />
@@ -421,7 +421,7 @@ export default function BulletinPage() {
                                     {batchJob.results.map((result) => (
                                         <div
                                             key={result.studentId}
-                                            className="flex items-center justify-between px-6 py-3 hover:bg-neutral-50 transition-colors"
+                                            className="flex items-center justify-between px-6 py-3 hover:bg-neutral-50 transition-colors w-full sm:w-auto"
                                         >
                                             <div className="flex items-center gap-3">
                                                 {result.url ? (
@@ -445,7 +445,7 @@ export default function BulletinPage() {
                                                     rel="noreferrer"
                                                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
                                                                text-green-700 border border-green-200 bg-green-50
-                                                               rounded-lg hover:bg-green-100 transition-colors"
+                                                               rounded-lg hover:bg-green-100 transition-colors w-full sm:w-auto"
                                                 >
                                                     <Download size={12} />
                                                     Télécharger
@@ -530,7 +530,7 @@ export default function BulletinPage() {
                                             onClick={() => refetchBulletin()}
                                             className="flex items-center gap-2 px-4 py-2 text-sm font-medium
                                                        text-green-700 border border-green-300 rounded-lg
-                                                       hover:bg-green-50 transition-colors"
+                                                       hover:bg-green-50 transition-colors w-full sm:w-auto"
                                         >
                                             <RefreshCw size={14} />
                                             Réessayer
@@ -561,7 +561,7 @@ export default function BulletinPage() {
                                             onClick={() => window.open(pdfBlobUrl, '_blank')}
                                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
                                                        text-neutral-600 border border-neutral-200 rounded-lg
-                                                       hover:bg-white transition-colors"
+                                                       hover:bg-white transition-colors w-full sm:w-auto"
                                         >
                                             <Eye size={12} />
                                             Plein écran
@@ -570,7 +570,7 @@ export default function BulletinPage() {
                                             onClick={handlePrint}
                                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium
                                                        text-neutral-600 border border-neutral-200 rounded-lg
-                                                       hover:bg-white transition-colors"
+                                                       hover:bg-white transition-colors w-full sm:w-auto"
                                         >
                                             <Printer size={12} />
                                             Imprimer
@@ -580,7 +580,7 @@ export default function BulletinPage() {
                                             disabled={isGenerating}
                                             className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold
                                                        text-white bg-green-700 rounded-lg hover:bg-green-800
-                                                       transition-colors disabled:opacity-50"
+                                                       transition-colors disabled:opacity-50 w-full sm:w-auto"
                                         >
                                             {isGenerating
                                                 ? <Loader2 size={12} className="animate-spin" />

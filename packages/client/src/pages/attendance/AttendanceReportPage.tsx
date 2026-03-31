@@ -88,7 +88,7 @@ export default function AttendanceReportPage() {
                 </div>
                 <button
                     onClick={() => setShowGenerateModal(true)}
-                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all shadow-sm"
+                    className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-primary rounded-xl hover:bg-primary/90 transition-all shadow-sm w-full sm:w-auto"
                 >
                     <FileBarChart size={16} />
                     Générer rapport

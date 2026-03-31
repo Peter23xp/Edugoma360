@@ -271,14 +271,14 @@ export default function SetupWizardPage() {
                             <button
                                 onClick={handleDiscardDraft}
                                 className="flex-1 px-4 py-2 border border-neutral-300 rounded-lg 
-                                           hover:bg-neutral-50 transition-colors text-sm font-medium"
+                                           hover:bg-neutral-50 transition-colors text-sm font-medium w-full sm:w-auto"
                             >
                                 Recommencer
                             </button>
                             <button
                                 onClick={handleRestoreDraft}
                                 className="flex-1 px-4 py-2 bg-primary text-white rounded-lg 
-                                           hover:bg-primary-dark transition-colors text-sm font-medium"
+                                           hover:bg-primary-dark transition-colors text-sm font-medium w-full sm:w-auto"
                             >
                                 Restaurer
                             </button>
@@ -332,7 +332,7 @@ export default function SetupWizardPage() {
                         disabled={currentStep === 1 && !showSummary}
                         className="flex items-center gap-2 px-5 py-2.5 border border-neutral-300 
                                    rounded-lg hover:bg-neutral-50 transition-colors text-sm 
-                                   font-medium disabled:opacity-0 disabled:pointer-events-none"
+                                   font-medium disabled:opacity-0 disabled:pointer-events-none w-full sm:w-auto"
                         accessKey="p"
                     >
                         <ArrowLeft size={16} />
@@ -346,7 +346,7 @@ export default function SetupWizardPage() {
                             className="flex items-center gap-2 px-6 py-2.5 bg-green-600 
                                        text-white rounded-lg hover:bg-green-700 transition-colors 
                                        text-sm font-medium disabled:opacity-50 shadow-lg 
-                                       shadow-green-600/20"
+                                       shadow-green-600/20 w-full sm:w-auto"
                         >
                             {setupMutation.isPending ? (
                                 <>
@@ -365,7 +365,7 @@ export default function SetupWizardPage() {
                             onClick={handleNext}
                             className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white 
                                        rounded-lg hover:bg-primary-dark transition-colors text-sm 
-                                       font-medium shadow-lg shadow-primary/20"
+                                       font-medium shadow-lg shadow-primary/20 w-full sm:w-auto"
                             accessKey="n"
                         >
                             Suivant

@@ -145,7 +145,7 @@ export default function PalmaresPage() {
                                 onClick={handlePrint}
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
                                            text-neutral-700 border border-neutral-300 rounded-lg 
-                                           hover:bg-neutral-100 transition-colors"
+                                           hover:bg-neutral-100 transition-colors w-full sm:w-auto"
                             >
                                 <Printer size={16} />
                                 Imprimer
@@ -157,7 +157,7 @@ export default function PalmaresPage() {
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
                                            text-neutral-700 border border-neutral-300 rounded-lg 
                                            hover:bg-neutral-100 transition-colors
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 {isGeneratingExcel ? (
                                     <Loader2 size={16} className="animate-spin" />
@@ -173,7 +173,7 @@ export default function PalmaresPage() {
                                 className="flex items-center gap-2 px-4 py-2 text-sm font-semibold 
                                            bg-primary text-white rounded-lg hover:bg-primary/90 
                                            transition-colors shadow-sm
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
+                                           disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                             >
                                 {isGeneratingPdf ? (
                                     <Loader2 size={16} className="animate-spin" />

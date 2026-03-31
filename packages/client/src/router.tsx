@@ -74,6 +74,7 @@ import AcademicYearPage from './pages/settings/AcademicYearPage';
 import SubjectsPage from './pages/settings/SubjectsPage';
 import SectionsPage from './pages/settings/SectionsPage';
 import ClassesManagementPage from './pages/settings/ClassesManagementPage';
+import ClassDetailPage from './pages/settings/ClassDetailPage';
 import SyncPage from './pages/settings/SyncPage';
 import UsersManagementPage from './pages/settings/UsersManagementPage';
 
@@ -379,6 +380,11 @@ export default function AppRouter() {
                 <Route path="settings/classes" element={
                     <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
                         <ClassesManagementPage />
+                    </RoleGuard>
+                } />
+                <Route path="settings/classes/:classId" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <ClassDetailPage />
                     </RoleGuard>
                 } />
                 <Route path="settings/subjects" element={

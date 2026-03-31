@@ -6,7 +6,7 @@ import { TeacherInfoTab } from '../../components/teachers/tabs/TeacherInfoTab';
 import { TeacherClassesTab } from '../../components/teachers/tabs/TeacherClassesTab';
 import { TeacherScheduleTab } from '../../components/teachers/tabs/TeacherScheduleTab';
 import { TeacherPerformanceTab } from '../../components/teachers/tabs/TeacherPerformanceTab';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, MoreVertical } from 'lucide-react';
 
 type Tab = 'infos' | 'classes' | 'schedule' | 'performance';
 
@@ -65,7 +65,7 @@ export const TeacherProfilePage: React.FC = () => {
                     onClick={() => navigate('/teachers')}
                     className="flex items-center gap-2 px-4 py-2 text-sm font-medium 
                                bg-primary text-white rounded-lg hover:bg-primary-dark 
-                               transition-colors"
+                               transition-colors w-full sm:w-auto"
                 >
                     <ArrowLeft size={14} />
                     Retour à la liste
@@ -84,26 +84,30 @@ export const TeacherProfilePage: React.FC = () => {
     ];
 
     return (
-        <div className="space-y-4 pb-8">
+        <div className="w-full max-w-full overflow-hidden space-y-4 lg:space-y-6 pb-24">
             {/* —— Top Bar —— */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                 <button
                     onClick={handleBack}
                     className="flex items-center gap-2 px-3 py-2 text-sm font-medium 
                                text-neutral-700 hover:bg-neutral-100 rounded-lg 
-                               transition-colors"
+                               transition-colors w-full sm:w-auto"
                 >
                     <ArrowLeft size={16} />
-                    Retour à la liste
+                    <span className="hidden sm:inline">Retour à la liste</span>
+                    <span className="sm:hidden">Retour</span>
                 </button>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-full sm:w-auto">
                     <button
                         onClick={() => navigate(`/teachers/${id}/edit`)}
-                        className="px-4 py-2 text-sm font-medium border border-neutral-300 
-                                   rounded-lg hover:bg-neutral-50 transition-colors"
+                        className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium border border-neutral-300 
+                                   rounded-lg hover:bg-neutral-50 transition-colors text-center w-full sm:w-auto"
                     >
                         Modifier
+                    </button>
+                    <button className="h-9 w-9 rounded-lg border border-neutral-300 flex items-center justify-center hover:bg-neutral-50 sm:hidden">
+                        <MoreVertical size={18} />
                     </button>
                 </div>
             </div>
@@ -111,7 +115,7 @@ export const TeacherProfilePage: React.FC = () => {
             {/* —— Archived Banner —— */}
             {isArchived && (
                 <div className="bg-neutral-100 border border-neutral-300 rounded-lg px-4 py-3">
-                    <p className="text-sm text-neutral-700">
+                    <p className="text-xs sm:text-sm text-neutral-700">
                         <span className="font-semibold">Cet enseignant est inactif/archivé.</span> Les données
                         sont en lecture seule.
                     </p>
@@ -122,15 +126,15 @@ export const TeacherProfilePage: React.FC = () => {
             <TeacherHeader teacher={teacher} />
 
             {/* —— Tabs Navigation —— */}
-            <div className="bg-white rounded-xl border border-neutral-300/50 overflow-hidden" id="teacher-profile-tabs">
-                <div className="border-b border-neutral-200">
-                    <div className="flex overflow-x-auto scrollbar-hide">
+            <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden w-full" id="teacher-profile-tabs">
+                <div className="bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-sm w-full overflow-x-auto scrollbar-hide">
+                    <div className="flex w-max min-w-full">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 id={`tab-${tab.id}`}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`px-6 py-3 text-sm font-medium whitespace-nowrap 
+                                className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-medium whitespace-nowrap 
                                            border-b-2 transition-colors ${activeTab === tab.id
                                         ? 'border-primary text-primary'
                                         : 'border-transparent text-neutral-600 hover:text-neutral-900'
@@ -143,7 +147,7 @@ export const TeacherProfilePage: React.FC = () => {
                 </div>
 
                 {/* —— Tab Content —— */}
-                <div className="p-6">
+                <div className="p-4 lg:p-6">
                     {activeTab === 'infos' && <TeacherInfoTab teacher={teacher} />}
                     {activeTab === 'classes' && <TeacherClassesTab teacher={teacher} />}
                     {activeTab === 'schedule' && <TeacherScheduleTab teacher={teacher} />}

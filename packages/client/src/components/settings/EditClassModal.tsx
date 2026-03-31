@@ -113,7 +113,7 @@ export default function EditClassModal({ isOpen, onClose, onSubmit, isSubmitting
                     </div>
 
                     {/* Footer */}
-                    <div className="sticky bottom-0 bg-white border-t border-neutral-300/50 px-6 py-4 flex justify-end gap-3 rounded-b-lg">
+                    <div className="sticky bottom-0 bg-white border-t border-neutral-300/50 px-6 py-4 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 rounded-b-lg">
                         <button
                             type="button"
                             onClick={onClose}
@@ -124,7 +124,7 @@ export default function EditClassModal({ isOpen, onClose, onSubmit, isSubmitting
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50 transition-all shadow-sm"
+                            className="flex items-center gap-2 px-6 py-3 bg-primary text-white text-sm font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50 transition-all shadow-sm w-full sm:w-auto"
                         >
                             {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                             Enregistrer les modifications

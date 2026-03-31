@@ -1,4 +1,4 @@
-﻿﻿import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { teachersService } from './teachers.service';
 import { createTeacherSchema, updateTeacherSchema } from './teachers.validation';
 import { getPublicUrl } from '../../lib/storage';
@@ -37,6 +37,14 @@ export class TeachersController {
         } catch (error) {
             next(error);
         }
+    }
+
+    async getMyClasses(req: Request, res: Response, next: NextFunction) {
+        res.json({ data: [] });
+    }
+
+    async getMySubjects(req: Request, res: Response, next: NextFunction) {
+        res.json({ data: [] });
     }
 
     /**

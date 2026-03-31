@@ -32,15 +32,15 @@ export default function SchoolInfoPage() {
     // C'est géré par useSchoolSettings. S'il n'y a pas d'école, le form sera vide.
 
     return (
-        <div className="min-h-screen bg-background pb-12">
+        <div className="min-h-screen bg-background pb-12 w-full overflow-hidden">
             {/* Contenu principal */}
-            <main className="container mx-auto px-4 py-8 max-w-5xl">
+            <main className="w-full max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-8">
                 {/* Titre page */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-primary mb-2">
+                <div className="mb-6 sm:mb-8">
+                    <h1 className="text-xl sm:text-3xl font-bold text-primary mb-2">
                         Informations de l'école
                     </h1>
-                    <p className="text-neutral-500">
+                    <p className="text-sm sm:text-base text-neutral-500">
                         Gérez l'identité et les paramètres principaux de votre établissement.
                     </p>
                 </div>

@@ -497,6 +497,49 @@ export class TeachersService {
         });
     }
 
+    async getTeacherByUserId(schoolId: string, userId: string) {
+        return prisma.teacher.findFirst({
+            where: { schoolId, userId }
+        });
+    }
+
+    async getMyClasses(schoolId: string, userId: string) {
+        const teacher = await this.getTeacherByUserId(schoolId, userId);
+        if (!teacher) return [];
+
+        const assignments = await prisma.teacherClassSubject.findMany({
+            where: { teacherId: teacher.id },
+            select: { classId: true },
+            distinct: ['classId']
+        });
+
+        const classIds = assignments.map(a => a.classId);
+
+        return prisma.class.findMany({
+            where: {
+                schoolId,
+                isActive: true,
+                OR: [
+                    { id: { in: classIds } },
+                    { titulaireId: teacher.id }
+                ]
+            },
+            include: { section: true }
+        });
+    }
+
+    async getMySubjects(schoolId: string, userId: string, classId: string) {
+        const teacher = await this.getTeacherByUserId(schoolId, userId);
+        if (!teacher) return [];
+
+        const assignments = await prisma.teacherClassSubject.findMany({
+            where: { teacherId: teacher.id, classId },
+            include: { subject: true }
+        });
+
+        return assignments.map(a => a.subject);
+    }
+
     /**
      * Get academic statistics for a teacher
      */

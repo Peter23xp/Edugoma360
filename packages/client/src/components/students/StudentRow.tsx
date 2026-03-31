@@ -1,4 +1,4 @@
-﻿import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
     Eye,
     Edit,
@@ -136,14 +136,14 @@ export default function StudentRow({ student, isSelected, onSelect, onAction }: 
             </td>
 
             {/* Matricule */}
-            <td className="px-3 py-3">
+            <td className="px-3 py-3 hidden md:table-cell">
                 <span className="font-mono text-xs text-primary/80 bg-primary/5 px-2 py-0.5 rounded">
                     {student.matricule}
                 </span>
             </td>
 
             {/* Nom Complet */}
-            <td className="px-3 py-3 min-w-[200px]">
+            <td className="px-3 py-3 min-w-[150px] sm:min-w-[200px]">
                 <div className="flex flex-col">
                     <span className="text-sm font-semibold text-neutral-900 leading-tight">
                         <span className="uppercase">{student.nom}</span>{' '}
@@ -152,14 +152,16 @@ export default function StudentRow({ student, isSelected, onSelect, onAction }: 
                             <span className="font-normal text-neutral-700"> {student.prenom}</span>
                         )}
                     </span>
-                    <span className="text-[11px] text-neutral-400 mt-0.5 md:hidden">
-                        {student.className ?? '—'}
-                    </span>
+                    <div className="flex items-center gap-1.5 mt-0.5 md:hidden text-[11px] text-neutral-400">
+                        <span className="font-mono text-[10px] text-primary/70">{student.matricule}</span>
+                        <span className="w-1 h-1 rounded-full bg-neutral-300"></span>
+                        <span>{student.className ?? '—'}</span>
+                    </div>
                 </div>
             </td>
 
             {/* Classe */}
-            <td className="px-3 py-3 hidden md:table-cell">
+            <td className="px-3 py-3 hidden lg:table-cell">
                 {student.className ? (
                     <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-success-bg text-success">
                         {student.className}

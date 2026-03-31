@@ -1,4 +1,4 @@
-﻿import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
@@ -42,11 +42,11 @@ export default function AppLayout() {
             )}
 
             {/* Main content */}
-            <div className="flex-1 flex flex-col min-h-screen lg:ml-64">
+            <div className="flex-1 flex flex-col min-h-screen lg:ml-64 overflow-x-hidden w-full">
                 <OfflineBanner />
                 <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} />
 
-                <main className="flex-1 p-4 md:p-6 lg:p-8">
+                <main className="flex-1 p-3 sm:p-4 md:p-6 lg:p-8 w-full max-w-full overflow-hidden">
                     <Outlet />
                 </main>
 

@@ -52,7 +52,7 @@ export default function AttendanceTab({ studentId }: AttendanceTabProps) {
     if (isLoading) {
         return (
             <div className="space-y-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                     {[1, 2, 3, 4].map((i) => (
                         <div key={i} className="h-20 bg-neutral-100 rounded-lg animate-pulse" />
                     ))}
@@ -230,57 +230,94 @@ export default function AttendanceTab({ studentId }: AttendanceTabProps) {
                     <h3 className="text-sm font-semibold text-neutral-900 mb-3">
                         Historique des absences
                     </h3>
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b border-neutral-200">
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Date
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Période
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Statut
-                                    </th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
-                                        Justification
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-neutral-100">
-                                {data.records
-                                    .filter((r) => r.status !== 'PRESENT')
-                                    .slice(0, 10)
-                                    .map((record) => (
-                                        <tr key={record.id}>
-                                            <td className="px-4 py-3 text-sm text-neutral-900">
-                                                {new Date(record.date).toLocaleDateString('fr-FR')}
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-neutral-700">
-                                                {record.period === 'MATIN' ? 'Matin' : 'Après-midi'}
-                                            </td>
-                                            <td className="px-4 py-3">
-                                                <span
-                                                    className={`inline-flex items-center gap-1.5 
-                                                               text-xs font-medium`}
-                                                >
+                    <>
+                        {/* Desktop View */}
+                        <div className="hidden md:block overflow-x-auto">
+                            <table className="w-full">
+                                <thead>
+                                    <tr className="border-b border-neutral-200">
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Date
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Période
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Statut
+                                        </th>
+                                        <th className="px-4 py-3 text-left text-xs font-semibold text-neutral-600">
+                                            Justification
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-neutral-100">
+                                    {data.records
+                                        .filter((r) => r.status !== 'PRESENT')
+                                        .slice(0, 10)
+                                        .map((record) => (
+                                            <tr key={record.id}>
+                                                <td className="px-4 py-3 text-sm text-neutral-900">
+                                                    {new Date(record.date).toLocaleDateString('fr-FR')}
+                                                </td>
+                                                <td className="px-4 py-3 text-sm text-neutral-700">
+                                                    {record.period === 'MATIN' ? 'Matin' : 'Après-midi'}
+                                                </td>
+                                                <td className="px-4 py-3">
                                                     <span
-                                                        className={`w-2 h-2 rounded-full ${
-                                                            statusColors[record.status]
-                                                        }`}
-                                                    />
-                                                    {statusLabels[record.status]}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-sm text-neutral-700">
-                                                {record.justification || '—'}
-                                            </td>
-                                        </tr>
-                                    ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                                        className={`inline-flex items-center gap-1.5 
+                                                                   text-xs font-medium`}
+                                                    >
+                                                        <span
+                                                            className={`w-2 h-2 rounded-full ${
+                                                                statusColors[record.status]
+                                                            }`}
+                                                        />
+                                                        {statusLabels[record.status]}
+                                                    </span>
+                                                </td>
+                                                <td className="px-4 py-3 text-sm text-neutral-700">
+                                                    {record.justification || '—'}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile View */}
+                        <div className="md:hidden space-y-3 mt-4">
+                            {data.records
+                                .filter((r) => r.status !== 'PRESENT')
+                                .slice(0, 10)
+                                .map((record) => (
+                                    <div key={record.id} className="bg-white border border-neutral-200 rounded-xl p-4 shadow-sm">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <p className="font-bold text-neutral-900">
+                                                {new Date(record.date).toLocaleDateString('fr-FR')}
+                                            </p>
+                                            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-neutral-100">
+                                                <span className={`w-1.5 h-1.5 rounded-full ${statusColors[record.status]}`} />
+                                                {statusLabels[record.status]}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-end mt-3">
+                                            <div>
+                                                <p className="text-xs text-neutral-500">Période</p>
+                                                <p className="text-sm font-medium text-neutral-800">
+                                                    {record.period === 'MATIN' ? 'Matin' : 'Après-midi'}
+                                                </p>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className="text-xs text-neutral-500">Justification</p>
+                                                <p className="text-sm text-neutral-800 line-clamp-1">
+                                                    {record.justification || 'Aucune'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    </>
                 </div>
             )}
         </div>

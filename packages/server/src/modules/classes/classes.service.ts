@@ -84,7 +84,7 @@ export class ClassesService {
     }
 
     /**
-     * Get a single class by ID
+     * Get a single class by ID with full details
      */
     async getClassById(classId: string, schoolId: string) {
         const classData = await prisma.class.findFirst({
@@ -93,10 +93,45 @@ export class ClassesService {
                 schoolId,
             },
             include: {
-                section: true,
+                section: {
+                    include: {
+                        subjects: {
+                            include: { subject: true },
+                        },
+                    },
+                },
+                titulaire: {
+                    select: {
+                        id: true, nom: true, postNom: true, prenom: true,
+                        telephone: true, email: true, photoUrl: true,
+                    },
+                },
+                teacherAssignments: {
+                    include: {
+                        teacher: {
+                            select: { id: true, nom: true, postNom: true, prenom: true, telephone: true },
+                        },
+                        subject: {
+                            select: { id: true, name: true, abbreviation: true, maxScore: true },
+                        },
+                    },
+                },
+                enrollments: {
+                    where: { academicYear: { isActive: true } },
+                    include: {
+                        student: {
+                            select: {
+                                id: true, matricule: true, nom: true, postNom: true,
+                                prenom: true, sexe: true, photoUrl: true, statut: true,
+                            },
+                        },
+                    },
+                    orderBy: { student: { nom: 'asc' } },
+                },
                 _count: {
                     select: {
                         enrollments: true,
+                        teacherAssignments: true,
                     },
                 },
             },
@@ -106,7 +141,26 @@ export class ClassesService {
             throw new Error('CLASS_NOT_FOUND');
         }
 
-        return { class: classData };
+        // Map students from enrollments
+        const students = classData.enrollments.map(e => ({
+            ...e.student,
+            enrollmentId: e.id,
+            enrolledAt: e.enrolledAt,
+        }));
+
+        // Get section subjects count
+        const totalSubjects = classData.section?.subjects?.length ?? 0;
+
+        return {
+            class: {
+                ...classData,
+                enrollments: undefined, // Don't send raw enrollments
+            },
+            students,
+            totalSubjects,
+            currentStudents: classData._count.enrollments,
+            subjectsAssigned: classData._count.teacherAssignments,
+        };
     }
 
     /**

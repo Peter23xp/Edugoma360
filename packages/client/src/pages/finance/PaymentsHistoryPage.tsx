@@ -153,7 +153,7 @@ export default function PaymentsHistoryPage() {
                        bg-gradient-to-r from-emerald-600 to-emerald-500 text-white
                        rounded-xl hover:shadow-lg hover:shadow-emerald-500/25
                        transition-all duration-200 shadow-md
-                       disabled:opacity-60 disabled:cursor-not-allowed"
+                       disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             {isExporting ? (
               <Loader2 size={15} className="animate-spin" />
@@ -170,7 +170,7 @@ export default function PaymentsHistoryPage() {
                        bg-gradient-to-r from-primary to-primary-light text-white
                        rounded-xl hover:shadow-lg hover:shadow-primary/25
                        transition-all duration-200 shadow-md
-                       disabled:opacity-60 disabled:cursor-not-allowed"
+                       disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             {isGeneratingReport ? (
               <Loader2 size={15} className="animate-spin" />
@@ -229,7 +229,7 @@ export default function PaymentsHistoryPage() {
             <button
               onClick={() => refetch()}
               className="mt-3 px-4 py-2 text-xs font-medium text-primary bg-primary/10 rounded-lg
-                         hover:bg-primary/20 transition-colors"
+                         hover:bg-primary/20 transition-colors w-full sm:w-auto"
             >
               Réessayer
             </button>

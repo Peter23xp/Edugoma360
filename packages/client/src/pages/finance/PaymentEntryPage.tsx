@@ -207,7 +207,7 @@ export function PaymentEntryPage() {
                              bg-gradient-to-r from-primary to-primary-light text-white
                              rounded-xl hover:shadow-lg hover:shadow-primary/25
                              transition-all duration-200 hover:-translate-y-0.5 shadow-md
-                             disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0"
+                             disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0 w-full sm:w-auto"
                 >
                   Étape suivante <ArrowRight size={15} />
                 </button>
@@ -219,7 +219,7 @@ export function PaymentEntryPage() {
                              bg-gradient-to-r from-green-600 to-green-500 text-white
                              rounded-xl hover:shadow-lg hover:shadow-green-500/25
                              transition-all duration-200 hover:-translate-y-0.5 shadow-md
-                             disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0"
+                             disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0 w-full sm:w-auto"
                 >
                   {createPayment.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

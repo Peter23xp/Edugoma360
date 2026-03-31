@@ -113,7 +113,7 @@
 
   /* ── Table Styles ────────────────────────────────────────────── */
   .table-header {
-    @apply bg-neutral-100 text-neutral-700 text-xs font-semibold uppercase tracking-wider;
+    @apply sticky top-0 z-10 bg-neutral-100 text-neutral-700 text-xs font-semibold uppercase tracking-wider shadow-sm;
   }
 
   /* ── Print Styles ────────────────────────────────────────────── */
