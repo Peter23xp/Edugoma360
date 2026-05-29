@@ -42,8 +42,8 @@ export default function PalmaresStatsCard({ data }: PalmaresStatsCardProps) {
             label: 'Écart-type',
             value: stats.standardDeviation.toFixed(2),
             sub: 'Dispersion des résultats',
-            color: 'text-purple-600',
-            bg: 'bg-purple-50',
+            color: 'text-[#0D47A1]',
+            bg: 'bg-[#E8F5E9]',
         },
         {
             icon: TrendingUp,

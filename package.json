@@ -12,6 +12,7 @@
     "build": "npm run build --workspaces",
     "db:migrate": "npm run db:migrate --workspace=packages/server",
     "db:seed": "npm run db:seed --workspace=packages/server",
+    "db:super-admin": "npm run db:super-admin --workspace=packages/server",
     "db:studio": "npm run db:studio --workspace=packages/server",
     "test": "npm run test --workspaces",
     "lint": "eslint packages/*/src --ext .ts,.tsx",

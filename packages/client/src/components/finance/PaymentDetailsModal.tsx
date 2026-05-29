@@ -3,6 +3,7 @@ import { formatFC, PAYMENT_METHODS } from '@edugoma360/shared';
 import { usePaymentHistory } from '../../hooks/usePaymentHistory';
 import { useAuthStore } from '../../stores/auth.store';
 import type { PaymentHistoryItem } from '../../hooks/usePaymentHistory';
+import { openPdfFromApi } from '../../lib/downloadPdf';
 
 interface PaymentDetailsModalProps {
   payment: PaymentHistoryItem;
@@ -56,11 +57,7 @@ export function PaymentDetailsModal({
   const canCancel = user?.role === 'PREFET' || user?.role === 'SUPER_ADMIN';
 
   const handlePrint = () => {
-    if (fullPayment.receiptUrl) {
-      window.open(fullPayment.receiptUrl, '_blank');
-    } else {
-      window.open(`/api/payments/${fullPayment.id}/receipt`, '_blank');
-    }
+    openPdfFromApi(`/payments/${fullPayment.id}/receipt`);
   };
 
   return (

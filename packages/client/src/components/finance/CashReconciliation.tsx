@@ -58,7 +58,7 @@ export function CashReconciliation({ session, countedData, onClose, onRetry }: C
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F1E12]/55 p-4">
       <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] shadow-2xl flex flex-col border border-neutral-200">
         <div className="flex-none flex justify-between items-center p-5 md:p-6 border-b border-neutral-100 bg-neutral-50/50 text-neutral-900">
           <h2 className="text-lg font-bold tracking-tight">Rapprochement de Caisse</h2>

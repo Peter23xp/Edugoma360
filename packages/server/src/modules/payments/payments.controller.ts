@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { paymentsService } from './payments.service';
 import { CreatePaymentDto } from './payments.dto';
+import { ReportsService } from '../reports/reports.service';
 
 export class PaymentsController {
   async getStudentFeesDue(req: Request, res: Response, next: NextFunction) {
@@ -28,7 +29,12 @@ export class PaymentsController {
   async getReceipt(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      res.status(200).json({ success: true });
+      const reportsService = new ReportsService();
+      const pdfBuffer = await reportsService.generateReceipt(id);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `inline; filename="recu_${id}.pdf"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      res.send(pdfBuffer);
     } catch (e) {
       next(e);
     }

@@ -21,7 +21,8 @@ const SECTIONS = [
 
 const STATUTS = [
     { value: '', label: 'Tous les statuts' },
-    { value: 'NOUVEAU', label: 'Actif' },
+    { value: 'ACTIF', label: 'Actif' },
+    { value: 'NOUVEAU', label: 'Nouveau' },
     { value: 'REDOUBLANT', label: 'Redoublant' },
     { value: 'TRANSFERE', label: 'Transféré' },
     { value: 'DEPLACE', label: 'Déplacé' },

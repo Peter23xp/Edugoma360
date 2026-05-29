@@ -37,6 +37,7 @@ import ClassGradesPage from './pages/academic/ClassGradesPage';
 // Grades
 import AveragesPage from './pages/academic/AveragesPage';
 import DeliberationPage from './pages/grades/DeliberationPage';
+import DeliberationHistoryPage from './pages/grades/DeliberationHistoryPage';
 import PVPage from './pages/academic/PVPage';
 import PalmaresPage from './pages/academic/PalmaresPage';
 import AcademicBulletinPage from './pages/academic/BulletinPage';
@@ -59,16 +60,28 @@ import AbsenceHistoryPage from './pages/attendance/AbsenceHistoryPage';
 import JustificationsPage from './pages/attendance/JustificationsPage';
 
 // Communication
-import SendSMSPage from './pages/communication/SendSMSPage';
+import SMSPage from './pages/communication/SMSPage';
 import ConvocationsPage from './pages/communication/ConvocationsPage';
+import EmailPage from './pages/communication/EmailPage';
+import AnnouncementsPage from './pages/communication/AnnouncementsPage';
 
 // Parent Portal
 import ParentHomePage from './pages/parent-portal/ParentHomePage';
+import ParentGradesPage from './pages/parent-portal/ParentGradesPage';
+import ParentAttendancePage from './pages/parent-portal/ParentAttendancePage';
+import ParentPaymentsPage from './pages/parent-portal/ParentPaymentsPage';
 
 // Reports
 import ReportsPage from './pages/reports/ReportsPage';
+import DirectionDashboardPage from './pages/reports/DirectionDashboardPage';
+import SchoolStatsPage from './pages/reports/SchoolStatsPage';
+import ReportGeneratorPage from './pages/reports/ReportGeneratorPage';
+import ExportsPage from './pages/reports/ExportsPage';
+import EduNcReportPage from './pages/reports/EduNcReportPage';
+import ExamNationalPage from './pages/reports/ExamNationalPage';
 
 // Settings
+import ProfilePage from './pages/settings/ProfilePage';
 import SchoolInfoPage from './pages/settings/SchoolInfoPage';
 import AcademicYearPage from './pages/settings/AcademicYearPage';
 import SubjectsPage from './pages/settings/SubjectsPage';
@@ -77,6 +90,18 @@ import ClassesManagementPage from './pages/settings/ClassesManagementPage';
 import ClassDetailPage from './pages/settings/ClassDetailPage';
 import SyncPage from './pages/settings/SyncPage';
 import UsersManagementPage from './pages/settings/UsersManagementPage';
+
+// Finance
+import ReceiptPage from './pages/finance/ReceiptPage';
+
+// Discipline
+import DisciplinePage from './pages/students/DisciplinePage';
+
+// Inventory
+import MaterialPage from './pages/inventory/MaterialPage';
+import LibraryPage from './pages/inventory/LibraryPage';
+import RoomsPage from './pages/inventory/RoomsPage';
+import MaintenancePage from './pages/inventory/MaintenancePage';
 
 // Access Denied
 import AccessDeniedPage from './pages/AccessDeniedPage';
@@ -220,6 +245,11 @@ export default function AppRouter() {
                         <DeliberationPage />
                     </RoleGuard>
                 } />
+                <Route path="grades/deliberation/historique" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <DeliberationHistoryPage />
+                    </RoleGuard>
+                } />
                 <Route path="deliberation/pv" element={
                     <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
                         <PVPage />
@@ -297,6 +327,11 @@ export default function AppRouter() {
                         <BudgetsPage />
                     </RoleGuard>
                 } />
+                <Route path="finance/receipt/:id" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'ECONOME', 'PREFET', 'SECRETAIRE']}>
+                        <ReceiptPage />
+                    </RoleGuard>
+                } />
 
                 {/* Attendance */}
                 <Route path="attendance" element={
@@ -328,12 +363,22 @@ export default function AppRouter() {
                 {/* Communication */}
                 <Route path="sms" element={
                     <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'SECRETAIRE']}>
-                        <SendSMSPage />
+                        <SMSPage />
+                    </RoleGuard>
+                } />
+                <Route path="emails" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'SECRETAIRE']}>
+                        <EmailPage />
                     </RoleGuard>
                 } />
                 <Route path="convocations" element={
                     <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'SECRETAIRE']}>
                         <ConvocationsPage />
+                    </RoleGuard>
+                } />
+                <Route path="announcements" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <AnnouncementsPage />
                     </RoleGuard>
                 } />
 
@@ -348,11 +393,85 @@ export default function AppRouter() {
                         <ParentHomePage />
                     </RoleGuard>
                 } />
+                <Route path="parent/grades" element={
+                    <RoleGuard allowedRoles={['PARENT']}>
+                        <ParentGradesPage />
+                    </RoleGuard>
+                } />
+                <Route path="parent/attendance" element={
+                    <RoleGuard allowedRoles={['PARENT']}>
+                        <ParentAttendancePage />
+                    </RoleGuard>
+                } />
+                <Route path="parent/payments" element={
+                    <RoleGuard allowedRoles={['PARENT']}>
+                        <ParentPaymentsPage />
+                    </RoleGuard>
+                } />
 
                 {/* Reports */}
                 <Route path="reports" element={
                     <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'ECONOME']}>
                         <ReportsPage />
+                    </RoleGuard>
+                } />
+                <Route path="reports/dashboard" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <DirectionDashboardPage />
+                    </RoleGuard>
+                } />
+                <Route path="reports/statistics" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <SchoolStatsPage />
+                    </RoleGuard>
+                } />
+                <Route path="reports/generator" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <ReportGeneratorPage />
+                    </RoleGuard>
+                } />
+                <Route path="reports/exports" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <ExportsPage />
+                    </RoleGuard>
+                } />
+                <Route path="reports/edu-nc" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <EduNcReportPage />
+                    </RoleGuard>
+                } />
+                <Route path="reports/exam-national" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <ExamNationalPage />
+                    </RoleGuard>
+                } />
+
+                {/* Discipline */}
+                <Route path="discipline" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <DisciplinePage />
+                    </RoleGuard>
+                } />
+
+                {/* Inventory */}
+                <Route path="inventory/material" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'SECRETAIRE']}>
+                        <MaterialPage />
+                    </RoleGuard>
+                } />
+                <Route path="inventory/library" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'SECRETAIRE']}>
+                        <LibraryPage />
+                    </RoleGuard>
+                } />
+                <Route path="inventory/rooms" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <RoomsPage />
+                    </RoleGuard>
+                } />
+                <Route path="inventory/maintenance" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET']}>
+                        <MaintenancePage />
                     </RoleGuard>
                 } />
 
@@ -402,6 +521,9 @@ export default function AppRouter() {
                         <UsersManagementPage />
                     </RoleGuard>
                 } />
+
+                {/* Profile — accessible à tous les rôles */}
+                <Route path="settings/profile" element={<ProfilePage />} />
 
                 {/* Access denied (route directe) */}
                 <Route path="access-denied" element={<AccessDeniedPage />} />

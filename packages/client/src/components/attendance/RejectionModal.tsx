@@ -40,7 +40,7 @@ export default function RejectionModal({ isOpen, onClose, justification, onRejec
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
+            <div className="fixed inset-0 bg-[#0F1E12]/35 backdrop-blur-sm" onClick={onClose} />
             <div className="relative mx-auto w-full max-w-md rounded-2xl bg-white p-6 shadow-xl flex flex-col max-h-[90vh] overflow-y-auto">
                 <div className="flex items-center justify-between mb-5">
                     <h2 className="text-lg font-bold text-neutral-900 flex items-center gap-2">

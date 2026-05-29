@@ -41,29 +41,40 @@ model School {
   nomCourt            String?
   code                String?   @unique
 
-  academicYears      AcademicYear[]
-  classes            Class[]
-  feeTypes           FeeType[]
-  payments           Payment[]
-  paymentPlans       PaymentPlan[]
-  sections           Section[]
-  settings           Setting[]
-  smsLogs            SmsLog[]
-  students           Student[]
-  subjects           Subject[]
-  teacherAttendances TeacherAttendance[]
-  teacherLeaves      TeacherLeave[]
-  teachers           Teacher[]
-  users              User[]
-  cashSessions       CashSession[]
-  budgets            Budget[]
-  justifications     Justification[]
+  academicYears       AcademicYear[]
+  classes             Class[]
+  feeTypes            FeeType[]
+  payments            Payment[]
+  paymentPlans        PaymentPlan[]
+  sections            Section[]
+  settings            Setting[]
+  smsLogs             SmsLog[]
+  students            Student[]
+  subjects            Subject[]
+  teacherAttendances  TeacherAttendance[]
+  teacherLeaves       TeacherLeave[]
+  teachers            Teacher[]
+  users               User[]
+  cashSessions        CashSession[]
+  budgets             Budget[]
+  justifications      Justification[]
+  smsCampaigns        SMSCampaign[]
+  emailCampaigns      EmailCampaign[]
+  convocations        Convocation[]
+  announcements       Announcement[]
+  savedReports        SavedReport[]
+  exportHistory       ExportHistory[]
+  exportSchedules     ExportSchedule[]
+  materialItems       MaterialItem[]
+  books               Book[]
+  rooms               Room[]
+  maintenanceRequests MaintenanceRequest[]
 
   @@map("schools")
 }
 
 model User {
-  id                      String              @id @default(uuid())
+  id                      String               @id @default(uuid())
   schoolId                String
   nom                     String
   postNom                 String
@@ -72,24 +83,35 @@ model User {
   phone                   String?
   passwordHash            String
   role                    String
-  permissions             String?             @default("{}")
-  isActive                Boolean             @default(true)
-  mustChangePassword      Boolean             @default(true)
+  permissions             String?              @default("{}")
+  isActive                Boolean              @default(true)
+  mustChangePassword      Boolean              @default(true)
   lastLoginAt             DateTime?
   lastLoginIp             String?
-  createdAt               DateTime            @default(now())
-  updatedAt               DateTime            @updatedAt
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
   attendanceTaken         Attendance[]
   gradesCreated           Grade[]
   paymentsCreated         Payment[]
   teacherAttendanceTaken  TeacherAttendance[]
-  leaveProcessing         TeacherLeave[]      @relation("LeaveProcessor")
-  cashSessions            CashSession[]       @relation("CashSessions")
-  justificationsSubmitted Justification[]     @relation("JustificationSubmitter")
-  justificationsReviewed  Justification[]     @relation("JustificationReviewer")
+  leaveProcessing         TeacherLeave[]       @relation("LeaveProcessor")
+  cashSessions            CashSession[]        @relation("CashSessions")
+  justificationsSubmitted Justification[]      @relation("JustificationSubmitter")
+  justificationsReviewed  Justification[]      @relation("JustificationReviewer")
   teacher                 Teacher?
-  school                  School              @relation(fields: [schoolId], references: [id])
-  parentStudents          Student[]           @relation("ParentStudents")
+  school                  School               @relation(fields: [schoolId], references: [id])
+  parentStudents          Student[]            @relation("ParentStudents")
+  smsCampaignsCreated     SMSCampaign[]
+  emailCampaignsCreated   EmailCampaign[]      @relation("EmailCampaignCreator")
+  convocationsCreated     Convocation[]        @relation("ConvocationCreator")
+  announcementsCreated    Announcement[]       @relation("AnnouncementCreator")
+  announcementViews       AnnouncementView[]   @relation("AnnouncementViews")
+  savedReports            SavedReport[]        @relation("SavedReportCreator")
+  exportHistories         ExportHistory[]      @relation("ExportHistoryCreator")
+  exportSchedules         ExportSchedule[]     @relation("ExportScheduleCreator")
+  stockMovements          StockMovement[]      @relation("StockMovementCreator")
+  bookLoansCreated        BookLoan[]           @relation("BookLoanCreator")
+  maintenanceReports      MaintenanceRequest[] @relation("MaintenanceReporter")
 
   @@unique([schoolId, phone])
   @@unique([schoolId, email])
@@ -169,7 +191,6 @@ model Class {
   schoolId           String
   sectionId          String
   name               String
-  room               String?
   titulaireId        String?
   maxStudents        Int                   @default(45)
   isActive           Boolean               @default(true)
@@ -180,6 +201,7 @@ model Class {
   deliberations      Deliberation[]
   enrollments        Enrollment[]
   teacherAssignments TeacherClassSubject[]
+  assignedRoom       Room?                 @relation("RoomAssignedClass")
 
   @@unique([schoolId, name])
   @@map("classes")
@@ -246,6 +268,9 @@ model Student {
   payments          Payment[]
   paymentPlans      PaymentPlan[]
   justifications    Justification[]
+  convocations      Convocation[]
+  delibResults      DelibResult[]
+  bookLoans         BookLoan[]
   school            School             @relation(fields: [schoolId], references: [id])
 
   @@unique([schoolId, matricule])
@@ -304,6 +329,7 @@ model Teacher {
   certificats      TeacherCertificate[]
   assignments      TeacherClassSubject[]
   titulaireClasses Class[]               @relation("ClassTitulaire")
+  roomsResponsable Room[]                @relation("RoomResponsable")
   leaves           TeacherLeave[]
   user             User?                 @relation(fields: [userId], references: [id])
   school           School                @relation(fields: [schoolId], references: [id])
@@ -428,6 +454,7 @@ model DelibResult {
   decision       String
   justification  String?
   deliberation   Deliberation @relation(fields: [deliberationId], references: [id])
+  student        Student      @relation(fields: [studentId], references: [id])
 
   @@unique([deliberationId, studentId])
   @@map("delib_results")
@@ -755,4 +782,454 @@ model Justification {
   @@index([status, createdAt])
   @@index([studentId])
   @@map("justifications")
+}
+
+model SMSCampaign {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  name          String?
+  template      String
+  recipientType String // PARENTS, TEACHERS, ALL
+
+  totalRecipients   Int
+  validRecipients   Int
+  invalidRecipients Int
+
+  status      String    @default("QUEUED") // QUEUED, SCHEDULED, SENDING, COMPLETED, FAILED, CANCELLED
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  sentSMS   Int   @default(0)
+  failedSMS Int   @default(0)
+  cost      Float @default(0)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  messages SMSMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, status])
+  @@index([createdAt])
+  @@map("sms_campaigns")
+}
+
+model SMSMessage {
+  id         String      @id @default(uuid())
+  campaignId String
+  campaign   SMSCampaign @relation(fields: [campaignId], references: [id])
+
+  phone   String
+  message String
+
+  status       String  @default("PENDING") // PENDING, SENT, FAILED
+  errorMessage String?
+
+  messageId String?
+  cost      Float?
+
+  sentAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([campaignId, status])
+  @@map("sms_messages")
+}
+
+// ── Email Campaigns ────────────────────────────────────────────────────────────
+
+model EmailCampaign {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  subject         String
+  htmlContent     String
+  recipientType   String // PARENTS, TEACHERS, ALL
+  recipientEmails String // JSON array of emails
+
+  totalRecipients Int
+  sentEmails      Int @default(0)
+  failedEmails    Int @default(0)
+
+  status      String    @default("QUEUED") // QUEUED, SCHEDULED, SENDING, COMPLETED, FAILED
+  scheduledAt DateTime?
+  startedAt   DateTime?
+  completedAt DateTime?
+
+  attachmentUrls String @default("[]") // JSON array of stored file paths
+
+  createdById String
+  createdBy   User   @relation("EmailCampaignCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, status])
+  @@index([createdAt])
+  @@map("email_campaigns")
+}
+
+// ── Convocations ───────────────────────────────────────────────────────────────
+
+model Convocation {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  numero String // CONV-2026-042 (unique par schoolId + année)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  parentName    String // Nom complet du tuteur convoqué
+  parentPhone   String? // Téléphone (pour SMS de rappel)
+  parentEmail   String? // Email (si disponible via parentUserId)
+  parentQualite String // Père, Mère, Tuteur, Les deux parents
+
+  motif   String // RESULTATS_INSUFFISANTS, ABSENCES_REPETEES, etc.
+  details String
+
+  dateRendezVous  DateTime
+  heureRendezVous String // HH:MM
+  lieu            String   @default("Bureau du Préfet")
+
+  status String @default("PENDING") // PENDING, CONFIRMED, ATTENDED, MISSED, CANCELLED
+
+  confirmedAt DateTime?
+  attendedAt  DateTime?
+
+  pdfUrl String?
+
+  emailSent Boolean @default(false)
+  smsSent   Boolean @default(false)
+
+  notes   String? // Compte-rendu entretien
+  actions String  @default("[]") // JSON array d'actions décidées
+
+  reminderD3Sent Boolean @default(false)
+  reminderD1Sent Boolean @default(false)
+
+  createdById String
+  createdBy   User   @relation("ConvocationCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, numero])
+  @@index([studentId, status])
+  @@index([dateRendezVous])
+  @@index([schoolId, createdAt])
+  @@map("convocations")
+}
+
+// ── Announcements ──────────────────────────────────────────────────────────────
+
+model Announcement {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  priority String // INFO, URGENT, CRITIQUE
+  titre    String
+  message  String
+
+  audience String @default("[]") // JSON: ["PARENTS","TEACHERS","STAFF"]
+  classIds String @default("[]") // JSON: [] = toutes les classes
+
+  startDate DateTime
+  endDate   DateTime
+
+  isPinned Boolean @default(false)
+  sendPush Boolean @default(false)
+
+  views AnnouncementView[]
+
+  createdById String
+  createdBy   User   @relation("AnnouncementCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, startDate, endDate])
+  @@map("announcements")
+}
+
+model AnnouncementView {
+  id             String       @id @default(uuid())
+  announcementId String
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("AnnouncementViews", fields: [userId], references: [id])
+
+  viewedAt DateTime @default(now())
+
+  @@unique([announcementId, userId])
+  @@map("announcement_views")
+}
+
+// ── Reports ────────────────────────────────────────────────────────────────────
+
+model SavedReport {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  name    String
+  type    String // PRESENCE, RESULTS, FINANCE, EFFECTIFS, END_OF_YEAR, CUSTOM
+  filters String @default("{}") // JSON
+  options String @default("{}") // JSON
+
+  pdfUrl   String?
+  excelUrl String?
+
+  generatedById String
+  generatedBy   User   @relation("SavedReportCreator", fields: [generatedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([schoolId, type])
+  @@map("saved_reports")
+}
+
+model ExportHistory {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  type     String // STUDENTS, FINANCE, PRESENCE, RESULTS, TEACHERS, FULL
+  filename String
+  format   String // EXCEL, PDF, ZIP, CSV
+  fileSize Int    @default(0)
+  fileUrl  String
+
+  filters String @default("{}") // JSON
+
+  generatedById String
+  generatedBy   User   @relation("ExportHistoryCreator", fields: [generatedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([schoolId, createdAt])
+  @@map("export_history")
+}
+
+model ExportSchedule {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  type       String // STUDENTS, FINANCE, PRESENCE, RESULTS, TEACHERS, FULL
+  frequency  String // MONTHLY, WEEKLY, QUARTERLY
+  dayOfMonth Int?
+  dayOfWeek  Int?
+  time       String // "08:00"
+  format     String
+  recipients String @default("[]") // JSON array emails
+
+  isActive  Boolean   @default(true)
+  lastRunAt DateTime?
+  nextRunAt DateTime
+
+  createdById String
+  createdBy   User   @relation("ExportScheduleCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, isActive])
+  @@map("export_schedules")
+}
+
+// ── Inventory: Material ───────────────────────────────────────────────────────
+
+model MaterialItem {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  name     String
+  category String // MOBILIER, INFORMATIQUE, PEDAGOGIQUE, FOURNITURES, SPORT, AUTRE
+
+  goodQty   Int @default(0)
+  usedQty   Int @default(0)
+  brokenQty Int @default(0)
+
+  unitValue Float @default(0)
+  minStock  Int   @default(0)
+
+  location   String?
+  acquiredAt DateTime?
+  notes      String?
+
+  movements StockMovement[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, category])
+  @@map("material_items")
+}
+
+model StockMovement {
+  id     String       @id @default(uuid())
+  itemId String
+  item   MaterialItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  type       String // ENTRY, EXIT, STATUS_CHANGE
+  quantity   Int
+  fromStatus String? // GOOD, USED, BROKEN
+  toStatus   String? // GOOD, USED, BROKEN
+  reason     String
+  date       DateTime
+
+  createdById String
+  createdBy   User   @relation("StockMovementCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([itemId, createdAt])
+  @@map("stock_movements")
+}
+
+// ── Inventory: Library ────────────────────────────────────────────────────────
+
+model Book {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  titre   String
+  auteur  String?
+  isbn    String?
+  matiere String
+  niveaux String  @default("[]") // JSON array of integers [4, 5, 6]
+
+  totalQty     Int
+  availableQty Int
+  etat         String // BON, PASSABLE, MAUVAIS
+
+  unitValue  Float?
+  acquiredAt DateTime?
+
+  loans BookLoan[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, matiere])
+  @@map("books")
+}
+
+model BookLoan {
+  id     String @id @default(uuid())
+  bookId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
+
+  exemplaire String?
+  notes      String?
+
+  loanDate       DateTime
+  expectedReturn DateTime
+  actualReturn   DateTime?
+
+  etatRetour     String? // BON, DEGRADE, ENDOMMAGE
+  coutReparation Float?
+
+  status String @default("ACTIVE") // ACTIVE, RETURNED, OVERDUE
+
+  createdById String
+  createdBy   User   @relation("BookLoanCreator", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([bookId, status])
+  @@index([studentId, status])
+  @@map("book_loans")
+}
+
+// ── Inventory: Rooms ──────────────────────────────────────────────────────────
+
+model Room {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  name     String
+  type     String // CLASSROOM, LABORATORY, OFFICE, TEACHERS_ROOM, LIBRARY, SPORTS, CAFETERIA, OTHER
+  capacity Int
+  status   String @default("GOOD") // GOOD, DEGRADED, CLOSED
+
+  building String?
+  floor    String?
+
+  assignedClassId String?  @unique
+  assignedClass   Class?   @relation("RoomAssignedClass", fields: [assignedClassId], references: [id])
+  responsableId   String?
+  responsable     Teacher? @relation("RoomResponsable", fields: [responsableId], references: [id])
+
+  equipments       String  @default("[]") // JSON array of strings
+  stateDescription String?
+
+  maintenanceRequests MaintenanceRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([schoolId, name])
+  @@index([schoolId, type, status])
+  @@index([responsableId])
+  @@map("rooms")
+}
+
+// ── Inventory: Maintenance ────────────────────────────────────────────────────
+
+model MaintenanceRequest {
+  id       String @id @default(uuid())
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  titre    String
+  category String // PLOMBERIE, ELECTRICITE, MENUISERIE, PEINTURE, INFORMATIQUE, AUTRE
+  urgency  String // URGENT, NORMAL, LOW
+
+  roomId   String?
+  room     Room?   @relation(fields: [roomId], references: [id])
+  location String?
+
+  description String
+  photoUrl    String?
+
+  status String @default("PENDING") // PENDING, IN_PROGRESS, RESOLVED, CANCELLED
+
+  technicien    String?
+  estimatedCost Float?
+  actualCost    Float?
+
+  startDate DateTime?
+  endDate   DateTime?
+  progress  Int       @default(0) // 0-100
+
+  notes String?
+
+  reportedById String
+  reportedBy   User   @relation("MaintenanceReporter", fields: [reportedById], references: [id])
+
+  resolvedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([schoolId, status, urgency])
+  @@index([roomId])
+  @@map("maintenance_requests")
 }

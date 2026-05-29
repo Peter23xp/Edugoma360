@@ -136,7 +136,7 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-2xl border border-neutral-100 shadow-sm">
           <h3 className="text-sm font-bold text-neutral-900 mb-6 flex items-center gap-2">
-            <BarChart3 size={16} className="text-indigo-500" /> Revenus par Classe
+            <BarChart3 size={16} className="text-[#0D47A1]" /> Revenus par Classe
           </h3>
           <div className="h-[350px] md:h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
@@ -161,7 +161,7 @@ export default function ReportsPage() {
                   formatter={(value: number) => [formatFC(value), 'Revenus']}
                   contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                 />
-                <Bar dataKey="amount" fill="#6366f1" radius={[0, 6, 6, 0]} barSize={20} />
+                <Bar dataKey="amount" fill="#0D47A1" radius={[0, 6, 6, 0]} barSize={20} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -169,7 +169,7 @@ export default function ReportsPage() {
 
         <div className="bg-white p-6 rounded-2xl border border-neutral-100 shadow-sm">
           <h3 className="text-sm font-bold text-neutral-900 mb-6 flex items-center gap-2">
-            <CreditCard size={16} className="text-violet-500" /> Modes de Paiement
+            <CreditCard size={16} className="text-[#0D47A1]" /> Modes de Paiement
           </h3>
           <PaymentMethodsChart data={paymentMethods} />
         </div>

@@ -8,6 +8,7 @@ import {
 import { formatFC } from '@edugoma360/shared';
 import { usePaymentHistory } from '../../hooks/usePaymentHistory';
 import type { PaymentHistoryFilters, PaymentHistoryItem } from '../../hooks/usePaymentHistory';
+import { openPdfFromApi } from '../../lib/downloadPdf';
 import { PaymentFilters } from '../../components/finance/PaymentFilters';
 import { PaymentRow, PaymentCard } from '../../components/finance/PaymentRow';
 import { PaymentDetailsModal } from '../../components/finance/PaymentDetailsModal';
@@ -51,11 +52,7 @@ export default function PaymentsHistoryPage() {
   };
 
   const handlePrintReceipt = (payment: PaymentHistoryItem) => {
-    if (payment.receiptUrl) {
-      window.open(payment.receiptUrl, '_blank');
-    } else {
-      window.open(`/api/payments/${payment.id}/receipt`, '_blank');
-    }
+    openPdfFromApi(`/payments/${payment.id}/receipt`);
   };
 
   const handleCancelPayment = (payment: PaymentHistoryItem) => {
@@ -120,9 +117,9 @@ export default function PaymentsHistoryPage() {
       label: 'Ce mois',
       value: stats.monthTotal,
       icon: TrendingUp,
-      gradient: 'from-purple-500 to-purple-600',
-      shadow: 'shadow-purple-500/20',
-      bgLight: 'bg-purple-50',
+      gradient: 'from-[#0D47A1] to-[#1565C0]',
+      shadow: 'shadow-[#0D47A1]/20',
+      bgLight: 'bg-[#E3F2FD]',
     },
   ];
 

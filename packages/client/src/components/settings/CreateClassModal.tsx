@@ -30,7 +30,6 @@ export default function CreateClassModal({ isOpen, onClose, onSubmit, isSubmitti
     const [selectedYear, setSelectedYear] = useState('');
     const [letter, setLetter] = useState('A');
     const [maxStudents, setMaxStudents] = useState('40');
-    const [room, setRoom] = useState('');
     const [titulaireId, setTitulaireId] = useState('');
 
     const { data: teachers } = useTeachersForDropdown();
@@ -73,7 +72,6 @@ export default function CreateClassModal({ isOpen, onClose, onSubmit, isSubmitti
             name: generatedName,
             sectionId: sectionMatch.id,
             maxStudents: Number(maxStudents),
-            room: room || undefined,
             titulaireId: titulaireId || undefined,
         });
         resetForm();
@@ -85,13 +83,12 @@ export default function CreateClassModal({ isOpen, onClose, onSubmit, isSubmitti
         setSelectedYear('');
         setLetter('A');
         setMaxStudents('40');
-        setRoom('');
         setTitulaireId('');
     };
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
+            <div className="absolute inset-0 bg-[#0F1E12]/35 backdrop-blur-sm" onClick={onClose} />
             <div className="relative bg-white rounded-lg shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto flex flex-col">
 
                 {/* Header */}
@@ -189,22 +186,6 @@ export default function CreateClassModal({ isOpen, onClose, onSubmit, isSubmitti
                                 <AlertCircle size={12} /> Recommandé : 35-40 pour cette section
                             </p>
                         </div>
-
-                        {/* Room */}
-                        <div>
-                            <label className={LABEL_CLS}>Salle de classe</label>
-                            <input
-                                value={room}
-                                onChange={e => setRoom(e.target.value)}
-                                placeholder="ex: 201"
-                                className={INPUT_CLS}
-                            />
-                            <p className="text-xs text-neutral-500 mt-1">
-                                Salle principale (matières théoriques)
-                            </p>
-                        </div>
-
-                        <hr className="border-neutral-100" />
 
                         {/* Titulaire */}
                         <div>

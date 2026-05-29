@@ -25,7 +25,7 @@ export class AbsencesService {
                     select: { id: true, nom: true, postNom: true, prenom: true, matricule: true }
                 },
                 processedBy: {
-                    select: { id: true, name: true }
+                    select: { id: true, nom: true, postNom: true }
                 }
             },
             orderBy: { createdAt: 'desc' }

@@ -35,6 +35,12 @@ export const DELIB_DECISIONS = {
         color: 'blue',
         condition: 'Décision spéciale Préfet avec justificatif',
     },
+    EXCLUDED_DEBT: {
+        code: 'EXCLUDED_DEBT',
+        label: 'Exclu(e) — Impayé',
+        color: 'gray',
+        condition: 'Créance non régularisée > 90 jours',
+    },
 } as const;
 
 export type DelibDecision = keyof typeof DELIB_DECISIONS;
@@ -47,6 +53,7 @@ export const getDecisionColor = (decision: DelibDecision): string => {
         orange: 'bg-orange-100 text-orange-800 border-orange-200',
         red: 'bg-red-100 text-red-800 border-red-200',
         blue: 'bg-blue-100 text-blue-800 border-blue-200',
+        gray: 'bg-gray-100 text-gray-800 border-gray-200',
     };
     return colors[DELIB_DECISIONS[decision].color] || colors.green;
 };
@@ -59,6 +66,7 @@ export const getDecisionBadgeColor = (decision: DelibDecision): string => {
         orange: 'bg-orange-600',
         red: 'bg-red-600',
         blue: 'bg-blue-600',
+        gray: 'bg-gray-500',
     };
     return colors[DELIB_DECISIONS[decision].color] || colors.green;
 };

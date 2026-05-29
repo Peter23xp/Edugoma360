@@ -5,14 +5,12 @@ interface CreateClassDto {
     sectionId: string;
     name: string;
     maxStudents: number;
-    room?: string;
     titulaireId?: string;
 }
 
 interface UpdateClassDto {
     maxStudents?: number;
     isActive?: boolean;
-    room?: string;
     titulaireId?: string | null;
 }
 
@@ -62,6 +60,9 @@ export class ClassesService {
                         subjects: true,
                     },
                 },
+                assignedRoom: {
+                    select: { id: true, name: true, capacity: true, status: true },
+                },
                 _count: {
                     select: {
                         enrollments: true,
@@ -105,6 +106,9 @@ export class ClassesService {
                         id: true, nom: true, postNom: true, prenom: true,
                         telephone: true, email: true, photoUrl: true,
                     },
+                },
+                assignedRoom: {
+                    select: { id: true, name: true, capacity: true, status: true },
                 },
                 teacherAssignments: {
                     include: {
@@ -197,7 +201,6 @@ export class ClassesService {
                 schoolId: data.schoolId,
                 sectionId: data.sectionId,
                 name: data.name,
-                room: data.room,
                 titulaireId: data.titulaireId,
                 maxStudents: data.maxStudents,
                 isActive: true,
@@ -249,7 +252,6 @@ export class ClassesService {
             data: {
                 maxStudents: data.maxStudents,
                 isActive: data.isActive,
-                room: data.room,
                 titulaireId: data.titulaireId,
             },
             include: {

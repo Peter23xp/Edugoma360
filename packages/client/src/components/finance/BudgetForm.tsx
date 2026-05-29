@@ -83,7 +83,7 @@ export function BudgetForm({ academicYearId, academicYearLabel, existing, onSave
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-[#0F1E12]/55 p-0 sm:p-4">
       {/* Sheet on mobile (slides from bottom), centered modal on sm+ */}
       <div className="bg-white w-full sm:rounded-2xl sm:max-w-xl shadow-2xl flex flex-col border-t sm:border border-neutral-200 max-h-[92dvh] rounded-t-2xl">
 

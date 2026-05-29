@@ -29,12 +29,12 @@ interface StudentRowProps {
 const AVATAR_COLORS = [
     'bg-emerald-500',
     'bg-blue-500',
-    'bg-violet-500',
+    'bg-[#0D47A1]',
     'bg-amber-500',
     'bg-rose-500',
     'bg-cyan-500',
     'bg-teal-500',
-    'bg-indigo-500',
+    'bg-[#E3F2FD]0',
     'bg-orange-500',
     'bg-pink-500',
 ];
@@ -60,7 +60,7 @@ const STATUS_CONFIG: Record<string, { label: string; className: string; icon?: R
     },
     DEPLACE: {
         label: 'Déplacé',
-        className: 'bg-purple-100 text-purple-700',
+        className: 'bg-[#E8F5E9] text-[#1B5E20]',
     },
     ARCHIVE: {
         label: 'Archivé',

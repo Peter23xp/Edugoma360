@@ -437,7 +437,7 @@ export function PaymentFilters({ filters, onFiltersChange }: PaymentFiltersProps
             </span>
           )}
           {filters.paymentMethod && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-purple-50 text-purple-700 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-[#E8F5E9] text-[#1B5E20] text-[11px] font-medium">
               <CreditCard size={11} />
               {PAYMENT_METHODS[filters.paymentMethod as keyof typeof PAYMENT_METHODS] || filters.paymentMethod}
             </span>

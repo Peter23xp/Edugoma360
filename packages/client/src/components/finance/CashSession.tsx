@@ -175,7 +175,7 @@ export function CashSession({ session }: CashSessionProps) {
       )}
 
       {showClosingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F1E12]/55 p-4">
            <div className="bg-white rounded-xl w-full max-w-md shadow-2xl flex flex-col border border-neutral-200 max-h-[95vh]">
               <div className="flex-none flex justify-between items-center p-5 border-b border-neutral-100 bg-neutral-50/50">
                 <h3 className="text-lg font-bold text-neutral-900">Fermeture de caisse</h3>

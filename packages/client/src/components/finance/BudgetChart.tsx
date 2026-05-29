@@ -57,7 +57,7 @@ export function BudgetChart({ data }: BudgetChartProps) {
             wrapperStyle={{ fontSize: 10, paddingTop: 6 }}
           />
           <Bar dataKey="budgeted" name="Prévu" fill="#e0e7ff" radius={[3, 3, 0, 0]} barSize={16} />
-          <Bar dataKey="realized" name="Réalisé" fill="#6366f1" radius={[3, 3, 0, 0]} barSize={16} />
+          <Bar dataKey="realized" name="Réalisé" fill="#0D47A1" radius={[3, 3, 0, 0]} barSize={16} />
           <Line
             type="monotone"
             dataKey="budgeted"

@@ -23,6 +23,16 @@ export class StatsController {
       next(error);
     }
   }
+
+  async getDashboardSummary(req: Request, res: Response, next: NextFunction) {
+    try {
+      const schoolId = req.user!.schoolId;
+      const result = await statsService.getDashboardSummary(schoolId);
+      res.json({ data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const statsController = new StatsController();

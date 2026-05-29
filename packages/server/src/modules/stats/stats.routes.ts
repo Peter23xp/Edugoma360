@@ -12,4 +12,8 @@ router.get('/class-averages', authenticate, (req, res, next) =>
   statsController.getClassAverages(req, res, next)
 );
 
+router.get('/dashboard-summary', authenticate, (req, res, next) =>
+  statsController.getDashboardSummary(req, res, next)
+);
+
 export default router;

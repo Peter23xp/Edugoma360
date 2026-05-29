@@ -197,9 +197,9 @@ export default function JustificationsPage() {
             {/* Document Viewer Modal */}
             {viewingDocUrl && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-10">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setViewingDocUrl(null)} />
+                    <div className="absolute inset-0 bg-[#0F1E12]/75 backdrop-blur-sm" onClick={() => setViewingDocUrl(null)} />
                     <div className="relative w-full max-w-5xl h-[85vh] bg-neutral-900 rounded-xl flex flex-col overflow-hidden shadow-2xl ring-1 ring-white/10">
-                        <div className="flex items-center justify-between p-3 border-b border-white/10 bg-black/40">
+                        <div className="flex items-center justify-between p-3 border-b border-white/10 bg-[#0F1E12]/45">
                             <h2 className="text-white text-sm font-medium flex items-center gap-2">
                                 <Filter size={14} className="text-neutral-400" />
                                 Visualisation du document

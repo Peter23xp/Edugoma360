@@ -20,7 +20,7 @@ export default function CalendarPanel({ events, isLoading }: CalendarPanelProps)
     const variants = {
       exam: { label: 'Examen', className: 'bg-red-100 text-red-700' },
       vacation: { label: 'Vacances', className: 'bg-blue-100 text-blue-700' },
-      deliberation: { label: 'Délibération', className: 'bg-purple-100 text-purple-700' },
+      deliberation: { label: 'Délibération', className: 'bg-[#E8F5E9] text-[#1B5E20]' },
       meeting: { label: 'Réunion', className: 'bg-amber-100 text-amber-700' },
     };
     return variants[type];

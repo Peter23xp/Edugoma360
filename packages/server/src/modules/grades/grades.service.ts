@@ -401,22 +401,28 @@ export class GradesService {
 
         const students = enrollments.map((e: any) => e.student);
 
-        // Get all subjects for the class section
-        const subjectSections = await prisma.subjectSection.findMany({
-            where: {
-                sectionId: classData.sectionId,
-            },
-            include: {
-                subject: true,
-            },
-            orderBy: {
-                subject: {
-                    displayOrder: 'asc',
-                },
-            },
+        // Matières de la classe = teacherAssignments (matières réellement enseignées)
+        // Fallback sur toutes les matières de la section si aucune affectation
+        const classAssignments = await prisma.teacherClassSubject.findMany({
+            where: { classId: classData.id },
+            include: { subject: true },
+            orderBy: { subject: { displayOrder: 'asc' } },
         });
 
-        const subjects = subjectSections.map((ss: any) => ss.subject);
+        let subjects: any[];
+        if (classAssignments.length > 0) {
+            const seen = new Set<string>();
+            subjects = classAssignments
+                .filter((a: any) => { if (seen.has(a.subjectId)) return false; seen.add(a.subjectId); return true; })
+                .map((a: any) => a.subject);
+        } else {
+            const subjectSections = await prisma.subjectSection.findMany({
+                where: { sectionId: classData.sectionId },
+                include: { subject: true },
+                orderBy: { subject: { displayOrder: 'asc' } },
+            });
+            subjects = subjectSections.map((ss: any) => ss.subject);
+        }
 
         // Get all grades for this class/term/evalType
         const grades = await prisma.grade.findMany({
@@ -567,25 +573,42 @@ export class GradesService {
 
         const studentIds = enrollments.map((e: any) => e.studentId);
 
-        // Get subjects for this section
-        const subjectSections = await prisma.subjectSection.findMany({
-            where: {
-                sectionId: classData.sectionId,
-            },
-            include: {
-                subject: true,
-            },
+        // Matières de la classe = teacherAssignments (matières réellement enseignées)
+        // Fallback sur matières de la section si aucune affectation
+        const calcAssignments = await prisma.teacherClassSubject.findMany({
+            where: { classId: classData.id },
+            include: { subject: true },
         });
 
-        const subjects = subjectSections.map((ss: any) => ({
-            id: ss.subject.id,
-            name: ss.subject.name,
-            abbreviation: ss.subject.abbreviation,
-            coefficient: ss.coefficient,
-            maxScore: ss.subject.maxScore,
-            isEliminatory: ss.subject.isEliminatory,
-            elimThreshold: ss.subject.elimThreshold,
-        }));
+        let subjects: any[];
+        if (calcAssignments.length > 0) {
+            const seen = new Set<string>();
+            subjects = calcAssignments
+                .filter((a: any) => { if (seen.has(a.subjectId)) return false; seen.add(a.subjectId); return true; })
+                .map((a: any) => ({
+                    id: a.subject.id,
+                    name: a.subject.name,
+                    abbreviation: a.subject.abbreviation,
+                    coefficient: 1,
+                    maxScore: a.subject.maxScore,
+                    isEliminatory: a.subject.isEliminatory,
+                    elimThreshold: a.subject.elimThreshold,
+                }));
+        } else {
+            const subjectSections = await prisma.subjectSection.findMany({
+                where: { sectionId: classData.sectionId },
+                include: { subject: true },
+            });
+            subjects = subjectSections.map((ss: any) => ({
+                id: ss.subject.id,
+                name: ss.subject.name,
+                abbreviation: ss.subject.abbreviation,
+                coefficient: ss.coefficient,
+                maxScore: ss.subject.maxScore,
+                isEliminatory: ss.subject.isEliminatory,
+                elimThreshold: ss.subject.elimThreshold,
+            }));
+        }
 
         // Get all grades for this class and term
         const grades = await prisma.grade.findMany({

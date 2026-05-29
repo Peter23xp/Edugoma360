@@ -34,7 +34,7 @@ export default function FeeTemplateModal({ isOpen, onClose, onApply, isSubmittin
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
+      <div className="absolute inset-0 bg-[#0F1E12]/45 backdrop-blur-sm" onClick={handleClose} />
 
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[85vh] overflow-y-auto m-4">
         {/* Header */}

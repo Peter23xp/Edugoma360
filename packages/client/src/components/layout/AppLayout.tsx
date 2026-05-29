@@ -36,7 +36,7 @@ export default function AppLayout() {
             {/* Mobile overlay */}
             {sidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/40 z-30 lg:hidden"
+                    className="fixed inset-0 bg-[#0F1E12]/45 z-40 lg:hidden"
                     onClick={() => setSidebarOpen(false)}
                 />
             )}

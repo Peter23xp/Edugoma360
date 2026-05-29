@@ -34,7 +34,7 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
     if (!isOpen || !request) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-neutral-300/50">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">

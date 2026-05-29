@@ -2,9 +2,13 @@ import app from './app';
 import { env } from './config/env';
 import { initTeacherCron } from './modules/teachers/teachers.cron';
 import { initPaymentsCron } from './modules/payments/payments.cron';
+import { startConvocationReminders } from './lib/cron/reminders';
+import { initInventoryCron } from './modules/inventory/inventory.cron';
 
 initTeacherCron();
 initPaymentsCron();
+startConvocationReminders();
+initInventoryCron();
 
 const PORT = env.PORT;
 const HOST = '0.0.0.0';

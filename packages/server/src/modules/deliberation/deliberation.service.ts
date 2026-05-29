@@ -43,10 +43,11 @@ export class DeliberationService {
             throw new Error('TERM_NOT_FOUND');
         }
 
-        // Get students with averages
+        // Get students with averages (filter by the term's academic year)
         const enrollments = await prisma.enrollment.findMany({
             where: {
                 classId,
+                academicYearId: term.academicYearId,
             },
             include: {
                 student: true,
@@ -55,22 +56,39 @@ export class DeliberationService {
 
         const studentIds = enrollments.map((e: any) => e.studentId);
 
-        // Get subjects for this section
-        const subjectSections = await prisma.subjectSection.findMany({
-            where: {
-                sectionId: classData.sectionId,
-            },
-            include: {
-                subject: true,
-            },
+        // Matières réellement enseignées dans cette classe (teacherAssignments)
+        // Fallback sur toutes les matières de la section si aucune affectation
+        const teacherAssignments = await prisma.teacherClassSubject.findMany({
+            where: { classId },
+            include: { subject: true },
         });
 
-        const subjects = subjectSections.map((ss: any) => ({
-            id: ss.subject.id,
-            coefficient: ss.coefficient,
-            isEliminatory: ss.subject.isEliminatory,
-            elimThreshold: ss.subject.elimThreshold,
-        }));
+        let subjects: any[];
+
+        if (teacherAssignments.length > 0) {
+            // Dédoublonnage par subjectId
+            const seen = new Set<string>();
+            subjects = teacherAssignments
+                .filter((a: any) => { if (seen.has(a.subjectId)) return false; seen.add(a.subjectId); return true; })
+                .map((a: any) => ({
+                    id: a.subject.id,
+                    coefficient: 1, // teacherAssignments n'a pas de coefficient → utiliser 1 par défaut
+                    isEliminatory: a.subject.isEliminatory,
+                    elimThreshold: a.subject.elimThreshold,
+                }));
+        } else {
+            // Fallback : matières de la section avec leurs coefficients
+            const subjectSections = await prisma.subjectSection.findMany({
+                where: { sectionId: classData.sectionId },
+                include: { subject: true },
+            });
+            subjects = subjectSections.map((ss: any) => ({
+                id: ss.subject.id,
+                coefficient: ss.coefficient,
+                isEliminatory: ss.subject.isEliminatory,
+                elimThreshold: ss.subject.elimThreshold,
+            }));
+        }
 
         // Get all grades
         const grades = await prisma.grade.findMany({
@@ -142,24 +160,46 @@ export class DeliberationService {
         students.sort((a, b) => b.totalPoints - a.totalPoints);
 
         // Verification checks
-        const totalGradesRequired = studentIds.length * subjects.length * 3; // 3 eval types
         const gradesEntered = grades.length;
-        const allGradesLocked = grades.every((g: any) => g.isLocked);
+        const allGradesLocked = grades.length > 0 && grades.every((g: any) => g.isLocked);
+        const lockedCount = grades.filter((g: any) => g.isLocked).length;
 
-        // Check if deliberation exists (means averages validated)
+        // Notes requises : chaque élève doit avoir au moins 1 note d'examen par matière
+        // En RDC (EPSP) le minimum pour calculer une moyenne = 1 EXAM (obligatoire)
+        // On vérifie que chaque étudiant a au moins 1 note par matière
+        const totalGradesRequired = studentIds.length * subjects.length;
+
+        // Vérifier combien d'élèves ont au moins une note d'examen par matière
+        let studentsWithExam = 0;
+        for (const studentId of studentIds) {
+            const hasAllExams = subjects.every((subject) => {
+                return grades.some((g: any) =>
+                    g.studentId === studentId &&
+                    g.subjectId === subject.id &&
+                    ['EXAM_TRIM', 'EXAM_TRIMESTRIEL', 'EXAMEN_TRIMESTRIEL', 'EXAM_SYNTH', 'EXAM_SYNTHESE', 'EXAMEN_SYNTHESE'].includes(g.evalType)
+                );
+            });
+            if (hasAllExams) studentsWithExam++;
+        }
+
+        // Notes suffisantes si au moins 80% des élèves ont toutes leurs notes d'examen
+        const allGradesEntered = studentIds.length > 0 && (studentsWithExam / studentIds.length) >= 0.8;
+
+        // Vérifier si la délibération a déjà été faite
         const existingDelib = await prisma.deliberation.findFirst({
-            where: {
-                classId,
-                termId,
-            },
+            where: { classId, termId },
         });
 
         const verification = {
-            allGradesEntered: gradesEntered >= totalGradesRequired * 0.9, // 90% threshold
+            allGradesEntered,
             gradesEntered,
             totalGradesRequired,
+            studentsWithExam,
+            totalStudents: studentIds.length,
             allGradesLocked,
-            averagesValidated: !!existingDelib,
+            lockedCount,
+            totalGrades: grades.length,
+            alreadyValidated: existingDelib?.status === 'VALIDATED',
             eliminatoryCount: students.filter((s) => s.hasEliminatoryFailure).length,
         };
 
@@ -269,6 +309,15 @@ export class DeliberationService {
             });
         }
 
+        // Auto-lock all grades for this class/term
+        await prisma.grade.updateMany({
+            where: {
+                studentId: { in: students.map(s => s.studentId) },
+                termId,
+            },
+            data: { isLocked: true },
+        });
+
         // Create deliberation results
         for (const decision of decisions) {
             const student = students.find((s: any) => s.studentId === decision.studentId);
@@ -290,8 +339,8 @@ export class DeliberationService {
             });
 
             const resultData = {
-                generalAverage: student.generalAverage,
-                totalPoints: student.totalPoints,
+                generalAverage: student.generalAverage ?? 0,
+                totalPoints: student.totalPoints ?? 0,
                 rank: students.findIndex((s: any) => s.studentId === decision.studentId) + 1,
                 decision: finalDecision,
                 justification: finalJustification,
@@ -329,15 +378,25 @@ export class DeliberationService {
                     },
                 },
                 results: {
-                    include: {
-                        student: true,
-                    },
                     orderBy: {
                         rank: 'asc',
                     },
                 },
             },
         }) as any;
+
+        // Fetch student details separately (DelibResult has no student relation in schema)
+        if (fullDeliberation?.results) {
+            const resultStudentIds = (fullDeliberation.results as any[]).map((r: any) => r.studentId);
+            const resultStudents = await prisma.student.findMany({
+                where: { id: { in: resultStudentIds } },
+            });
+            const studentMap = new Map(resultStudents.map((s: any) => [s.id, s]));
+            fullDeliberation.results = (fullDeliberation.results as any[]).map((r: any) => ({
+                ...r,
+                student: studentMap.get(r.studentId) || { nom: 'Inconnu', postNom: '' },
+            }));
+        }
 
         if (!fullDeliberation) {
             throw new Error('DELIBERATION_NOT_FOUND');
@@ -365,9 +424,10 @@ export class DeliberationService {
             return d.decision !== suggestion;
         }).length;
 
-        // Generate PV PDF
+        // Generate PV PDF (skip if template not available)
         let pvUrl: string | null = null;
         try {
+            console.log('[DELIB] Preparing PV data...');
             const pvData = deliberationPdfService.preparePVData(
                 fullDeliberation.class.school,
                 fullDeliberation.class,
@@ -376,10 +436,11 @@ export class DeliberationService {
                 prefetName,
                 modifiedCount
             );
+            console.log('[DELIB] Generating PV PDF...');
             pvUrl = await deliberationPdfService.generatePV(pvData);
-        } catch (error) {
-            console.error('Error generating PV:', error);
-            // Continue even if PV generation fails
+            console.log('[DELIB] PV generated:', pvUrl);
+        } catch (error: any) {
+            console.error('[DELIB] PV generation skipped:', error.message);
         }
 
         // Update deliberation with PV URL
@@ -434,9 +495,6 @@ export class DeliberationService {
                     },
                 },
                 results: {
-                    include: {
-                        student: true,
-                    },
                     orderBy: {
                         rank: 'asc',
                     },
@@ -448,9 +506,71 @@ export class DeliberationService {
             throw new Error('DELIBERATION_NOT_FOUND');
         }
 
+        // Fetch student details separately
+        if (deliberation?.results) {
+            const resultStudentIds = (deliberation.results as any[]).map((r: any) => r.studentId);
+            const resultStudents = await prisma.student.findMany({
+                where: { id: { in: resultStudentIds } },
+            });
+            const studentMap = new Map(resultStudents.map((s: any) => [s.id, s]));
+            deliberation.results = (deliberation.results as any[]).map((r: any) => ({
+                ...r,
+                student: studentMap.get(r.studentId) || { nom: 'Inconnu', postNom: '' },
+            }));
+        }
+
         return deliberation;
     }
-}
 
+    /**
+     * List all deliberations for a school with summary stats
+     */
+    async listDeliberations(schoolId: string, filters: { classId?: string; termId?: string; status?: string }) {
+        const deliberations = await (prisma.deliberation.findMany as any)({
+            where: {
+                class: { schoolId },
+                ...(filters.classId ? { classId: filters.classId } : {}),
+                ...(filters.termId  ? { termId:  filters.termId  } : {}),
+                ...(filters.status  ? { status:  filters.status  } : {}),
+            },
+            include: {
+                class: { include: { section: true } },
+                term:  { include: { academicYear: true } },
+                results: true,
+            },
+            orderBy: { validatedAt: 'desc' },
+        });
+
+        return deliberations.map((d: any) => {
+            const total    = d.results.length;
+            const admitted = d.results.filter((r: any) => ['ADMITTED','DISTINCTION','GREAT_DISTINCTION'].includes(r.decision)).length;
+            const failed   = d.results.filter((r: any) => r.decision === 'FAILED').length;
+            const adjourned= d.results.filter((r: any) => r.decision === 'ADJOURNED').length;
+            const avgGeneral = total > 0
+                ? Math.round((d.results.reduce((s: number, r: any) => s + (r.generalAverage ?? 0), 0) / total) * 100) / 100
+                : null;
+
+            return {
+                id:           d.id,
+                status:       d.status,
+                pvUrl:        d.pvUrl,
+                validatedAt:  d.validatedAt,
+                createdAt:    d.createdAt,
+                class: {
+                    id:   d.class.id,
+                    name: d.class.name,
+                    section: d.class.section?.name,
+                },
+                term: {
+                    id:    d.term.id,
+                    label: d.term.label,
+                    academicYear: d.term.academicYear?.label,
+                },
+                stats: { total, admitted, failed, adjourned, avgGeneral,
+                    successRate: total > 0 ? Math.round((admitted / total) * 100) : 0 },
+            };
+        });
+    }
+}
 
 export const deliberationService = new DeliberationService();

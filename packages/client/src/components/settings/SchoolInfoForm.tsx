@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm as useRHForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Settings, RefreshCw, Save, X, Phone, Mail, Globe, Hash, Info, ChevronDown, ChevronUp } from 'lucide-react';
+import { RefreshCw, Save, Phone, Mail, Globe, Hash, Info } from 'lucide-react';
 import { schoolInfoSchema, SchoolInfoFormData } from '../../schemas/schoolInfoSchema';
 import LogoUploadZone from './LogoUploadZone';
 import ProvinceVilleSelector from './ProvinceVilleSelector';
@@ -20,7 +20,7 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
         handleSubmit, 
         control, 
         setValue, 
-        watch, 
+        
         reset, 
         formState: { errors } 
     } = useRHForm<SchoolInfoFormData>({
@@ -72,7 +72,7 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
     const inputClass = "w-full appearance-none h-10 px-4 border border-neutral-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:bg-neutral-100 placeholder:text-neutral-400";
     const errorClass = "text-xs text-red-500 mt-1";
 
-    const AccordionHeader = ({ id, title, defaultOpen = true }: { id: string, title: string, defaultOpen?: boolean }) => (
+    const AccordionHeader = ({ id, title }: { id: string, title: string }) => (
         <button
             type="button"
             onClick={() => toggleSection(id)}

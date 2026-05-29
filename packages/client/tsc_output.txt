@@ -1,0 +1,42 @@
+﻿src/components/communication/RecipientSelector.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/communication/RecipientSelector.tsx(339,13): error TS2322: Type '{ children: (string | Element)[]; variant: "link"; size: string; className: string; onClick: () => void; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/components/communication/SMSHistory.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/communication/SMSHistory.tsx(8,21): error TS6133: 'Filter' is declared but its value is never read.
+src/components/communication/SMSHistory.tsx(8,29): error TS6133: 'ChevronDown' is declared but its value is never read.
+src/components/communication/SMSHistory.tsx(11,18): error TS6133: 'CampaignHistory' is declared but its value is never read.
+src/components/communication/SMSHistory.tsx(269,42): error TS2322: Type '{ children: (string | Element)[]; variant: "link"; size: string; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/components/communication/SMSHistory.tsx(272,42): error TS2322: Type '{ children: (string | Element)[]; variant: "link"; size: string; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/components/communication/SMSPreview.tsx(166,13): error TS2322: Type '{ children: Element[]; variant: "outline"; size: string; onClick: () => void; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/components/communication/SMSPreview.tsx(201,13): error TS2322: Type '{ children: Element[]; variant: "outline"; size: string; onClick: () => void; className: string; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/components/communication/SMSTemplates.tsx(5,1): error TS6133: 'Button' is declared but its value is never read.
+src/components/communication/SMSTemplates.tsx(141,65): error TS2322: Type '{ backgroundColor: string; ringColor: string; } | {}' is not assignable to type 'CSSProperties | undefined'.
+  Object literal may only specify known properties, and 'ringColor' does not exist in type 'Properties<string | number, string & {}>'.
+src/components/communication/SMSTemplates.tsx(217,61): error TS2322: Type '{ className: string; title: string; }' is not assignable to type 'IntrinsicAttributes & LucideProps'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & LucideProps'.
+src/components/settings/AssignTeachersModal.tsx(96,48): error TS2322: Type 'string | null' is not assignable to type 'string | undefined'.
+  Type 'null' is not assignable to type 'string | undefined'.
+src/components/settings/SchoolInfoForm.tsx(1,8): error TS6133: 'React' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(1,27): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(4,10): error TS6133: 'Settings' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(4,37): error TS6133: 'X' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(4,72): error TS6133: 'ChevronDown' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(4,85): error TS6133: 'ChevronUp' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(23,9): error TS6133: 'watch' is declared but its value is never read.
+src/components/settings/SchoolInfoForm.tsx(75,43): error TS6133: 'defaultOpen' is declared but its value is never read.
+src/pages/attendance/AbsenceHistoryPage.tsx(33,46): error TS2345: Argument of type '{ isActive: boolean; }' is not assignable to parameter of type 'string'.
+src/pages/attendance/AbsenceHistoryPage.tsx(132,17): error TS2322: Type 'never[] | { classes: ClassItem[]; stats: ClassStats; }' is not assignable to type 'ClassWithStats[]'.
+  Type '{ classes: ClassItem[]; stats: ClassStats; }' is missing the following properties from type 'ClassWithStats[]': length, pop, push, concat, and 29 more.
+src/pages/communication/SMSPage.tsx(5,1): error TS6133: 'Badge' is declared but its value is never read.
+src/pages/communication/SMSPage.tsx(13,27): error TS6133: 'ArrowLeft' is declared but its value is never read.
+src/pages/communication/SMSPage.tsx(17,23): error TS2307: Cannot find module 'sonner' or its corresponding type declarations.
+src/pages/communication/SMSPage.tsx(44,45): error TS6133: 'isLoadingStats' is declared but its value is never read.
+src/pages/settings/SchoolInfoPage.tsx(1,1): error TS6133: 'React' is declared but its value is never read.
+src/pages/settings/SchoolInfoPage.tsx(8,32): error TS6133: 'error' is declared but its value is never read.
+src/pages/students/StudentsListPage.tsx(195,11): error TS6133: 'pageNumbers' is declared but its value is never read.
+src/pages/teachers/TeachersListPage.tsx(77,44): error TS6133: 'isFetching' is declared but its value is never read.
+src/pages/teachers/TeachersListPage.tsx(186,11): error TS6133: 'pageNumbers' is declared but its value is never read.

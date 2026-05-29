@@ -15,10 +15,10 @@ const SECTION_COLORS: Record<string, string> = {
     TC: 'bg-blue-100 text-blue-700 border-blue-300',
     Sc: 'bg-green-100 text-green-700 border-green-300',
     HCG: 'bg-orange-100 text-orange-700 border-orange-300',
-    Péd: 'bg-purple-100 text-purple-700 border-purple-300',
-    Peda: 'bg-purple-100 text-purple-700 border-purple-300',
+    Péd: 'bg-[#E8F5E9] text-[#1B5E20] border-[#1B5E20]/30',
+    Peda: 'bg-[#E8F5E9] text-[#1B5E20] border-[#1B5E20]/30',
     HT: 'bg-red-100 text-red-700 border-red-300',
-    Lit: 'bg-indigo-100 text-indigo-700 border-indigo-300',
+    Lit: 'bg-[#E3F2FD] text-[#0D47A1] border-[#0D47A1]/30',
 };
 
 export default function TimetableCell({

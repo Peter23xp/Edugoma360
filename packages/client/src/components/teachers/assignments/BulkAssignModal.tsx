@@ -51,7 +51,7 @@ export const BulkAssignModal: React.FC<BulkAssignModalProps> = ({
     const totalHoursRequested = selectedClasses.length * volumeHoraire;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-neutral-300/50 flex flex-col">
 
                 {/* Header */}

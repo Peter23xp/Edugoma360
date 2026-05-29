@@ -88,7 +88,7 @@ export default function AbsenceRequestModal({ isOpen, onClose }: AbsenceRequestM
     const inputClass = "w-full px-3 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm text-neutral-900 appearance-none";
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-neutral-300/50">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">

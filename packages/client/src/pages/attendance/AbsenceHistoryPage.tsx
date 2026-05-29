@@ -30,8 +30,8 @@ export default function AbsenceHistoryPage() {
     const [selectedAbsence, setSelectedAbsence] = useState<AbsenceHistoryItem | null>(null);
 
     // ── Queries ────────────────────────────────────────────────────────────
-    const { data: classesData } = useClasses({ isActive: true });
-    const classesList = classesData || [];
+    const { data: classesData } = useClasses();
+    const classesList = classesData?.classes || [];
 
     const { 
         data: historyData, 
@@ -129,7 +129,7 @@ export default function AbsenceHistoryPage() {
             <AbsenceFilters 
                 filters={filters} 
                 onChange={handleFilterChange} 
-                classes={classesList} 
+                classes={classesList as any} 
             />
 
             {/* Table */}

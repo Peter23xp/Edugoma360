@@ -50,8 +50,8 @@ export default function StudentHeader({ student }: StudentHeaderProps) {
         NOUVEAU: { label: 'Actif', className: 'bg-green-100 text-green-700' },
         REDOUBLANT: { label: 'Redoublant', className: 'bg-orange-100 text-orange-700' },
         TRANSFERE: { label: 'Transféré', className: 'bg-blue-100 text-blue-700' },
-        DEPLACE: { label: 'Déplacé', className: 'bg-purple-100 text-purple-700' },
-        REFUGIE: { label: 'Réfugié', className: 'bg-indigo-100 text-indigo-700' },
+        DEPLACE: { label: 'Déplacé', className: 'bg-[#E8F5E9] text-[#1B5E20]' },
+        REFUGIE: { label: 'Réfugié', className: 'bg-[#E3F2FD] text-[#0D47A1]' },
         ARCHIVE: { label: 'Archivé', className: 'bg-neutral-200 text-neutral-700' },
     };
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { X, Save, Loader2, AlertCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { X, Save, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
 import { useTeachersForDropdown, ClassItem } from '../../hooks/useClasses';
 
 interface EditClassModalProps {
@@ -17,12 +18,10 @@ export default function EditClassModal({ isOpen, onClose, onSubmit, isSubmitting
     const { data: teachers } = useTeachersForDropdown();
 
     const [maxStudents, setMaxStudents] = useState(String(classData.maxStudents));
-    const [room, setRoom] = useState(classData.room || '');
     const [titulaireId, setTitulaireId] = useState(classData.titulaire?.id || '');
 
     useEffect(() => {
         setMaxStudents(String(classData.maxStudents));
-        setRoom(classData.room || '');
         setTitulaireId(classData.titulaire?.id || '');
     }, [classData]);
 
@@ -32,7 +31,6 @@ export default function EditClassModal({ isOpen, onClose, onSubmit, isSubmitting
         e.preventDefault();
         await onSubmit(classData.id, {
             maxStudents: Number(maxStudents),
-            room: room || null,
             titulaireId: titulaireId || null,
         });
         onClose();
@@ -40,7 +38,7 @@ export default function EditClassModal({ isOpen, onClose, onSubmit, isSubmitting
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
+            <div className="absolute inset-0 bg-[#0F1E12]/35 backdrop-blur-sm" onClick={onClose} />
             <div className="relative bg-white rounded-lg shadow-2xl w-full max-w-lg max-h-[92vh] overflow-y-auto flex flex-col">
 
                 {/* Header */}
@@ -77,15 +75,25 @@ export default function EditClassModal({ isOpen, onClose, onSubmit, isSubmitting
                             </p>
                         </div>
 
-                        {/* Room */}
+                        {/* Room — read-only, managed from Inventory/Rooms */}
                         <div>
                             <label className={LABEL_CLS}>Salle de classe</label>
-                            <input
-                                value={room}
-                                onChange={e => setRoom(e.target.value)}
-                                placeholder="ex: 201"
-                                className={INPUT_CLS}
-                            />
+                            {classData.assignedRoom ? (
+                                <div className="flex items-center gap-2 px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md">
+                                    <span className="text-sm text-neutral-700 font-medium">🏫 {classData.assignedRoom.name}</span>
+                                    <span className="text-xs text-neutral-500">(capacité: {classData.assignedRoom.capacity})</span>
+                                </div>
+                            ) : (
+                                <div className="px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-md">
+                                    <span className="text-sm text-neutral-500">Aucune salle assignée</span>
+                                </div>
+                            )}
+                            <p className="text-xs text-neutral-500 mt-1.5 flex items-center gap-1">
+                                <ExternalLink size={11} />
+                                <Link to="/inventory/rooms" className="text-primary hover:underline">
+                                    Gérer l'assignation dans Inventaire → Salles
+                                </Link>
+                            </p>
                         </div>
 
                         <hr className="border-neutral-100" />

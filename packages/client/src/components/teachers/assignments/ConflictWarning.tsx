@@ -22,7 +22,7 @@ export const ConflictWarning: React.FC<ConflictWarningProps> = ({
     if (!isOpen || !conflictData) return null;
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-red-200">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-red-100 flex justify-between items-center bg-red-50">

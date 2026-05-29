@@ -124,9 +124,9 @@ export default function ClassDetailPage() {
                         
                         {/* Badges */}
                         <div className="flex flex-wrap items-center gap-2 sm:mt-3">
-                            {cls.room && (
+                            {cls.assignedRoom && (
                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/80 border border-neutral-200 rounded-lg text-xs font-semibold text-neutral-700">
-                                    <MapPin size={12} /> Salle {cls.room}
+                                    <MapPin size={12} /> Salle {cls.assignedRoom.name}
                                 </span>
                             )}
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white/80 border border-neutral-200 rounded-lg text-xs font-semibold text-neutral-700">
@@ -244,7 +244,7 @@ export default function ClassDetailPage() {
                                         { label: 'Nom de la classe', value: cls.name },
                                         { label: 'Section', value: `${section?.name} (${section?.code})` },
                                         { label: 'Année', value: section?.year === 1 ? '1ère année' : `${section?.year}ème année` },
-                                        { label: 'Salle', value: cls.room || 'Non définie' },
+                                        { label: 'Salle', value: cls.assignedRoom?.name || 'Non définie' },
                                         { label: 'Effectif max', value: `${cls.maxStudents} élèves` },
                                         { label: 'Effectif actuel', value: `${currentStudents} élèves (${pct}%)` },
                                         { label: 'Matières configurées', value: `${subjectsAssigned} / ${totalSubjects} attribuées` },

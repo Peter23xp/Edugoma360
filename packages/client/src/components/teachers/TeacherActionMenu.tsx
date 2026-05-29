@@ -68,7 +68,7 @@ export const TeacherActionMenu: React.FC<TeacherActionMenuProps> = ({
         { label: 'Modifier la fiche', icon: <Edit size={16} />, onClick: onEdit, color: 'text-gray-700' },
         { label: 'Emploi du temps', icon: <Calendar size={16} />, onClick: onSchedule, color: 'text-blue-600' },
         { label: 'Performances', icon: <AlertTriangle size={16} />, onClick: onPerformance, color: 'text-orange-600' },
-        { label: 'Fiche Contrat (PDF)', icon: <FileText size={16} />, onClick: () => handleDownload('contract'), color: 'text-indigo-600', show: isAdminOrPrefet },
+        { label: 'Fiche Contrat (PDF)', icon: <FileText size={16} />, onClick: () => handleDownload('contract'), color: 'text-[#0D47A1]', show: isAdminOrPrefet },
         { label: 'Exporter Horaire', icon: <Download size={16} />, onClick: () => handleDownload('timetable'), color: 'text-emerald-600', show: isAdminOrPrefet },
         { label: 'Réinitialiser MDP', icon: <Key size={16} />, onClick: handleResetPassword, color: 'text-rose-600', show: isAdminOrPrefet, divider: true },
         { label: 'Archiver', icon: <Archive size={16} />, onClick: onArchive, color: 'text-gray-500', divider: !isAdminOrPrefet },

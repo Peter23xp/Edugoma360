@@ -1,6 +1,7 @@
 import { formatFC } from '@edugoma360/shared';
 import { CheckCircle, Printer, PlusCircle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { openPdfFromApi } from '../../lib/downloadPdf';
 
 interface ReceiptPreviewProps {
   receiptNumber: string;
@@ -12,7 +13,7 @@ export function ReceiptPreview({ receiptNumber, payment, onNewPayment }: Receipt
   const navigate = useNavigate();
 
   const handlePrint = () => {
-    window.open(`/api/payments/${payment.id}/receipt`, '_blank');
+    openPdfFromApi(`/payments/${payment.id}/receipt`);
   };
 
   return (

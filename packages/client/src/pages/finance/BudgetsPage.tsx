@@ -89,7 +89,7 @@ export default function BudgetsPage() {
       {/* ─── Header ───────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-gradient-to-br from-indigo-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-gradient-to-br from-[#0D47A1] to-[#1565C0] flex items-center justify-center shadow-lg shadow-[#0D47A1]/20">
             <PiggyBank size={20} className="text-white" />
           </div>
           <div className="min-w-0">
@@ -128,11 +128,11 @@ export default function BudgetsPage() {
       {/* ─── KPI Cards ─────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
         <KpiCard
-          icon={<Target size={18} className="text-indigo-600" />}
+          icon={<Target size={18} className="text-[#0D47A1]" />}
           label="Budget total"
           value={formatFC(tracking?.totalBudget ?? 0)}
           sub={budget ? `${budget.categories.length} catégorie(s)` : 'Non configuré'}
-          accent="bg-indigo-50"
+          accent="bg-[#E3F2FD]"
         />
         <KpiCard
           icon={<TrendingUp size={18} className="text-green-600" />}
@@ -154,7 +154,7 @@ export default function BudgetsPage() {
       <div className="bg-white border border-neutral-200/80 rounded-2xl p-4 sm:p-5 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xs sm:text-sm font-bold text-neutral-900 flex items-center gap-2">
-            <BarChart3 size={15} className="text-indigo-500" />
+            <BarChart3 size={15} className="text-[#0D47A1]" />
             <span>Suivi mensuel — Prévu vs Réalisé</span>
           </h2>
           <button

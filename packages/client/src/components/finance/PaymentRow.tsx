@@ -23,8 +23,8 @@ const METHOD_ICONS: Record<string, { bg: string; text: string; dot: string }> = 
   MPESA: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-400' },
   AIRTEL_MONEY: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-400' },
   ORANGE_MONEY: { bg: 'bg-orange-50', text: 'text-orange-700', dot: 'bg-orange-400' },
-  BANK_TRANSFER: { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-400' },
-  VIREMENT: { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-400' },
+  BANK_TRANSFER: { bg: 'bg-[#E8F5E9]', text: 'text-[#1B5E20]', dot: 'bg-[#0D47A1]' },
+  VIREMENT: { bg: 'bg-[#E8F5E9]', text: 'text-[#1B5E20]', dot: 'bg-[#0D47A1]' },
   CHECK: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-400' },
 };
 

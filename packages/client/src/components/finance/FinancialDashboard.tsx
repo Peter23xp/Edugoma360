@@ -18,7 +18,7 @@ export function FinancialDashboard({ kpis }: FinancialDashboardProps) {
     { label: 'Revenus totaux', value: formatFC(kpis.totalRevenue), icon: Wallet, color: 'text-emerald-600', bg: 'bg-emerald-50' },
     { label: 'Créances totales', value: formatFC(kpis.totalDebts), icon: TrendingDown, color: 'text-red-600', bg: 'bg-red-50' },
     { label: 'Recouvrement', value: `${kpis.recoveryRate}%`, icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { label: 'Moyenne / Élève', value: formatFC(kpis.avgRevenuePerStudent), icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'Moyenne / Élève', value: formatFC(kpis.avgRevenuePerStudent), icon: Users, color: 'text-[#0D47A1]', bg: 'bg-[#E8F5E9]' },
     { label: 'Transactions', value: kpis.paymentsCount, icon: CreditCard, color: 'text-amber-600', bg: 'bg-amber-50' },
     { label: 'Panier Moyen', value: formatFC(kpis.avgPaymentAmount), icon: TrendingUp, color: 'text-cyan-600', bg: 'bg-cyan-50' },
   ];

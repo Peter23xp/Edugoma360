@@ -21,7 +21,12 @@ export interface ClassItem {
     subjectsAssigned: number;
     totalSubjects: number;
     hasTimetable: boolean;
-    room?: string;
+    assignedRoom?: {
+        id: string;
+        name: string;
+        capacity: number;
+        status: string;
+    } | null;
     titulaire?: {
         id: string;
         nom: string;
@@ -77,7 +82,7 @@ export function useClasses(sectionId?: string, search?: string) {
                 total: classes.length,
                 complete: classes.filter(c => c.currentStudents >= c.maxStudents * 0.8).length,
                 avgStudents: classes.length > 0 ? Math.round(totalStudents / classes.length) : 0,
-                roomsUsed: classes.filter(c => c.room).length,
+                roomsUsed: classes.filter(c => c.assignedRoom).length,
                 totalStudents,
             };
 
@@ -132,7 +137,7 @@ export function useClasses(sectionId?: string, search?: string) {
 
     // Assign teachers
     const assignMutation = useMutation({
-        mutationFn: async ({ classId, assignments, titulaireId }: { classId: string; assignments: any[]; titulaireId?: string }) => {
+        mutationFn: async ({ classId, assignments, titulaireId }: { classId: string; assignments: any[]; titulaireId?: string | null }) => {
             const res = await api.post(`/classes/${classId}/assign-teachers`, { assignments, titulaireId });
             return res.data;
         },

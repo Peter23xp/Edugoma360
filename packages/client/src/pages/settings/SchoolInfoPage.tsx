@@ -1,11 +1,10 @@
-import React from 'react';
 import SchoolInfoForm from '../../components/settings/SchoolInfoForm';
 import { useSchoolSettings } from '../../hooks/useSchoolSettings';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function SchoolInfoPage() {
-    const { school, isLoading, error, updateSchool, isUpdating } = useSchoolSettings();
+    const { school, isLoading, error: _error, updateSchool, isUpdating } = useSchoolSettings();
     const navigate = useNavigate();
 
     const handleSubmit = async (formData: FormData) => {

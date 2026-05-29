@@ -51,7 +51,7 @@ export default function CloseYearModal({ isOpen, yearId, yearName, onClose, onSu
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={handleClose} />
+            <div className="absolute inset-0 bg-[#0F1E12]/45 backdrop-blur-sm" onClick={handleClose} />
             <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="sticky top-0 bg-red-50 z-10 flex items-center justify-between px-6 py-4 border-b border-red-100 rounded-t-2xl">

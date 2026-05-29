@@ -176,14 +176,29 @@ export function calculateStudentSubjectAverage(
 
         switch (grade.evalType) {
             case 'INTERRO':
-                gradesByType.interro = normalized;
+            case 'INTERROGATION':
+            case 'INTERROGATION_1':
+            case 'INTERROGATION_2':
+                // Garde la meilleure interro si plusieurs
+                if (gradesByType.interro === undefined || normalized > gradesByType.interro) {
+                    gradesByType.interro = normalized;
+                }
                 break;
             case 'TP':
                 gradesByType.tp = normalized;
                 break;
             case 'EXAM_TRIM':
-            case 'EXAM_SYNTH':
+            case 'EXAM_TRIMESTRIEL':
+            case 'EXAMEN_TRIMESTRIEL':
                 gradesByType.exam = normalized;
+                break;
+            case 'EXAM_SYNTH':
+            case 'EXAM_SYNTHESE':
+            case 'EXAMEN_SYNTHESE':
+                // Synthèse = examen si pas déjà un EXAM_TRIM
+                if (gradesByType.exam === undefined) {
+                    gradesByType.exam = normalized;
+                }
                 break;
         }
     });

@@ -332,9 +332,9 @@ export default function TimetablePage() {
                                     { color: 'bg-blue-100 border-blue-300', label: 'Tronc Commun (TC)' },
                                     { color: 'bg-green-100 border-green-300', label: 'Scientifique (Sc)' },
                                     { color: 'bg-orange-100 border-orange-300', label: 'Histoire-Géo-Civisme (HCG)' },
-                                    { color: 'bg-purple-100 border-purple-300', label: 'Pédagogie (Péd)' },
+                                    { color: 'bg-[#E3F2FD] border-[#1B5E20]/30', label: 'Pédagogie (Péd)' },
                                     { color: 'bg-red-100 border-red-300', label: 'Hôtellerie-Tourisme (HT)' },
-                                    { color: 'bg-indigo-100 border-indigo-300', label: 'Littéraire (Lit)' },
+                                    { color: 'bg-[#E3F2FD] border-[#0D47A1]/30', label: 'Littéraire (Lit)' },
                                 ].map((item) => (
                                     <div key={item.label} className="flex items-center gap-2">
                                         <div className={`w-4 h-4 ${item.color} border-2 rounded`} />

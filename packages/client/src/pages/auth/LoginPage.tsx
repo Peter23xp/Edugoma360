@@ -425,7 +425,7 @@ export default function LoginPage() {
                                 onClick={handleContinueOffline}
                                 className="text-amber-600 hover:text-amber-700 text-sm font-medium hover:underline transition-colors"
                             >
-                                Continuer sans connexion â†’
+                                Continuer sans connexion &rarr;
                             </button>
                         </div>
                     )}
@@ -433,7 +433,7 @@ export default function LoginPage() {
 
                 {/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
                 <p className="text-center text-neutral-400 text-xs mt-6" id="login-footer">
-                    v1.0 — EduGoma360 Â© {new Date().getFullYear()}
+                    v1.0 &mdash; EduGoma360 &copy; {new Date().getFullYear()}
                 </p>
             </div>
         </div>

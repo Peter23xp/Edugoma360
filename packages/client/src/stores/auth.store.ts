@@ -55,11 +55,28 @@ function getOfflineUser(): User | null {
     }
 }
 
-// â”€â”€ Zustand Store â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Token persistence ────────────────────────────────────────────────────────
+const TOKEN_KEY = 'edugoma_token';
+
+function saveToken(token: string) {
+    try { localStorage.setItem(TOKEN_KEY, token); } catch { /* ignore */ }
+}
+function loadToken(): string | null {
+    try { return localStorage.getItem(TOKEN_KEY); } catch { return null; }
+}
+function clearToken() {
+    try { localStorage.removeItem(TOKEN_KEY); } catch { /* ignore */ }
+}
+
+// Restaurer la session au démarrage
+const savedToken = loadToken();
+const savedUser = (() => { try { const s = localStorage.getItem('edugoma_last_user'); return s ? JSON.parse(s) : null; } catch { return null; } })();
+
+// ── Zustand Store ─────────────────────────────────────────────────────────────
 export const useAuthStore = create<AuthState>()((set, get) => ({
-    user: null,
-    token: null,
-    isAuthenticated: false,
+    user: savedUser,
+    token: savedToken,
+    isAuthenticated: !!(savedToken && savedUser),
     isLoading: false,
     loginAttempts: 0,
     lockedUntil: null,
@@ -71,6 +88,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             const { user, token } = res.data.data;
             // Persist user for offline access
             await persistUserOffline(user);
+            saveToken(token);
             set({
                 user,
                 token,
@@ -87,6 +105,8 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     logout: () => {
         api.post('/auth/logout').catch(() => { /* Ignore network errors on logout */ });
+        clearToken();
+        localStorage.removeItem('edugoma_last_user');
         set({
             user: null,
             token: null,
@@ -100,6 +120,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         try {
             const res = await api.post('/auth/refresh');
             const { token } = res.data.data;
+            saveToken(token);
             set({ token });
         } catch {
             get().logout();
@@ -108,7 +129,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
     setUser: (user: User) => set({ user }),
 
-    setToken: (token: string) => set({ token, isAuthenticated: true }),
+    setToken: (token: string) => { saveToken(token); set({ token, isAuthenticated: true }); },
 
     incrementAttempts: () => {
         const attempts = get().loginAttempts + 1;

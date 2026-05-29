@@ -30,14 +30,14 @@ export const StudentQueryDto = z.object({
     q: z.string().optional(),
     classId: z.string().optional(),
     section: z.string().optional(),
-    status: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
+    status: z.enum(['ACTIF', 'NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
     sexe: z.enum(['M', 'F']).optional(),
     sortBy: z.string().optional().default('nom'),
     sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
     // Legacy support
     search: z.string().optional(),
     perPage: z.coerce.number().optional(),
-    statut: z.enum(['NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
+    statut: z.enum(['ACTIF', 'NOUVEAU', 'REDOUBLANT', 'TRANSFERE', 'DEPLACE', 'REFUGIE', 'ARCHIVE']).optional(),
     sectionId: z.string().optional(),
 });
 

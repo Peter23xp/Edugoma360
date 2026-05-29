@@ -124,6 +124,26 @@
   }
 }
 
+/* ── Modal Overlay Standard ────────────────────────────────────── */
+.modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  background: rgba(15, 30, 18, 0.55);
+  backdrop-filter: blur(4px);
+}
+
+/* ── Card accent standardisée ──────────────────────────────────── */
+.card-accent-primary { @apply border-l-[3px] border-l-primary; }
+.card-accent-info    { @apply border-l-[3px] border-l-info; }
+.card-accent-accent  { @apply border-l-[3px] border-l-accent; }
+.card-accent-error   { @apply border-l-[3px] border-l-error; }
+
+/* ── Couleurs charte (aliases) ─────────────────────────────────── */
+.text-info    { color: var(--info); }
+.bg-info      { background-color: var(--info); }
+.bg-info-light { background-color: var(--info-light); }
+.text-accent  { color: var(--accent); }
+.bg-accent    { background-color: var(--accent); }
+
 /* ── Scrollbar Styling ─────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

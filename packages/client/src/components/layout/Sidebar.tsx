@@ -19,6 +19,17 @@ import {
   Briefcase,
   Target,
   UserCog,
+  Mail,
+  Megaphone,
+  BarChart2,
+  Download,
+  History,
+  Package,
+  Building2,
+  Wrench,
+  Library,
+  ShieldAlert,
+  User,
 } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import logo from "../../assets/logo.svg";
@@ -64,6 +75,12 @@ const navItems = [
         icon: ClipboardList,
         path: "/grades/deliberation",
       },
+      {
+        label: "Historique délibérations",
+        icon: History,
+        path: "/grades/deliberation/historique",
+        roles: ["SUPER_ADMIN", "PREFET"],
+      },
     ],
   },
   {
@@ -105,19 +122,45 @@ const navItems = [
     ],
   },
   {
-    label: "SMS",
+    label: "Communication",
     icon: MessageSquare,
     roles: ["SUPER_ADMIN", "PREFET", "SECRETAIRE"],
     children: [
       { label: "Envoyer SMS", icon: Send, path: "/sms" },
+      { label: "Emails", icon: Mail, path: "/emails" },
       { label: "Convocations", icon: UserCheck, path: "/convocations" },
+      { label: "Annonces", icon: Megaphone, path: "/announcements" },
+    ],
+  },
+  {
+    label: "Inventaire",
+    icon: Package,
+    roles: ["SUPER_ADMIN", "PREFET", "SECRETAIRE"],
+    children: [
+      { label: "Matériel", icon: Package, path: "/inventory/material" },
+      { label: "Bibliothèque", icon: Library, path: "/inventory/library" },
+      { label: "Salles", icon: Building2, path: "/inventory/rooms" },
+      { label: "Maintenance", icon: Wrench, path: "/inventory/maintenance" },
     ],
   },
   {
     label: "Rapports",
     icon: FileBarChart,
-    path: "/reports",
     roles: ["SUPER_ADMIN", "PREFET", "ECONOME"],
+    children: [
+      { label: "Tableau de bord Direction", icon: TrendingUp, path: "/reports/dashboard" },
+      { label: "Statistiques école", icon: BarChart2, path: "/reports/statistics" },
+      { label: "Générateur de rapports", icon: FileBarChart, path: "/reports/generator" },
+      { label: "Exports avancés", icon: Download, path: "/reports/exports" },
+      { label: "Fiche EDU-NC", icon: FileBarChart, path: "/reports/edu-nc" },
+      { label: "Listes Examen d'État", icon: GraduationCap, path: "/reports/exam-national" },
+    ],
+  },
+  {
+    label: "Discipline",
+    icon: ShieldAlert,
+    roles: ["SUPER_ADMIN", "PREFET"],
+    path: "/discipline",
   },
   {
     label: "Paramètres",
@@ -142,6 +185,7 @@ const navItems = [
       },
       { label: "Utilisateurs", icon: UserCog, path: "/settings/users" },
       { label: "Synchronisation", icon: TrendingUp, path: "/settings/sync" },
+      { label: "Mon Profil", icon: User, path: "/settings/profile", roles: ["*"] },
     ],
   },
 ];
@@ -157,7 +201,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <aside
       className={cn(
-        "fixed top-0 left-0 z-40 h-full w-64 bg-white border-r border-neutral-300/50 shadow-lg",
+        "fixed top-0 left-0 z-50 h-full w-64 bg-white border-r border-neutral-300/50 shadow-lg",
         "transform transition-transform duration-300 ease-in-out",
         "lg:translate-x-0",
         isOpen ? "translate-x-0" : "-translate-x-full",

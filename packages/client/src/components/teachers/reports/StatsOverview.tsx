@@ -60,8 +60,8 @@ export default function StatsOverview({ data, isLoading }: StatsOverviewProps) {
             value: `${data.averageWorkload} h`,
             trend: 'Stable',
             icon: Clock,
-            color: 'text-purple-600',
-            bg: 'bg-purple-50',
+            color: 'text-[#0D47A1]',
+            bg: 'bg-[#E8F5E9]',
             status: 'Équilibré'
         }
     ];

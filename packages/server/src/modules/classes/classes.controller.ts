@@ -33,14 +33,13 @@ export class ClassesController {
 
     async createClass(req: Request, res: Response, next: NextFunction) {
         try {
-            const { sectionId, name, maxStudents, room, titulaireId } = req.body;
+            const { sectionId, name, maxStudents, titulaireId } = req.body;
 
             const result = await classesService.createClass({
                 schoolId: req.user!.schoolId,
                 sectionId,
                 name,
                 maxStudents,
-                room,
                 titulaireId,
             });
 
@@ -53,12 +52,11 @@ export class ClassesController {
     async updateClass(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
-            const { maxStudents, isActive, room, titulaireId } = req.body;
+            const { maxStudents, isActive, titulaireId } = req.body;
 
             const result = await classesService.updateClass(id, req.user!.schoolId, {
                 maxStudents,
                 isActive,
-                room,
                 titulaireId,
             });
 

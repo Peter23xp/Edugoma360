@@ -44,8 +44,8 @@ export default function ClassStatsCard({ classData }: ClassStatsCardProps) {
             label: 'Matières',
             value: classData.subjectCount?.toString() ?? '—',
             sub: 'Cette section',
-            color: 'text-purple-600',
-            bg: 'bg-purple-50',
+            color: 'text-[#0D47A1]',
+            bg: 'bg-[#E8F5E9]',
         },
     ];
 

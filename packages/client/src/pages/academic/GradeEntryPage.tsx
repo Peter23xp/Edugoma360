@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save, Lock, Wifi, WifiOff, Loader2 } from 'lucide-react';
+import { normalize } from '../../lib/apiNormalize';
 import toast from 'react-hot-toast';
 import { useAuthStore } from '../../stores/auth.store';
 import { useOffline } from '../../hooks/useOffline';
@@ -41,22 +42,32 @@ export default function GradeEntryPage() {
         return () => clearInterval(interval);
     }, []);
 
-    // Fetch teacher's classes
+    const isAdmin = ['SUPER_ADMIN', 'PREFET'].includes(user?.role || '');
+
+    // Fetch classes
     const { data: classesData } = useQuery({
-        queryKey: ['teacher-classes', user?.id],
+        queryKey: ['grade-entry-classes', user?.id, isAdmin],
         queryFn: async () => {
-            const response = await api.get('/teachers/me/classes');
-            return response.data;
+            if (isAdmin) {
+                const { data } = await api.get('/classes');
+                return { classes: normalize.classes(data) };
+            }
+            const { data } = await api.get('/teachers/me/classes');
+            return { classes: normalize.classes(data) };
         },
         enabled: !!user,
     });
 
     // Fetch subjects for selected class
     const { data: subjectsData } = useQuery({
-        queryKey: ['teacher-subjects', selectedClassId],
+        queryKey: ['grade-entry-subjects', selectedClassId],
         queryFn: async () => {
-            const response = await api.get(`/teachers/me/subjects?classId=${selectedClassId}`);
-            return response.data;
+            if (isAdmin) {
+                const { data } = await api.get(`/classes/${selectedClassId}`);
+                return { subjects: normalize.classSubjects(normalize.class(data)) };
+            }
+            const { data } = await api.get(`/teachers/me/subjects?classId=${selectedClassId}`);
+            return { subjects: normalize.subjects(data) };
         },
         enabled: !!selectedClassId,
     });
@@ -65,17 +76,17 @@ export default function GradeEntryPage() {
     const { data: termsData } = useQuery({
         queryKey: ['terms'],
         queryFn: async () => {
-            const response = await api.get('/settings/terms');
-            return response.data;
+            const { data } = await api.get('/settings/terms');
+            return { terms: normalize.terms(data) };
         },
     });
 
-    // Fetch students in class
+    // Fetch students
     const { data: studentsData } = useQuery({
         queryKey: ['class-students', selectedClassId],
         queryFn: async () => {
-            const response = await api.get(`/students?classId=${selectedClassId}`);
-            return response.data;
+            const { data } = await api.get('/students', { params: { classId: selectedClassId, limit: 200 } });
+            return { students: normalize.students(data) };
         },
         enabled: !!selectedClassId,
     });
@@ -84,15 +95,10 @@ export default function GradeEntryPage() {
     const { data: existingGradesData, isLoading: gradesLoading } = useQuery({
         queryKey: ['grades', selectedClassId, selectedSubjectId, selectedTermId, selectedEvalType],
         queryFn: async () => {
-            const response = await api.get('/grades', {
-                params: {
-                    classId: selectedClassId,
-                    subjectId: selectedSubjectId,
-                    termId: selectedTermId,
-                    evalType: selectedEvalType,
-                },
+            const { data } = await api.get('/grades', {
+                params: { classId: selectedClassId, subjectId: selectedSubjectId, termId: selectedTermId, evalType: selectedEvalType },
             });
-            return response.data;
+            return { grades: normalize.grades(data) };
         },
         enabled: !!selectedClassId && !!selectedSubjectId && !!selectedTermId,
     });
@@ -280,19 +286,30 @@ export default function GradeEntryPage() {
                             <select
                                 value={selectedSubjectId}
                                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                                disabled={!selectedClassId}
-                                className="w-full px-4 py-2 border border-neutral-300 rounded-lg 
-                                           text-sm focus:ring-2 focus:ring-primary/20 
+                                disabled={!selectedClassId || subjects.length === 0}
+                                className="w-full px-4 py-2 border border-neutral-300 rounded-lg
+                                           text-sm focus:ring-2 focus:ring-primary/20
                                            focus:border-primary bg-white
                                            disabled:bg-neutral-100 disabled:cursor-not-allowed"
                             >
-                                <option value="">Sélectionnez une matière</option>
+                                <option value="">
+                                    {!selectedClassId
+                                        ? 'Choisir une classe d\'abord'
+                                        : subjects.length === 0
+                                        ? 'Aucune matière assignée à cette classe'
+                                        : 'Sélectionnez une matière'}
+                                </option>
                                 {subjects.map((subject: any) => (
                                     <option key={subject.id} value={subject.id}>
                                         {subject.name}
                                     </option>
                                 ))}
                             </select>
+                            {selectedClassId && subjects.length === 0 && (
+                                <p className="text-xs text-amber-600 mt-1">
+                                    Assignez des enseignants aux matières dans Paramètres → Gestion des Classes.
+                                </p>
+                            )}
                         </div>
 
                         {/* Term */}
@@ -310,7 +327,7 @@ export default function GradeEntryPage() {
                                 <option value="">Sélectionnez un trimestre</option>
                                 {terms.map((term: any) => (
                                     <option key={term.id} value={term.id}>
-                                        {term.name}
+                                        {term.label || term.name || `Trimestre ${term.number}`}
                                     </option>
                                 ))}
                             </select>

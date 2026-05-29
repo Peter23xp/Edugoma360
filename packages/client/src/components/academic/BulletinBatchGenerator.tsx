@@ -47,7 +47,7 @@ export default function BulletinBatchGenerator({ classes, terms, onClose }: Bull
     const progressPct = job && job.total > 0 ? Math.round((job.processed / job.total) * 100) : 0;
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-[#0F1E12]/55 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
                 <div className="flex items-center justify-between p-6 border-b border-neutral-200">
                     <div>

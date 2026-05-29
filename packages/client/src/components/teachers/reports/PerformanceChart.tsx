@@ -25,7 +25,7 @@ export default function PerformanceChart({ data, isLoading }: PerformanceChartPr
 
     const colors = [
         '#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444',
-        '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#6366f1'
+        '#ec4899', '#06b6d4', '#84cc16', '#f97316', '#0D47A1'
     ];
 
     return (

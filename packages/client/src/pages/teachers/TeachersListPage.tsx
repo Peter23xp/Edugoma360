@@ -74,7 +74,7 @@ export const TeachersListPage: React.FC = () => {
         archiveMutation,
     } = useTeachers(filters);
 
-    const { data: teachersData, isLoading, isFetching } = teachersQuery;
+    const { data: teachersData, isLoading, isFetching: _isFetching } = teachersQuery;
     const teachers = teachersData?.data || [];
     const total = teachersData?.total || 0;
     const totalPages = teachersData?.pages || 1;
@@ -183,21 +183,7 @@ export const TeachersListPage: React.FC = () => {
     }, [selectedIds, archiveMutation]);
 
     // —— Page numbers for pagination ——
-    const pageNumbers = useMemo(() => {
-        const pages: (number | '...')[] = [];
-        if (totalPages <= 7) {
-            for (let i = 1; i <= totalPages; i++) pages.push(i);
-        } else {
-            pages.push(1);
-            if (page > 3) pages.push('...');
-            for (let i = Math.max(2, page - 1); i <= Math.min(totalPages - 1, page + 1); i++) {
-                pages.push(i);
-            }
-            if (page < totalPages - 2) pages.push('...');
-            pages.push(totalPages);
-        }
-        return pages;
-    }, [page, totalPages]);
+
 
     const hasFiltersActive = !!(subjectId || section || status || search);
 

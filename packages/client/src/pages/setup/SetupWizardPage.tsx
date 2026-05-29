@@ -258,7 +258,7 @@ export default function SetupWizardPage() {
         <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-neutral-100">
             {/* Draft Restore Prompt */}
             {showDraftPrompt && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 bg-[#0F1E12]/55 flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
                         <h3 className="text-lg font-bold text-neutral-900 mb-2">
                             Brouillon trouvé

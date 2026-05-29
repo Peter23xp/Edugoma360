@@ -70,7 +70,7 @@ function RemarkModal({ state, onSave, onClose }: RemarkModalProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+            <div className="absolute inset-0 bg-[#0F1E12]/45 backdrop-blur-sm" onClick={onClose} />
 
             {/* Modal */}
             <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl border border-neutral-200 overflow-hidden animate-slide-up">
@@ -173,7 +173,7 @@ interface ConfirmModalProps {
 function ConfirmUnsetModal({ count, onConfirm, onCancel }: ConfirmModalProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onCancel} />
+            <div className="absolute inset-0 bg-[#0F1E12]/45 backdrop-blur-sm" onClick={onCancel} />
             <div className="relative z-10 w-full max-w-sm bg-white rounded-2xl shadow-2xl border border-neutral-200 p-6 space-y-4">
                 <div className="text-center">
                     <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center mx-auto mb-3">

@@ -42,7 +42,7 @@ export function ExpenseEntry({ sessionId, onClose }: ExpenseEntryProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F1E12]/55 p-4">
       <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[95vh] sm:max-h-[90vh] border border-neutral-200">
         <div className="flex-none flex justify-between items-center p-4 sm:p-6 border-b border-neutral-100 bg-neutral-50/50">
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Enregistrer une dépense</h2>

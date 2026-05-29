@@ -24,7 +24,8 @@ interface AveragesTableProps {
 }
 
 export default function AveragesTable({ students, subjects, isLoading }: AveragesTableProps) {
-    const getAverageBadge = (average: number, hasEliminatoryFailure: boolean) => {
+    const getAverageBadge = (average: number | null, hasEliminatoryFailure: boolean) => {
+        const avg = average ?? 0;
         if (hasEliminatoryFailure) {
             return (
                 <div className="flex items-center gap-1 text-red-600">
@@ -34,7 +35,7 @@ export default function AveragesTable({ students, subjects, isLoading }: Average
             );
         }
 
-        if (average >= 10) {
+        if (avg >= 10) {
             return (
                 <div className="flex items-center gap-1 text-green-600">
                     <CheckCircle size={14} />
@@ -145,12 +146,12 @@ export default function AveragesTable({ students, subjects, isLoading }: Average
                                                     className={`text-sm font-medium ${
                                                         subjectAvg.hasFailed
                                                             ? 'text-red-600'
-                                                            : subjectAvg.average >= 10
+                                                            : (subjectAvg.average ?? 0) >= 10
                                                             ? 'text-green-600'
                                                             : 'text-orange-600'
                                                     }`}
                                                 >
-                                                    {subjectAvg.average.toFixed(1)}
+                                                    {(subjectAvg.average ?? 0).toFixed(1)}
                                                 </span>
                                             ) : (
                                                 <span className="text-xs text-neutral-400">—</span>
@@ -160,18 +161,18 @@ export default function AveragesTable({ students, subjects, isLoading }: Average
                                 })}
                                 <td className="px-4 py-3 text-center bg-blue-50">
                                     <span className="text-sm font-bold text-blue-900">
-                                        {student.totalPoints.toFixed(1)}
+                                        {(student.totalPoints ?? 0).toFixed(1)}
                                     </span>
                                 </td>
                                 <td className="px-4 py-3 text-center bg-blue-50">
                                     <span
                                         className={`text-sm font-bold ${
-                                            student.generalAverage >= 10
+                                            (student.generalAverage ?? 0) >= 10
                                                 ? 'text-green-600'
                                                 : 'text-red-600'
                                         }`}
                                     >
-                                        {student.generalAverage.toFixed(2)}
+                                        {(student.generalAverage ?? 0).toFixed(2)}
                                     </span>
                                 </td>
                                 <td className="px-4 py-3 text-center bg-blue-50">

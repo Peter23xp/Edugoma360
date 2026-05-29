@@ -1,4 +1,5 @@
 import { Edit2, Trash2, MoreVertical } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { ClassItem } from '../../hooks/useClasses';
 import { useState } from 'react';
 
@@ -74,8 +75,10 @@ export default function ClassCard({ classItem, onEdit, onViewDetails, onAssignTe
                 
                 {/* Section & Room */}
                 <p className="text-sm font-medium text-neutral-600">
-                    {c.section.year === 1 ? '1ère' : `${c.section.year}ème`} année {c.section.name} 
-                    {c.room && <> • Salle {c.room}</>}
+                    {c.section.year === 1 ? '1ère' : `${c.section.year}ème`} année {c.section.name}
+                    {c.assignedRoom ? (
+                        <> • <Link to="/inventory/rooms" className="text-primary hover:underline">🏫 {c.assignedRoom.name}</Link></>
+                    ) : null}
                 </p>
 
                 {/* Effectif */}

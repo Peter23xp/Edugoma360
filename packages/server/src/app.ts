@@ -16,7 +16,14 @@ import deliberationRoutes from './modules/deliberation/deliberation.routes';
 import financeRoutes from './modules/finance/finance.routes';
 import attendanceRoutes from './modules/attendance/attendance.routes';
 import teachersRoutes from './modules/teachers/teachers.routes';
-import smsRoutes from './modules/sms/sms.routes';
+import { smsRoutes } from './modules/communication/sms/sms.routes';
+import { emailRoutes } from './modules/communication/email/email.routes';
+import { convocationsRoutes } from './modules/communication/convocations/convocations.routes';
+import { announcementsRoutes } from './modules/communication/announcements/announcements.routes';
+import { dashboardRoutes } from './modules/reports/dashboard/dashboard.routes';
+import { statsRoutes as reportsStatsRoutes } from './modules/reports/stats/stats.routes';
+import { generatorRoutes } from './modules/reports/generator/generator.routes';
+import { exportsRoutes } from './modules/reports/exports/exports.routes';
 import reportsRoutes from './modules/reports/reports.routes';
 import syncRoutes from './modules/sync/sync.routes';
 import settingsRoutes from './modules/settings/settings.routes';
@@ -34,6 +41,13 @@ import debtsRoutes from './modules/payments/debts.routes';
 import cashSessionsRoutes from './modules/cash-sessions/cash-sessions.routes';
 import budgetsRoutes from './modules/budgets/budgets.routes';
 import usersRoutes from './modules/users/users.routes';
+import materialRoutes from './modules/inventory/material.routes';
+import libraryRoutes from './modules/inventory/library.routes';
+import roomsRoutes from './modules/inventory/rooms.routes';
+import maintenanceRoutes from './modules/inventory/maintenance.routes';
+import parentRoutes from './modules/parent/parent.routes';
+import profileRoutes from './modules/users/profile.routes';
+import disciplineRoutes from './modules/discipline/discipline.routes';
 
 const app = express();
 
@@ -46,7 +60,7 @@ app.use(cookieParser());
 app.use(apiLimiter);
 
 // â”€â”€ Static Files (uploads) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-app.use('/uploads', express.static(path.join(__dirname, '..', '..', '..', 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // â”€â”€ Health Check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.get('/api/health', (_req, res) => {
@@ -69,6 +83,13 @@ app.use('/api/finance', financeRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/teachers', teachersRoutes);
 app.use('/api/sms', smsRoutes);
+app.use('/api/emails', emailRoutes);
+app.use('/api/convocations', convocationsRoutes);
+app.use('/api/announcements', announcementsRoutes);
+app.use('/api/reports/dashboard', dashboardRoutes);
+app.use('/api/reports/statistics', reportsStatsRoutes);
+app.use('/api/reports', generatorRoutes);
+app.use('/api/exports', exportsRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/sync', syncRoutes);
 app.use('/api/settings', settingsRoutes);
@@ -86,6 +107,13 @@ app.use('/api/cash-sessions', cashSessionsRoutes);
 app.use('/api/budgets', budgetsRoutes);
 app.use('/api/sections', sectionsRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/inventory/material', materialRoutes);
+app.use('/api/inventory/books', libraryRoutes);
+app.use('/api/inventory/rooms', roomsRoutes);
+app.use('/api/inventory/maintenance', maintenanceRoutes);
+app.use('/api/parent', parentRoutes);
+app.use('/api/profile', profileRoutes);
+app.use('/api/discipline', disciplineRoutes);
 
 // â”€â”€ 404 Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use((_req, res) => {

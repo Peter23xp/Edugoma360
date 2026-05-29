@@ -83,7 +83,7 @@ export default function ClassesManagementPage() {
         setAssignTarget({ id: c.id, name: c.name, sectionCode: c.section?.code || '' });
     };
 
-    const handleAssign = async (payload: { classId: string; assignments: any[]; titulaireId?: string }) => {
+    const handleAssign = async (payload: { classId: string; assignments: any[]; titulaireId?: string | null }) => {
         await assignTeachers(payload);
     };
 
