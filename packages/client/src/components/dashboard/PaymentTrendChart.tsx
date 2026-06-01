@@ -23,8 +23,8 @@ function formatFCShort(n: number): string {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white border rounded-lg shadow-lg px-3 py-2 text-xs">
-      <p className="font-medium mb-1">{label}</p>
+    <div className="bg-white border border-neutral-200 rounded-lg shadow-md px-3 py-2 text-xs">
+      <p className="font-semibold text-neutral-900 mb-1">{label}</p>
       {payload.map((p: any) => (
         <p key={p.dataKey} style={{ color: p.color }}>
           {p.name}: {p.value.toLocaleString('fr-FR')} FC
@@ -36,12 +36,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 
 export default function PaymentTrendChart({ data, isLoading }: Props) {
   if (isLoading) {
-    return <div className="h-52 bg-gray-100 rounded-lg animate-pulse" />;
+    return <div className="h-52 bg-neutral-100 rounded-lg animate-pulse" />;
   }
 
   return (
-    <div className="bg-white border rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-gray-700 mb-3">Paiements — 6 derniers mois</h3>
+    <div className="bg-white border border-neutral-200 rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-neutral-800 mb-3">Paiements — 6 derniers mois</h3>
       <ResponsiveContainer width="100%" height={180}>
         <AreaChart data={data} margin={{ top: 4, right: 8, left: -10, bottom: 0 }}>
           <defs>

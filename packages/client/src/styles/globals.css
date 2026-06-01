@@ -113,7 +113,7 @@
 
   /* ── Table Styles ────────────────────────────────────────────── */
   .table-header {
-    @apply sticky top-0 z-10 bg-neutral-100 text-neutral-700 text-xs font-semibold uppercase tracking-wider shadow-sm;
+    @apply sticky top-0 z-10 bg-neutral-100 text-neutral-900 text-xs font-semibold tracking-wide shadow-sm;
   }
 
   /* ── Print Styles ────────────────────────────────────────────── */
@@ -131,11 +131,42 @@
   backdrop-filter: blur(4px);
 }
 
+/* Standard modal utilities aligned with teachers bulk assignment modal */
+.edugoma-modal-overlay {
+  @apply fixed inset-0 z-[100] flex items-center justify-center p-4;
+  background: rgba(15, 30, 18, 0.45);
+  backdrop-filter: blur(4px);
+}
+
+.edugoma-modal-panel {
+  @apply flex w-full max-h-[90vh] flex-col overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-xl;
+}
+
+.edugoma-modal-header {
+  @apply flex items-center justify-between gap-3 border-b border-neutral-200 px-6 py-4;
+}
+
+.edugoma-modal-body {
+  @apply flex-1 overflow-y-auto px-6 py-5;
+}
+
+.edugoma-modal-footer {
+  @apply flex gap-3 border-t border-neutral-200 px-6 py-4;
+}
+
+.edugoma-modal-close {
+  @apply rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700;
+}
+
+.edugoma-modal-icon {
+  @apply rounded-lg bg-primary/10 p-2 text-primary;
+}
+
 /* ── Card accent standardisée ──────────────────────────────────── */
-.card-accent-primary { @apply border-l-[3px] border-l-primary; }
-.card-accent-info    { @apply border-l-[3px] border-l-info; }
-.card-accent-accent  { @apply border-l-[3px] border-l-accent; }
-.card-accent-error   { @apply border-l-[3px] border-l-error; }
+.card-accent-primary { @apply border border-primary/25 bg-primary/5; }
+.card-accent-info    { @apply border border-info/25 bg-info/5; }
+.card-accent-accent  { @apply border border-accent/25 bg-accent/5; }
+.card-accent-error   { @apply border border-error/25 bg-error/5; }
 
 /* ── Couleurs charte (aliases) ─────────────────────────────────── */
 .text-info    { color: var(--info); }
@@ -158,6 +189,10 @@
 
 .animate-slide-up {
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up { animation: none; }
 }
 
 /* ── Mobile optimization ───────────────────────────────────────── */

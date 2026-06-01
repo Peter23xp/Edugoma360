@@ -69,9 +69,8 @@ export function ReceiptPreview({ receiptNumber, payment, onNewPayment }: Receipt
           <button
             onClick={handlePrint}
             className="flex flex-1 items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium
-                       bg-gradient-to-r from-primary to-primary-light text-white
-                       rounded-xl hover:shadow-lg hover:shadow-primary/25
-                       transition-all duration-200 shadow-md w-full"
+                       bg-primary hover:bg-primary-hover text-white
+                       rounded-lg transition-colors w-full"
           >
             <Printer size={15} /> Imprimer le reçu
           </button>

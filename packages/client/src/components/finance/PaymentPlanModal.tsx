@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { X, CalendarDays, Check, Wallet } from 'lucide-react';
+import { X, CalendarDays, Check, Wallet, AlertTriangle } from 'lucide-react';
 import { formatFC } from '@edugoma360/shared';
 
 interface PaymentPlanModalProps {
@@ -19,10 +19,10 @@ export function PaymentPlanModal({ isOpen, onClose, onSubmit, studentName, total
   const schedule = useMemo(() => {
     const perMonth = Math.round(totalDebt / installments);
     const start = new Date(startDate);
-    return Array.from({ length: installments }).map((_, i) => {
+    return Array.from({ length: installments }).map((_, index) => {
       const due = new Date(start);
-      due.setMonth(due.getMonth() + i);
-      const amount = i === installments - 1
+      due.setMonth(due.getMonth() + index);
+      const amount = index === installments - 1
         ? totalDebt - perMonth * (installments - 1)
         : perMonth;
       return { date: due, amount };
@@ -32,61 +32,61 @@ export function PaymentPlanModal({ isOpen, onClose, onSubmit, studentName, total
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-neutral-900/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
-        
-        {/* Header */}
-        <div className="px-6 py-4 bg-orange-600 text-white flex items-center justify-between flex-shrink-0">
-          <h2 className="text-lg font-bold flex items-center gap-2">
-            <Wallet size={20} /> Plan d'Apurement
-          </h2>
-          <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white">
-            <X size={20} />
+    <div className="edugoma-modal-overlay">
+      <div className="edugoma-modal-panel max-w-lg">
+        <div className="edugoma-modal-header">
+          <div className="flex items-center gap-3">
+            <div className="edugoma-modal-icon">
+              <Wallet className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-neutral-900">Plan de paiement</h2>
+              <p className="text-xs text-neutral-500">Échelonnement de la créance</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="edugoma-modal-close">
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-6 overflow-y-auto">
-          {/* Student info */}
-          <div className="p-4 bg-neutral-50 rounded-xl border border-neutral-100 flex items-center justify-between">
+        <div className="edugoma-modal-body space-y-5">
+          <div className="grid grid-cols-1 gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4 sm:grid-cols-2">
             <div>
-              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">Élève concerné</p>
-              <p className="text-sm font-bold text-neutral-900">{studentName}</p>
+              <p className="text-xs font-medium text-neutral-500">Élève concerné</p>
+              <p className="mt-1 text-sm font-semibold text-neutral-900">{studentName}</p>
             </div>
-            <div className="text-right">
-              <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mb-1">Total exigible</p>
-              <p className="text-lg font-bold font-mono text-red-600">{formatFC(totalDebt)}</p>
+            <div className="sm:text-right">
+              <p className="text-xs font-medium text-neutral-500">Total exigible</p>
+              <p className="mt-1 font-mono text-lg font-bold text-error">{formatFC(totalDebt)}</p>
             </div>
           </div>
 
-          {/* Installment options */}
           <div>
-            <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-3 block">
-              Paiement échelonné (Choix)
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              {options.map(n => {
-                const perMonth = Math.round(totalDebt / n);
+            <label className="mb-2 block text-sm font-medium text-neutral-700">Nombre de mensualités</label>
+            <div className="grid grid-cols-2 gap-2">
+              {options.map((option) => {
+                const perMonth = Math.round(totalDebt / option);
+                const selected = installments === option;
                 return (
                   <button
-                    key={n}
-                    onClick={() => setInstallments(n)}
-                    className={`p-4 rounded-xl border-2 transition-all text-left flex items-start gap-4
-                      ${installments === n
-                        ? 'border-orange-500 bg-orange-50 shadow-sm'
-                        : 'border-neutral-100 hover:border-neutral-200 bg-white'}`}
+                    key={option}
+                    onClick={() => setInstallments(option)}
+                    className={`rounded-lg border p-4 text-left transition-colors ${
+                      selected
+                        ? 'border-primary bg-primary/5'
+                        : 'border-neutral-200 bg-white hover:border-neutral-300'
+                    }`}
                   >
-                    <div className={`w-5 h-5 rounded-full border-2 mt-0.5 flex flex-shrink-0 items-center justify-center transition-colors
-                      ${installments === n ? 'border-orange-500' : 'border-neutral-300'}`}>
-                      {installments === n && <div className="w-2.5 h-2.5 rounded-full bg-orange-500" />}
-                    </div>
-                    <div>
-                      <span className={`text-sm font-bold block mb-1 ${installments === n ? 'text-orange-700' : 'text-neutral-700'}`}>
-                        {n} mensualités
-                      </span>
-                      <span className="text-xs font-mono font-medium text-neutral-500 block">
-                        ≈ {formatFC(perMonth)} / mois
-                      </span>
+                    <div className="flex items-start gap-3">
+                      <span className={`mt-1 h-3 w-3 rounded-full border ${selected ? 'border-primary bg-primary' : 'border-neutral-300'}`} />
+                      <div>
+                        <span className={`block text-sm font-semibold ${selected ? 'text-primary' : 'text-neutral-800'}`}>
+                          {option} mensualités
+                        </span>
+                        <span className="mt-1 block font-mono text-xs text-neutral-500">
+                          {formatFC(perMonth)} / mois
+                        </span>
+                      </div>
                     </div>
                   </button>
                 );
@@ -94,65 +94,64 @@ export function PaymentPlanModal({ isOpen, onClose, onSubmit, studentName, total
             </div>
           </div>
 
-          {/* Start date */}
           <div>
-            <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-3 block">
-              Date d'effet (1ère échéance)
-            </label>
+            <label className="mb-2 block text-sm font-medium text-neutral-700">Date de première échéance</label>
             <div className="relative">
-              <CalendarDays className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" size={16} />
+              <CalendarDays className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
               <input
                 type="date"
                 value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 border border-neutral-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none transition-all"
+                onChange={(event) => setStartDate(event.target.value)}
+                className="w-full rounded-lg border border-neutral-300 bg-white py-2.5 pl-10 pr-4 text-sm text-neutral-900 outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/10"
               />
             </div>
           </div>
 
-          {/* Schedule preview */}
           <div>
-             <label className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mb-3 block">
-               Aperçu de l'échéancier généré
-             </label>
-             <div className="bg-white rounded-xl border border-neutral-200 overflow-hidden">
-               {schedule.map((item, i) => (
-                 <div key={i} className={`flex items-center justify-between p-3.5 text-sm ${i !== schedule.length - 1 ? 'border-b border-neutral-100' : ''}`}>
-                   <div className="flex items-center gap-3">
-                     <div className="w-7 h-7 rounded-lg bg-orange-50 border border-orange-100 flex items-center justify-center text-[10px] font-bold text-orange-600">
-                       Tr. {i + 1}
-                     </div>
-                     <span className="text-neutral-700 font-medium">
-                       {item.date.toLocaleDateString('fr-CD', { day: '2-digit', month: 'long', year: 'numeric' })}
-                     </span>
-                   </div>
-                   <span className="font-bold font-mono text-neutral-900">{formatFC(item.amount)}</span>
-                 </div>
-               ))}
-             </div>
+            <label className="mb-2 block text-sm font-medium text-neutral-700">Échéancier prévu</label>
+            <div className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+              {schedule.map((item, index) => (
+                <div
+                  key={`${item.date.toISOString()}-${index}`}
+                  className={`flex items-center justify-between gap-3 px-4 py-3 text-sm ${index !== schedule.length - 1 ? 'border-b border-neutral-100' : ''}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/5 text-xs font-semibold text-primary">
+                      {index + 1}
+                    </span>
+                    <span className="text-neutral-700">
+                      {item.date.toLocaleDateString('fr-CD', { day: '2-digit', month: 'long', year: 'numeric' })}
+                    </span>
+                  </div>
+                  <span className="font-mono font-semibold text-neutral-900">{formatFC(item.amount)}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <div className="p-3 bg-neutral-50 rounded-lg border border-neutral-100 italic text-[11px] text-neutral-500 font-medium leading-relaxed">
-            ⚠️ Attention : La création de ce plan nécessite l'engagement signé des parents. Un rappel automatique de recouvrement sera envoyé 3 jours avant chaque date d'échéance validée.
+          <div className="flex items-start gap-2 rounded-lg border border-accent/25 bg-accent-light p-3 text-sm text-accent">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+            La création du plan doit correspondre à un engagement signé des parents.
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-100 flex items-center justify-end gap-3 flex-shrink-0">
-          <button 
-             onClick={onClose} 
-             className="px-6 py-2.5 text-sm font-bold text-neutral-500 hover:text-neutral-700 transition-colors focus:outline-none focus:ring-2 focus:ring-neutral-200 rounded-xl"
+        <div className="edugoma-modal-footer">
+          <button
+            onClick={onClose}
+            className="flex-1 rounded-lg border border-neutral-300 px-4 py-2.5 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-50"
           >
             Annuler
           </button>
           <button
             onClick={() => onSubmit({ totalAmount: totalDebt, installments, startDate })}
-            className="px-8 py-2.5 bg-orange-500 text-white text-sm font-bold rounded-xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+            className="flex-1 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
           >
-            <Check size={16} /> Valider le plan
+            <span className="inline-flex items-center justify-center gap-2">
+              <Check className="h-4 w-4" />
+              Valider le plan
+            </span>
           </button>
         </div>
-
       </div>
     </div>
   );

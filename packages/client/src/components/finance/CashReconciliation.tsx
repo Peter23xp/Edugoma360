@@ -157,8 +157,8 @@ export function CashReconciliation({ session, countedData, onClose, onRetry }: C
             <button 
               type="submit"
               disabled={isSubmitting}
-              className={`flex-1 px-5 py-2.5 text-white font-medium rounded-xl transition-all shadow-sm shadow-black/10 disabled:opacity-50 flex items-center justify-center gap-2 hover:-translate-y-0.5
-                ${requiresExplanation ? (isLoss ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' : 'bg-yellow-600 hover:bg-yellow-700 shadow-yellow-500/20') : 'bg-gradient-to-r from-primary to-primary-light hover:shadow-lg hover:shadow-primary/25'}`}
+              className={`flex-1 px-5 py-2.5 text-white font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2
+                ${requiresExplanation ? (isLoss ? 'bg-red-600 hover:bg-red-700' : 'bg-amber-600 hover:bg-amber-700') : 'bg-primary hover:bg-primary-hover'}`}
             >
               {isSubmitting ? 'Validation...' : (requiresExplanation ? `Valider écart ${isLoss ? 'manquant' : 'excédentaire'} ` : 'Fermer la caisse')}
               {!isSubmitting && <ChevronRight size={18} />}

@@ -410,7 +410,7 @@ export default function LoginPage() {
                                     Connexion en cours...
                                 </>
                             ) : (
-                                'SE CONNECTER'
+                                'Se connecter'
                             )}
                         </button>
                     </form>
@@ -432,8 +432,8 @@ export default function LoginPage() {
                 </div>
 
                 {/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-                <p className="text-center text-neutral-400 text-xs mt-6" id="login-footer">
-                    v1.0 &mdash; EduGoma360 &copy; {new Date().getFullYear()}
+                <p className="text-center text-neutral-500 text-xs mt-6" id="login-footer">
+                    v1.0 · EduGoma360 &copy; {new Date().getFullYear()}
                 </p>
             </div>
         </div>

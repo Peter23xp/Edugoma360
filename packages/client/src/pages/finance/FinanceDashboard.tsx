@@ -29,8 +29,8 @@ export default function FinanceDashboard() {
         <div className="space-y-4 pb-20">
             {/* ── Header ─────────────────────────────────────── */}
             <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
-                    <Wallet size={22} className="text-white" />
+                <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Wallet size={22} className="text-primary" />
                 </div>
                 <div>
                     <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
@@ -70,7 +70,7 @@ export default function FinanceDashboard() {
             </div>
 
             {/* ── Monthly Revenue Chart ──────────────────────── */}
-            <div className="bg-white rounded-xl border border-neutral-300/50 p-5">
+            <div className="bg-white rounded-lg border border-neutral-200 p-5">
                 <h3 className="text-sm font-semibold text-neutral-900 mb-4">Recettes mensuelles (FC)</h3>
                 {monthlyRevenue.length > 0 ? (
                     <ResponsiveContainer width="100%" height={280}>
@@ -106,9 +106,9 @@ function StatCard({
     subtext?: string;
 }) {
     return (
-        <div className="bg-white rounded-xl border border-neutral-300/50 p-4">
+        <div className="bg-white rounded-lg border border-neutral-200 p-4">
             <div className="flex items-center justify-between mb-2">
-                <p className="text-[10px] sm:text-xs text-neutral-500 uppercase font-semibold">{label}</p>
+                <p className="text-xs text-neutral-600 font-medium">{label}</p>
                 {icon}
             </div>
             <p className={`text-lg sm:text-2xl font-bold truncate ${accent}`}>{value}</p>

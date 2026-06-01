@@ -26,9 +26,9 @@ const getWeeks = (start?: string, end?: string) => {
 };
 
 const termStatusConfig = {
-    COMPLETED: { label: 'Terminé', badge: 'bg-green-100 text-green-700 border-green-200', bar: 'bg-green-500', icon: '✅', left: 'border-green-400' },
-    CURRENT: { label: 'En cours', badge: 'bg-blue-100 text-blue-700 border-blue-200', bar: 'bg-blue-500', icon: '🟢', left: 'border-blue-500' },
-    UPCOMING: { label: 'À venir', badge: 'bg-neutral-100 text-neutral-500 border-neutral-200', bar: 'bg-neutral-200', icon: '⏳', left: 'border-neutral-300' },
+    COMPLETED: { label: 'Terminé', badge: 'bg-green-100 text-green-700 border-green-200', bar: 'bg-green-500', icon: '✅', left: 'border-green-200 bg-green-50/40' },
+    CURRENT: { label: 'En cours', badge: 'bg-blue-100 text-blue-700 border-blue-200', bar: 'bg-blue-500', icon: '🟢', left: 'border-blue-200 bg-blue-50/40' },
+    UPCOMING: { label: 'À venir', badge: 'bg-neutral-100 text-neutral-500 border-neutral-200', bar: 'bg-neutral-200', icon: '⏳', left: 'border-neutral-200' },
 };
 
 function TermProgress({ term, onActivate }: { term: Term; onActivate?: (id: string) => void }) {
@@ -43,7 +43,7 @@ function TermProgress({ term, onActivate }: { term: Term; onActivate?: (id: stri
     const currentWeek = term.status === 'CURRENT' ? Math.min(totalWeeks, differenceInWeeks(now, start) + 1) : 0;
 
     return (
-        <div className={cn("pl-4 border-l-2 py-2 group/term", cfg.left)}>
+        <div className={cn("pl-3 py-2 border rounded-lg group/term", cfg.left)}>
             <div className="flex flex-wrap justify-between items-start gap-2 mb-1">
                 <div className="flex items-center gap-2">
                     <Navigation size={12} className="text-neutral-400 shrink-0" />

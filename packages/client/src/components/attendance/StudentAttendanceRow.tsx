@@ -66,7 +66,7 @@ export default function StudentAttendanceRow({
             data-student-id={student.id}
             className={cn(
                 'group border-b border-neutral-100 transition-colors duration-150',
-                isSelected ? 'bg-primary/5 border-l-2 border-l-primary' : 'hover:bg-neutral-50',
+                isSelected ? 'bg-primary/5 outline outline-1 outline-primary/30' : 'hover:bg-neutral-50',
                 currentStatus === 'ABSENT' && 'bg-red-50/40',
                 currentStatus === 'RETARD' && 'bg-orange-50/40',
             )}

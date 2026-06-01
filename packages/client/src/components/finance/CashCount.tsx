@@ -114,7 +114,7 @@ export function CashCount({ onValidate }: CashCountProps) {
         </button>
         <button 
           onClick={() => onValidate({ actualBalance, denominations: counts })}
-          className="px-4 py-3 bg-gradient-to-r from-primary to-primary-light text-white font-medium rounded-xl flex-1 hover:-translate-y-0.5 transition-all shadow-md hover:shadow-lg hover:shadow-primary/25 flex items-center justify-center gap-2"
+          className="px-4 py-3 bg-primary hover:bg-primary-hover text-white font-medium rounded-lg flex-1 transition-colors flex items-center justify-center gap-2"
         >
           Valider le comptage <ChevronRight size={18} />
         </button>

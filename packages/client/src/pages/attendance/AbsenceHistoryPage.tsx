@@ -68,7 +68,7 @@ export default function AbsenceHistoryPage() {
                 <div>
                     <h1 className="text-2xl font-black tracking-tight text-neutral-900 drop-shadow-sm flex items-center gap-3">
                         Historique des Absences
-                        <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-bold rounded-lg uppercase tracking-wider">
+                        <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-md">
                             Global
                         </span>
                     </h1>
@@ -82,16 +82,16 @@ export default function AbsenceHistoryPage() {
                 <div className="relative">
                     <button 
                         onClick={() => setIsExportOpen(!isExportOpen)}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-xl shadow-md transition-all active:scale-95 w-full sm:w-auto"
+                        className="flex items-center gap-2 px-4 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-medium rounded-lg transition-colors w-full sm:w-auto"
                     >
                         <Download size={18} />
                         Export
                     </button>
 
                     {isExportOpen && (
-                        <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-neutral-100 z-50 overflow-hidden">
+                        <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-neutral-200 z-50 overflow-hidden">
                             <div className="px-4 py-2 bg-neutral-50 border-b border-neutral-100">
-                                <span className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Format</span>
+                                <span className="text-xs font-semibold text-neutral-600">Format d'export</span>
                             </div>
                             <button 
                                 onClick={() => { exportData.mutate('excel'); setIsExportOpen(false); }}

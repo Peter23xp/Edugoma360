@@ -35,11 +35,11 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-neutral-300/50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden border border-neutral-200">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-br from-primary to-primary-dark text-white rounded-lg shadow-md shadow-primary/20">
+                        <div className="p-2 bg-primary/10 text-primary rounded-lg">
                             <ShieldCheck size={18} />
                         </div>
                         <div>
@@ -55,7 +55,7 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
                 {/* Body */}
                 <div className="px-6 py-5 space-y-5">
                     {/* Request details */}
-                    <div className="bg-neutral-50 p-4 rounded-xl border border-neutral-200 space-y-3">
+                    <div className="bg-neutral-50 p-4 rounded-lg border border-neutral-200 space-y-3">
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-xs text-neutral-500">Type de congé</p>
@@ -120,7 +120,7 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
                                 "flex-1 py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2",
                                 !observations.trim()
                                     ? "bg-neutral-100 text-neutral-400 cursor-not-allowed"
-                                    : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"
+                                    : "bg-red-50 hover:bg-red-100 text-red-700 border border-red-200"
                             )}
                         >
                             <XCircle size={14} /> Refuser
@@ -128,8 +128,8 @@ export default function AbsenceApprovalModal({ request, isOpen, onClose }: Absen
                         <button
                             onClick={() => mutation.mutate({ status: 'APPROVED', observations })}
                             disabled={mutation.isPending}
-                            className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl 
-                                       text-sm font-medium transition-all shadow-md flex items-center justify-center gap-2"
+                            className="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg
+                                       text-sm font-medium transition-colors flex items-center justify-center gap-2"
                         >
                             <CheckCircle2 size={14} /> Approuver
                         </button>

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Loader2 } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -113,26 +113,26 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
     };
 
     return (
-        <div className="fixed inset-0 bg-[#0F1E12]/55 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm overflow-y-auto">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl border border-neutral-200 flex flex-col">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-neutral-200">
-                    <h2 className="text-xl font-bold text-neutral-900">
+                <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
+                    <h2 className="text-base font-bold text-neutral-900">
                         {isEdit ? 'Modifier la classe' : 'Créer une classe'}
                     </h2>
                     <button
                         onClick={onClose}
-                        className="p-1 hover:bg-neutral-100 rounded transition-colors"
+                        className="p-2 hover:bg-neutral-100 text-neutral-400 rounded-lg transition-colors"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
                     {/* Section */}
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-neutral-600 mb-1.5">
                             Section <span className="text-red-500">*</span>
                         </label>
                         <select
@@ -141,9 +141,7 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
                                 setFormData({ ...formData, sectionId: e.target.value })
                             }
                             disabled={isEdit}
-                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg 
-                                       focus:ring-2 focus:ring-primary/20 focus:border-primary 
-                                       bg-white disabled:bg-neutral-100 disabled:cursor-not-allowed"
+                            className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-lg focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm text-neutral-900 disabled:bg-neutral-100 disabled:cursor-not-allowed"
                             required
                         >
                             <option value="">Sélectionnez une section</option>
@@ -162,7 +160,7 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
 
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-neutral-600 mb-1.5">
                             Nom de la classe <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -174,9 +172,7 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
                             }}
                             disabled={isEdit}
                             placeholder="Ex: 4ScA, 1TC-B, 5PédA"
-                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg 
-                                       focus:ring-2 focus:ring-primary/20 focus:border-primary
-                                       disabled:bg-neutral-100 disabled:cursor-not-allowed"
+                            className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-lg focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm text-neutral-900 disabled:bg-neutral-100 disabled:cursor-not-allowed"
                             required
                         />
                         {!isEdit && (
@@ -201,7 +197,7 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
 
                     {/* Max Students */}
                     <div>
-                        <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                        <label className="block text-xs font-semibold text-neutral-600 mb-1.5">
                             Effectif maximum <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -212,8 +208,7 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
                             onChange={(e) =>
                                 setFormData({ ...formData, maxStudents: parseInt(e.target.value) })
                             }
-                            className="w-full px-4 py-2.5 border border-neutral-300 rounded-lg 
-                                       focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                            className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-lg focus:bg-white focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm text-neutral-900"
                             required
                         />
                         <p className="text-xs text-neutral-500 mt-1">
@@ -222,23 +217,18 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
                     </div>
 
                     {/* Actions */}
-                    <div className="flex items-center justify-end gap-3 pt-4 border-t 
-                                    border-neutral-200">
+                    <div className="px-6 py-4 border-t border-neutral-200 flex gap-3 -mx-6">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="px-4 py-2 text-sm font-medium text-neutral-700 
-                                       hover:bg-neutral-100 rounded-lg transition-colors"
+                            className="px-4 py-2 text-sm font-medium border border-neutral-300 text-neutral-700 rounded-lg hover:bg-neutral-50 transition-colors"
                         >
                             Annuler
                         </button>
                         <button
                             type="submit"
                             disabled={mutation.isPending}
-                            className="flex items-center gap-2 px-6 py-2 bg-primary text-white 
-                                       rounded-lg hover:bg-primary-dark font-medium text-sm 
-                                       transition-colors disabled:opacity-50 
-                                       disabled:cursor-not-allowed w-full sm:w-auto"
+                            className="flex items-center justify-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover font-medium text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                         >
                             {mutation.isPending && <Loader2 size={16} className="animate-spin" />}
                             {isEdit ? 'Enregistrer' : 'Créer la classe'}
@@ -249,4 +239,3 @@ export default function ClassFormModal({ classId, onClose, onSuccess }: ClassFor
         </div>
     );
 }
-

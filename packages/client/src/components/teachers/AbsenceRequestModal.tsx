@@ -89,11 +89,11 @@ export default function AbsenceRequestModal({ isOpen, onClose }: AbsenceRequestM
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden border border-neutral-300/50">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg overflow-hidden border border-neutral-200">
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-br from-primary to-primary-dark text-white rounded-lg shadow-md shadow-primary/20">
+                        <div className="p-2 bg-primary/10 text-primary rounded-lg">
                             <Calendar size={18} />
                         </div>
                         <div>
@@ -223,9 +223,9 @@ export default function AbsenceRequestModal({ isOpen, onClose }: AbsenceRequestM
                         <button
                             type="submit"
                             disabled={mutation.isPending}
-                            className="flex-1 py-2.5 bg-gradient-to-r from-primary to-primary-light text-white 
-                                       rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-primary/25 
-                                       transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md 
+                            className="flex-1 py-2.5 bg-primary text-white
+                                       rounded-lg text-sm font-medium hover:bg-primary-hover
+                                       transition-colors disabled:opacity-40 disabled:cursor-not-allowed
                                        flex items-center justify-center gap-2"
                         >
                             {mutation.isPending ? 'Envoi...' : <><Send size={14} /> Soumettre</>}

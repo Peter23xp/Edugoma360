@@ -73,12 +73,12 @@ export default function StudentAbsenceModal({
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm" onClick={onClose} />
             
-            <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl z-10 overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-white w-full max-w-xl rounded-lg shadow-xl z-10 overflow-hidden flex flex-col max-h-[90vh]">
                 
                 {/* Header */}
                 <header className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
-                    <h2 className="text-lg font-black text-neutral-800 uppercase tracking-wide">
-                        {tab === 'edit' ? 'Modifier Justification' : 'Détails Absence'}
+                    <h2 className="text-base font-bold text-neutral-900">
+                        {tab === 'edit' ? 'Modifier la justification' : "Détails de l'absence"}
                     </h2>
                     <button 
                         onClick={onClose}
@@ -96,7 +96,7 @@ export default function StudentAbsenceModal({
                             <button
                                 onClick={() => setTab('details')}
                                 className={cn(
-                                    "pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors",
+                                    "pb-3 text-sm font-semibold border-b-2 transition-colors",
                                     tab === 'details' ? "border-primary text-primary" : "border-transparent text-neutral-400 hover:text-neutral-600"
                                 )}
                             >
@@ -105,7 +105,7 @@ export default function StudentAbsenceModal({
                             <button
                                 onClick={() => setTab('edit')}
                                 className={cn(
-                                    "pb-3 text-sm font-bold uppercase tracking-wide border-b-2 transition-colors",
+                                    "pb-3 text-sm font-semibold border-b-2 transition-colors",
                                     tab === 'edit' ? "border-primary text-primary" : "border-transparent text-neutral-400 hover:text-neutral-600"
                                 )}
                             >
@@ -118,8 +118,8 @@ export default function StudentAbsenceModal({
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                             
                             {/* Student Info Card */}
-                            <div className="bg-neutral-50 rounded-xl p-4 flex gap-4">
-                                <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center text-primary overflow-hidden shrink-0">
+                            <div className="bg-neutral-50 rounded-lg p-4 flex gap-4 border border-neutral-100">
+                                <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center text-primary overflow-hidden shrink-0">
                                     {absence.student.photoUrl ? (
                                         <img src={absence.student.photoUrl} alt="Photo" className="w-full h-full object-cover" />
                                     ) : (
@@ -133,7 +133,7 @@ export default function StudentAbsenceModal({
                                     <p className="text-sm font-medium text-neutral-500 font-mono">
                                         MT: {absence.student.matricule}
                                     </p>
-                                    <span className="inline-block mt-1 text-xs font-bold text-neutral-600 bg-neutral-200/60 px-2 py-0.5 rounded uppercase tracking-wider">
+                                    <span className="inline-block mt-1 text-xs font-medium text-neutral-600 bg-neutral-100 px-2 py-0.5 rounded">
                                         Classe : {absence.class.name}
                                     </span>
                                 </div>
@@ -141,9 +141,9 @@ export default function StudentAbsenceModal({
 
                             {/* Absence details */}
                             <div>
-                                <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3">L'Absence</h4>
+                                <h4 className="text-xs font-semibold text-neutral-600 mb-3">L'absence</h4>
                                 <div className="grid grid-cols-2 gap-3">
-                                    <div className="bg-neutral-50 p-3 rounded-xl">
+                                    <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100">
                                         <div className="flex items-center gap-2 text-neutral-500 mb-1">
                                             <CalendarDays size={14} />
                                             <span className="text-xs font-semibold">Date & Période</span>
@@ -156,7 +156,7 @@ export default function StudentAbsenceModal({
                                               absence.period === 'AFTERNOON' || absence.period === 'APRES_MIDI' ? 'Après-midi (12h30-17h)' : 'Soir (17h-20h)'})
                                         </p>
                                     </div>
-                                    <div className="bg-neutral-50 p-3 rounded-xl">
+                                    <div className="bg-neutral-50 p-3 rounded-lg border border-neutral-100">
                                         <div className="flex items-center gap-2 text-neutral-500 mb-1">
                                             <StatusIcon size={14} />
                                             <span className="text-xs font-semibold">Statut</span>
@@ -172,11 +172,11 @@ export default function StudentAbsenceModal({
                                         </div>
                                         <div className="flex items-center gap-1 mt-1">
                                             {absence.isJustified ? (
-                                                <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 uppercase tracking-widest bg-green-50 px-1.5 py-0.5 rounded">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 font-semibold bg-green-50 px-1.5 py-0.5 rounded">
                                                     <CheckCircle2 size={12} /> Justifié
                                                 </div>
                                             ) : (
-                                                <div className="flex items-center gap-1.5 text-xs font-bold text-red-500 uppercase tracking-widest bg-red-50 px-1.5 py-0.5 rounded">
+                                                <div className="flex items-center gap-1.5 text-xs font-bold text-red-500 font-semibold bg-red-50 px-1.5 py-0.5 rounded">
                                                     <XCircle size={12} /> Non justifié
                                                 </div>
                                             )}
@@ -193,7 +193,7 @@ export default function StudentAbsenceModal({
                                     <p className="text-sm text-neutral-700 italic">
                                         {absence.remark ? `« ${absence.remark} »` : "Aucune remarque enregistrée."}
                                     </p>
-                                    <div className="mt-2 text-[10px] text-neutral-400 uppercase tracking-wider">
+                                    <div className="mt-2 text-[10px] text-neutral-500">
                                         Enregistré par : {absence.createdBy.nom} ({absence.createdBy.role})
                                     </div>
                                 </div>
@@ -201,8 +201,8 @@ export default function StudentAbsenceModal({
 
                             {/* 30 Days Stats */}
                             <div>
-                                <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                                    <AlertTriangle size={14} /> 
+                                <h4 className="text-xs font-semibold text-neutral-600 mb-3 flex items-center gap-2">
+                                    <AlertTriangle size={14} className="text-accent" />
                                     Historique 30 derniers jours
                                 </h4>
                                 
@@ -210,21 +210,21 @@ export default function StudentAbsenceModal({
                                     <div className="h-20 bg-neutral-50 rounded-xl animate-pulse" />
                                 ) : statsData ? (
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                        <div className="bg-red-50 p-3 rounded-xl border border-red-100 flex flex-col items-center justify-center text-center">
+                                        <div className="bg-red-50 p-3 rounded-lg border border-red-100 flex flex-col items-center justify-center text-center">
                                             <span className="text-2xl font-black text-red-600 leading-none">{statsData.stats.notJustifiedAbsences}</span>
-                                            <span className="text-[10px] uppercase tracking-wider font-bold text-red-700/70 mt-1">Abs. NJ</span>
+                                            <span className="text-[10px] font-semibold text-red-700/70 mt-1">Abs. NJ</span>
                                         </div>
-                                        <div className="bg-green-50 p-3 rounded-xl border border-green-100 flex flex-col items-center justify-center text-center">
+                                        <div className="bg-green-50 p-3 rounded-lg border border-green-100 flex flex-col items-center justify-center text-center">
                                             <span className="text-2xl font-black text-green-600 leading-none">{statsData.stats.justifiedAbsences}</span>
-                                            <span className="text-[10px] uppercase tracking-wider font-bold text-green-700/70 mt-1">Abs. J</span>
+                                            <span className="text-[10px] font-semibold text-green-700/70 mt-1">Abs. J</span>
                                         </div>
-                                        <div className="bg-orange-50 p-3 rounded-xl border border-orange-100 flex flex-col items-center justify-center text-center">
+                                        <div className="bg-orange-50 p-3 rounded-lg border border-orange-100 flex flex-col items-center justify-center text-center">
                                             <span className="text-2xl font-black text-orange-600 leading-none">{statsData.stats.totalLates}</span>
-                                            <span className="text-[10px] uppercase tracking-wider font-bold text-orange-700/70 mt-1">Retards</span>
+                                            <span className="text-[10px] font-semibold text-orange-700/70 mt-1">Retards</span>
                                         </div>
-                                        <div className="bg-primary/5 p-3 rounded-xl border border-primary/10 flex flex-col items-center justify-center text-center">
+                                        <div className="bg-primary/5 p-3 rounded-lg border border-primary/10 flex flex-col items-center justify-center text-center">
                                             <span className="text-2xl font-black text-primary leading-none">{statsData.stats.attendanceRate}%</span>
-                                            <span className="text-[10px] uppercase tracking-wider font-bold text-primary/70 mt-1">Présence</span>
+                                            <span className="text-[10px] font-semibold text-primary/70 mt-1">Présence</span>
                                         </div>
                                     </div>
                                 ) : (
@@ -238,12 +238,12 @@ export default function StudentAbsenceModal({
                     {tab === 'edit' && canEdit && (
                         <form onSubmit={handleSave} className="space-y-6 animate-in fade-in slide-in-from-right-2 duration-300">
                             
-                            <div className="bg-orange-50/50 border border-orange-100 rounded-xl p-4">
+                            <div className="bg-orange-50/50 border border-orange-100 rounded-lg p-4">
                                 <h3 className="font-bold text-neutral-800 text-sm mb-4">Statut de l'absence</h3>
                                 
                                 <div className="space-y-3">
                                     <label className={cn(
-                                        "flex items-start gap-3 p-3 rounded-xl border-2 transition-colors cursor-pointer",
+                                        "flex items-start gap-3 p-3 rounded-lg border-2 transition-colors cursor-pointer",
                                         !isJustified ? "border-red-500 bg-red-50/50" : "border-neutral-200 bg-white hover:bg-neutral-50"
                                     )}>
                                         <input 
@@ -261,7 +261,7 @@ export default function StudentAbsenceModal({
                                     </label>
 
                                     <label className={cn(
-                                        "flex items-start gap-3 p-3 rounded-xl border-2 transition-colors cursor-pointer",
+                                        "flex items-start gap-3 p-3 rounded-lg border-2 transition-colors cursor-pointer",
                                         isJustified ? "border-green-500 bg-green-50/50" : "border-neutral-200 bg-white hover:bg-neutral-50"
                                     )}>
                                         <input 
@@ -288,7 +288,7 @@ export default function StudentAbsenceModal({
                                     onChange={(e) => setRemark(e.target.value)}
                                     placeholder="Ex: Certificat médical reçu ce matin, rendez-vous consulaire..."
                                     rows={3}
-                                    className="w-full bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
+                                    className="w-full bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none"
                                 />
                             </div>
 
@@ -296,7 +296,7 @@ export default function StudentAbsenceModal({
                             {isJustified && (
                                 <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                                     <label className="text-xs font-bold text-neutral-600 ml-1">Pièce justificative (Optionnel)</label>
-                                    <div className="w-full border-2 border-dashed border-neutral-300 rounded-xl p-6 flex flex-col items-center justify-center text-neutral-500 hover:bg-neutral-50 hover:border-primary/50 transition-colors cursor-pointer">
+                                    <div className="w-full border-2 border-dashed border-neutral-300 rounded-lg p-6 flex flex-col items-center justify-center text-neutral-500 hover:bg-neutral-50 hover:border-primary/50 transition-colors cursor-pointer">
                                         <UploadCloud size={24} className="mb-2" />
                                         <p className="text-sm font-medium">Glisser-déposer un fichier</p>
                                         <p className="text-xs text-neutral-400 mt-1">.pdf, .jpg, .png (Max: 5Mo)</p>
@@ -316,17 +316,17 @@ export default function StudentAbsenceModal({
                     {tab === 'details' ? (
                         <>
                             <div className="flex items-center justify-center gap-2 w-full sm:w-auto">
-                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors w-full sm:w-auto shadow-sm">
+                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-medium rounded-lg transition-colors w-full sm:w-auto">
                                     <Phone size={16} /> Contacter
                                 </button>
-                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors w-full sm:w-auto shadow-sm">
+                                <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-medium rounded-lg transition-colors w-full sm:w-auto">
                                     <Mail size={16} /> Email
                                 </button>
                             </div>
                             {canEdit && (
                                 <button 
                                     onClick={() => setTab('edit')}
-                                    className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl shadow-md transition-all active:scale-95"
+                                    className="w-full sm:w-auto px-6 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-semibold rounded-lg transition-colors"
                                 >
                                     Modifier
                                 </button>
@@ -336,7 +336,7 @@ export default function StudentAbsenceModal({
                         <div className="w-full sm:w-auto flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 sm:ml-auto">
                             <button 
                                 onClick={() => setTab('details')}
-                                className="w-full sm:w-auto px-6 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-bold rounded-xl transition-colors shadow-sm"
+                                className="w-full sm:w-auto px-6 py-2.5 bg-white border border-neutral-200 hover:bg-neutral-50 text-neutral-700 text-sm font-medium rounded-lg transition-colors"
                             >
                                 Annuler
                             </button>
@@ -344,7 +344,7 @@ export default function StudentAbsenceModal({
                             <button 
                                 onClick={handleSave}
                                 disabled={updateJustification.isPending}
-                                className="w-full sm:w-auto px-8 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-bold rounded-xl shadow-md transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="w-full sm:w-auto px-8 py-2.5 bg-primary hover:bg-primary-hover text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {updateJustification.isPending ? (
                                     <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>

@@ -128,8 +128,8 @@ export default function PaymentsHistoryPage() {
       {/* ── Header ─────────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
-            <History size={22} className="text-white" />
+          <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            <History size={22} className="text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
@@ -164,9 +164,9 @@ export default function PaymentsHistoryPage() {
             onClick={handleReport}
             disabled={isGeneratingReport}
             className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium
-                       bg-gradient-to-r from-primary to-primary-light text-white
-                       rounded-xl hover:shadow-lg hover:shadow-primary/25
-                       transition-all duration-200 shadow-md
+                       bg-primary hover:bg-primary-hover text-white
+                       rounded-lg
+                       transition-all duration-200
                        disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
           >
             {isGeneratingReport ? (

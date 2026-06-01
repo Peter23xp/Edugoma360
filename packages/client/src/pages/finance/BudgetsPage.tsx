@@ -89,8 +89,8 @@ export default function BudgetsPage() {
       {/* ─── Header ───────────────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl bg-gradient-to-br from-[#0D47A1] to-[#1565C0] flex items-center justify-center shadow-lg shadow-[#0D47A1]/20">
-            <PiggyBank size={20} className="text-white" />
+          <div className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            <PiggyBank size={20} className="text-primary" />
           </div>
           <div className="min-w-0">
             <h1 className="text-lg sm:text-xl font-bold text-neutral-900 tracking-tight truncate">Budgets &amp; Prévisions</h1>
@@ -106,7 +106,7 @@ export default function BudgetsPage() {
             }
             setShowForm(true);
           }}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary to-primary-light text-white rounded-xl text-sm font-semibold shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 transition-all whitespace-nowrap shrink-0 w-full sm:w-auto"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-lg text-sm font-semibold transition-all whitespace-nowrap shrink-0 w-full sm:w-auto"
         >
           <Edit3 size={14} />
           <span>{budget ? 'Modifier le budget' : 'Configurer le budget'}</span>

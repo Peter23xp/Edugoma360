@@ -108,7 +108,7 @@ export default function JustificationCard({ data, onApprove, onReject, onViewDoc
                 {/* Absence Details */}
                 <div className="bg-neutral-50 rounded-lg p-3 space-y-2 text-sm border border-neutral-100">
                     <div className="grid grid-cols-[80px_1fr] gap-2">
-                        <span className="text-neutral-500 font-medium">ABSENCE :</span>
+                        <span className="text-neutral-500 font-medium">Absence :</span>
                         <div className="text-neutral-800">
                             Date : {new Date(data.absence.date).toLocaleDateString('fr-FR')} <br/>
                             <span className="text-neutral-500 text-xs">Période : {data.absence.period}</span>
@@ -116,7 +116,7 @@ export default function JustificationCard({ data, onApprove, onReject, onViewDoc
                     </div>
                     
                     <div className="grid grid-cols-[80px_1fr] gap-2">
-                        <span className="text-neutral-500 font-medium">MOTIF :</span>
+                        <span className="text-neutral-500 font-medium">Motif :</span>
                         <div className="text-neutral-800">
                             <span className="font-medium">{reasonLabels[data.reason] || data.reason}</span>
                             <p className="text-xs text-neutral-600 mt-0.5 mt-1 border-l-2 border-neutral-300 pl-2">
@@ -128,7 +128,7 @@ export default function JustificationCard({ data, onApprove, onReject, onViewDoc
 
                 {/* Document */}
                 <div>
-                    <span className="text-xs font-medium text-neutral-500 uppercase tracking-wider mb-2 block">Pièce justificative</span>
+                    <span className="text-xs font-medium text-neutral-600 mb-2 block">Pièce justificative</span>
                     <div className="flex items-center gap-3 p-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors">
                         <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
                             <FileText size={16} />
@@ -168,7 +168,7 @@ export default function JustificationCard({ data, onApprove, onReject, onViewDoc
                     <div className="flex items-start gap-2">
                         <User size={14} className="text-neutral-400 mt-0.5" />
                         <div className="text-xs">
-                            <p className="text-neutral-500 mb-0.5">SOUMIS PAR :</p>
+                            <p className="text-neutral-500 mb-0.5">Soumis par :</p>
                             <p className="font-medium text-neutral-800">
                                 {data.submittedBy.nom} ({data.submittedBy.relationship})
                             </p>

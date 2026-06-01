@@ -120,20 +120,20 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <RecentPayments payments={d?.recentPayments ?? []} isLoading={isLoading} />
             <TodayAbsences absences={d?.absencesToday ?? []} isLoading={isLoading} />
-            <div className="bg-white border rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-700 mb-3">Prochains événements</h3>
+            <div className="bg-white border border-neutral-200 rounded-lg p-4">
+              <h3 className="text-sm font-semibold text-neutral-800 mb-3">Prochains événements</h3>
               {isLoading ? (
                 <div className="space-y-2">
-                  {[...Array(3)].map((_, i) => <div key={i} className="h-8 bg-gray-100 rounded animate-pulse" />)}
+                  {[...Array(3)].map((_, i) => <div key={i} className="h-8 bg-neutral-100 rounded animate-pulse" />)}
                 </div>
               ) : (d?.nextEvents ?? []).length === 0 ? (
-                <p className="text-sm text-gray-400 text-center py-4">Aucun événement à venir</p>
+                <p className="text-sm text-neutral-500 text-center py-4">Aucun événement à venir</p>
               ) : (
                 <ul className="space-y-2">
                   {(d?.nextEvents ?? []).map((e, i) => (
                     <li key={i} className="text-sm">
-                      <p className="font-medium truncate">{e.title}</p>
-                      <p className="text-xs text-gray-400">{new Date(e.date).toLocaleDateString('fr-FR')}</p>
+                      <p className="font-medium text-neutral-900 truncate">{e.title}</p>
+                      <p className="text-xs text-neutral-500">{new Date(e.date).toLocaleDateString('fr-FR')}</p>
                     </li>
                   ))}
                 </ul>

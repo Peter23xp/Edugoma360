@@ -20,7 +20,7 @@ export default function StatusBar({ cashSession, classesDone, classesTotal, last
 
   return (
     <div className="bg-[#1B5E20]/5 border-b border-[#1B5E20]/20 px-4 py-2">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-700">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-700">
         <span className="flex items-center gap-1.5">
           {cashSession.isOpen ? (
             <CheckCircle className="w-3.5 h-3.5 text-green-600" />
@@ -34,7 +34,7 @@ export default function StatusBar({ cashSession, classesDone, classesTotal, last
 
         {classesTotal > 0 && (
           <>
-            <span className="text-gray-300 hidden sm:inline">|</span>
+            <span className="text-neutral-300 hidden sm:inline">|</span>
             <span className="flex items-center gap-1.5">
               <ClipboardList className={`w-3.5 h-3.5 ${allClassesDone ? 'text-green-600' : 'text-orange-500'}`} />
               Appel : {classesDone}/{classesTotal} classe{classesTotal > 1 ? 's' : ''}
@@ -44,9 +44,9 @@ export default function StatusBar({ cashSession, classesDone, classesTotal, last
 
         {lastSync && (
           <>
-            <span className="text-gray-300 hidden sm:inline">|</span>
+            <span className="text-neutral-300 hidden sm:inline">|</span>
             <span className="flex items-center gap-1.5">
-              <RefreshCw className="w-3 h-3 text-gray-400" />
+              <RefreshCw className="w-3 h-3 text-neutral-400" />
               Sync : {timeAgo(lastSync)}
             </span>
           </>

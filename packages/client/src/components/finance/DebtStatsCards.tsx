@@ -1,4 +1,3 @@
-
 import { AlertCircle, Users, TrendingDown } from 'lucide-react';
 import { formatFC } from '@edugoma360/shared';
 
@@ -13,48 +12,38 @@ interface DebtStatsCardsProps {
 export function DebtStatsCards({ stats }: DebtStatsCardsProps) {
   const cards = [
     {
-      label: 'Total des Créances',
+      label: 'Créances totales',
       value: formatFC(stats.totalDebt),
       icon: TrendingDown,
-      color: 'text-red-600',
-      bg: 'bg-red-50',
-      border: 'border-red-100'
+      tone: 'text-error bg-error-light',
     },
     {
-      label: 'Retard > 90 jours',
+      label: 'Retards de plus de 90 jours',
       value: formatFC(stats.over90Days),
       icon: AlertCircle,
-      color: 'text-orange-600',
-      bg: 'bg-orange-50',
-      border: 'border-orange-100'
+      tone: 'text-accent bg-accent-light',
     },
     {
       label: 'Élèves concernés',
-      value: `${stats.studentsCount} élèves`,
+      value: `${stats.studentsCount} élève${stats.studentsCount > 1 ? 's' : ''}`,
       icon: Users,
-      color: 'text-blue-600',
-      bg: 'bg-blue-50',
-      border: 'border-blue-100'
-    }
+      tone: 'text-info bg-info-light',
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      {cards.map((card, i) => (
-        <div 
-          key={i} 
-          className={`p-5 rounded-2xl border ${card.border} ${card.bg} shadow-sm flex items-center gap-4`}
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {cards.map((card) => (
+        <div
+          key={card.label}
+          className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm"
         >
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center bg-white shadow-sm`}>
-            <card.icon className={card.color} size={24} />
+          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${card.tone}`}>
+            <card.icon className="h-5 w-5" />
           </div>
-          <div>
-            <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-              {card.label}
-            </p>
-            <p className={`text-xl font-bold ${card.color}`}>
-              {card.value}
-            </p>
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-neutral-600">{card.label}</p>
+            <p className="mt-1 text-xl font-bold text-neutral-900">{card.value}</p>
           </div>
         </div>
       ))}

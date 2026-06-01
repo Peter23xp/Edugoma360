@@ -40,45 +40,34 @@ export function DebtFilters({ filters, onFiltersChange, onSendBulkReminders }: D
   }, []);
 
   return (
-    <div className="bg-white rounded-xl border border-neutral-300/50 p-4 shadow-sm">
-      <div className="flex flex-col lg:flex-row gap-3">
-        {/* Search bar */}
-        <div className="relative flex-1 min-w-0">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+    <div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm">
+      <div className="flex flex-col gap-3 lg:flex-row">
+        <div className="relative min-w-0 flex-1">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
-            placeholder="Rechercher par nom, post-nom ou matricule..."
+            placeholder="Rechercher par nom, post-nom ou matricule"
             value={localSearch}
             onChange={(e) => handleSearchInput(e.target.value)}
-            className="w-full pl-10 pr-10 py-2.5 border border-neutral-300 rounded-lg 
-                       focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none 
-                       text-sm transition-all duration-200 bg-neutral-100/30 
-                       hover:border-neutral-400 placeholder:text-neutral-400"
+            className="w-full rounded-lg border border-neutral-300 bg-white py-2.5 pl-10 pr-10 text-sm text-neutral-900 outline-none transition-colors placeholder:text-neutral-500 hover:border-neutral-400 focus:border-primary focus:ring-2 focus:ring-primary/10"
           />
           {localSearch && (
             <button
               onClick={clearSearch}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 
-                         rounded-full hover:bg-neutral-200 text-neutral-400 
-                         hover:text-neutral-600 transition-colors"
+              className="absolute right-3 top-1/2 rounded-lg p-1 -translate-y-1/2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700"
               aria-label="Effacer la recherche"
             >
-              <X size={14} />
+              <X className="h-3.5 w-3.5" />
             </button>
           )}
         </div>
 
-        {/* Filters and Actions row */}
-        <div className="flex flex-col sm:flex-row gap-2">
-          {/* Class filter */}
-          <div className="relative sm:min-w-[160px]">
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="relative sm:min-w-[168px]">
             <select
               value={filters.classId || ''}
               onChange={(e) => onFiltersChange({ ...filters, classId: e.target.value || undefined })}
-              className="w-full appearance-none px-3 py-2.5 pr-8 border border-neutral-300 
-                         rounded-lg text-sm bg-white hover:border-neutral-400 
-                         focus:ring-2 focus:ring-primary/20 focus:border-primary 
-                         outline-none transition-all duration-200 cursor-pointer"
+              className="w-full appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2.5 pr-8 text-sm text-neutral-900 outline-none transition-colors hover:border-neutral-400 focus:border-primary focus:ring-2 focus:ring-primary/10"
             >
               <option value="">Toutes les classes</option>
               {classes.map((c: any) => (
@@ -87,33 +76,29 @@ export function DebtFilters({ filters, onFiltersChange, onSendBulkReminders }: D
                 </option>
               ))}
             </select>
-            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
           </div>
 
-          {/* Level filter */}
-          <div className="relative sm:min-w-[160px]">
+          <div className="relative sm:min-w-[168px]">
             <select
               value={filters.level || ''}
               onChange={(e) => onFiltersChange({ ...filters, level: e.target.value || undefined })}
-              className="w-full appearance-none px-3 py-2.5 pr-8 border border-neutral-300 
-                         rounded-lg text-sm bg-white hover:border-neutral-400 
-                         focus:ring-2 focus:ring-primary/20 focus:border-primary 
-                         outline-none transition-all duration-200 cursor-pointer"
+              className="w-full appearance-none rounded-lg border border-neutral-300 bg-white px-3 py-2.5 pr-8 text-sm text-neutral-900 outline-none transition-colors hover:border-neutral-400 focus:border-primary focus:ring-2 focus:ring-primary/10"
             >
               <option value="">Tous les niveaux</option>
-              <option value="LEGER">🟢 Retard Léger</option>
-              <option value="MOYEN">🟡 Retard Moyen</option>
-              <option value="ELEVE">🔴 Priorité Élevée</option>
+              <option value="LEGER">Retard léger</option>
+              <option value="MOYEN">Retard moyen</option>
+              <option value="ELEVE">Priorité élevée</option>
             </select>
-            <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" />
+            <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-neutral-400" />
           </div>
 
-          {/* Bulk Action */}
           <button
             onClick={onSendBulkReminders}
-            className="ml-auto sm:ml-2 px-5 py-2.5 bg-neutral-900 hover:bg-black text-white text-sm font-semibold rounded-lg shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-hover"
           >
-            <Send size={16} /> Rappels groupés
+            <Send className="h-4 w-4" />
+            Rappels groupés
           </button>
         </div>
       </div>

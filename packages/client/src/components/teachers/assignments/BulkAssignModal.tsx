@@ -52,12 +52,12 @@ export const BulkAssignModal: React.FC<BulkAssignModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#0F1E12]/45 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-neutral-300/50 flex flex-col">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-neutral-200 flex flex-col">
 
                 {/* Header */}
                 <div className="px-6 py-4 border-b border-neutral-200 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-gradient-to-br from-primary to-primary-dark text-white rounded-lg shadow-md shadow-primary/20">
+                        <div className="p-2 bg-primary/10 text-primary rounded-lg">
                             <Layers size={18} />
                         </div>
                         <div>
@@ -222,9 +222,9 @@ export const BulkAssignModal: React.FC<BulkAssignModalProps> = ({
                     <button
                         disabled={!teacherId || !subjectId || selectedClasses.length === 0}
                         onClick={handleBulkAssign}
-                        className="flex-[2] py-2.5 bg-gradient-to-r from-primary to-primary-light text-white 
-                                   rounded-xl text-sm font-medium hover:shadow-lg hover:shadow-primary/25 
-                                   transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-md"
+                        className="flex-[2] py-2.5 bg-primary text-white
+                                   rounded-lg text-sm font-medium hover:bg-primary-hover
+                                   transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         Affecter aux {selectedClasses.length} classes
                     </button>

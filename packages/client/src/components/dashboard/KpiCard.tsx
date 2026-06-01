@@ -21,27 +21,27 @@ export default function KpiCard({
   const content = (
     <div className={cn(
       'bg-white rounded-lg border p-3 flex items-center gap-3 h-20 transition-shadow',
-      alert ? 'border-red-300 bg-red-50' : 'hover:shadow-sm',
+      alert ? 'border-red-300 bg-red-50' : 'border-neutral-200 hover:shadow-sm',
       href && 'cursor-pointer',
     )}>
       <div className={cn('p-2 rounded-lg shrink-0', iconColor)}>
         <Icon className="w-5 h-5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs text-gray-500 truncate">{title}</p>
+        <p className="text-xs text-neutral-600 truncate">{title}</p>
         {isLoading ? (
-          <div className="h-6 w-16 bg-gray-200 rounded animate-pulse mt-1" />
+          <div className="h-6 w-16 bg-neutral-200 rounded animate-pulse mt-1" />
         ) : (
-          <p className="text-xl font-bold text-gray-900 leading-tight truncate">{value}</p>
+          <p className="text-xl font-bold text-neutral-900 leading-tight truncate">{value}</p>
         )}
         {subtitle && !isLoading && (
-          <p className="text-xs text-gray-400 truncate">{subtitle}</p>
+          <p className="text-xs text-neutral-500 truncate">{subtitle}</p>
         )}
       </div>
       {trend && !isLoading && (
         <div className={cn(
           'text-xs font-medium shrink-0',
-          trend.isGood ? 'text-green-600' : 'text-red-600',
+          trend.isGood ? 'text-green-700' : 'text-red-700',
         )}>
           {trend.direction === 'up' ? '↑' : '↓'} {trend.value}%
         </div>

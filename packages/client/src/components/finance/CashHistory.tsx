@@ -36,13 +36,13 @@ export function CashHistory({ onClose }: CashHistoryProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F1E12]/55 p-4">
-      <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl flex flex-col border border-neutral-200 max-h-[92vh]">
+      <div className="bg-white rounded-lg w-full max-w-2xl shadow-xl flex flex-col border border-neutral-200 max-h-[92vh]">
 
         {/* Header */}
         <div className="flex-none flex justify-between items-center p-5 border-b border-neutral-100 bg-neutral-50/60">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-md shadow-primary/20">
-              <History size={18} className="text-white" />
+            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+              <History size={18} />
             </div>
             <div>
               <h2 className="text-base font-bold text-neutral-900 tracking-tight">Historique de Caisse</h2>
@@ -87,7 +87,7 @@ export function CashHistory({ onClose }: CashHistoryProps) {
                     key={s.id}
                     type="button"
                     onClick={() => setSelected(s)}
-                    className={`text-left p-4 border-b border-neutral-50 hover:bg-primary/5 transition-colors flex items-start gap-3 ${isSelected ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}
+                    className={`text-left p-4 border-b border-neutral-100 hover:bg-primary/5 transition-colors flex items-start gap-3 ${isSelected ? 'bg-primary/5' : ''}`}
                   >
                     <div className="w-8 h-8 rounded-lg bg-neutral-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Wallet size={14} className="text-neutral-500" />

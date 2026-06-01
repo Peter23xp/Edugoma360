@@ -4,6 +4,14 @@ import { smsService } from '../sms/sms.service';
 import { subDays, startOfDay, endOfDay, addMonths } from 'date-fns';
 
 export class DebtsService {
+  private normalizeSearch(value: string) {
+    return value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
   async getDebts(schoolId: string, query: { classId?: string; level?: string; minAmount?: number; page?: number; limit?: number; search?: string }) {
     const page = query.page || 1;
     const limit = query.limit || 50;
@@ -19,21 +27,18 @@ export class DebtsService {
       where: { schoolId, isActive: true },
     });
 
-    const searchFilter = query.search ? {
-      OR: [
-        { nom: { contains: query.search, mode: 'insensitive' as any } },
-        { postNom: { contains: query.search, mode: 'insensitive' as any } },
-        { prenom: { contains: query.search, mode: 'insensitive' as any } },
-        { matricule: { contains: query.search, mode: 'insensitive' as any } },
-      ]
-    } : {};
+    const searchTerms = query.search
+      ?.trim()
+      .split(/\s+/)
+      .filter(Boolean) || [];
+
+    const normalizedSearchTerms = searchTerms.map((term) => this.normalizeSearch(term));
 
     // 2. Get students with their payments and enrollments
     const students = await prisma.student.findMany({
       where: {
         schoolId,
         isActive: true,
-        ...searchFilter,
         ...(query.classId ? { enrollments: { some: { classId: query.classId, academicYearId: academicYear.id } } } : {})
       },
       include: {
@@ -49,10 +54,24 @@ export class DebtsService {
       }
     });
 
+    const matchingStudents = normalizedSearchTerms.length > 0
+      ? students.filter((student) => {
+          const searchable = this.normalizeSearch([
+            student.nom,
+            student.postNom,
+            student.prenom,
+            student.matricule,
+            student.enrollments[0]?.class?.name,
+          ].filter(Boolean).join(' '));
+
+          return normalizedSearchTerms.every((term) => searchable.includes(term));
+        })
+      : students;
+
     const now = new Date();
     
     // Logic for "Due Fees"
-    const debts = students.map(student => {
+    const debts = matchingStudents.map(student => {
       let totalDue = 0;
       let oldestUnpaidDate: Date | null = null;
       

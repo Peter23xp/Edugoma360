@@ -4,25 +4,25 @@ import { useActiveAnnouncements, Announcement } from '../../hooks/useAnnouncemen
 
 const PRIORITY_STYLES = {
   INFO: {
-    wrapper: 'bg-blue-50 border-l-4 border-[#0D47A1]',
+    wrapper: 'bg-blue-50 border border-[#0D47A1]/25',
     icon: Info,
     iconColor: 'text-[#0D47A1]',
     labelColor: 'text-[#0D47A1]',
-    label: 'INFO',
+    label: 'Info',
   },
   URGENT: {
-    wrapper: 'bg-orange-50 border-l-4 border-[#F57F17]',
+    wrapper: 'bg-orange-50 border border-[#F57F17]/30',
     icon: AlertTriangle,
     iconColor: 'text-[#F57F17]',
-    labelColor: 'text-[#F57F17]',
-    label: 'URGENT',
+    labelColor: 'text-[#E65100]',
+    label: 'Urgent',
   },
   CRITIQUE: {
-    wrapper: 'bg-red-50 border-l-4 border-[#C62828] animate-pulse',
+    wrapper: 'bg-red-50 border border-[#C62828]/30 animate-pulse',
     icon: AlertOctagon,
     iconColor: 'text-[#C62828]',
     labelColor: 'text-[#C62828]',
-    label: 'ALERTE',
+    label: 'Alerte',
   },
 };
 
@@ -45,14 +45,14 @@ function SingleBanner({ ann, onDismiss }: { ann: Announcement; onDismiss: (id: s
       <Icon className={`h-5 w-5 flex-shrink-0 mt-0.5 ${cfg.iconColor}`} />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className={`text-xs font-bold uppercase tracking-wide ${cfg.labelColor}`}>{cfg.label}</span>
-          <span className="text-sm font-semibold text-gray-900">{ann.titre}</span>
+          <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${cfg.labelColor} bg-current/10`}>{cfg.label}</span>
+          <span className="text-sm font-semibold text-neutral-900">{ann.titre}</span>
         </div>
-        <p className={`text-sm text-gray-600 mt-0.5 ${!expanded ? 'line-clamp-1' : ''}`}>{ann.message}</p>
+        <p className={`text-sm text-neutral-700 mt-0.5 ${!expanded ? 'line-clamp-1' : ''}`}>{ann.message}</p>
         {ann.message.length > 80 && (
           <button
             onClick={() => setExpanded((e) => !e)}
-            className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-0.5 mt-1"
+            className="text-xs text-neutral-500 hover:text-neutral-700 flex items-center gap-0.5 mt-1"
           >
             {expanded ? <><ChevronUp className="h-3 w-3" /> Réduire</> : <><ChevronDown className="h-3 w-3" /> Voir plus</>}
           </button>
@@ -61,7 +61,7 @@ function SingleBanner({ ann, onDismiss }: { ann: Announcement; onDismiss: (id: s
       {canClose && (
         <button
           onClick={() => onDismiss(ann.id)}
-          className="text-gray-400 hover:text-gray-600 flex-shrink-0 p-0.5 rounded hover:bg-black/5"
+          className="text-neutral-500 hover:text-neutral-700 flex-shrink-0 p-0.5 rounded hover:bg-black/5"
           aria-label="Fermer"
         >
           <X className="h-4 w-4" />

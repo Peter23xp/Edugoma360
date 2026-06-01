@@ -234,8 +234,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             if (item.children) {
               return (
                 <div key={item.label} className="space-y-0.5">
-                  <p className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">
-                    <item.icon size={14} />
+                  <p className="flex items-center gap-2 px-3 pt-4 pb-1.5 text-xs font-semibold text-neutral-700">
+                    <item.icon size={14} className="text-neutral-500" />
                     {item.label}
                   </p>
                   {item.children.map((child) => (

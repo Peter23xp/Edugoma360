@@ -224,7 +224,7 @@ export function BudgetForm({ academicYearId, academicYearLabel, existing, onSave
             type="button"
             onClick={handleSubmit}
             disabled={isSaving}
-            className="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary to-primary-light rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-5 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-hover rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSaving ? <RefreshCw size={14} className="animate-spin" /> : <Save size={14} />}
             {isSaving ? 'Enregistrement...' : 'Enregistrer le budget'}

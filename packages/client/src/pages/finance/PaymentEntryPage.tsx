@@ -92,8 +92,8 @@ export function PaymentEntryPage() {
       {/* ── Header ─────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-lg shadow-primary/20">
-            <Receipt size={22} className="text-white" />
+          <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+            <Receipt size={22} className="text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-neutral-900 tracking-tight">
@@ -204,10 +204,10 @@ export function PaymentEntryPage() {
                   onClick={handleNext}
                   disabled={(step === 1 && !student) || (step === 2 && selectedFeeIds.length === 0)}
                   className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium
-                             bg-gradient-to-r from-primary to-primary-light text-white
-                             rounded-xl hover:shadow-lg hover:shadow-primary/25
-                             transition-all duration-200 hover:-translate-y-0.5 shadow-md
-                             disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0 w-full sm:w-auto"
+                             bg-primary hover:bg-primary-hover text-white
+                             rounded-lg
+                             transition-all duration-200
+                             disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto"
                 >
                   Étape suivante <ArrowRight size={15} />
                 </button>

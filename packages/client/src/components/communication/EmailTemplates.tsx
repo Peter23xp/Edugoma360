@@ -93,8 +93,8 @@ export function EmailTemplates({ onSelectTemplate, selectedId }: EmailTemplatesP
                 onClick={() => onSelectTemplate(t)}
                 className={`
                   w-full flex items-center justify-between p-4 text-left transition-colors
-                  hover:bg-gray-50
-                  ${isSelected ? 'bg-[#1B5E20]/5 border-l-4 border-l-[#1B5E20]' : 'border-l-4 border-l-transparent'}
+                  hover:bg-neutral-50
+                  ${isSelected ? 'bg-primary/5' : ''}
                 `}
               >
                 <div className="flex items-center gap-3">

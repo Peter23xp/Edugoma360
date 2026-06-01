@@ -52,13 +52,13 @@ export default function AbsenceTable({
     const StatusBadge = ({ status }: { status: string }) => {
         if (status === 'LATE' || status === 'RETARD') {
             return (
-                <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-orange-100 text-orange-700 uppercase tracking-wider">
+                <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-orange-100 text-orange-700">
                     Retard
                 </span>
             );
         }
         return (
-            <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold bg-red-100 text-red-700 uppercase tracking-wider">
+            <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-semibold bg-red-100 text-red-700">
                 Absent
             </span>
         );
@@ -67,19 +67,19 @@ export default function AbsenceTable({
     const pagesArray = Array.from({ length: pages }, (_, i) => i + 1);
 
     return (
-        <div className="bg-white rounded-xl border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
+        <div className="bg-white rounded-lg border border-neutral-200 shadow-sm overflow-hidden flex flex-col">
             
             {/* Table (Desktop) */}
             <div className="hidden md:block overflow-x-auto flex-1">
                 <table className="w-full text-left min-w-[700px]">
                     <thead className="bg-neutral-50/80 border-b border-neutral-200">
                         <tr>
-                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-500 uppercase tracking-wider">Date</th>
-                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-500 uppercase tracking-wider">Élève</th>
-                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-500 uppercase tracking-wider w-24">Classe</th>
-                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-center w-28">Type</th>
-                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-center w-28">Justifié</th>
-                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-500 uppercase tracking-wider text-right w-24">Actions</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-700">Date</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-700">Élève</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-700 w-24">Classe</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-700 text-center w-28">Type</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-700 text-center w-28">Justifié</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold text-neutral-700 text-right w-24">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-neutral-100">
@@ -190,14 +190,14 @@ export default function AbsenceTable({
                         <span className="text-sm">Chargement...</span>
                     </div>
                 ) : data.length === 0 ? (
-                    <div className="py-12 text-center text-neutral-500 bg-white rounded-xl border border-neutral-200">
+                    <div className="py-12 text-center text-neutral-500 bg-white rounded-lg border border-neutral-200">
                         <CalendarDays size={36} className="mx-auto text-neutral-300 mb-2" />
                         <p className="font-semibold text-neutral-700 text-sm">Aucune absence</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
                         {data.map((item) => (
-                            <div key={item.id} className="bg-white p-4 rounded-xl border border-neutral-200 shadow-sm flex flex-col gap-3">
+                            <div key={item.id} className="bg-white p-4 rounded-lg border border-neutral-200 shadow-sm flex flex-col gap-3">
                                 {/* Header: Élève et Actions */}
                                 <div className="flex justify-between items-start gap-2">
                                     <div className="min-w-0">
