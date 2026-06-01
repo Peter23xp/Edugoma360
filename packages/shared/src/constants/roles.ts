@@ -93,13 +93,13 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     PREFET: [
         'students:read', 'students:create', 'students:update', 'students:export',
         'grades:read', 'grades:create', 'grades:update', 'grades:lock', 'grades:export',
+        'finance:read', 'finance:create', 'finance:update', 'finance:reports', 'finance:export', 'finance:manage',
         'attendance:read', 'attendance:create', 'attendance:update', 'attendance:reports',
         'teachers:read', 'teachers:create', 'teachers:update', 'teachers:delete',
         'sms:send', 'sms:read', 'sms:templates',
         'reports:bulletins', 'reports:palmares', 'reports:pv', 'reports:statistics',
         'settings:read', 'settings:academic_year',
         'deliberation:read', 'deliberation:create', 'deliberation:validate',
-        'finance:manage',
         'classes:read', 'classes:create', 'classes:update', 'classes:delete',
         'timetable:read', 'timetable:create', 'timetable:delete',
     ],
@@ -139,7 +139,12 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
  * Check if a role has a specific permission
  */
 export function hasPermission(role: UserRole, permission: Permission): boolean {
-    return ROLE_PERMISSIONS[role]?.includes(permission) ?? false;
+    const permissions = ROLE_PERMISSIONS[role] ?? [];
+    if (permissions.includes(permission)) return true;
+
+    const [domain] = permission.split(':');
+    const managePermission = `${domain}:manage` as Permission;
+    return permissions.includes(managePermission);
 }
 
 /**
