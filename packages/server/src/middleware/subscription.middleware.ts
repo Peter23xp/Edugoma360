@@ -3,7 +3,7 @@ import prisma from '../lib/prisma';
 
 // ── Subscription Middleware ───────────────────────────────────────────────────
 // Verifies that the current tenant (req.school) has a valid, non-expired
-// subscription (status ACTIVE or TRIAL).
+// subscription (status ACTIVE, TRIAL, or PENDING while payment/setup is ongoing).
 //
 // Must be applied AFTER tenantMiddleware.
 // Exempted routes: subscription renewal, onboarding, superadmin.
@@ -38,11 +38,12 @@ export async function checkSubscription(
         const schoolId = req.school.id;
         const now = new Date();
 
-        // 1. Retrieve the most recently created active/trial subscription
+        // 1. Retrieve the most recently created usable subscription.
+        // PENDING is allowed so a newly configured school can finish setup and billing.
         const subscription = await prisma.subscription.findFirst({
             where: {
                 schoolId,
-                status: { in: ['ACTIVE', 'TRIAL'] },
+                status: { in: ['ACTIVE', 'TRIAL', 'PENDING'] },
                 endDate: { gte: now },
             },
             orderBy: { createdAt: 'desc' },

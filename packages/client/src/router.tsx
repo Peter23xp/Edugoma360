@@ -132,12 +132,26 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
 }
 
+/** Platform super-admins must stay in the SaaS console, not in a tenant school app. */
+function SchoolAppGuard({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated, user } = useAuthStore();
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (user?.isSuperAdmin) return <Navigate to="/superadmin" replace />;
+    return <>{children}</>;
+}
+
 /** Blocks non-super-admins from /superadmin/* routes */
 function SuperAdminGuard({ children }: { children: React.ReactNode }) {
     const { isAuthenticated, user } = useAuthStore();
     if (!isAuthenticated) return <Navigate to="/login" replace />;
     if (!user?.isSuperAdmin) return <Navigate to="/dashboard" replace />;
     return <>{children}</>;
+}
+
+function DefaultAuthenticatedRedirect() {
+    const { isAuthenticated, user } = useAuthStore();
+    if (!isAuthenticated) return <Navigate to="/" replace />;
+    return <Navigate to={user?.isSuperAdmin ? '/superadmin' : '/dashboard'} replace />;
 }
 
 export default function AppRouter() {
@@ -182,7 +196,9 @@ export default function AppRouter() {
             <Route
                 element={
                     <ProtectedRoute>
-                        <AppLayout />
+                        <SchoolAppGuard>
+                            <AppLayout />
+                        </SchoolAppGuard>
                     </ProtectedRoute>
                 }
             >
@@ -583,7 +599,7 @@ export default function AppRouter() {
             </Route>
 
             {/* Catch-all */}
-            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            <Route path="*" element={<DefaultAuthenticatedRedirect />} />
         </Routes>
     );
 }

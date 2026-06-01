@@ -1,97 +1,96 @@
 import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import {
-    School,
-    TrendingUp,
-    MessageSquare,
-    Clock,
-    CheckCircle,
     AlertCircle,
+    Building2,
+    CheckCircle,
+    Clock,
     Loader2,
+    MessageSquare,
     RefreshCw,
+    TrendingUp,
 } from 'lucide-react';
 
-// ── Types ─────────────────────────────────────────────────────────────────────
-
 interface Metrics {
-    totalSchools:       number;
-    activeSchools:      number;
-    trialSchools:       number;
-    expiredSchools:     number;
-    mrr:                number;
-    totalSmsThisMonth:  number;
-    schoolsByPlan:      { planId: string | null; planName: string; slug: string; count: number }[];
-    month:              string;
+    totalSchools: number;
+    activeSchools: number;
+    trialSchools: number;
+    expiredSchools: number;
+    mrr: number;
+    totalSmsThisMonth: number;
+    schoolsByPlan: { planId: string | null; planName: string; slug: string; count: number }[];
+    month: string;
 }
 
-interface School {
-    id:           string;
-    name:         string;
-    subdomain:    string | null;
-    createdAt:    string;
+interface SchoolRow {
+    id: string;
+    name: string;
+    subdomain: string | null;
+    createdAt: string;
     subscriptions: { status: string; endDate: string }[];
-    plan:         { name: string; slug: string } | null;
-    _count:       { students: number };
+    plan: { name: string; slug: string } | null;
+    _count: { students: number };
 }
-
-// ── Status Badge ──────────────────────────────────────────────────────────────
-
-const STATUS_STYLES: Record<string, string> = {
-    ACTIVE:    'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30',
-    TRIAL:     'bg-blue-500/15 text-blue-300 border border-blue-500/30',
-    EXPIRED:   'bg-red-500/15 text-red-300 border border-red-500/30',
-    SUSPENDED: 'bg-amber-500/15 text-amber-300 border border-amber-500/30',
-    PENDING:   'bg-purple-500/15 text-purple-300 border border-purple-500/30',
-};
 
 const STATUS_LABELS: Record<string, string> = {
-    ACTIVE:    'Actif',
-    TRIAL:     'Essai',
-    EXPIRED:   'Expiré',
+    ACTIVE: 'Actif',
+    TRIAL: 'Essai',
+    EXPIRED: 'Expiré',
     SUSPENDED: 'Suspendu',
-    PENDING:   'En attente',
+    PENDING: 'En attente',
+};
+
+const STATUS_STYLES: Record<string, string> = {
+    ACTIVE: 'bg-primary-lighter text-primary',
+    TRIAL: 'bg-info-light text-info',
+    EXPIRED: 'bg-error-light text-error',
+    SUSPENDED: 'bg-accent-light text-accent',
+    PENDING: 'bg-neutral-100 text-neutral-700',
 };
 
 function StatusBadge({ status }: { status: string }) {
     return (
-        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_STYLES[status] ?? 'bg-gray-500/15 text-gray-300'}`}>
+        <span className={`inline-flex rounded px-2 py-1 text-xs font-medium ${STATUS_STYLES[status] ?? STATUS_STYLES.PENDING}`}>
             {STATUS_LABELS[status] ?? status}
         </span>
     );
 }
 
-// ── KPI Card ──────────────────────────────────────────────────────────────────
-
 interface KpiCardProps {
-    title:    string;
-    value:    string | number;
-    icon:     React.ElementType;
-    color:    string;
-    subtitle?: string;
+    title: string;
+    value: string | number;
+    subtitle: string;
+    icon: React.ElementType;
+    tone: 'primary' | 'info' | 'accent' | 'error';
 }
 
-function KpiCard({ title, value, icon: Icon, color, subtitle }: KpiCardProps) {
+function KpiCard({ title, value, subtitle, icon: Icon, tone }: KpiCardProps) {
+    const tones = {
+        primary: 'bg-primary-lighter text-primary',
+        info: 'bg-info-light text-info',
+        accent: 'bg-accent-light text-accent',
+        error: 'bg-error-light text-error',
+    };
+
     return (
-        <div className="bg-gray-900 rounded-xl border border-gray-800 p-5 flex items-start gap-4 hover:border-gray-700 transition-colors">
-            <div className={`w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0 ${color}`}>
-                <Icon className="w-5 h-5 text-white" />
+        <div className="rounded-lg border border-neutral-200 bg-white p-5">
+            <div className="mb-4 flex items-center justify-between">
+                <p className="text-sm font-medium text-neutral-700">{title}</p>
+                <span className={`flex h-9 w-9 items-center justify-center rounded-md ${tones[tone]}`}>
+                    <Icon className="h-4 w-4" />
+                </span>
             </div>
-            <div className="min-w-0">
-                <p className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-1">{title}</p>
-                <p className="text-2xl font-bold text-white tabular-nums">{value}</p>
-                {subtitle && <p className="text-xs text-gray-500 mt-0.5">{subtitle}</p>}
-            </div>
+            <p className="text-2xl font-bold tabular-nums text-neutral-900">{value}</p>
+            <p className="mt-1 text-xs text-neutral-700">{subtitle}</p>
         </div>
     );
 }
 
-// ── MetricsDashboard ──────────────────────────────────────────────────────────
-
 export default function MetricsDashboard() {
-    const [metrics,        setMetrics]        = useState<Metrics | null>(null);
-    const [recentSchools,  setRecentSchools]  = useState<School[]>([]);
-    const [loading,        setLoading]        = useState(true);
-    const [error,          setError]          = useState<string | null>(null);
+    const [metrics, setMetrics] = useState<Metrics | null>(null);
+    const [recentSchools, setRecentSchools] = useState<SchoolRow[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const fetchData = async () => {
         setLoading(true);
@@ -104,7 +103,7 @@ export default function MetricsDashboard() {
             setMetrics(metricsRes.data.data);
             setRecentSchools(schoolsRes.data.data ?? []);
         } catch {
-            setError('Impossible de charger les métriques. Vérifiez votre connexion.');
+            setError('Impossible de charger les métriques de la plateforme.');
         } finally {
             setLoading(false);
         }
@@ -114,144 +113,105 @@ export default function MetricsDashboard() {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center h-full">
-                <Loader2 className="w-8 h-8 text-[#F57F17] animate-spin" />
+            <div className="flex h-72 items-center justify-center">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
             </div>
         );
     }
 
-    if (error) {
+    if (error || !metrics) {
         return (
-            <div className="flex flex-col items-center justify-center h-64 gap-3">
-                <AlertCircle className="w-10 h-10 text-red-400" />
-                <p className="text-gray-400">{error}</p>
-                <button onClick={fetchData} className="px-4 py-2 bg-[#1B5E20] rounded-lg text-sm text-white hover:bg-[#2E7D32] transition-colors">
+            <div className="mx-auto mt-12 max-w-md rounded-lg border border-error/30 bg-error-light p-5 text-center">
+                <AlertCircle className="mx-auto mb-3 h-8 w-8 text-error" />
+                <p className="text-sm font-medium text-error">{error}</p>
+                <button onClick={fetchData} className="mt-4 h-10 rounded-md bg-primary px-4 text-sm font-semibold text-white hover:bg-primary-hover">
                     Réessayer
                 </button>
             </div>
         );
     }
 
-    const m = metrics!;
-
     return (
-        <div className="p-6 space-y-6">
-            {/* Header */}
-            <div className="flex items-center justify-between">
+        <div className="space-y-6 p-4 sm:p-6">
+            <div className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
                 <div>
-                    <h1 className="text-xl font-bold text-white">Tableau de Bord Plateforme</h1>
-                    <p className="text-gray-500 text-sm mt-0.5">Période : {m.month}</p>
+                    <h1 className="text-2xl font-bold text-neutral-900">Vue plateforme</h1>
+                    <p className="mt-1 text-sm text-neutral-700">Synthèse SaaS, écoles, abonnements et usage SMS pour {metrics.month}.</p>
                 </div>
                 <button
                     onClick={fetchData}
-                    className="flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-300 transition-colors"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-neutral-300 bg-white px-4 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
                 >
-                    <RefreshCw className="w-3.5 h-3.5" />
+                    <RefreshCw className="h-4 w-4" />
                     Actualiser
                 </button>
             </div>
 
-            {/* KPI Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <KpiCard
-                    title="Écoles actives"
-                    value={m.activeSchools}
-                    icon={CheckCircle}
-                    color="bg-emerald-600"
-                    subtitle={`sur ${m.totalSchools} total`}
-                />
-                <KpiCard
-                    title="En période d'essai"
-                    value={m.trialSchools}
-                    icon={Clock}
-                    color="bg-blue-600"
-                    subtitle="abonnements TRIAL"
-                />
-                <KpiCard
-                    title="MRR (USD)"
-                    value={`$${m.mrr.toLocaleString()}`}
-                    icon={TrendingUp}
-                    color="bg-[#F57F17]"
-                    subtitle="revenus du mois"
-                />
-                <KpiCard
-                    title="SMS ce mois"
-                    value={m.totalSmsThisMonth.toLocaleString()}
-                    icon={MessageSquare}
-                    color="bg-purple-600"
-                    subtitle="envoyés sur la plateforme"
-                />
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <KpiCard title="Écoles actives" value={metrics.activeSchools} subtitle={`sur ${metrics.totalSchools} écoles`} icon={CheckCircle} tone="primary" />
+                <KpiCard title="Périodes d'essai" value={metrics.trialSchools} subtitle="écoles à convertir" icon={Clock} tone="info" />
+                <KpiCard title="Revenu mensuel" value={`$${metrics.mrr.toLocaleString()}`} subtitle="abonnements actifs" icon={TrendingUp} tone="accent" />
+                <KpiCard title="SMS envoyés" value={metrics.totalSmsThisMonth.toLocaleString()} subtitle="ce mois-ci" icon={MessageSquare} tone="primary" />
             </div>
 
-            {/* Schools by Plan */}
-            {m.schoolsByPlan.length > 0 && (
-                <div className="bg-gray-900 rounded-xl border border-gray-800 p-5">
-                    <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4 flex items-center gap-2">
-                        <School className="w-4 h-4 text-[#F57F17]" />
-                        Répartition par Plan
-                    </h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {m.schoolsByPlan.map((p) => (
-                            <div key={p.planId ?? 'none'} className="bg-gray-800 rounded-lg p-3 text-center">
-                                <p className="text-lg font-bold text-white">{p.count}</p>
-                                <p className="text-xs text-gray-400 mt-0.5">{p.planName}</p>
+            <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">
+                <section className="rounded-lg border border-neutral-200 bg-white">
+                    <div className="border-b border-neutral-200 px-5 py-4">
+                        <h2 className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
+                            <Building2 className="h-4 w-4 text-primary" />
+                            Répartition par plan
+                        </h2>
+                    </div>
+                    <div className="divide-y divide-neutral-200">
+                        {metrics.schoolsByPlan.length === 0 ? (
+                            <p className="p-5 text-sm text-neutral-700">Aucune école rattachée à un plan.</p>
+                        ) : metrics.schoolsByPlan.map((plan) => (
+                            <div key={plan.planId ?? 'none'} className="flex items-center justify-between px-5 py-4">
+                                <div>
+                                    <p className="text-sm font-semibold text-neutral-900">{plan.planName}</p>
+                                    <p className="text-xs text-neutral-700">{plan.slug || 'sans-slug'}</p>
+                                </div>
+                                <span className="text-xl font-bold tabular-nums text-primary">{plan.count}</span>
                             </div>
                         ))}
                     </div>
-                </div>
-            )}
+                </section>
 
-            {/* Recent Schools Table */}
-            <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-800">
-                    <h2 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">
-                        10 Dernières Écoles Inscrites
-                    </h2>
-                </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b border-gray-800">
-                                <th className="text-left px-5 py-3 text-xs text-gray-500 font-medium uppercase tracking-wider">École</th>
-                                <th className="text-left px-5 py-3 text-xs text-gray-500 font-medium uppercase tracking-wider">Sous-domaine</th>
-                                <th className="text-left px-5 py-3 text-xs text-gray-500 font-medium uppercase tracking-wider">Plan</th>
-                                <th className="text-left px-5 py-3 text-xs text-gray-500 font-medium uppercase tracking-wider">Élèves</th>
-                                <th className="text-left px-5 py-3 text-xs text-gray-500 font-medium uppercase tracking-wider">Statut</th>
-                                <th className="text-left px-5 py-3 text-xs text-gray-500 font-medium uppercase tracking-wider">Inscrite le</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {recentSchools.map((school) => {
-                                const sub = school.subscriptions?.[0];
-                                return (
-                                    <tr key={school.id} className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors">
-                                        <td className="px-5 py-3.5 font-medium text-white">{school.name}</td>
-                                        <td className="px-5 py-3.5 text-gray-400 font-mono text-xs">{school.subdomain}.edugoma360.cd</td>
-                                        <td className="px-5 py-3.5">
-                                            <span className="px-2 py-0.5 bg-[#1B5E20]/30 text-green-300 rounded text-xs border border-[#1B5E20]/50">
-                                                {school.plan?.name ?? '—'}
-                                            </span>
-                                        </td>
-                                        <td className="px-5 py-3.5 text-gray-300 tabular-nums">{school._count.students}</td>
-                                        <td className="px-5 py-3.5">
-                                            <StatusBadge status={sub?.status ?? 'PENDING'} />
-                                        </td>
-                                        <td className="px-5 py-3.5 text-gray-400 text-xs">
-                                            {new Date(school.createdAt).toLocaleDateString('fr-FR')}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                            {recentSchools.length === 0 && (
+                <section className="overflow-hidden rounded-lg border border-neutral-200 bg-white">
+                    <div className="border-b border-neutral-200 px-5 py-4">
+                        <h2 className="text-sm font-semibold text-neutral-900">Dernières écoles inscrites</h2>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="bg-neutral-100">
                                 <tr>
-                                    <td colSpan={6} className="px-5 py-8 text-center text-gray-500">
-                                        Aucune école inscrite
-                                    </td>
+                                    <th className="px-5 py-3 text-left text-xs font-semibold text-neutral-700">École</th>
+                                    <th className="px-5 py-3 text-left text-xs font-semibold text-neutral-700">Plan</th>
+                                    <th className="px-5 py-3 text-left text-xs font-semibold text-neutral-700">Élèves</th>
+                                    <th className="px-5 py-3 text-left text-xs font-semibold text-neutral-700">Statut</th>
+                                    <th className="px-5 py-3 text-left text-xs font-semibold text-neutral-700">Inscription</th>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="divide-y divide-neutral-200">
+                                {recentSchools.map((school) => {
+                                    const subscription = school.subscriptions?.[0];
+                                    return (
+                                        <tr key={school.id} className="hover:bg-primary-lighter/40">
+                                            <td className="px-5 py-3">
+                                                <p className="font-semibold text-neutral-900">{school.name}</p>
+                                                <p className="text-xs text-neutral-700">{school.subdomain ?? 'sans-sous-domaine'}.edugoma360.cd</p>
+                                            </td>
+                                            <td className="px-5 py-3 text-neutral-700">{school.plan?.name ?? 'Aucun'}</td>
+                                            <td className="px-5 py-3 tabular-nums text-neutral-900">{school._count.students}</td>
+                                            <td className="px-5 py-3"><StatusBadge status={subscription?.status ?? 'PENDING'} /></td>
+                                            <td className="px-5 py-3 text-neutral-700">{new Date(school.createdAt).toLocaleDateString('fr-FR')}</td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
             </div>
         </div>
     );

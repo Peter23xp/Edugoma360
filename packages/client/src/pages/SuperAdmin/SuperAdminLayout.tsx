@@ -1,27 +1,22 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/auth.store';
 import {
-    LayoutDashboard,
-    School,
+    BarChart3,
+    Building2,
     CreditCard,
+    LogOut,
     MessageSquare,
     Package,
-    LogOut,
-    Shield,
-    ChevronRight,
+    ShieldCheck,
 } from 'lucide-react';
-
-// ── Super Admin Layout ────────────────────────────────────────────────────────
-// Distinct dark-green sidebar layout SEPARATE from the school AppLayout.
-// Primary: #1B5E20 | Accent: #F57F17
-// ─────────────────────────────────────────────────────────────────────────────
+import logo from '../../assets/logo.svg';
 
 const NAV_ITEMS = [
-    { to: '/superadmin/metrics',       icon: LayoutDashboard, label: 'Métriques'    },
-    { to: '/superadmin/schools',       icon: School,          label: 'Écoles'       },
-    { to: '/superadmin/subscriptions', icon: CreditCard,      label: 'Abonnements'  },
-    { to: '/superadmin/sms',           icon: MessageSquare,   label: 'Usage SMS'    },
-    { to: '/superadmin/plans',         icon: Package,         label: 'Plans'        },
+    { to: '/superadmin/metrics', icon: BarChart3, label: 'Vue plateforme' },
+    { to: '/superadmin/schools', icon: Building2, label: 'Écoles' },
+    { to: '/superadmin/subscriptions', icon: CreditCard, label: 'Abonnements' },
+    { to: '/superadmin/sms', icon: MessageSquare, label: 'Usage SMS' },
+    { to: '/superadmin/plans', icon: Package, label: 'Plans SaaS' },
 ];
 
 export default function SuperAdminLayout() {
@@ -34,70 +29,101 @@ export default function SuperAdminLayout() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-950 text-white overflow-hidden">
-            {/* ── Sidebar ── */}
-            <aside className="w-64 flex flex-col flex-shrink-0 bg-[#1B5E20] shadow-2xl">
-                {/* Logo / Brand */}
-                <div className="px-6 py-5 border-b border-white/10">
-                    <div className="flex items-center gap-2 mb-1">
-                        <Shield className="w-6 h-6 text-[#F57F17]" />
-                        <span className="text-lg font-bold tracking-wide">EduGoma 360</span>
+        <div className="flex min-h-screen bg-background text-neutral-900">
+            <aside className="hidden w-72 flex-col border-r border-neutral-200 bg-white lg:flex">
+                <div className="border-b border-neutral-200 px-5 py-4">
+                    <div className="flex items-center gap-3">
+                        <img src={logo} alt="EduGoma 360" className="h-10 w-10" />
+                        <div>
+                            <p className="text-sm font-bold text-primary">EduGoma 360</p>
+                            <p className="text-xs font-medium text-neutral-700">Console plateforme</p>
+                        </div>
                     </div>
-                    <p className="text-xs text-green-200 font-medium uppercase tracking-widest">
-                        Super Admin
-                    </p>
                 </div>
 
-                {/* Navigation */}
-                <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+                <div className="border-b border-neutral-200 bg-primary-lighter px-5 py-4">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                        <ShieldCheck className="h-4 w-4" />
+                        Super administrateur
+                    </div>
+                    <p className="mt-1 text-xs text-neutral-700">Pilotage multi-écoles, abonnements et quotas.</p>
+                </div>
+
+                <nav className="flex-1 space-y-1 px-3 py-4">
                     {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
                         <NavLink
                             key={to}
                             to={to}
                             className={({ isActive }) =>
-                                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group ${
+                                `flex h-10 items-center gap-3 rounded-md px-3 text-sm font-medium transition-colors ${
                                     isActive
-                                        ? 'bg-white/15 text-white shadow'
-                                        : 'text-green-100 hover:bg-white/10 hover:text-white'
+                                        ? 'bg-primary text-white'
+                                        : 'text-neutral-700 hover:bg-primary-lighter hover:text-primary'
                                 }`
                             }
                         >
-                            {({ isActive }) => (
-                                <>
-                                    <Icon className={`w-4.5 h-4.5 flex-shrink-0 ${isActive ? 'text-[#F57F17]' : 'text-green-300 group-hover:text-white'}`} />
-                                    <span className="flex-1">{label}</span>
-                                    {isActive && <ChevronRight className="w-3 h-3 text-[#F57F17]" />}
-                                </>
-                            )}
+                            <Icon className="h-4 w-4" />
+                            {label}
                         </NavLink>
                     ))}
                 </nav>
 
-                {/* User info + Logout */}
-                <div className="px-4 py-4 border-t border-white/10">
-                    <div className="flex items-center gap-3 mb-3">
-                        <div className="w-8 h-8 rounded-full bg-[#F57F17] flex items-center justify-center text-sm font-bold text-white flex-shrink-0">
-                            {user?.nom?.charAt(0) ?? 'S'}
-                        </div>
-                        <div className="min-w-0">
-                            <p className="text-sm font-semibold truncate">{user?.nom} {user?.prenom}</p>
-                            <p className="text-xs text-green-300 truncate">{user?.email ?? user?.phone}</p>
-                        </div>
+                <div className="border-t border-neutral-200 p-4">
+                    <div className="mb-3 min-w-0">
+                        <p className="truncate text-sm font-semibold text-neutral-900">{user?.nom} {user?.prenom}</p>
+                        <p className="truncate text-xs text-neutral-700">{user?.email ?? user?.phone}</p>
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-green-200 hover:bg-red-600/20 hover:text-red-300 transition-colors"
+                        className="flex h-10 w-full items-center justify-center gap-2 rounded-md border border-neutral-300 bg-white text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
                     >
-                        <LogOut className="w-4 h-4" />
-                        Déconnexion
+                        <LogOut className="h-4 w-4" />
+                        Se déconnecter
                     </button>
                 </div>
             </aside>
 
-            {/* ── Main Content ── */}
-            <main className="flex-1 overflow-y-auto bg-gray-950">
-                <Outlet />
-            </main>
+            <div className="flex min-w-0 flex-1 flex-col">
+                <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white">
+                    <div className="flex h-14 items-center justify-between px-4 sm:px-6">
+                        <div className="flex items-center gap-3 lg:hidden">
+                            <img src={logo} alt="EduGoma 360" className="h-8 w-8" />
+                            <span className="text-sm font-bold text-primary">Console plateforme</span>
+                        </div>
+                        <div className="hidden lg:block">
+                            <p className="text-sm font-semibold text-neutral-900">Administration SaaS</p>
+                            <p className="text-xs text-neutral-700">Toutes les données plateforme, séparées des espaces école.</p>
+                        </div>
+                        <button
+                            onClick={handleLogout}
+                            className="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 lg:hidden"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            Sortir
+                        </button>
+                    </div>
+                    <nav className="flex gap-1 overflow-x-auto border-t border-neutral-200 px-3 py-2 lg:hidden">
+                        {NAV_ITEMS.map(({ to, icon: Icon, label }) => (
+                            <NavLink
+                                key={to}
+                                to={to}
+                                className={({ isActive }) =>
+                                    `inline-flex h-9 shrink-0 items-center gap-2 rounded-md px-3 text-sm font-medium ${
+                                        isActive ? 'bg-primary text-white' : 'text-neutral-700 hover:bg-neutral-100'
+                                    }`
+                                }
+                            >
+                                <Icon className="h-4 w-4" />
+                                {label}
+                            </NavLink>
+                        ))}
+                    </nav>
+                </header>
+
+                <main className="min-w-0 flex-1">
+                    <Outlet />
+                </main>
+            </div>
         </div>
     );
 }

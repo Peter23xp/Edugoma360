@@ -1,0 +1,7 @@
+{
+  "framework": "vite",
+  "files": ["packages/client/index.html"],
+  "insertBefore": "</head>",
+  "commentSyntax": "html",
+  "cspChecked": true
+}

@@ -17,6 +17,98 @@ class OnboardingError extends Error {
     }
 }
 
+const PUBLIC_PLANS_TIMEOUT_MS = 2500;
+
+const FALLBACK_PUBLIC_PLANS = [
+    {
+        id: 'fallback-trial',
+        name: 'Essai',
+        slug: 'trial',
+        priceUSD: 0,
+        priceCDF: 0,
+        maxStudents: 150,
+        maxTeachers: 10,
+        maxSmsPerMonth: 50,
+        durationDays: 30,
+        features: ['30 jours gratuits', 'Gestion des eleves', 'Presences et notes', 'Support de demarrage'],
+        isActive: true,
+    },
+    {
+        id: 'fallback-bronze',
+        name: 'Bronze',
+        slug: 'bronze',
+        priceUSD: 15,
+        priceCDF: 42000,
+        maxStudents: 300,
+        maxTeachers: 20,
+        maxSmsPerMonth: 150,
+        durationDays: 30,
+        features: ['Eleves et classes', 'Paiements scolaires', 'Bulletins', 'SMS parents'],
+        isActive: true,
+    },
+    {
+        id: 'fallback-silver',
+        name: 'Argent',
+        slug: 'silver',
+        priceUSD: 30,
+        priceCDF: 84000,
+        maxStudents: 700,
+        maxTeachers: 50,
+        maxSmsPerMonth: 500,
+        durationDays: 30,
+        features: ['Tout Bronze', 'Rapports avances', 'Mode hors-ligne', 'Support prioritaire'],
+        isActive: true,
+    },
+    {
+        id: 'fallback-gold',
+        name: 'Or',
+        slug: 'gold',
+        priceUSD: 60,
+        priceCDF: 168000,
+        maxStudents: -1,
+        maxTeachers: -1,
+        maxSmsPerMonth: 1500,
+        durationDays: 30,
+        features: ['Utilisateurs illimites', 'SMS et finances avances', 'Exports officiels', 'Accompagnement premium'],
+        isActive: true,
+    },
+];
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+    return Promise.race([
+        promise,
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), ms)),
+    ]);
+}
+
+function toPublicPlan(plan: (typeof FALLBACK_PUBLIC_PLANS)[number] | {
+    id: string;
+    name: string;
+    slug: string;
+    priceUSD: number;
+    priceCDF: number;
+    maxStudents: number;
+    maxTeachers: number;
+    maxSmsPerMonth: number;
+    durationDays: number;
+    features: string;
+    isActive: boolean;
+}) {
+    const features = Array.isArray(plan.features)
+        ? plan.features
+        : (() => {
+            try { return JSON.parse(plan.features) as string[]; }
+            catch { return []; }
+        })();
+
+    return {
+        ...plan,
+        features,
+        maxStudentsLabel: plan.maxStudents === -1 ? 'Illimité' : `${plan.maxStudents}`,
+        maxTeachersLabel: plan.maxTeachers === -1 ? 'Illimité' : `${plan.maxTeachers}`,
+    };
+}
+
 // ── RegisterSchoolController ──────────────────────────────────────────────────
 /**
  * POST /api/public/onboarding/register
@@ -264,6 +356,23 @@ export async function GetPlansController(
     next: NextFunction,
 ): Promise<void> {
     try {
+        try {
+            const plans = await withTimeout(
+                prisma.subscriptionPlan.findMany({
+                    where:   { isActive: true },
+                    orderBy: { priceUSD: 'asc' },
+                }),
+                PUBLIC_PLANS_TIMEOUT_MS,
+            );
+
+            const source = plans?.length ? plans : FALLBACK_PUBLIC_PLANS;
+            res.json({ data: source.map(toPublicPlan) });
+            return;
+        } catch {
+            res.json({ data: FALLBACK_PUBLIC_PLANS.map(toPublicPlan) });
+            return;
+        }
+
         const plans = await prisma.subscriptionPlan.findMany({
             where:   { isActive: true },
             orderBy: { priceUSD: 'asc' },

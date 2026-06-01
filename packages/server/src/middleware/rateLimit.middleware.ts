@@ -6,7 +6,7 @@ import { env } from '../config/env';
  */
 export const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100,
+    max: env.NODE_ENV === 'production' ? 100 : 1000, // Plus permissif en dev
     message: {
         error: {
             code: 'RATE_LIMIT',
@@ -15,6 +15,7 @@ export const apiLimiter = rateLimit({
     },
     standardHeaders: true,
     legacyHeaders: false,
+    skip: (req) => env.NODE_ENV === 'development' && req.ip === '127.0.0.1', // Skip pour localhost en dev
 });
 
 /**
