@@ -217,17 +217,17 @@ export default function SMSPage() {
             key={i}
             className="bg-white border border-gray-200 hover:shadow-md transition-all duration-200 overflow-hidden"
           >
-            <CardContent className="p-4 flex items-center gap-3">
+            <CardContent className="p-6 pt-6 flex flex-col items-center justify-center text-center gap-2">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 mb-1"
                 style={{ backgroundColor: stat.color + '15' }}
               >
-                <stat.icon className="h-5 w-5" style={{ color: stat.color }} />
+                <stat.icon className="h-6 w-6" style={{ color: stat.color }} />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 flex flex-col items-center">
                 <p className="text-xs font-medium text-gray-500 truncate">{stat.label}</p>
-                <h3 className="text-xl font-bold text-gray-900 leading-tight">{stat.value}</h3>
-                <p className={`text-[10px] font-medium ${stat.subtextColor} flex items-center gap-0.5 mt-0.5`}>
+                <h3 className="text-2xl font-bold text-gray-900 leading-tight my-0.5">{stat.value}</h3>
+                <p className={`text-[10px] font-medium ${stat.subtextColor} flex items-center justify-center gap-1 mt-1`}>
                   {stat.trendIcon && <stat.trendIcon className="h-3 w-3" />}
                   {stat.subtext}
                 </p>
@@ -296,7 +296,7 @@ export default function SMSPage() {
           <div className="sticky bottom-0 bg-white/95 backdrop-blur-sm border border-gray-200 rounded-xl p-4 shadow-lg z-10">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
               {/* Summary */}
-              <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-xs text-gray-500">
                 {canSend && (
                   <>
                     <span className="flex items-center gap-1">
