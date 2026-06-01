@@ -109,6 +109,19 @@ import AccessDeniedPage from './pages/AccessDeniedPage';
 // Setup Wizard
 import SetupWizardPage from './pages/setup/SetupWizardPage';
 
+// Super Admin
+import SuperAdminLayout    from './pages/SuperAdmin/SuperAdminLayout';
+import MetricsDashboard    from './pages/SuperAdmin/MetricsDashboard';
+import SchoolsTable        from './pages/SuperAdmin/SchoolsTable';
+
+// Public Marketing
+import LandingPage     from './pages/Landing/LandingPage';
+import OnboardingPage  from './pages/Onboarding/OnboardingPage';
+
+// Billing
+import SubscriptionStatus from './pages/Billing/SubscriptionStatus';
+import PaymentCallbackPage from './pages/Billing/PaymentCallbackPage';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
     if (!isAuthenticated) {
@@ -119,12 +132,41 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <>{children}</>;
 }
 
+/** Blocks non-super-admins from /superadmin/* routes */
+function SuperAdminGuard({ children }: { children: React.ReactNode }) {
+    const { isAuthenticated, user } = useAuthStore();
+    if (!isAuthenticated) return <Navigate to="/login" replace />;
+    if (!user?.isSuperAdmin) return <Navigate to="/dashboard" replace />;
+    return <>{children}</>;
+}
+
 export default function AppRouter() {
     return (
         <Routes>
-            {/* Public */}
+            {/* ── Public Marketing ── */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/register" element={<OnboardingPage />} />
+
+            {/* Auth */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+
+            {/* ── Super Admin Space ── completely separate from school layout */}
+            <Route
+                path="/superadmin"
+                element={
+                    <SuperAdminGuard>
+                        <SuperAdminLayout />
+                    </SuperAdminGuard>
+                }
+            >
+                <Route index element={<Navigate to="metrics" replace />} />
+                <Route path="metrics"       element={<MetricsDashboard />} />
+                <Route path="schools"       element={<SchoolsTable />} />
+                <Route path="subscriptions" element={<SchoolsTable />} />
+                <Route path="sms"           element={<MetricsDashboard />} />
+                <Route path="plans"         element={<MetricsDashboard />} />
+            </Route>
 
             {/* Setup Wizard (Protected but outside AppLayout) */}
             <Route
@@ -136,16 +178,14 @@ export default function AppRouter() {
                 }
             />
 
-            {/* Protected */}
+            {/* Protected app routes */}
             <Route
-                path="/"
                 element={
                     <ProtectedRoute>
                         <AppLayout />
                     </ProtectedRoute>
                 }
             >
-                <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<DashboardPage />} />
 
                 {/* Students — Tous les rôles sauf PARENT (a son portail dédié) */}
@@ -521,6 +561,19 @@ export default function AppRouter() {
                         <UsersManagementPage />
                     </RoleGuard>
                 } />
+                {/* Billing */}
+                <Route path="billing" element={
+                    <RoleGuard allowedRoles={['SUPER_ADMIN', 'PREFET', 'ECONOME']}>
+                        <div className="space-y-6">
+                            <div className="mb-4">
+                                <h1 className="text-2xl font-bold text-neutral-900">Abonnement & Quotas</h1>
+                                <p className="text-xs text-neutral-500 mt-1">Gérez votre formule SaaS et suivez la consommation en temps réel de vos élèves et SMS.</p>
+                            </div>
+                            <SubscriptionStatus />
+                        </div>
+                    </RoleGuard>
+                } />
+                <Route path="billing/callback" element={<PaymentCallbackPage />} />
 
                 {/* Profile — accessible à tous les rôles */}
                 <Route path="settings/profile" element={<ProfilePage />} />

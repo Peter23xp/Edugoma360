@@ -5,6 +5,8 @@ import path from 'path';
 import { corsOptions } from './config/cors';
 import { apiLimiter } from './middleware/rateLimit.middleware';
 import { errorHandler } from './middleware/errorHandler.middleware';
+import { tenantMiddleware } from './middleware/tenant.middleware';
+import { checkSubscription } from './middleware/subscription.middleware';
 
 // Import routes
 import authRoutes from './modules/auth/auth.routes';
@@ -48,6 +50,9 @@ import maintenanceRoutes from './modules/inventory/maintenance.routes';
 import parentRoutes from './modules/parent/parent.routes';
 import profileRoutes from './modules/users/profile.routes';
 import disciplineRoutes from './modules/discipline/discipline.routes';
+import onboardingRoutes from './modules/onboarding/onboarding.routes';
+import superAdminRoutes from './modules/superadmin/superadmin.routes';
+import { billingRoutes, billingWebhookRoutes } from './modules/billing/billing.routes';
 
 const app = express();
 
@@ -72,8 +77,40 @@ app.get('/api/health', (_req, res) => {
     });
 });
 
-// â”€â”€ API Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ── Public & Auth Routes (exempt from tenant + subscription checks) ───────────
+// These routes do NOT require a resolved school tenant:
+//   • /api/auth/*       → login, OTP, forgot-password
+//   • /api/public/*     → landing page data, subscription plans
+//   • /api/superadmin/* → platform-level Super Admin dashboard
+//   • /api/health       → health check (already registered above)
 app.use('/api/auth', authRoutes);
+
+// ── Super Admin Routes (auth required, isSuperAdmin check, NO tenant) ──────────
+// Mounted BEFORE tenantMiddleware so Super Admin can access all schools.
+// Protected entirely by superAdminGuard (JWT + isSuperAdmin DB check).
+app.use('/api/superadmin', superAdminRoutes);
+
+// ── Fully Public Routes (no tenant, no subscription, no auth) ──────────────
+// /api/public/onboarding/register   → create school account
+// /api/public/onboarding/check-subdomain → check slug availability
+// /api/public/plans                 → list subscription plans
+app.use('/api/public', onboardingRoutes);
+app.use('/api/public/billing', billingWebhookRoutes);
+
+// ── Tenant Resolution ──────────────────────────────────────────────────────────
+// Applied on all /api/* routes that follow this point.
+// Reads X-Tenant-Subdomain header → resolves School from DB → sets req.school.
+app.use('/api', tenantMiddleware);
+
+// ── Billing Routes (tenant resolved, but exempt from subscription block) ────────
+app.use('/api/billing', billingRoutes);
+
+// ── Subscription Gate ──────────────────────────────────────────────────────────
+// Blocks access with 403 if the school's subscription is expired.
+// Applies to all business routes except subscription renewal endpoints.
+app.use('/api', checkSubscription);
+
+// ── Business Routes (all protected by tenant + subscription) ───────────────
 app.use('/api/students', studentsRoutes);
 app.use('/api/classes', classesRoutes);
 app.use('/api/timetable', timetableRoutes);

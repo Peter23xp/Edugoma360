@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Menu, Bell, RefreshCw, LogOut, User, AlertTriangle, ChevronRight, CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '../../hooks/useAuth';
 import { useOffline } from '../../hooks/useOffline';
@@ -36,6 +36,13 @@ export default function Header({ onMenuToggle }: HeaderProps) {
     const { syncNow, isSyncing } = useSync();
     const { schoolName, academicYearLabel, termLabel } = useSchoolStore();
     const { pendingAlerts, pendingConvocations } = useNotificationStats();
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/', { replace: true });
+    };
 
     const [notifOpen, setNotifOpen] = useState(false);
     const notifRef = useRef<HTMLDivElement>(null);
@@ -224,7 +231,7 @@ export default function Header({ onMenuToggle }: HeaderProps) {
 
                     {/* Logout */}
                     <button
-                        onClick={logout}
+                        onClick={handleLogout}
                         className="p-1.5 rounded-lg hover:bg-red-50 text-neutral-500 hover:text-error transition-colors"
                         title="Se déconnecter"
                         aria-label="Se déconnecter"

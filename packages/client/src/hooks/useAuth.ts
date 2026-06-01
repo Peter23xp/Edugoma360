@@ -1,4 +1,4 @@
-﻿import { useAuthStore } from '../stores/auth.store';
+import { useAuthStore } from '../stores/auth.store';
 import { useCallback } from 'react';
 import type { User } from '../stores/auth.store';
 
@@ -60,7 +60,8 @@ export function useAuth() {
     /**
      * Returns the default redirect path for a given role after login.
      */
-    const getDefaultRedirect = useCallback((role: UserRole): string => {
+    const getDefaultRedirect = useCallback((role: UserRole, isSuperAdmin?: boolean): string => {
+        if (isSuperAdmin) return '/superadmin';
         switch (role) {
             case 'SUPER_ADMIN': return '/dashboard';
             case 'PREFET': return '/dashboard';

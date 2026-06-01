@@ -15,6 +15,7 @@ import PaymentTrendChart from '../../components/dashboard/PaymentTrendChart';
 import RecentPayments from '../../components/dashboard/RecentPayments';
 import TodayAbsences from '../../components/dashboard/TodayAbsences';
 import AnnouncementBanner from '../../components/dashboard/AnnouncementBanner';
+import SubscriptionStatus from '../Billing/SubscriptionStatus';
 
 interface DashboardSummary {
   enrollment: { total: number; bySection: Record<string, number> };
@@ -59,6 +60,7 @@ export default function DashboardPage() {
           classesTotal={d?.attendanceToday.classesTotal ?? 0}
         />
         <div className="px-4 pt-4 pb-6 sm:px-6 space-y-4">
+          <SubscriptionStatus />
           {/* Row 1 — École */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <KpiCard title="Élèves inscrits" value={d?.enrollment.total ?? 0}
@@ -155,6 +157,7 @@ export default function DashboardPage() {
           classesDone={0} classesTotal={0}
         />
         <div className="space-y-4 pt-2">
+          <SubscriptionStatus />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <KpiCard title="Collecté ce mois" value={formatFC(d?.finance.collectedThisMonth ?? 0)}
               subtitle={`sur ${formatFC(d?.finance.expectedThisMonth ?? 0)}`}

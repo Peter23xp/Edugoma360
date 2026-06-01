@@ -41,6 +41,13 @@ model School {
   nomCourt            String?
   code                String?   @unique
 
+  // ── SaaS / Multi-Tenant ──────────────────────────────────────────────────
+  subdomain    String?          @unique   // ex: "mungano" → mungano.edugoma360.cd
+  planId       String?
+  plan         SubscriptionPlan? @relation(fields: [planId], references: [id])
+  trialEndsAt  DateTime?         // Fin de la période d'essai gratuit
+
+  subscriptions       Subscription[]
   academicYears       AcademicYear[]
   classes             Class[]
   feeTypes            FeeType[]
@@ -83,6 +90,7 @@ model User {
   phone                   String?
   passwordHash            String
   role                    String
+  isSuperAdmin            Boolean              @default(false) // Super Admin de la plateforme SaaS
   permissions             String?              @default("{}")
   isActive                Boolean              @default(true)
   mustChangePassword      Boolean              @default(true)
@@ -1232,4 +1240,51 @@ model MaintenanceRequest {
   @@index([schoolId, status, urgency])
   @@index([roomId])
   @@map("maintenance_requests")
+}
+
+// ── SaaS: Plans d'Abonnement ─────────────────────────────────────────────────
+
+model SubscriptionPlan {
+  id             String   @id @default(uuid())
+  name           String   // "Essai", "Bronze", "Argent", "Or"
+  slug           String   @unique // "trial", "bronze", "silver", "gold"
+  priceUSD       Float    @default(0)
+  priceCDF       Float    @default(0)
+  maxStudents    Int      @default(300)  // -1 = illimité
+  maxTeachers    Int      @default(20)
+  maxSmsPerMonth Int      @default(100)
+  durationDays   Int      @default(30)
+  features       String   @default("[]") // JSON string des fonctionnalités incluses
+  isActive       Boolean  @default(true)
+
+  schools School[]
+
+  @@map("subscription_plans")
+}
+
+// ── SaaS: Abonnements des Écoles ─────────────────────────────────────────────
+
+model Subscription {
+  id            String   @id @default(uuid())
+  schoolId      String
+  school        School   @relation(fields: [schoolId], references: [id])
+
+  planId        String?
+
+  startDate     DateTime
+  endDate       DateTime
+  status        String   // "TRIAL" | "ACTIVE" | "EXPIRED" | "SUSPENDED" | "PENDING"
+
+  amountPaid    Float    @default(0)
+  currency      String   @default("USD")
+  paymentRef    String?  // Référence du paiement Mobile Money / Carte
+  paymentMethod String?  // "MPESA" | "AIRTEL_MONEY" | "ORANGE_MONEY" | "FLEXPAY" | "MANUAL"
+
+  notes         String?
+
+  createdAt     DateTime @default(now())
+
+  @@index([schoolId, status])
+  @@index([endDate])
+  @@map("subscriptions")
 }

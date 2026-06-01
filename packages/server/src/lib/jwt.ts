@@ -6,6 +6,7 @@ export interface JwtPayload {
     id?: string;         // alias de userId — rempli automatiquement par verifyToken
     schoolId: string;
     role: string;
+    isSuperAdmin?: boolean;
 }
 
 /**

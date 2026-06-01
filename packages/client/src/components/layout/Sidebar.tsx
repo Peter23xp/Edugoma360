@@ -163,6 +163,12 @@ const navItems = [
     path: "/discipline",
   },
   {
+    label: "Abonnement",
+    icon: Wallet,
+    path: "/billing",
+    roles: ["SUPER_ADMIN", "PREFET", "ECONOME"],
+  },
+  {
     label: "Paramètres",
     icon: Settings,
     roles: ["SUPER_ADMIN", "PREFET"],

@@ -38,6 +38,8 @@ export interface User {
     email?: string | null;
     phone: string;
     role: UserRole;
+    isSuperAdmin: boolean; // true = Super Admin de la plateforme SaaS (accès cross-école)
+    schoolSubdomain?: string | null;
     isActive: boolean;
     lastLoginAt?: Date | string | null;
     createdAt: Date | string;
@@ -49,6 +51,7 @@ export interface AuthUser extends Omit<User, 'updatedAt'> {
     school: {
         id: string;
         name: string;
+        subdomain?: string | null;
         province: string;
         ville: string;
     };

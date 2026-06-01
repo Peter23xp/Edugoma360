@@ -11,9 +11,12 @@ const api = axios.create({
 
 // â”€â”€ Request interceptor: attach JWT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-    const token = useAuthStore.getState().token;
+    const { token, user } = useAuthStore.getState();
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (user?.schoolSubdomain) {
+        config.headers['X-Tenant-Subdomain'] = user.schoolSubdomain;
     }
     return config;
 });
@@ -44,7 +47,11 @@ api.interceptors.response.use(
         // If 401 and not already retrying, attempt token refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
             // Don't retry the refresh endpoint itself or the login endpoint
-            if (originalRequest.url?.includes('/auth/refresh') || originalRequest.url?.includes('/auth/login')) {
+            if (
+                originalRequest.url?.includes('/auth/refresh') ||
+                originalRequest.url?.includes('/auth/login') ||
+                originalRequest.url?.includes('/auth/logout')
+            ) {
                 return Promise.reject(error);
             }
 

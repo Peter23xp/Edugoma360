@@ -31,11 +31,16 @@ export class AuthService {
 
         const user = await prisma.user.findFirst({
             where: whereClause,
+            orderBy: [
+                { isSuperAdmin: 'desc' },
+                { updatedAt: 'desc' },
+            ],
             include: {
                 school: {
                     select: {
                         id: true,
                         name: true,
+                        subdomain: true,
                         type: true,
                         province: true,
                         ville: true,
@@ -67,6 +72,7 @@ export class AuthService {
             userId: user.id,
             schoolId: user.schoolId,
             role: user.role,
+            isSuperAdmin: user.isSuperAdmin,
         };
 
         const token = generateToken(payload);
@@ -85,6 +91,8 @@ export class AuthService {
                 email: userWithoutPassword.email,
                 schoolId: userWithoutPassword.schoolId,
                 schoolName: userWithoutPassword.school.name,
+                schoolSubdomain: userWithoutPassword.school.subdomain,
+                isSuperAdmin: userWithoutPassword.isSuperAdmin,
             },
             token,
             refreshToken,
@@ -103,6 +111,7 @@ export class AuthService {
                 userId: payload.userId,
                 schoolId: payload.schoolId,
                 role: payload.role,
+                isSuperAdmin: payload.isSuperAdmin,
             });
             return { token: newToken, expiresIn: 28800 }; // 8h in seconds
         } catch {
@@ -121,6 +130,7 @@ export class AuthService {
                     select: {
                         id: true,
                         name: true,
+                        subdomain: true,
                         type: true,
                         province: true,
                         ville: true,

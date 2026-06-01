@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -103,7 +103,12 @@ export default function LoginPage() {
     useEffect(() => {
         if (isAuthenticated && user) {
             const redirect = searchParams.get('redirect');
-            navigate(redirect || getDefaultRedirect(user.role), { replace: true });
+            const defaultRedirect = getDefaultRedirect(user.role, user.isSuperAdmin);
+            const safeRedirect =
+                user.isSuperAdmin && redirect && !redirect.startsWith('/superadmin')
+                    ? defaultRedirect
+                    : redirect || defaultRedirect;
+            navigate(safeRedirect, { replace: true });
         }
     }, [isAuthenticated, user, navigate, searchParams, getDefaultRedirect]);
 

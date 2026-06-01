@@ -1,4 +1,4 @@
-﻿import { create } from 'zustand';
+import { create } from 'zustand';
 import api from '../lib/api';
 
 
@@ -7,12 +7,14 @@ export interface User {
     id: string;
     schoolId: string;
     schoolName: string;
+    schoolSubdomain?: string | null;
     nom: string;
     postNom: string;
     prenom?: string;
     phone: string;
     email?: string | null;
     role: 'SUPER_ADMIN' | 'PREFET' | 'ECONOME' | 'SECRETAIRE' | 'ENSEIGNANT' | 'PARENT';
+    isSuperAdmin?: boolean; // Platform-level Super Admin flag
 }
 
 interface AuthState {
