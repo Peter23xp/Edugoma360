@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError, z } from 'zod';
 import prisma from '../../lib/prisma';
 import { flexpayService } from './flexpay.service';
+import { stripe } from '../../lib/stripe-client';
+import { env } from '../../config/env';
+import { notifyPaymentSuccess, notifyPaymentFailed, notifyNewSchool } from '../notifications/notification.service';
 
 // ── Zod Schemas for Validation ────────────────────────────────────────────────
 const InitiatePaymentSchema = z.object({
@@ -260,6 +263,8 @@ export async function handleFlexPayWebhook(req: Request, res: Response, next: Ne
             if (sub && sub.status === 'PENDING') {
                 const amountPaid = amount ? parseFloat(amount) : sub.amountPaid;
                 await activateSubscription(sub.schoolId, sub.planId!, amountPaid, reference || orderNumber);
+                const plan = await prisma.subscriptionPlan.findUnique({ where: { id: sub.planId! } });
+                notifyPaymentSuccess(sub.schoolId, plan?.name ?? 'inconnu', amountPaid, sub.currency).catch(() => {});
                 console.log(`[FLEXPAY WEBHOOK] Subscription successfully activated for school ${sub.schoolId}`);
             }
         }
@@ -344,6 +349,169 @@ export async function getBillingInfo(req: Request, res: Response, next: NextFunc
     } catch (error) {
         next(error);
     }
+}
+
+/**
+ * createStripeCheckout
+ *
+ * POST /api/billing/stripe/checkout
+ * Creates a Stripe Checkout session and returns the URL.
+ */
+export async function createStripeCheckout(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        if (!req.school) {
+            res.status(404).json({ error: { code: 'SCHOOL_NOT_FOUND', message: 'École non identifiée' } });
+            return;
+        }
+
+        const { planSlug } = z.object({ planSlug: z.string() }).parse(req.body);
+        const schoolId = req.school.id;
+
+        const plan = await prisma.subscriptionPlan.findUnique({ where: { slug: planSlug } });
+        if (!plan || !plan.isActive) {
+            res.status(404).json({ error: { code: 'PLAN_NOT_FOUND', message: 'Formule introuvable' } });
+            return;
+        }
+
+        const school = await prisma.school.findUnique({ where: { id: schoolId }, select: { name: true, email: true } });
+
+        const successUrl = `${env.CLIENT_URL}/billing/callback?provider=stripe&session={CHECKOUT_SESSION_ID}`;
+        const cancelUrl  = `${env.CLIENT_URL}/billing`;
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'payment',
+            customer_email: school?.email ?? undefined,
+            metadata: { schoolId, planSlug, planId: plan.id },
+            line_items: [{
+                price_data: {
+                    currency: 'usd',
+                    unit_amount: Math.round(plan.priceUSD * 100),
+                    product_data: {
+                        name: `EduGoma 360 — ${plan.name}`,
+                        description: `Abonnement ${plan.durationDays} jours · ${plan.maxStudents === -1 ? 'Illimité' : plan.maxStudents} élèves`,
+                    },
+                },
+                quantity: 1,
+            }],
+            success_url: successUrl,
+            cancel_url:  cancelUrl,
+        });
+
+        // Create pending subscription
+        const now = new Date();
+        const endDate = new Date(now.getTime() + plan.durationDays * 86400000);
+        const sub = await prisma.subscription.create({
+            data: {
+                schoolId, planId: plan.id, startDate: now, endDate,
+                status: 'PENDING', amountPaid: 0, currency: 'USD',
+                paymentMethod: 'STRIPE', paymentRef: session.id,
+                notes: `Session Stripe: ${session.id}`,
+            },
+        });
+
+        res.json({ success: true, checkoutUrl: session.url, sessionId: session.id, subscriptionId: sub.id });
+    } catch (error) {
+        if (error instanceof ZodError) {
+            res.status(422).json({ error: { code: 'VALIDATION_ERROR', fields: error.errors } });
+            return;
+        }
+        next(error);
+    }
+}
+
+/**
+ * getStripeStatus
+ *
+ * GET /api/billing/stripe/status/:sessionId
+ * Polls Stripe session status and activates subscription if paid.
+ */
+export async function getStripeStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        if (!req.school) {
+            res.status(404).json({ error: { code: 'SCHOOL_NOT_FOUND', message: 'École non identifiée' } });
+            return;
+        }
+
+        const { sessionId } = req.params;
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        if (session.payment_status === 'paid') {
+            const sub = await prisma.subscription.findFirst({
+                where: { schoolId: req.school.id, paymentRef: sessionId, status: 'PENDING' },
+            });
+            if (sub) {
+                const plan = await prisma.subscriptionPlan.findUnique({ where: { id: sub.planId! } });
+                if (plan) await activateSubscription(req.school.id, plan.id, plan.priceUSD, sessionId);
+            }
+            res.json({ success: true, status: 'SUCCESSFUL' });
+        } else if (session.status === 'expired') {
+            res.json({ success: true, status: 'FAILED' });
+        } else {
+            res.json({ success: true, status: 'PENDING' });
+        }
+    } catch (error) { next(error); }
+}
+
+/**
+ * handleStripeWebhook
+ *
+ * POST /api/public/billing/webhook/stripe
+ * Stripe webhook — requires raw body for signature verification.
+ */
+export async function handleStripeWebhook(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const sig = req.headers['stripe-signature'] as string;
+        let event;
+        try {
+            event = stripe.webhooks.constructEvent(req.body, sig, env.STRIPE_WEBHOOK_SECRET);
+        } catch {
+            res.status(400).json({ error: 'Signature webhook Stripe invalide' });
+            return;
+        }
+
+        if (event.type === 'checkout.session.completed') {
+            const session = event.data.object as any;
+            const { schoolId, planId } = session.metadata ?? {};
+            if (schoolId && planId && session.payment_status === 'paid') {
+                const plan = await prisma.subscriptionPlan.findUnique({ where: { id: planId } });
+                if (plan) {
+                    const amountPaid = (session.amount_total ?? 0) / 100;
+                    await activateSubscription(schoolId, planId, amountPaid, session.id);
+                }
+            }
+        }
+
+        res.json({ received: true });
+    } catch (error) { next(error); }
+}
+
+/**
+ * createStripeRefund
+ *
+ * POST /api/superadmin/billing/refund/:subscriptionId
+ * SA-only: refund a Stripe payment.
+ */
+export async function createStripeRefund(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const { subscriptionId } = req.params;
+        const sub = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+        if (!sub || sub.paymentMethod !== 'STRIPE' || !sub.paymentRef) {
+            res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Transaction Stripe introuvable.' } });
+            return;
+        }
+        const session = await stripe.checkout.sessions.retrieve(sub.paymentRef);
+        if (!session.payment_intent) {
+            res.status(400).json({ error: { code: 'NO_PAYMENT_INTENT', message: 'Aucun PaymentIntent lié à cette session.' } });
+            return;
+        }
+        const refund = await stripe.refunds.create({ payment_intent: session.payment_intent as string });
+        await prisma.subscription.update({
+            where: { id: subscriptionId },
+            data: { status: 'EXPIRED', notes: `Remboursé via Stripe (ref: ${refund.id})` },
+        });
+        res.json({ success: true, refundId: refund.id });
+    } catch (error) { next(error); }
 }
 
 /**

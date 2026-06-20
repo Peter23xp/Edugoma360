@@ -6,7 +6,9 @@ import { CheckCircle2, XCircle, AlertCircle, Loader2, Home } from 'lucide-react'
 export default function PaymentCallbackPage() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+    const provider    = searchParams.get('provider') ?? 'flexpay';
     const orderNumber = searchParams.get('order') || searchParams.get('orderNumber') || '';
+    const sessionId   = searchParams.get('session') ?? '';
 
     const [status, setStatus] = useState<'LOADING' | 'PENDING' | 'SUCCESSFUL' | 'FAILED' | 'TIMEOUT'>('LOADING');
     const [attempts, setAttempts] = useState(0);
@@ -15,10 +17,8 @@ export default function PaymentCallbackPage() {
 
     // Polling effect
     useEffect(() => {
-        if (!orderNumber) {
-            setStatus('FAILED');
-            return;
-        }
+        const ref = provider === 'stripe' ? sessionId : orderNumber;
+        if (!ref) { setStatus('FAILED'); return; }
 
         let isMounted = true;
         let attemptCount = 0;
@@ -30,7 +30,10 @@ export default function PaymentCallbackPage() {
             setAttempts(attemptCount);
 
             try {
-                const res = await api.get(`/billing/status/${orderNumber}`);
+                const url = provider === 'stripe'
+                    ? `/billing/stripe/status/${sessionId}`
+                    : `/billing/status/${orderNumber}`;
+                const res = await api.get(url);
                 const paymentStatus = res.data?.status; // PENDING, SUCCESSFUL, FAILED
 
                 if (paymentStatus === 'SUCCESSFUL') {

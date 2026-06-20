@@ -53,8 +53,17 @@ import disciplineRoutes from './modules/discipline/discipline.routes';
 import onboardingRoutes from './modules/onboarding/onboarding.routes';
 import superAdminRoutes from './modules/superadmin/superadmin.routes';
 import { billingRoutes, billingWebhookRoutes } from './modules/billing/billing.routes';
+import { handleStripeWebhook } from './modules/billing/billing.controller';
+import notificationRoutes from './modules/notifications/notification.routes';
+import { startSubscriptionAlertsCron } from './lib/cron/subscription-alerts';
 
 const app = express();
+
+// ── Stripe Webhook — raw body BEFORE express.json() ───────────────────────────
+app.post('/api/public/billing/webhook/stripe',
+    express.raw({ type: 'application/json' }),
+    (req, res, next) => handleStripeWebhook(req, res, next),
+);
 
 // â”€â”€ Global Middleware â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(helmet());
@@ -89,6 +98,7 @@ app.use('/api/auth', authRoutes);
 // Mounted BEFORE tenantMiddleware so Super Admin can access all schools.
 // Protected entirely by superAdminGuard (JWT + isSuperAdmin DB check).
 app.use('/api/superadmin', superAdminRoutes);
+app.use('/api/superadmin/notifications', notificationRoutes);
 
 // ── Fully Public Routes (no tenant, no subscription, no auth) ──────────────
 // /api/public/onboarding/register   → create school account
@@ -164,5 +174,8 @@ app.use((_req, res) => {
 
 // â”€â”€ Error Handler â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 app.use(errorHandler);
+
+// ── Start Cron Jobs ───────────────────────────────────────────────────────────
+startSubscriptionAlertsCron();
 
 export default app;

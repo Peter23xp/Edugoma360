@@ -232,7 +232,12 @@ export async function RegisterSchoolController(
             return { school, adminUser, subscription };
         });
 
-        // ── 5. Respond with success ─────────────────────────────────────────
+        // ── 5. Notify SA admins of new school (fire-and-forget) ────────────────
+        import('../../modules/notifications/notification.service')
+            .then(({ notifyNewSchool }) => notifyNewSchool(result.school.id, result.school.name))
+            .catch(() => {});
+
+        // ── 6. Respond with success ─────────────────────────────────────────
         const loginUrl = `https://${subdomain}.edugoma360.cd`;
 
         res.status(201).json({

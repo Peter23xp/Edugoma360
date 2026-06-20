@@ -1288,3 +1288,21 @@ model Subscription {
   @@index([endDate])
   @@map("subscriptions")
 }
+
+model Notification {
+  id        String    @id @default(uuid())
+  schoolId  String?
+  userId    String?
+  type      String    // SUB_EXPIRING_30 | SUB_EXPIRING_7 | SUB_EXPIRING_1 | SMS_QUOTA_80 | SMS_QUOTA_100 | PAYMENT_SUCCESS | PAYMENT_FAILED | NEW_SCHOOL | ANOMALY
+  title     String
+  message   String
+  channel   String    // IN_APP | EMAIL | SMS
+  isRead    Boolean   @default(false)
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, isRead])
+  @@index([schoolId])
+  @@index([createdAt])
+  @@map("notifications")
+}

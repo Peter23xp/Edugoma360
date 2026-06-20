@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/auth.store';
+import NotificationBell from '../../components/superadmin/NotificationBell';
 import {
     BarChart3,
     Building2,
@@ -9,6 +10,7 @@ import {
     Package,
     ShieldCheck,
     Users2,
+    Bell,
 } from 'lucide-react';
 import logo from '../../assets/logo.svg';
 
@@ -19,6 +21,7 @@ const NAV_ITEMS = [
     { to: '/superadmin/sms',           icon: MessageSquare, label: 'Usage SMS' },
     { to: '/superadmin/plans',         icon: Package,       label: 'Plans SaaS' },
     { to: '/superadmin/admins',        icon: Users2,        label: 'Admins SA' },
+    { to: '/superadmin/notifications', icon: Bell,          label: 'Notifications' },
 ];
 
 export default function SuperAdminLayout() {
@@ -96,6 +99,8 @@ export default function SuperAdminLayout() {
                             <p className="text-sm font-semibold text-neutral-900">Administration SaaS</p>
                             <p className="text-xs text-neutral-700">Toutes les données plateforme, séparées des espaces école.</p>
                         </div>
+                        <div className="flex items-center gap-2">
+                            <NotificationBell />
                         <button
                             onClick={handleLogout}
                             className="inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-neutral-700 hover:bg-neutral-100 lg:hidden"
@@ -103,6 +108,7 @@ export default function SuperAdminLayout() {
                             <LogOut className="h-4 w-4" />
                             Sortir
                         </button>
+                        </div>
                     </div>
                     <nav className="flex gap-1 overflow-x-auto border-t border-neutral-200 px-3 py-2 lg:hidden">
                         {NAV_ITEMS.map(({ to, icon: Icon, label }) => (

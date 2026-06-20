@@ -117,6 +117,7 @@ import PlansPage           from './pages/SuperAdmin/PlansPage';
 import SubscriptionsPage   from './pages/SuperAdmin/SubscriptionsPage';
 import SmsPage             from './pages/SuperAdmin/SmsPage';
 import AdminsPage          from './pages/SuperAdmin/AdminsPage';
+import NotificationsPage   from './pages/SuperAdmin/NotificationsPage';
 
 // Public Marketing
 import LandingPage     from './pages/Landing/LandingPage';
@@ -185,6 +186,7 @@ export default function AppRouter() {
                 <Route path="sms"           element={<SmsPage />} />
                 <Route path="plans"         element={<PlansPage />} />
                 <Route path="admins"        element={<AdminsPage />} />
+                <Route path="notifications" element={<NotificationsPage />} />
             </Route>
 
             {/* Setup Wizard (Protected but outside AppLayout) */}

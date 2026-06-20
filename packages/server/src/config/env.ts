@@ -40,6 +40,18 @@ export const env = {
     OFFLINE_SYNC_INTERVAL_MS: parseInt(process.env.OFFLINE_SYNC_INTERVAL_MS ?? '300000', 10),
     SYNC_BATCH_SIZE: parseInt(process.env.SYNC_BATCH_SIZE ?? '100', 10),
 
+    // Stripe
+    STRIPE_SECRET_KEY:      process.env.STRIPE_SECRET_KEY ?? '',
+    STRIPE_WEBHOOK_SECRET:  process.env.STRIPE_WEBHOOK_SECRET ?? '',
+    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY ?? '',
+
+    // Resend Email
+    RESEND_API_KEY: process.env.RESEND_API_KEY ?? '',
+    FROM_EMAIL:     process.env.FROM_EMAIL ?? 'EduGoma 360 <noreply@edugoma360.cd>',
+
+    // Notifications
+    NOTIFICATION_ADMIN_EMAIL: process.env.NOTIFICATION_ADMIN_EMAIL ?? '',
+
     // Helpers
     get isDev() { return this.NODE_ENV === 'development'; },
     get isProd() { return this.NODE_ENV === 'production'; },
