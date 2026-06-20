@@ -119,7 +119,7 @@ import SmsPage             from './pages/SuperAdmin/SmsPage';
 import AdminsPage          from './pages/SuperAdmin/AdminsPage';
 import NotificationsPage   from './pages/SuperAdmin/NotificationsPage';
 import AuditPage           from './pages/SuperAdmin/AuditPage';
-import ExportsPage         from './pages/SuperAdmin/ExportsPage';
+import SAExportsPage       from './pages/SuperAdmin/ExportsPage';
 
 // Public Marketing
 import LandingPage     from './pages/Landing/LandingPage';
@@ -190,7 +190,7 @@ export default function AppRouter() {
                 <Route path="admins"        element={<AdminsPage />} />
                 <Route path="notifications" element={<NotificationsPage />} />
                 <Route path="audit"         element={<AuditPage />} />
-                <Route path="exports"       element={<ExportsPage />} />
+                <Route path="exports"       element={<SAExportsPage />} />
             </Route>
 
             {/* Setup Wizard (Protected but outside AppLayout) */}
