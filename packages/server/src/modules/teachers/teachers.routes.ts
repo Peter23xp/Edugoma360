@@ -1,10 +1,29 @@
 import { Router } from 'express';
+import multer from 'multer';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
 import { teachersController } from './teachers.controller';
 import { upload } from '../../lib/storage';
 
 const router = Router();
+
+// Import Excel : stockage en mémoire (le service lit le buffer) + filtre tableur
+const importUpload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+    fileFilter: (_req, file, cb) => {
+        const allowed = [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel',
+            'text/csv',
+        ];
+        if (allowed.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Format de fichier non supporté. Utilisez .xlsx, .xls ou .csv'));
+        }
+    },
+});
 
 // All routes require authentication
 router.use(authenticate);
@@ -30,6 +49,13 @@ router.get(
     '/',
     requirePermission('teachers:read'),
     (req, res, next) => teachersController.getTeachers(req, res, next)
+);
+
+// ⚠️ Doit précéder '/:id' sinon intercepté comme un id
+router.get(
+    '/import-template',
+    requirePermission('teachers:read'),
+    (req, res, next) => teachersController.getImportTemplate(req, res, next)
 );
 
 router.get(
@@ -70,7 +96,7 @@ router.post(
 router.post(
     '/import',
     requirePermission('teachers:create'),
-    upload.single('file'),
+    importUpload.single('file'),
     (req, res, next) => teachersController.importTeachers(req, res, next)
 );
 

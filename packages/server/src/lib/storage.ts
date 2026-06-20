@@ -1,22 +1,13 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { UPLOADS_ROOT, ensureUploadDir } from './uploads';
 
-// Ensure upload directories exist
-const uploadRoot = path.join(process.cwd(), '..', '..', '..', 'uploads');
-const dirs = [
-    uploadRoot,
-    path.join(uploadRoot, 'photos'),
-    path.join(uploadRoot, 'certificates'),
-    path.join(uploadRoot, 'documents'),
-];
-
-dirs.forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-    }
-});
+// Ensure upload directories exist (chemin unifié, servi par /uploads)
+const uploadRoot = UPLOADS_ROOT;
+ensureUploadDir('photos');
+ensureUploadDir('certificates');
+ensureUploadDir('documents');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {

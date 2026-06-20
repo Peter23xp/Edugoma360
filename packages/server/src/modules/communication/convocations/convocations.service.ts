@@ -2,6 +2,7 @@ import prisma from '../../../lib/prisma';
 import { generateConvocationPDF } from '../../../lib/pdf/convocationGenerator';
 import { sendEmail } from '../../../lib/email/resend';
 import { sendSMS } from '../../../lib/sms/africasTalking';
+import { ensureUploadDir, uploadUrl } from '../../../lib/uploads';
 import path from 'path';
 import fs from 'fs';
 
@@ -76,12 +77,11 @@ export class ConvocationsService {
     });
 
     // ── Stocker le PDF ──────────────────────────────────────────────────────
-    const uploadsDir = path.join(__dirname, '..', '..', '..', '..', '..', '..', 'uploads', 'convocations');
-    fs.mkdirSync(uploadsDir, { recursive: true });
+    const uploadsDir = ensureUploadDir('convocations');
     const pdfFilename = `${numero.replace(/-/g, '_')}.pdf`;
     const pdfPath = path.join(uploadsDir, pdfFilename);
     fs.writeFileSync(pdfPath, pdfBuffer);
-    const pdfUrl = `/uploads/convocations/${pdfFilename}`;
+    const pdfUrl = uploadUrl('convocations', pdfFilename);
 
     // ── Sauvegarder en base (retry si collision numéro) ─────────────────────
     let convocation: any;

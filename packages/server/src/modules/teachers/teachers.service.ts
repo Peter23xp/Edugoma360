@@ -15,9 +15,9 @@ export class TeachersService {
     /**
      * Import teachers from Excel
      */
-    async importTeachers(schoolId: string, filePath: string) {
+    async importTeachers(schoolId: string, fileBuffer: Buffer) {
         const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.readFile(filePath);
+        await workbook.xlsx.load(fileBuffer as any);
         const worksheet = workbook.getWorksheet(1);
         if (!worksheet) throw new Error('Le fichier Excel est vide');
 
@@ -95,6 +95,33 @@ export class TeachersService {
         }
 
         return { count: imported, errors };
+    }
+
+    /**
+     * Génère le modèle Excel d'import des enseignants (mêmes colonnes que l'import).
+     */
+    async getImportTemplate(): Promise<Buffer> {
+        const wb = new ExcelJS.Workbook();
+        const ws = wb.addWorksheet('Enseignants');
+
+        ws.columns = [
+            { header: 'Nom', key: 'nom', width: 22 },
+            { header: 'Postnom', key: 'postNom', width: 22 },
+            { header: 'Prénom', key: 'prenom', width: 22 },
+            { header: 'Genre (M/F)', key: 'genre', width: 14 },
+            { header: 'Téléphone (+243...)', key: 'phone', width: 22 },
+        ];
+
+        const header = ws.getRow(1);
+        header.font = { bold: true };
+        header.eachCell((cell) => {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8F5E9' } };
+        });
+
+        // Ligne d'exemple
+        ws.addRow(['KASEREKA', 'MUMBERE', 'Jean', 'M', '+243990000000']);
+
+        return Buffer.from(await wb.xlsx.writeBuffer());
     }
 
     /**

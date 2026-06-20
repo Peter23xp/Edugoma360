@@ -398,29 +398,63 @@ export async function importStudentsFromExcel(
 
 // â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+/**
+ * Normalise une cellule ExcelJS :
+ * - déballe les objets cellule (richText, hyperlink/text, résultat de formule)
+ * - conserve les Date telles quelles
+ * - cellule vide / espaces → undefined (essentiel : '' échouerait sur les
+ *   champs optionnels `.optional()` qui ne couvrent pas la chaîne vide)
+ */
+function cleanCell(v: any): any {
+    if (v === null || v === undefined) return undefined;
+    if (v instanceof Date) return v;
+    if (typeof v === 'object') {
+        if (Array.isArray(v.richText)) v = v.richText.map((r: any) => r.text).join('');
+        else if ('text' in v) v = v.text;
+        else if ('result' in v) v = v.result;
+        else if ('hyperlink' in v) v = v.hyperlink;
+        else return undefined;
+    }
+    if (v instanceof Date) return v;
+    const s = String(v).trim();
+    return s === '' ? undefined : s;
+}
+
+/** Cellule -> chaîne de date JJ/MM/AAAA (gère une vraie Date Excel). */
+function cleanDate(v: any): string | undefined {
+    const c = cleanCell(v);
+    if (c === undefined) return undefined;
+    if (c instanceof Date) {
+        const dd = String(c.getDate()).padStart(2, '0');
+        const mm = String(c.getMonth() + 1).padStart(2, '0');
+        return `${dd}/${mm}/${c.getFullYear()}`;
+    }
+    return String(c);
+}
+
 function parseRowData(values: any): any {
-    // ExcelJS values array is 1-indexed. index 0 is empty? usually.
-    // values[1] is column A, etc.
+    // ExcelJS values array is 1-indexed : values[1] = colonne A, etc.
+    const tenasosp = cleanCell(values[12]);
     return {
-        matricule: values[1], // ignored but mapped
-        nom: values[2],
-        postNom: values[3],
-        prenom: values[4],
-        sexe: values[5],
-        dateNaissance: values[6],
-        lieuNaissance: values[7],
-        nationalite: values[8] || 'Congolaise',
-        classe: values[9],
-        statut: values[10],
-        ecoleOrigine: values[11],
-        resultatTenasosp: values[12] ? Number(values[12]) : undefined,
-        nomPere: values[13],
-        telPere: values[14],
-        nomMere: values[15],
-        telMere: values[16],
-        nomTuteur: values[17],
-        telTuteur: values[18],
-        tuteurPrincipal: values[19] || 'tuteur'
+        matricule: cleanCell(values[1]), // ignored but mapped
+        nom: cleanCell(values[2]),
+        postNom: cleanCell(values[3]),
+        prenom: cleanCell(values[4]),
+        sexe: cleanCell(values[5]),
+        dateNaissance: cleanDate(values[6]),
+        lieuNaissance: cleanCell(values[7]),
+        nationalite: cleanCell(values[8]) ?? 'Congolaise',
+        classe: cleanCell(values[9]),
+        statut: cleanCell(values[10]),
+        ecoleOrigine: cleanCell(values[11]),
+        resultatTenasosp: tenasosp !== undefined ? Number(tenasosp) : undefined,
+        nomPere: cleanCell(values[13]),
+        telPere: cleanCell(values[14]),
+        nomMere: cleanCell(values[15]),
+        telMere: cleanCell(values[16]),
+        nomTuteur: cleanCell(values[17]),
+        telTuteur: cleanCell(values[18]),
+        tuteurPrincipal: (cleanCell(values[19]) ?? 'tuteur').toString().toLowerCase(),
     };
 }
 

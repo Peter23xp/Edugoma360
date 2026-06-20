@@ -5,6 +5,7 @@ import { fr } from 'date-fns/locale';
 import Handlebars from 'handlebars';
 import prisma from '../../lib/prisma';
 import { generatePdf } from '../../lib/pdf';
+import { ensureUploadDir, uploadUrl } from '../../lib/uploads';
 import { DELIB_DECISIONS } from '@edugoma360/shared/constants/decisions';
 
 // â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -411,17 +412,8 @@ export class BulletinsService {
             try {
                 const pdf = await this.generateBulletin(studentId, termId, schoolId);
 
-                // Save PDF to uploads/bulletins/
-                const uploadsDir = path.join(
-                    __dirname,
-                    '..',
-                    '..',
-                    '..',
-                    '..',
-                    'uploads',
-                    'bulletins',
-                );
-                await fs.mkdir(uploadsDir, { recursive: true });
+                // Save PDF to uploads/bulletins/ (chemin unifié, servi par /uploads)
+                const uploadsDir = ensureUploadDir('bulletins');
 
                 const filename = `bulletin_${studentId}_${termId}_${Date.now()}.pdf`;
                 const filepath = path.join(uploadsDir, filename);
@@ -429,7 +421,7 @@ export class BulletinsService {
 
                 job.results.push({
                     studentId,
-                    url: `/uploads/bulletins/${filename}`,
+                    url: uploadUrl('bulletins', filename),
                 });
             } catch (err: any) {
                 console.error(`[BulletinsService] Error for student ${studentId}:`, err.message);

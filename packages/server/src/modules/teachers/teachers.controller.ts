@@ -56,8 +56,22 @@ export class TeachersController {
                 res.status(400).json({ message: 'Le fichier Excel est requis' });
                 return;
             }
-            const result = await teachersService.importTeachers(req.user!.schoolId, req.file.path);
+            const result = await teachersService.importTeachers(req.user!.schoolId, req.file.buffer);
             res.json(result);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    /**
+     * Download the Excel import template for teachers
+     */
+    async getImportTemplate(_req: Request, res: Response, next: NextFunction) {
+        try {
+            const buffer = await teachersService.getImportTemplate();
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', 'attachment; filename="modele-import-enseignants.xlsx"');
+            res.send(buffer);
         } catch (error) {
             next(error);
         }
