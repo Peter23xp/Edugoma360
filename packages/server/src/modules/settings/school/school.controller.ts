@@ -5,7 +5,11 @@ import { optimizeSchoolLogo } from '../../../lib/upload/imageOptimizer';
 
 export const getSchoolInfo = async (req: Request, res: Response) => {
     try {
-        const school = await schoolService.getSchool();
+        const schoolId = req.user?.schoolId;
+        if (!schoolId) {
+            return res.status(403).json({ error: 'NO_SCHOOL', message: 'Aucune école associée à ce compte.' });
+        }
+        const school = await schoolService.getSchool(schoolId);
         if (!school) {
             return res.status(404).json({
                 error: 'SCHOOL_NOT_FOUND',
@@ -21,11 +25,11 @@ export const getSchoolInfo = async (req: Request, res: Response) => {
 
 export const updateSchoolInfo = async (req: Request, res: Response) => {
     try {
+        const schoolId = req.user?.schoolId;
+        if (!schoolId) {
+            return res.status(403).json({ error: 'NO_SCHOOL', message: 'Aucune école associée à ce compte.' });
+        }
         const data = req.body;
-        
-        // Zod validation on backend is highly recommended. 
-        // We will just pass the request to the service to handle and return
-        // assuming client sent right data, but normally we'd validate here.
         
         let logoUrls = undefined;
 
@@ -37,7 +41,7 @@ export const updateSchoolInfo = async (req: Request, res: Response) => {
             }
         }
 
-        const updatedSchool = await schoolService.updateSchool(data, logoUrls);
+        const updatedSchool = await schoolService.updateSchool(schoolId, data, logoUrls);
         
         return res.json({
             message: "Informations de l'école mises à jour avec succès",

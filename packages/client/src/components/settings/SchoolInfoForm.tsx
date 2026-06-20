@@ -12,9 +12,10 @@ interface SchoolInfoFormProps {
     defaultValues?: Partial<SchoolData>;
     onSubmit: (formData: FormData) => Promise<void>;
     isSubmitting: boolean;
+    onCancel?: () => void;
 }
 
-export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }: SchoolInfoFormProps) {
+export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting, onCancel }: SchoolInfoFormProps) {
     const { 
         register, 
         handleSubmit, 
@@ -99,9 +100,15 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
                     </button>
                 </div>
                 <div className="w-full sm:w-auto flex flex-col-reverse sm:flex-row gap-3">
-                    <button type="button" className="w-full sm:w-auto px-6 py-2.5 text-primary font-bold border border-primary hover:bg-primary-lighter rounded-lg text-sm transition-colors text-center shadow-sm">
-                        Annuler
-                    </button>
+                    {onCancel && (
+                        <button 
+                            type="button" 
+                            onClick={onCancel}
+                            className="w-full sm:w-auto px-6 py-2.5 text-primary font-bold border border-primary hover:bg-primary-lighter rounded-lg text-sm transition-colors text-center shadow-sm"
+                        >
+                            Annuler
+                        </button>
+                    )}
                     <button 
                         type="submit" 
                         disabled={isSubmitting}
@@ -162,11 +169,17 @@ export default function SchoolInfoForm({ defaultValues, onSubmit, isSubmitting }
                                     </label>
                                     <div className="relative">
                                         <Hash className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400" />
-                                        <input 
-                                            {...register('code')} 
-                                            disabled={!!defaultValues?.code} // Immuable
-                                            className={cn(inputClass, "pl-10 uppercase", errors.code && "border-red-500")}
-                                            placeholder="Ex: ISS001" 
+                                        <input
+                                            {...register('code')}
+                                            readOnly={!!defaultValues?.code} // Immuable : readOnly garde la valeur soumise (disabled la mettrait à undefined avec RHF)
+                                            aria-readonly={!!defaultValues?.code}
+                                            className={cn(
+                                                inputClass,
+                                                "pl-10 uppercase",
+                                                !!defaultValues?.code && "bg-neutral-100 text-neutral-500 cursor-not-allowed",
+                                                errors.code && "border-red-500"
+                                            )}
+                                            placeholder="Ex: ISS001"
                                         />
                                     </div>
                                     <div className="flex items-start gap-2 mt-1">

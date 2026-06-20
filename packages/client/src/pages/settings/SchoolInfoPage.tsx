@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import SchoolInfoForm from '../../components/settings/SchoolInfoForm';
+import SchoolInfoDisplay from '../../components/settings/SchoolInfoDisplay';
 import { useSchoolSettings } from '../../hooks/useSchoolSettings';
 import { Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -6,14 +8,18 @@ import { useNavigate } from 'react-router-dom';
 export default function SchoolInfoPage() {
     const { school, isLoading, error: _error, updateSchool, isUpdating } = useSchoolSettings();
     const navigate = useNavigate();
+    const [isEditMode, setIsEditMode] = useState(false);
 
     const handleSubmit = async (formData: FormData) => {
         try {
             await updateSchool(formData);
-            // Redirection auto vers academic-year
-            setTimeout(() => {
-                navigate('/settings/academic-year');
-            }, 1500);
+            setIsEditMode(false); // Retour en mode lecture après sauvegarde
+            // Redirection auto vers academic-year seulement si c'est la première configuration
+            if (!school) {
+                setTimeout(() => {
+                    navigate('/settings/academic-year');
+                }, 1500);
+            }
         } catch (error) {
             console.error(error);
         }
@@ -27,8 +33,9 @@ export default function SchoolInfoPage() {
         );
     }
 
-    // Le backend renverra une erreur avec SCHOOL_NOT_FOUND si vide (404 ou 200 avec message empty)
-    // C'est géré par useSchoolSettings. S'il n'y a pas d'école, le form sera vide.
+    // Si l'école existe (même partiellement) et qu'on n'est pas en mode édition
+    const schoolConfigured = school && (school.nomOfficiel || (school as any).name);
+    const shouldShowDisplay = schoolConfigured && !isEditMode;
 
     return (
         <div className="min-h-screen bg-background pb-12 w-full overflow-hidden">
@@ -40,15 +47,35 @@ export default function SchoolInfoPage() {
                         Informations de l'école
                     </h1>
                     <p className="text-sm sm:text-base text-neutral-500">
-                        Gérez l'identité et les paramètres principaux de votre établissement.
+                        {shouldShowDisplay 
+                            ? "Consultez l'identité et les paramètres de votre établissement."
+                            : "Gérez l'identité et les paramètres principaux de votre établissement."
+                        }
                     </p>
                 </div>
 
-                <SchoolInfoForm 
-                    defaultValues={school || {}} 
-                    onSubmit={handleSubmit}
-                    isSubmitting={isUpdating}
-                />
+                {shouldShowDisplay ? (
+                    <SchoolInfoDisplay 
+                        school={school} 
+                        onEdit={() => setIsEditMode(true)}
+                    />
+                ) : (
+                    <SchoolInfoForm 
+                        defaultValues={school ? {
+                            ...school,
+                            // Migrate old fields to new ones
+                            nomOfficiel: school.nomOfficiel || (school as any).name || '',
+                            nomCourt: school.nomCourt || (school as any).name || '',
+                            telephonePrincipal: school.telephonePrincipal || (school as any).telephone || '',
+                            commune: school.commune || (school as any).commune || '',
+                            avenue: school.avenue || (school as any).adresse || '',
+                            type: ((school.type as string) === 'PRIVE' ? 'PRIVEE' : school.type) as any,
+                        } : {}} 
+                        onSubmit={handleSubmit}
+                        isSubmitting={isUpdating}
+                        onCancel={schoolConfigured ? () => setIsEditMode(false) : undefined}
+                    />
+                )}
             </main>
         </div>
     );

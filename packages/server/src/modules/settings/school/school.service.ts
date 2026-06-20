@@ -2,13 +2,26 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const getSchool = async () => {
-    // Only one school per installation
-    return await prisma.school.findFirst();
+export const getSchool = async (schoolId: string) => {
+    const school = await prisma.school.findUnique({ where: { id: schoolId } });
+    if (!school) return null;
+
+    // Migrate old fields to new schema fields if not yet filled
+    const migrated = {
+        ...school,
+        nomOfficiel: school.nomOfficiel || (school as any).name || null,
+        nomCourt:    school.nomCourt    || (school as any).name || null,
+        telephonePrincipal: school.telephonePrincipal || (school as any).telephone || null,
+        commune: school.commune || (school as any).commune || null,
+        avenue:  school.avenue  || (school as any).adresse  || null,
+        type: (school.type === 'PRIVE' ? 'PRIVEE' : school.type) as any,
+    };
+
+    return migrated;
 };
 
-export const updateSchool = async (data: any, logoUrls?: any) => {
-    const defaultSchool = await prisma.school.findFirst();
+export const updateSchool = async (schoolId: string, data: any, logoUrls?: any) => {
+    const defaultSchool = await prisma.school.findUnique({ where: { id: schoolId } });
 
     // Map Prisma schema properly
     const payload: any = {
@@ -51,8 +64,9 @@ export const updateSchool = async (data: any, logoUrls?: any) => {
             data: payload
         });
     } else {
+        // Créer une nouvelle école si elle n'existe pas encore
         return await prisma.school.create({
-            data: payload
+            data: { ...payload, id: schoolId }
         });
     }
 };
