@@ -11,6 +11,8 @@ import {
     ShieldCheck,
     Users2,
     Bell,
+    Activity,
+    Download,
 } from 'lucide-react';
 import logo from '../../assets/logo.svg';
 
@@ -22,6 +24,8 @@ const NAV_ITEMS = [
     { to: '/superadmin/plans',         icon: Package,       label: 'Plans SaaS' },
     { to: '/superadmin/admins',        icon: Users2,        label: 'Admins SA' },
     { to: '/superadmin/notifications', icon: Bell,          label: 'Notifications' },
+    { to: '/superadmin/audit',         icon: Activity,      label: 'Audit & Logs'  },
+    { to: '/superadmin/exports',       icon: Download,      label: 'Exports'       },
 ];
 
 export default function SuperAdminLayout() {

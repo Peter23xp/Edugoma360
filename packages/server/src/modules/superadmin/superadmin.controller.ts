@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import prisma from '../../lib/prisma';
+import { auditSAAction } from '../audit/audit.service';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -339,6 +340,7 @@ export async function updateSchoolSubscription(req: Request, res: Response, next
             return newSub;
         });
 
+        auditSAAction(req, 'SUBSCRIPTION_UPDATE', `Abonnement mis à jour pour l'école ${id}`, { schoolId: id, entityId: id, entity: 'Subscription' }).catch(() => {});
         res.json({
             success: true,
             message: `Abonnement de l'école mis à jour avec succès.`,
@@ -393,6 +395,7 @@ export async function updateSchoolStatus(req: Request, res: Response, next: Next
             }
         });
 
+        auditSAAction(req, status === 'ACTIVE' ? 'ACTIVATE' : 'SUSPEND', `École ${id} ${status === 'ACTIVE' ? 'réactivée' : 'suspendue'}${reason ? ` : ${reason}` : ''}`, { schoolId: id, entity: 'School', entityId: id }).catch(() => {});
         res.json({ success: true, status, message: `École ${status === 'ACTIVE' ? 'réactivée' : 'suspendue'} avec succès.` });
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -626,6 +629,7 @@ export async function createSAAdmin(req: Request, res: Response, next: NextFunct
         });
 
         const { passwordHash: _, ...safe } = user;
+        auditSAAction(req, 'ADMIN_CREATE', `Nouvel admin SA créé : ${body.nom} ${body.postNom}`, { entity: 'User', entityId: user.id }).catch(() => {});
         res.status(201).json({ success: true, data: { ...safe, permissions: body.permissions } });
     } catch (error) {
         if (error instanceof z.ZodError) {

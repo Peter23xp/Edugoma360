@@ -55,6 +55,8 @@ import superAdminRoutes from './modules/superadmin/superadmin.routes';
 import { billingRoutes, billingWebhookRoutes } from './modules/billing/billing.routes';
 import { handleStripeWebhook } from './modules/billing/billing.controller';
 import notificationRoutes from './modules/notifications/notification.routes';
+import auditRoutes        from './modules/audit/audit.routes';
+import exportRoutes       from './modules/exports/export.routes';
 import { startSubscriptionAlertsCron } from './lib/cron/subscription-alerts';
 
 const app = express();
@@ -99,6 +101,8 @@ app.use('/api/auth', authRoutes);
 // Protected entirely by superAdminGuard (JWT + isSuperAdmin DB check).
 app.use('/api/superadmin', superAdminRoutes);
 app.use('/api/superadmin/notifications', notificationRoutes);
+app.use('/api/superadmin/audit',         auditRoutes);
+app.use('/api/superadmin/exports',       exportRoutes);
 
 // ── Fully Public Routes (no tenant, no subscription, no auth) ──────────────
 // /api/public/onboarding/register   → create school account

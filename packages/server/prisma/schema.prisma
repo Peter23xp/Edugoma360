@@ -1306,3 +1306,27 @@ model Notification {
   @@index([createdAt])
   @@map("notifications")
 }
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  actorRole String?
+  actorName String?
+  schoolId  String?
+  schoolName String?
+  action    String   // LOGIN | LOGOUT | CREATE | UPDATE | DELETE | EXPORT | SUSPEND | ACTIVATE | PAYMENT | etc.
+  entity    String?  // School | Student | Teacher | Subscription | Plan | User
+  entityId  String?
+  summary   String?  // Human-readable description
+  before    String?  // JSON snapshot before change
+  after     String?  // JSON snapshot after change
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([schoolId])
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
