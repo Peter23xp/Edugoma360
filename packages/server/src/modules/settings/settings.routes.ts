@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authenticate } from '../../middleware/auth.middleware';
 import { requirePermission } from '../../middleware/rbac.middleware';
 import { settingsController } from './settings.controller';
+import schoolRoutes from './school/school.routes';
 
 const router = Router();
 router.use(authenticate);
@@ -28,5 +29,8 @@ router.get('/terms', (req, res, next) => settingsController.getTerms(req, res, n
 
 // Sections
 router.get('/sections', requirePermission('settings:read'), (req, res, next) => settingsController.getSections(req, res, next));
+
+// School info (GET + PUT /api/settings/school)
+router.use('/school', schoolRoutes);
 
 export default router;
