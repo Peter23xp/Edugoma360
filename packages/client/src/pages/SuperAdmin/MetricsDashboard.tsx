@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../../lib/api';
 import {
     AlertCircle,
+    AlertTriangle,
     Building2,
     CheckCircle,
     Clock,
@@ -19,6 +20,8 @@ interface Metrics {
     mrr: number;
     totalSmsThisMonth: number;
     schoolsByPlan: { planId: string | null; planName: string; slug: string; count: number }[];
+    expiringIn30Days: number;
+    newSchoolsThisMonth: number;
     month: string;
 }
 
@@ -147,11 +150,13 @@ export default function MetricsDashboard() {
                 </button>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 <KpiCard title="Écoles actives" value={metrics.activeSchools} subtitle={`sur ${metrics.totalSchools} écoles`} icon={CheckCircle} tone="primary" />
                 <KpiCard title="Périodes d'essai" value={metrics.trialSchools} subtitle="écoles à convertir" icon={Clock} tone="info" />
                 <KpiCard title="Revenu mensuel" value={`$${metrics.mrr.toLocaleString()}`} subtitle="abonnements actifs" icon={TrendingUp} tone="accent" />
                 <KpiCard title="SMS envoyés" value={metrics.totalSmsThisMonth.toLocaleString()} subtitle="ce mois-ci" icon={MessageSquare} tone="primary" />
+                <KpiCard title="Expirent dans 30j" value={metrics.expiringIn30Days} subtitle="à renouveler rapidement" icon={AlertTriangle} tone="error" />
+                <KpiCard title="Nouvelles ce mois" value={metrics.newSchoolsThisMonth} subtitle="inscriptions récentes" icon={TrendingUp} tone="info" />
             </div>
 
             <div className="grid gap-4 xl:grid-cols-[0.8fr_1.2fr]">

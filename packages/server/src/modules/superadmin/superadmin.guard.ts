@@ -60,3 +60,38 @@ export async function superAdminGuard(
     req.isSuperAdmin = true;
     next();
 }
+
+/**
+ * requireSAPermission — checks granular SA permissions stored in user.permissions (JSON array).
+ * If permissions is empty array, user has ALL permissions (full SA).
+ * Usage: router.post('/plans', superAdminGuard, requireSAPermission('plans:write'), handler)
+ */
+export function requireSAPermission(permission: string) {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        const userId = req.user?.userId;
+        if (!userId) {
+            res.status(401).json({ error: { code: 'UNAUTHORIZED', message: 'Authentification requise.' } });
+            return;
+        }
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { permissions: true, isSuperAdmin: true },
+        });
+        if (!user?.isSuperAdmin) {
+            res.status(403).json({ error: { code: 'FORBIDDEN', message: 'Accès refusé.' } });
+            return;
+        }
+        let perms: string[] = [];
+        try { const p = JSON.parse(user.permissions || '[]'); perms = Array.isArray(p) ? p : []; }
+        catch { perms = []; }
+
+        // Empty array = full access (backward compat)
+        if (perms.length === 0 || perms.includes(permission)) {
+            next();
+            return;
+        }
+        res.status(403).json({
+            error: { code: 'INSUFFICIENT_PERMISSION', message: `Permission "${permission}" requise.` },
+        });
+    };
+}

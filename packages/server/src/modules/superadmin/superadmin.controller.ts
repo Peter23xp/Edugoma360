@@ -49,12 +49,40 @@ const CreatePlanSchema = z.object({
     isActive:       z.boolean().default(true),
 });
 
+const UpdatePlanSchema = z.object({
+    name:           z.string().min(2).optional(),
+    priceUSD:       z.number().min(0).optional(),
+    priceCDF:       z.number().min(0).optional(),
+    maxStudents:    z.number().int().optional(),
+    maxTeachers:    z.number().int().optional(),
+    maxSmsPerMonth: z.number().int().min(0).optional(),
+    durationDays:   z.number().int().min(1).optional(),
+    features:       z.array(z.string()).optional(),
+    isActive:       z.boolean().optional(),
+});
+
+const CreateSAAdminSchema = z.object({
+    nom:         z.string().min(2),
+    postNom:     z.string().min(2),
+    prenom:      z.string().optional(),
+    email:       z.string().email().optional().or(z.literal('')),
+    phone:       z.string().optional(),
+    password:    z.string().min(8),
+    schoolId:    z.string().optional(),
+    permissions: z.array(z.string()).default([]),
+});
+
+const UpdatePermissionsSchema = z.object({
+    permissions: z.array(z.string()),
+});
+
 // ── getMetrics ─────────────────────────────────────────────────────────────────
 export async function getMetrics(_req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const monthStart = startOfMonth();
         const monthEnd   = endOfMonth();
         const now        = new Date();
+        const in30Days   = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
         // Parallel queries for performance
         const [
@@ -65,6 +93,8 @@ export async function getMetrics(_req: Request, res: Response, next: NextFunctio
             mrrData,
             totalSmsThisMonth,
             schoolsByPlan,
+            expiringIn30Days,
+            newSchoolsThisMonth,
         ] = await Promise.all([
             prisma.school.count({ where: { isActive: true } }),
 
@@ -101,6 +131,19 @@ export async function getMetrics(_req: Request, res: Response, next: NextFunctio
                 _count: { _all: true },
                 where: { isActive: true },
             }),
+
+            // Subscriptions expiring in the next 30 days
+            prisma.subscription.count({
+                where: {
+                    status: { in: ['ACTIVE', 'TRIAL'] },
+                    endDate: { gte: now, lte: in30Days },
+                },
+            }),
+
+            // New schools registered this month
+            prisma.school.count({
+                where: { createdAt: { gte: monthStart, lte: monthEnd } },
+            }),
         ]);
 
         // Resolve plan names for schoolsByPlan
@@ -121,13 +164,15 @@ export async function getMetrics(_req: Request, res: Response, next: NextFunctio
         res.json({
             data: {
                 totalSchools,
-                activeSchools:   activeSubCount,
-                trialSchools:    trialSubCount,
+                activeSchools:      activeSubCount,
+                trialSchools:       trialSubCount,
                 expiredSchools,
-                mrr:             mrrData._sum.amountPaid ?? 0,
-                totalSmsThisMonth: totalSmsThisMonth._sum.sentSMS ?? 0,
-                schoolsByPlan:   schoolsByPlanFormatted,
-                month:           `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}`,
+                mrr:                mrrData._sum.amountPaid ?? 0,
+                totalSmsThisMonth:  totalSmsThisMonth._sum.sentSMS ?? 0,
+                schoolsByPlan:      schoolsByPlanFormatted,
+                expiringIn30Days,
+                newSchoolsThisMonth,
+                month:              `${monthStart.getFullYear()}-${String(monthStart.getMonth() + 1).padStart(2, '0')}`,
             },
         });
     } catch (error) {
@@ -413,4 +458,225 @@ export async function managePlan(req: Request, res: Response, next: NextFunction
         }
         next(error);
     }
+}
+
+// ── listPlans ─────────────────────────────────────────────────────────────────
+export async function listPlans(_req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const plans = await prisma.subscriptionPlan.findMany({
+            orderBy: { priceUSD: 'asc' },
+            include: { _count: { select: { schools: true } } },
+        });
+        const data = plans.map((p) => ({
+            ...p,
+            features: (() => { try { return JSON.parse(p.features); } catch { return []; } })(),
+            schoolCount: p._count.schools,
+        }));
+        res.json({ data });
+    } catch (error) { next(error); }
+}
+
+// ── updatePlan ────────────────────────────────────────────────────────────────
+export async function updatePlan(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const { id } = req.params;
+        const body = UpdatePlanSchema.parse(req.body);
+        const { features, ...planData } = body;
+        const plan = await prisma.subscriptionPlan.update({
+            where: { id },
+            data: { ...planData, ...(features !== undefined && { features: JSON.stringify(features) }) },
+        });
+        res.json({
+            success: true,
+            data: { ...plan, features: (() => { try { return JSON.parse(plan.features); } catch { return []; } })() },
+        });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(422).json({ error: { code: 'VALIDATION_ERROR', fields: error.errors } });
+            return;
+        }
+        next(error);
+    }
+}
+
+// ── togglePlan ────────────────────────────────────────────────────────────────
+export async function togglePlan(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const { id } = req.params;
+        const plan = await prisma.subscriptionPlan.findUnique({ where: { id } });
+        if (!plan) {
+            res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Plan introuvable.' } });
+            return;
+        }
+        const updated = await prisma.subscriptionPlan.update({
+            where: { id },
+            data: { isActive: !plan.isActive },
+        });
+        res.json({ success: true, data: updated });
+    } catch (error) { next(error); }
+}
+
+// ── listAllSubscriptions ──────────────────────────────────────────────────────
+export async function listAllSubscriptions(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const page   = Math.max(1, parseInt(req.query.page as string) || 1);
+        const limit  = Math.min(100, parseInt(req.query.limit as string) || 20);
+        const skip   = (page - 1) * limit;
+        const status = req.query.status as string | undefined;
+        const search = (req.query.search as string)?.trim() || '';
+        const planId = req.query.planId as string | undefined;
+
+        const where: any = {};
+        if (status && status !== 'ALL') where.status = status;
+        if (planId) where.planId = planId;
+        if (search) where.school = { name: { contains: search } };
+
+        const [subscriptions, total] = await Promise.all([
+            prisma.subscription.findMany({
+                where,
+                skip,
+                take: limit,
+                orderBy: { createdAt: 'desc' },
+                include: { school: { select: { id: true, name: true, subdomain: true } } },
+            }),
+            prisma.subscription.count({ where }),
+        ]);
+
+        const planIds = [...new Set(subscriptions.map((s) => s.planId).filter(Boolean))] as string[];
+        const plans   = await prisma.subscriptionPlan.findMany({
+            where: { id: { in: planIds } },
+            select: { id: true, name: true, slug: true },
+        });
+        const planMap = new Map(plans.map((p) => [p.id, p]));
+
+        const data = subscriptions.map((s) => ({
+            ...s,
+            planName: s.planId ? (planMap.get(s.planId)?.name ?? 'Inconnu') : 'Sans plan',
+        }));
+
+        res.json({ data, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } });
+    } catch (error) { next(error); }
+}
+
+// ── listSAAdmins ──────────────────────────────────────────────────────────────
+export async function listSAAdmins(_req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const admins = await prisma.user.findMany({
+            where: { isSuperAdmin: true },
+            select: {
+                id: true, nom: true, postNom: true, prenom: true,
+                email: true, phone: true, isActive: true,
+                permissions: true, createdAt: true, lastLoginAt: true,
+                school: { select: { id: true, name: true } },
+            },
+            orderBy: { createdAt: 'asc' },
+        });
+        const data = admins.map((a) => ({
+            ...a,
+            permissions: (() => {
+                try { const p = JSON.parse(a.permissions || '[]'); return Array.isArray(p) ? p : []; }
+                catch { return []; }
+            })(),
+        }));
+        res.json({ data });
+    } catch (error) { next(error); }
+}
+
+// ── createSAAdmin ─────────────────────────────────────────────────────────────
+export async function createSAAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const body = CreateSAAdminSchema.parse(req.body);
+        const bcrypt = await import('bcryptjs');
+        const passwordHash = await bcrypt.hash(body.password, 12);
+
+        const requestingUserId = req.user?.userId;
+        const requestingUser = requestingUserId
+            ? await prisma.user.findUnique({ where: { id: requestingUserId }, select: { schoolId: true } })
+            : null;
+
+        const schoolId = body.schoolId || requestingUser?.schoolId;
+        if (!schoolId) {
+            res.status(422).json({ error: { code: 'MISSING_SCHOOL', message: 'schoolId requis.' } });
+            return;
+        }
+
+        if (body.email) {
+            const existing = await prisma.user.findFirst({ where: { email: body.email } });
+            if (existing) {
+                res.status(409).json({ error: { code: 'EMAIL_TAKEN', message: 'Cet email est déjà utilisé.' } });
+                return;
+            }
+        }
+
+        const user = await prisma.user.create({
+            data: {
+                schoolId,
+                nom:                body.nom.toUpperCase(),
+                postNom:            body.postNom.toUpperCase(),
+                prenom:             body.prenom,
+                email:              body.email || null,
+                phone:              body.phone || null,
+                role:               'SUPER_ADMIN',
+                passwordHash,
+                isSuperAdmin:       true,
+                isActive:           true,
+                mustChangePassword: true,
+                permissions:        JSON.stringify(body.permissions),
+            },
+        });
+
+        const { passwordHash: _, ...safe } = user;
+        res.status(201).json({ success: true, data: { ...safe, permissions: body.permissions } });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(422).json({ error: { code: 'VALIDATION_ERROR', fields: error.errors } });
+            return;
+        }
+        next(error);
+    }
+}
+
+// ── updateSAAdminPermissions ──────────────────────────────────────────────────
+export async function updateSAAdminPermissions(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const { id } = req.params;
+        const { permissions } = UpdatePermissionsSchema.parse(req.body);
+
+        const admin = await prisma.user.findUnique({ where: { id } });
+        if (!admin || !admin.isSuperAdmin) {
+            res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Admin introuvable.' } });
+            return;
+        }
+
+        await prisma.user.update({ where: { id }, data: { permissions: JSON.stringify(permissions) } });
+        res.json({ success: true, message: 'Permissions mises à jour avec succès.' });
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            res.status(422).json({ error: { code: 'VALIDATION_ERROR', fields: error.errors } });
+            return;
+        }
+        next(error);
+    }
+}
+
+// ── toggleSAAdmin ─────────────────────────────────────────────────────────────
+export async function toggleSAAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const { id } = req.params;
+        const requestingUserId = req.user?.userId;
+
+        if (id === requestingUserId) {
+            res.status(400).json({ error: { code: 'SELF_ACTION', message: 'Vous ne pouvez pas désactiver votre propre compte.' } });
+            return;
+        }
+
+        const admin = await prisma.user.findUnique({ where: { id } });
+        if (!admin || !admin.isSuperAdmin) {
+            res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Admin introuvable.' } });
+            return;
+        }
+
+        const updated = await prisma.user.update({ where: { id }, data: { isActive: !admin.isActive } });
+        res.json({ success: true, isActive: updated.isActive });
+    } catch (error) { next(error); }
 }

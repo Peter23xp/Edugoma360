@@ -113,6 +113,10 @@ import SetupWizardPage from './pages/setup/SetupWizardPage';
 import SuperAdminLayout    from './pages/SuperAdmin/SuperAdminLayout';
 import MetricsDashboard    from './pages/SuperAdmin/MetricsDashboard';
 import SchoolsTable        from './pages/SuperAdmin/SchoolsTable';
+import PlansPage           from './pages/SuperAdmin/PlansPage';
+import SubscriptionsPage   from './pages/SuperAdmin/SubscriptionsPage';
+import SmsPage             from './pages/SuperAdmin/SmsPage';
+import AdminsPage          from './pages/SuperAdmin/AdminsPage';
 
 // Public Marketing
 import LandingPage     from './pages/Landing/LandingPage';
@@ -177,9 +181,10 @@ export default function AppRouter() {
                 <Route index element={<Navigate to="metrics" replace />} />
                 <Route path="metrics"       element={<MetricsDashboard />} />
                 <Route path="schools"       element={<SchoolsTable />} />
-                <Route path="subscriptions" element={<SchoolsTable />} />
-                <Route path="sms"           element={<MetricsDashboard />} />
-                <Route path="plans"         element={<MetricsDashboard />} />
+                <Route path="subscriptions" element={<SubscriptionsPage />} />
+                <Route path="sms"           element={<SmsPage />} />
+                <Route path="plans"         element={<PlansPage />} />
+                <Route path="admins"        element={<AdminsPage />} />
             </Route>
 
             {/* Setup Wizard (Protected but outside AppLayout) */}

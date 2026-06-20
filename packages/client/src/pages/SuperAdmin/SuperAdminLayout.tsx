@@ -8,15 +8,17 @@ import {
     MessageSquare,
     Package,
     ShieldCheck,
+    Users2,
 } from 'lucide-react';
 import logo from '../../assets/logo.svg';
 
 const NAV_ITEMS = [
-    { to: '/superadmin/metrics', icon: BarChart3, label: 'Vue plateforme' },
-    { to: '/superadmin/schools', icon: Building2, label: 'Écoles' },
-    { to: '/superadmin/subscriptions', icon: CreditCard, label: 'Abonnements' },
-    { to: '/superadmin/sms', icon: MessageSquare, label: 'Usage SMS' },
-    { to: '/superadmin/plans', icon: Package, label: 'Plans SaaS' },
+    { to: '/superadmin/metrics',       icon: BarChart3,     label: 'Vue plateforme' },
+    { to: '/superadmin/schools',       icon: Building2,     label: 'Écoles' },
+    { to: '/superadmin/subscriptions', icon: CreditCard,    label: 'Abonnements' },
+    { to: '/superadmin/sms',           icon: MessageSquare, label: 'Usage SMS' },
+    { to: '/superadmin/plans',         icon: Package,       label: 'Plans SaaS' },
+    { to: '/superadmin/admins',        icon: Users2,        label: 'Admins SA' },
 ];
 
 export default function SuperAdminLayout() {
