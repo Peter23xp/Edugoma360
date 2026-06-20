@@ -94,6 +94,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
         ADJOURNED: 'Ajourné(e)',
         FAILED: 'Refusé(e)',
         MEDICAL: 'Cas Médical',
+        EXCLUDED_DEBT: 'Exclu(e) pour dette',
     };
 
     const decisionColors: Record<DelibDecision, string> = {
@@ -103,6 +104,7 @@ export default function GradesTab({ studentId }: GradesTabProps) {
         ADJOURNED: 'bg-orange-100 text-orange-700',
         FAILED: 'bg-red-100 text-red-700',
         MEDICAL: 'bg-blue-100 text-blue-700',
+        EXCLUDED_DEBT: 'bg-neutral-200 text-neutral-700',
     };
 
     return (
