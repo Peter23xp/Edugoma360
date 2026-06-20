@@ -13,6 +13,7 @@ import {
     Power,
     PowerOff,
     Search,
+    Trash2,
     X,
 } from 'lucide-react';
 
@@ -136,6 +137,125 @@ function ConfirmToggleModal({ school, onConfirm, onCancel, isLoading }: ConfirmM
     );
 }
 
+// ── Delete Confirmation Modal ─────────────────────────────────────────────────
+interface DeleteModalProps {
+    school: SchoolRow;
+    onConfirm: () => void;
+    onCancel: () => void;
+    isLoading: boolean;
+}
+
+function DeleteSchoolModal({ school, onConfirm, onCancel, isLoading }: DeleteModalProps) {
+    const [typed, setTyped] = useState('');
+    const confirmed = typed === school.name;
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+            <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
+
+                {/* Header */}
+                <div className="flex items-center justify-between rounded-t-2xl bg-red-700 px-6 py-4">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20">
+                            <Trash2 className="h-5 w-5 text-white" />
+                        </div>
+                        <h2 className="text-base font-bold text-white">Supprimer définitivement</h2>
+                    </div>
+                    <button onClick={onCancel} className="rounded-full p-1 text-white/70 hover:bg-white/20">
+                        <X className="h-5 w-5" />
+                    </button>
+                </div>
+
+                {/* Body */}
+                <div className="space-y-4 px-6 py-5">
+                    {/* Warning banner */}
+                    <div className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+                        <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+                        <div>
+                            <p className="text-sm font-bold text-red-700">Action irréversible</p>
+                            <p className="mt-0.5 text-xs text-red-600">
+                                Cette action ne peut pas être annulée. Toutes les données seront définitivement perdues.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* School recap */}
+                    <div className="rounded-lg border border-neutral-200 bg-neutral-50 px-4 py-3">
+                        <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">École à supprimer</p>
+                        <p className="mt-0.5 text-sm font-bold text-neutral-900">{school.name}</p>
+                        <p className="text-xs text-neutral-500">{school.subdomain}.edugoma360.cd</p>
+                    </div>
+
+                    {/* What gets deleted */}
+                    <div>
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-neutral-500">Ce qui sera supprimé :</p>
+                        <ul className="space-y-1 text-xs text-neutral-700">
+                            {[
+                                `${school._count.students} élève(s) et tous leurs dossiers`,
+                                'Enseignants, classes, matières et sections',
+                                'Bulletins, notes, délibérations',
+                                'Historique des paiements et abonnements',
+                                'SMS, emails, convocations, annonces',
+                                'Inventaire, bibliothèque, salles',
+                                'Tous les utilisateurs du compte',
+                            ].map(item => (
+                                <li key={item} className="flex items-start gap-1.5">
+                                    <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Type to confirm */}
+                    <div>
+                        <label className="mb-1.5 block text-xs font-medium text-neutral-700">
+                            Tapez <span className="rounded bg-neutral-100 px-1 font-mono text-neutral-900">{school.name}</span> pour confirmer
+                        </label>
+                        <input
+                            value={typed}
+                            onChange={e => setTyped(e.target.value)}
+                            placeholder={school.name}
+                            autoComplete="off"
+                            className={`h-10 w-full rounded-lg border px-3 text-sm focus:outline-none focus:ring-2 ${
+                                typed.length > 0 && !confirmed
+                                    ? 'border-red-400 focus:ring-red-200 text-red-700'
+                                    : confirmed
+                                        ? 'border-green-400 focus:ring-green-200 text-green-700'
+                                        : 'border-neutral-300 focus:ring-neutral-200'
+                            }`}
+                        />
+                        {typed.length > 0 && !confirmed && (
+                            <p className="mt-1 text-xs text-red-500">Le nom saisi ne correspond pas.</p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="flex gap-3 border-t border-neutral-200 px-6 py-4">
+                    <button
+                        onClick={onCancel}
+                        disabled={isLoading}
+                        className="flex-1 rounded-lg border border-neutral-300 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 disabled:opacity-50 transition-colors"
+                    >
+                        Annuler
+                    </button>
+                    <button
+                        onClick={onConfirm}
+                        disabled={!confirmed || isLoading}
+                        className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-700 py-2.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                        {isLoading
+                            ? <><Loader2 className="h-4 w-4 animate-spin" /> Suppression...</>
+                            : <><Trash2 className="h-4 w-4" /> Supprimer définitivement</>
+                        }
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 // ── Status helpers ────────────────────────────────────────────────────────────
 const STATUS_LABELS: Record<string, string> = {
     ACTIVE: 'Actif', TRIAL: 'Essai', EXPIRED: 'Expiré',
@@ -166,7 +286,9 @@ export default function SchoolsTable() {
     const [page, setPage]                 = useState(1);
     const [selectedSchool, setSelectedSchool] = useState<SchoolRow | null>(null);
     const [confirmSchool, setConfirmSchool]   = useState<SchoolRow | null>(null);
+    const [deleteSchool, setDeleteSchool]     = useState<SchoolRow | null>(null);
     const [toggling, setToggling]             = useState(false);
+    const [deleting, setDeleting]             = useState(false);
 
     const fetchSchools = async () => {
         setLoading(true);
@@ -211,6 +333,24 @@ export default function SchoolsTable() {
             toast.error('Une erreur est survenue. Veuillez réessayer.');
         } finally {
             setToggling(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!deleteSchool) return;
+        setDeleting(true);
+        try {
+            await api.delete(`/superadmin/schools/${deleteSchool.id}`);
+            toast.success(`"${deleteSchool.name}" supprimée définitivement.`, {
+                style: { background: '#B71C1C', color: '#fff' },
+                icon: '🗑️',
+            });
+            setDeleteSchool(null);
+            fetchSchools();
+        } catch {
+            toast.error('Erreur lors de la suppression. Veuillez réessayer.');
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -318,6 +458,13 @@ export default function SchoolsTable() {
                                                                 : <Power className="h-4 w-4" />
                                                             }
                                                         </button>
+                                                        <button
+                                                            onClick={() => setDeleteSchool(school)}
+                                                            title="Supprimer définitivement"
+                                                            className="flex h-9 w-9 items-center justify-center rounded-md text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-700"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -361,13 +508,23 @@ export default function SchoolsTable() {
                 />
             )}
 
-            {/* Confirmation modal */}
+            {/* Suspend/Reactivate confirmation modal */}
             {confirmSchool && (
                 <ConfirmToggleModal
                     school={confirmSchool}
                     onConfirm={handleConfirmToggle}
                     onCancel={() => setConfirmSchool(null)}
                     isLoading={toggling}
+                />
+            )}
+
+            {/* Delete confirmation modal */}
+            {deleteSchool && (
+                <DeleteSchoolModal
+                    school={deleteSchool}
+                    onConfirm={handleDelete}
+                    onCancel={() => setDeleteSchool(null)}
+                    isLoading={deleting}
                 />
             )}
         </>

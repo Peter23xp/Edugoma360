@@ -663,6 +663,37 @@ export async function updateSAAdminPermissions(req: Request, res: Response, next
     }
 }
 
+// ── deleteSchool ──────────────────────────────────────────────────────────────
+export async function deleteSchool(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        const { id } = req.params;
+
+        const school = await prisma.school.findUnique({
+            where: { id },
+            select: { id: true, name: true },
+        });
+        if (!school) {
+            res.status(404).json({ error: { code: 'NOT_FOUND', message: 'École introuvable.' } });
+            return;
+        }
+
+        // Cascade delete via interactive transaction on the same SQLite connection.
+        // PRAGMA foreign_keys = OFF allows deleting the parent without FK errors.
+        // All child records become orphaned but are inaccessible via tenant middleware.
+        await prisma.$transaction(async (tx) => {
+            await tx.$executeRawUnsafe('PRAGMA foreign_keys = OFF');
+            await tx.school.delete({ where: { id } });
+            await tx.$executeRawUnsafe('PRAGMA foreign_keys = ON');
+        });
+
+        auditSAAction(req, 'DELETE', `École supprimée définitivement : ${school.name}`, {
+            schoolId: id, schoolName: school.name, entity: 'School', entityId: id,
+        }).catch(() => {});
+
+        res.json({ success: true, message: `L'école "${school.name}" a été supprimée définitivement.` });
+    } catch (error) { next(error); }
+}
+
 // ── toggleSAAdmin ─────────────────────────────────────────────────────────────
 export async function toggleSAAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {

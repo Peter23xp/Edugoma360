@@ -16,6 +16,7 @@ import {
     createSAAdmin,
     updateSAAdminPermissions,
     toggleSAAdmin,
+    deleteSchool,
 } from './superadmin.controller';
 
 const router = Router();
@@ -29,6 +30,7 @@ router.get('/schools',                      (req, res, next) => listSchools(req,
 router.get('/schools/:id',                  (req, res, next) => getSchoolDetail(req, res, next));
 router.patch('/schools/:id/subscription',   (req, res, next) => updateSchoolSubscription(req, res, next));
 router.patch('/schools/:id/status',         (req, res, next) => updateSchoolStatus(req, res, next));
+router.delete('/schools/:id',               (req, res, next) => deleteSchool(req, res, next));
 
 // ── Subscriptions (vue globale) ───────────────────────────────────────────────
 router.get('/subscriptions', (req, res, next) => listAllSubscriptions(req, res, next));
