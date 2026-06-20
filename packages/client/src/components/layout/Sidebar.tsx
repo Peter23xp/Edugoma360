@@ -41,7 +41,7 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { label: "Tableau de bord", icon: LayoutDashboard, path: "/", roles: ["*"] },
+  { label: "Tableau de bord", icon: LayoutDashboard, path: "/dashboard", roles: ["*"] },
   {
     label: "Élèves",
     icon: Users,

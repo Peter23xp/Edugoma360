@@ -7,6 +7,9 @@ import schoolRoutes from './school/school.routes';
 const router = Router();
 router.use(authenticate);
 
+// School info DOIT être avant /:key (wildcard) pour ne pas être intercepté
+router.use('/school', schoolRoutes);
+
 router.get('/', requirePermission('settings:read'), (req, res, next) => settingsController.getAll(req, res, next));
 router.put('/:key', requirePermission('settings:update'), (req, res, next) => settingsController.updateSetting(req, res, next));
 
@@ -29,8 +32,5 @@ router.get('/terms', (req, res, next) => settingsController.getTerms(req, res, n
 
 // Sections
 router.get('/sections', requirePermission('settings:read'), (req, res, next) => settingsController.getSections(req, res, next));
-
-// School info (GET + PUT /api/settings/school)
-router.use('/school', schoolRoutes);
 
 export default router;

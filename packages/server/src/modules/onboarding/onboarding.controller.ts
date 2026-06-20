@@ -147,16 +147,20 @@ export async function RegisterSchoolController(
             // 4a. Create the school
             const school = await tx.school.create({
                 data: {
-                    name:      schoolInput.name,
-                    type:      'PRIVE',
-                    province:  schoolInput.province,
-                    ville:     schoolInput.city,
-                    commune:   schoolInput.city,
-                    adresse:   schoolInput.address ?? schoolInput.city,
-                    telephone: schoolInput.phone,
-                    email:     schoolInput.email || null,
+                    name:               schoolInput.name,
+                    nomOfficiel:        schoolInput.name,
+                    nomCourt:           schoolInput.name,
+                    type:               'PRIVE',
+                    province:           schoolInput.province,
+                    ville:              schoolInput.city,
+                    commune:            schoolInput.city,
+                    adresse:            schoolInput.address ?? schoolInput.city,
+                    avenue:             schoolInput.address ?? schoolInput.city,
+                    telephone:          schoolInput.phone,
+                    telephonePrincipal: schoolInput.phone,
+                    email:              schoolInput.email || null,
                     subdomain,
-                    planId:    plan.id,
+                    planId:             plan.id,
                 },
             });
 
