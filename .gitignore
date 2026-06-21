@@ -18,7 +18,10 @@ build/
 # Database
 packages/server/prisma/dev.db
 packages/server/prisma/dev.db-journal
-packages/server/prisma/migrations/
+packages/server/prisma/dev.db-shm
+packages/server/prisma/dev.db-wal
+packages/server/prisma/dev.db.backup-*
+# NB: prisma/migrations/ DOIT etre versionne (reproductibilite). Ne pas ignorer.
 
 # Uploads
 uploads/
