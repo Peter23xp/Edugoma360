@@ -44,6 +44,7 @@ export class AuthService {
                         type: true,
                         province: true,
                         ville: true,
+                        isActive: true,
                     },
                 },
             },
@@ -57,6 +58,14 @@ export class AuthService {
         const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
         if (!isPasswordValid) {
             throw new AuthError('INVALID_CREDENTIALS', 'Email/matricule ou mot de passe incorrect.');
+        }
+
+        // â”€â”€ Block login when the school is suspended (SUPER_ADMIN bypasses) â”€
+        if (!user.isSuperAdmin && user.school && !user.school.isActive) {
+            throw new AuthError(
+                'SCHOOL_SUSPENDED',
+                "L'accès à cette école est suspendu. Veuillez contacter l'administration de la plateforme.",
+            );
         }
 
         // â”€â”€ Check lockout (handled at controller level via loginAttempts) â”€

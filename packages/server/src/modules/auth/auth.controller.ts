@@ -27,7 +27,10 @@ export class AuthController {
             res.json({ data: responseData });
         } catch (error) {
             if (error instanceof AuthError) {
-                const statusCode = error.code === 'ACCOUNT_LOCKED' ? 423 : 401;
+                const statusCode =
+                    error.code === 'ACCOUNT_LOCKED'   ? 423 :
+                    error.code === 'SCHOOL_SUSPENDED' ? 403 :
+                    401;
                 res.status(statusCode).json({
                     error: { code: error.code, message: error.message },
                 });
