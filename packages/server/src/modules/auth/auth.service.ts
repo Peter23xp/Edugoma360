@@ -79,7 +79,7 @@ export class AuthService {
         // â”€â”€ Generate tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         const payload = {
             userId: user.id,
-            schoolId: user.schoolId,
+            schoolId: user.schoolId ?? '', // Super Admin : pas d'école → chaîne vide (jamais utilisée sur les routes tenant)
             role: user.role,
             isSuperAdmin: user.isSuperAdmin,
         };
@@ -99,8 +99,8 @@ export class AuthService {
                 phone: userWithoutPassword.phone,
                 email: userWithoutPassword.email,
                 schoolId: userWithoutPassword.schoolId,
-                schoolName: userWithoutPassword.school.name,
-                schoolSubdomain: userWithoutPassword.school.subdomain,
+                schoolName: userWithoutPassword.school?.name ?? 'Plateforme',
+                schoolSubdomain: userWithoutPassword.school?.subdomain ?? null,
                 isSuperAdmin: userWithoutPassword.isSuperAdmin,
             },
             token,
@@ -256,7 +256,7 @@ export class AuthService {
             const smsService = await import('../sms/sms.service');
             const message = `EduGoma360: Votre code de réinitialisation est ${otp}. Valable 10 minutes.`;
             
-            await smsService.smsService.sendAndLog(user.schoolId, phone, message, 'fr');
+            await smsService.smsService.sendAndLog(user.schoolId ?? '', phone, message, 'fr');
         } catch (error) {
             console.error('SMS sending failed:', error);
             // Continue even if SMS fails (for development)

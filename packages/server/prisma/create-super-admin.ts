@@ -21,47 +21,24 @@ async function main() {
   const password = process.env.SUPER_ADMIN_PASSWORD ?? DEFAULT_PASSWORD;
   const rounds = Number(process.env.BCRYPT_ROUNDS ?? 12);
 
-  const school = await prisma.school.findFirst({
-    where: { isActive: true },
-    orderBy: { createdAt: 'asc' },
-  }) ?? await prisma.school.findFirst({
-    orderBy: { createdAt: 'asc' },
-  }) ?? await prisma.school.create({
-    data: {
-      name: process.env.DEFAULT_SCHOOL_NAME ?? 'EduGoma360',
-      type: 'PRIVE',
-      province: process.env.DEFAULT_PROVINCE ?? 'Nord-Kivu',
-      ville: process.env.DEFAULT_VILLE ?? 'Goma',
-      email: process.env.DEFAULT_SCHOOL_EMAIL ?? 'contact@edugoma360.cd',
-      telephone: process.env.DEFAULT_SCHOOL_PHONE ?? '+243970000000',
-    },
-  });
-
   const passwordHash = await bcrypt.hash(password, rounds);
 
-  const existingSuperAdmin = await prisma.user.findFirst({
-    where: {
-      schoolId: school.id,
-      role: 'SUPER_ADMIN',
-    },
-    orderBy: { createdAt: 'asc' },
-  });
+  // Le Super Admin est indépendant de toute école (schoolId = null).
+  // On le retrouve par isSuperAdmin, sinon par téléphone / email.
+  const existingByLogin =
+    (await prisma.user.findFirst({
+      where: { isSuperAdmin: true },
+      orderBy: { createdAt: 'asc' },
+    })) ??
+    (await prisma.user.findFirst({
+      where: { OR: [{ phone }, { email }] },
+      orderBy: { createdAt: 'asc' },
+    }));
 
-  const existingByLogin = existingSuperAdmin ?? await prisma.user.findFirst({
-    where: {
-      schoolId: school.id,
-      OR: [
-        { phone },
-        { email },
-      ],
-    },
-    orderBy: { createdAt: 'asc' },
-  });
-
+  // Si l'email cible appartient déjà à un AUTRE utilisateur, on garde le login téléphone.
   const emailOwner = email
     ? await prisma.user.findFirst({
         where: {
-          schoolId: school.id,
           email,
           NOT: existingByLogin ? { id: existingByLogin.id } : undefined,
         },
@@ -74,12 +51,14 @@ async function main() {
     ? await prisma.user.update({
         where: { id: existingByLogin.id },
         data: {
+          schoolId: null, // détache le super admin de toute école
           nom: existingByLogin.nom || 'Super',
           postNom: existingByLogin.postNom || 'Admin',
           prenom: existingByLogin.prenom || 'EduGoma360',
           phone,
           email: emailToSave,
           role: 'SUPER_ADMIN',
+          isSuperAdmin: true,
           passwordHash,
           isActive: true,
           mustChangePassword: false,
@@ -87,21 +66,21 @@ async function main() {
       })
     : await prisma.user.create({
         data: {
-          schoolId: school.id,
+          schoolId: null,
           nom: 'Super',
           postNom: 'Admin',
           prenom: 'EduGoma360',
           phone,
           email: emailToSave,
           role: 'SUPER_ADMIN',
+          isSuperAdmin: true,
           passwordHash,
           isActive: true,
           mustChangePassword: false,
         },
       });
 
-  console.log('\nSuper admin prêt, sans suppression de données.');
-  console.log(`Ecole   : ${school.name} (${school.id})`);
+  console.log('\nSuper admin prêt (indépendant de toute école).');
   console.log(`Login   : ${user.phone}`);
   console.log(`Email   : ${user.email ?? 'non défini'}`);
   console.log(`Mot de passe : ${password}`);

@@ -593,16 +593,8 @@ export async function createSAAdmin(req: Request, res: Response, next: NextFunct
         const bcrypt = await import('bcryptjs');
         const passwordHash = await bcrypt.hash(body.password, 12);
 
-        const requestingUserId = req.user?.userId;
-        const requestingUser = requestingUserId
-            ? await prisma.user.findUnique({ where: { id: requestingUserId }, select: { schoolId: true } })
-            : null;
-
-        const schoolId = body.schoolId || requestingUser?.schoolId;
-        if (!schoolId) {
-            res.status(422).json({ error: { code: 'MISSING_SCHOOL', message: 'schoolId requis.' } });
-            return;
-        }
+        // Super Admin = indépendant de toute école. schoolId optionnel (null par défaut).
+        const schoolId = body.schoolId ?? null;
 
         if (body.email) {
             const existing = await prisma.user.findFirst({ where: { email: body.email } });

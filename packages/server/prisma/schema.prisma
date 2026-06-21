@@ -82,7 +82,7 @@ model School {
 
 model User {
   id                      String               @id @default(uuid())
-  schoolId                String
+  schoolId                String?              // null = Super Admin de la plateforme (indépendant de toute école)
   nom                     String
   postNom                 String
   prenom                  String?
@@ -107,7 +107,7 @@ model User {
   justificationsSubmitted Justification[]      @relation("JustificationSubmitter")
   justificationsReviewed  Justification[]      @relation("JustificationReviewer")
   teacher                 Teacher?
-  school                  School               @relation(fields: [schoolId], references: [id])
+  school                  School?              @relation(fields: [schoolId], references: [id])
   parentStudents          Student[]            @relation("ParentStudents")
   smsCampaignsCreated     SMSCampaign[]
   emailCampaignsCreated   EmailCampaign[]      @relation("EmailCampaignCreator")
