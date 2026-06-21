@@ -191,7 +191,8 @@ export async function listSchools(req: Request, res: Response, next: NextFunctio
         const status = req.query.status as string | undefined;
         const now    = new Date();
 
-        const where: any = { isActive: true };
+        // Show ALL schools (active + suspended) so SA can manage suspended ones too
+        const where: any = {};
 
         if (search) {
             where.OR = [
@@ -677,14 +678,86 @@ export async function deleteSchool(req: Request, res: Response, next: NextFuncti
             return;
         }
 
-        // Cascade delete via interactive transaction on the same SQLite connection.
-        // PRAGMA foreign_keys = OFF allows deleting the parent without FK errors.
-        // All child records become orphaned but are inaccessible via tenant middleware.
+        // Explicit ordered cascade: collect parent IDs, then delete children before
+        // parents using scalar FK filters. Deterministic — no reliance on SQLite
+        // PRAGMA (which is a no-op inside a transaction) or partial onDelete rules.
         await prisma.$transaction(async (tx) => {
-            await tx.$executeRawUnsafe('PRAGMA foreign_keys = OFF');
+            // ── Collect parent IDs ──────────────────────────────────────────────
+            const pick = (rows: { id: string }[]) => rows.map((r) => r.id);
+            const studentIds   = pick(await tx.student.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const classIds     = pick(await tx.class.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const teacherIds   = pick(await tx.teacher.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const ayIds        = pick(await tx.academicYear.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const sectionIds   = pick(await tx.section.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const paymentIds   = pick(await tx.payment.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const planIds      = pick(await tx.paymentPlan.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const sessionIds   = pick(await tx.cashSession.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const budgetIds    = pick(await tx.budget.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const campaignIds  = pick(await tx.sMSCampaign.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const announceIds  = pick(await tx.announcement.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const materialIds  = pick(await tx.materialItem.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const bookIds      = pick(await tx.book.findMany({ where: { schoolId: id }, select: { id: true } }));
+            const tcsIds       = pick(await tx.teacherClassSubject.findMany({ where: { classId: { in: classIds } }, select: { id: true } }));
+            const delibIds     = pick(await tx.deliberation.findMany({ where: { classId: { in: classIds } }, select: { id: true } }));
+
+            // ── Delete leaf children first ──────────────────────────────────────
+            await tx.timetablePeriod.deleteMany({ where: { teacherClassSubjectId: { in: tcsIds } } });
+            await tx.delibResult.deleteMany({ where: { deliberationId: { in: delibIds } } });
+            await tx.grade.deleteMany({ where: { studentId: { in: studentIds } } });
+            await tx.justification.deleteMany({ where: { schoolId: id } });        // refs attendance → before attendance
+            await tx.attendance.deleteMany({ where: { studentId: { in: studentIds } } });
+            await tx.teacherAttendance.deleteMany({ where: { schoolId: id } });
+            await tx.disciplineRecord.deleteMany({ where: { studentId: { in: studentIds } } });
+            await tx.feePayment.deleteMany({ where: { paymentId: { in: paymentIds } } });
+            await tx.installment.deleteMany({ where: { planId: { in: planIds } } });
+            await tx.cashMovement.deleteMany({ where: { sessionId: { in: sessionIds } } });
+            await tx.budgetMonth.deleteMany({ where: { budgetId: { in: budgetIds } } });
+            await tx.budgetCategory.deleteMany({ where: { budgetId: { in: budgetIds } } });
+            await tx.announcementView.deleteMany({ where: { announcementId: { in: announceIds } } });
+            await tx.sMSMessage.deleteMany({ where: { campaignId: { in: campaignIds } } });
+            await tx.stockMovement.deleteMany({ where: { itemId: { in: materialIds } } });
+            await tx.bookLoan.deleteMany({ where: { bookId: { in: bookIds } } });
+            await tx.maintenanceRequest.deleteMany({ where: { schoolId: id } });
+            await tx.enrollment.deleteMany({ where: { studentId: { in: studentIds } } });
+            await tx.teacherCertificate.deleteMany({ where: { teacherId: { in: teacherIds } } });
+            await tx.teacherLeave.deleteMany({ where: { schoolId: id } });
+            await tx.teacherClassSubject.deleteMany({ where: { id: { in: tcsIds } } });
+
+            // ── Mid-level entities ──────────────────────────────────────────────
+            await tx.deliberation.deleteMany({ where: { id: { in: delibIds } } });
+            await tx.payment.deleteMany({ where: { schoolId: id } });
+            await tx.paymentPlan.deleteMany({ where: { schoolId: id } });
+            await tx.feeType.deleteMany({ where: { schoolId: id } });
+            await tx.cashSession.deleteMany({ where: { schoolId: id } });
+            await tx.budget.deleteMany({ where: { schoolId: id } });
+            await tx.sMSCampaign.deleteMany({ where: { schoolId: id } });
+            await tx.emailCampaign.deleteMany({ where: { schoolId: id } });
+            await tx.convocation.deleteMany({ where: { schoolId: id } });
+            await tx.announcement.deleteMany({ where: { schoolId: id } });
+            await tx.savedReport.deleteMany({ where: { schoolId: id } });
+            await tx.exportHistory.deleteMany({ where: { schoolId: id } });
+            await tx.exportSchedule.deleteMany({ where: { schoolId: id } });
+            await tx.smsLog.deleteMany({ where: { schoolId: id } });
+            await tx.setting.deleteMany({ where: { schoolId: id } });
+            await tx.subscription.deleteMany({ where: { schoolId: id } });
+            await tx.materialItem.deleteMany({ where: { schoolId: id } });
+            await tx.book.deleteMany({ where: { schoolId: id } });
+            await tx.room.deleteMany({ where: { schoolId: id } });
+
+            // ── Structural entities (order matters) ─────────────────────────────
+            await tx.term.deleteMany({ where: { academicYearId: { in: ayIds } } });
+            await tx.class.deleteMany({ where: { schoolId: id } });
+            await tx.subjectSection.deleteMany({ where: { sectionId: { in: sectionIds } } });
+            await tx.subject.deleteMany({ where: { schoolId: id } });
+            await tx.section.deleteMany({ where: { schoolId: id } });
+            await tx.student.deleteMany({ where: { schoolId: id } });
+            await tx.teacher.deleteMany({ where: { schoolId: id } });
+            await tx.academicYear.deleteMany({ where: { schoolId: id } });
+            await tx.user.deleteMany({ where: { schoolId: id } });
+
+            // ── Finally the school itself ───────────────────────────────────────
             await tx.school.delete({ where: { id } });
-            await tx.$executeRawUnsafe('PRAGMA foreign_keys = ON');
-        });
+        }, { timeout: 30000 });
 
         auditSAAction(req, 'DELETE', `École supprimée définitivement : ${school.name}`, {
             schoolId: id, schoolName: school.name, entity: 'School', entityId: id,

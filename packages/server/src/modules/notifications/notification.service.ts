@@ -50,7 +50,7 @@ export async function createNotification(input: CreateNotificationInput): Promis
 
     if (input.channel === 'SMS' && input.smsTo) {
         try {
-            const { smsService } = await import('../../modules/communication/sms/sms.service');
+            const { smsService } = await import('../sms/sms.service');
             await smsService.sendAndLog(
                 input.schoolId ?? 'platform',
                 input.smsTo,
